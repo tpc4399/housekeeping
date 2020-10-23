@@ -6,13 +6,18 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="housekeeping-admin-service" />
         <module name="housekeeping-register" />
         <module name="housekeeping-gateway" />
+        <module name="housekeeping-admin-interface" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="housekeeping-admin" options="-parameters" />
+      <module name="housekeeping-admin-interface" options="-parameters" />
+      <module name="housekeeping-admin-service" options="-parameters" />
       <module name="housekeeping-gateway" options="-parameters" />
       <module name="housekeeping-register" options="-parameters" />
     </option>

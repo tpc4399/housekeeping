@@ -20,6 +20,7 @@
     <modules>
         <module>housekeeping-register</module>
         <module>housekeeping-gateway</module>
+        <module>housekeeping-admin</module>
     </modules>
 
     <properties>

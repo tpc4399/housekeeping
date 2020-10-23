@@ -11,6 +11,6 @@ eureka:
 zuul:
   prefix: /api
   routes:
-    admin-service: /admin/** #路由到商品的微服务
+    admin-service: /admin/**
   add-host-header: true
   sensitive-headers:
