@@ -4,10 +4,11 @@ spring:
   application:
     name: admin-service
   datasource:
+    type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://47.56.146.107:3306/housekeeping?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
     username: root
     password: snaildy123
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 eureka:
   client:
     service-url:
@@ -16,7 +17,7 @@ eureka:
     lease-renewal-interval-in-seconds: 5
     lease-expiration-duration-in-seconds: 15
 mybatis-plus:
-  type-aliases-package: com.housekeeping.admin.pojo
+  type-aliases-package: com.housekeeping.admin.entity
   mapper-locations: classpath:mapper/*.xml
   configuration:
     map-underscore-to-camel-case: true

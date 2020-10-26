@@ -9,31 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.housekeeping.admin</groupId>
-    <artifactId>housekeeping-admin</artifactId>
-    <version>1.0.0</version>
-    <modules>
-        <module>housekeeping-admin-interface</module>
-        <module>housekeeping-admin-service</module>
-    </modules>
-    <packaging>pom</packaging>
-
+    <artifactId>housekeeping-common</artifactId>
     <dependencies>
-        <!-- mysql驱动 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.3.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.housekeeping.parent</groupId>
-            <artifactId>housekeeping-common</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
     </dependencies>
+
 
 </project>

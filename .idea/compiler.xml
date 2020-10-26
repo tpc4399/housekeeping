@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="housekeeping-admin-service" />
+        <module name="housekeeping-common" />
         <module name="housekeeping-register" />
         <module name="housekeeping-gateway" />
         <module name="housekeeping-admin-interface" />
@@ -18,6 +19,7 @@
       <module name="housekeeping-admin" options="-parameters" />
       <module name="housekeeping-admin-interface" options="-parameters" />
       <module name="housekeeping-admin-service" options="-parameters" />
+      <module name="housekeeping-common" options="-parameters" />
       <module name="housekeeping-gateway" options="-parameters" />
       <module name="housekeeping-register" options="-parameters" />
     </option>
