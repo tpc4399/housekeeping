@@ -31,12 +31,24 @@ public class CommonUtils {
 		return toString(string).isEmpty();
 	}
 
+	public static boolean isNotEmpty(String string) {
+		return !toString(string).isEmpty();
+	}
+
 	public static boolean isEmptyTrim(String string) {
 		return toString(string).trim().isEmpty();
 	}
 
+	public static boolean isNotEmptyTrim(String string) {
+		return !toString(string).trim().isEmpty();
+	}
+
 	public static boolean isEmpty(Object object) {
 		return toString(object).isEmpty();
+	}
+
+	public static boolean isNotEmpty(Object object) {
+		return !toString(object).isEmpty();
 	}
 
 	public static boolean isEmptyTrim(Object object) {

@@ -25,6 +25,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-undertow</artifactId>
@@ -34,11 +35,6 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>4.5.6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.housekeeping.admin</groupId>
-            <artifactId>housekeeping-admin-interface</artifactId>
-            <version>1.0.0</version>
         </dependency>
         <!-- springboot检测服务启动器 -->
         <dependency>
@@ -58,6 +54,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.housekeeping.parent</groupId>
+            <artifactId>housekeeping-common</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

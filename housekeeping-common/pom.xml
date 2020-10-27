@@ -16,7 +16,18 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.3.0</version>
         </dependency>
-
+        <!--        admin远程调用支持-->
+        <dependency>
+            <groupId>com.housekeeping.admin</groupId>
+            <artifactId>housekeeping-admin-interface</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <!--        auth远程调用支持-->
+        <dependency>
+            <groupId>com.housekeeping.auth</groupId>
+            <artifactId>housekeeping-auth-interface</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 

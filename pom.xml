@@ -22,6 +22,7 @@
         <module>housekeeping-gateway</module>
         <module>housekeeping-admin</module>
         <module>housekeeping-common</module>
+        <module>housekeeping-auth</module>
     </modules>
 
     <properties>

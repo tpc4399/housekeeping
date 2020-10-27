@@ -3,6 +3,8 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/housekeeping-admin/housekeeping-admin-interface/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-admin/housekeeping-admin-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/housekeeping-auth/housekeeping-auth-interface/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/housekeeping-auth/housekeeping-auth-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-register/src/main/java" charset="UTF-8" />

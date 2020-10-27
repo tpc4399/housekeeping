@@ -2,7 +2,7 @@ server:
   port: 10010
 spring:
   application:
-    name: housekeeping-gateway
+    name: gateway
 eureka:
   client:
     service-url:
@@ -12,5 +12,6 @@ zuul:
   prefix: /api
   routes:
     admin-service: /admin/**
+    auth-service: /auth/**
   add-host-header: true
   sensitive-headers:
