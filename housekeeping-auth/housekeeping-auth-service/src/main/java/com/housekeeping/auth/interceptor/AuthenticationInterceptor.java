@@ -1,7 +1,10 @@
 package com.housekeeping.auth.interceptor;
 
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.auth.service.impl.HkUserService;
 import com.housekeeping.auth.utils.HkUser;
@@ -66,9 +69,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }else if ("2".equals(audience.get(2))){
             //phone+code登入方式
             hkUser = hkUserService.byPhone(audience.get(1));
+            return true;
         }else {
             throw new RuntimeException("authType error, please again");
         }
-        return false;
+        if(hkUser == null){
+            throw new RuntimeException("no this user ,please again");
+        }
+        /**** 验证token *****/
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(hkUser.getPassword())).build();
+        try{
+            jwtVerifier.verify(token);
+        }catch (JWTVerificationException e){
+            throw new RuntimeException("token 失效");
+        }
+        return true;
     }
 }
