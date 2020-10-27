@@ -11,6 +11,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 public class HousekeepingAdminApplication {
     public static void main(String[] args) {
-        SpringApplication.run(HousekeepingAdminApplication.class);
+        SpringApplication.run(HousekeepingAdminApplication.class, args);
     }
 }
