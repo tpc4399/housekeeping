@@ -1,6 +1,13 @@
 package com.housekeeping.gateway.filter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.housekeeping.common.entiity.HkUser;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.CookieUtils;
 import com.housekeeping.common.utils.TokenUtils;
 import com.housekeeping.gateway.config.FilterProperties;
@@ -17,6 +24,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @EnableConfigurationProperties({FilterProperties.class})
@@ -74,8 +83,51 @@ public class LoginFilter extends ZuulFilter {
             // 设置响应信息
             context.setResponseBody("{\"status\":\"401\", \"text\":\"request error!\"}");
         }
-        // 校验通过，把登陆信息放入上下文信息，继续向后执行
-        context.set("token", token);
+        /** token信息提取，格式校验 */
+        List<String> audience = new ArrayList<>();
+        HkUser hkUser = null;
+        try {
+            audience = JWT.decode(token).getAudience();
+            //手机号不能为空
+            if (audience.get(1) == null) {
+                throw new RuntimeException("token waring, null phone, please again");
+            }
+            //登录类型需要符合规范
+            if (!"0".equals(audience.get(2)) && !"1".equals(audience.get(2)) && !"2".equals(audience.get(2))) {
+                throw new RuntimeException("token waring, error authType, please again");
+            }
+        } catch (JWTDecodeException j) {
+            throw new RuntimeException("token error, please again");
+        }
+        if ("0".equals(audience.get(2))) {
+            //email+password登入方式
+//            hkUser = hkUserService.byEmail(audience.get(0));
+        } else if ("1".equals(audience.get(2))) {
+            //phone+password登入方式
+//            hkUser = hkUserService.byPhone(audience.get(1));
+        } else if ("2".equals(audience.get(2))) {
+            //phone+code登入方式
+//            hkUser = hkUserService.byPhone(audience.get(1));
+            if (CommonUtils.isNotEmpty(hkUser)) {
+                return null;
+            }
+        } else {
+            throw new RuntimeException("authType error, please again");
+        }
+        if (hkUser == null) {
+            throw new RuntimeException("no this user ,please again");
+        }
+        /** token信息提取，格式校验 */
+
+
+        /**** 验证token，密码正确性 *****/
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(hkUser.getPassword())).build();
+        try {
+            jwtVerifier.verify(token);
+        } catch (JWTVerificationException e) {
+            throw new RuntimeException("token 失效");
+        }
+        /**** 验证token，密码正确性 *****/
         return null;
     }
 }
