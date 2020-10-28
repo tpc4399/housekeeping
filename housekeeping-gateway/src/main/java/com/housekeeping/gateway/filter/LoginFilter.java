@@ -6,10 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.housekeeping.common.entiity.HkUser;
+import com.housekeeping.auth.entity.HkUser;
 import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.CookieUtils;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.gateway.client.AuthClient;
+import com.housekeeping.gateway.client.AdminClient;
 import com.housekeeping.gateway.config.FilterProperties;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,9 +29,11 @@ import java.util.List;
 @EnableConfigurationProperties({FilterProperties.class})
 public class LoginFilter extends ZuulFilter {
 
-
     @Autowired
     private FilterProperties filterProp;
+
+    @Autowired
+    private AuthClient authClient;
 
     private static final Logger logger = LoggerFactory.getLogger(LoginFilter.class);
 
@@ -81,11 +81,12 @@ public class LoginFilter extends ZuulFilter {
             // 设置响应状态码，401
             context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
             // 设置响应信息
-            context.setResponseBody("{\"status\":\"401\", \"text\":\"request error!\"}");
+            context.setResponseBody("{\"status\":\"401\", \"text\":\"forget Token!\"}");
+            return null;
         }
         /** token信息提取，格式校验 */
         List<String> audience = new ArrayList<>();
-        HkUser hkUser = null;
+        HkUser user = null;
         try {
             audience = JWT.decode(token).getAudience();
             //手机号不能为空
@@ -101,27 +102,28 @@ public class LoginFilter extends ZuulFilter {
         }
         if ("0".equals(audience.get(2))) {
             //email+password登入方式
-//            hkUser = hkUserService.byEmail(audience.get(0));
+            user = authClient.getUserByEmail(audience.get(0));
         } else if ("1".equals(audience.get(2))) {
             //phone+password登入方式
-//            hkUser = hkUserService.byPhone(audience.get(1));
+            user = authClient.getUserByPhone(audience.get(1));
         } else if ("2".equals(audience.get(2))) {
             //phone+code登入方式
-//            hkUser = hkUserService.byPhone(audience.get(1));
-            if (CommonUtils.isNotEmpty(hkUser)) {
+            user = authClient.getUserByPhone(audience.get(1));
+            if (CommonUtils.isNotEmpty(user)) {
                 return null;
             }
         } else {
             throw new RuntimeException("authType error, please again");
         }
-        if (hkUser == null) {
+        if (user == null) {
             throw new RuntimeException("no this user ,please again");
         }
         /** token信息提取，格式校验 */
 
 
         /**** 验证token，密码正确性 *****/
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(hkUser.getPassword())).build();
+        JWTVerifier jwtVerifier =
+                JWT.require(Algorithm.HMAC256(user.getPassword())).build();
         try {
             jwtVerifier.verify(token);
         } catch (JWTVerificationException e) {

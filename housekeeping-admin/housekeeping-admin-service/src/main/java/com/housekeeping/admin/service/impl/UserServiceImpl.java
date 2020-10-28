@@ -20,23 +20,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserMapper userMapper;
 
     @Override
-    public R getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         QueryWrapper qr = new QueryWrapper();
         qr.eq("email", email);
         qr.eq("del_flag", 0); //未删除
-        List<User> userList = baseMapper.selectList(qr);
+        User res = baseMapper.selectOne(qr);
 
-        return CommonUtils.selectOneHandle(userList, "邮箱号错误或者根本没有此邮箱", "通过邮箱获取用户成功", "重大问题：数据库数据有误，存在多个用户使用了该邮箱");
+        return res;
     }
 
     @Override
-    public R getUserByPhone(String phone) {
+    public User getUserByPhone(String phone) {
         QueryWrapper qr = new QueryWrapper();
         qr.eq("phone", phone);
         qr.eq("del_flag", 0); //未删除
-        List<User> userList = baseMapper.selectList(qr);
+        User res = baseMapper.selectOne(qr);
 
-        return CommonUtils.selectOneHandle(userList, "手机号错误或者根本没有此手机号", "通过手机号获取用户成功", "重大问题：数据库数据有误，存在多个用户使用了该手机号");
+        return res;
     }
 
     @Override

@@ -42,6 +42,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.housekeeping.admin</groupId>
+            <artifactId>housekeeping-admin-interface</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>

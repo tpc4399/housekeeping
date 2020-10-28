@@ -68,6 +68,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.housekeeping.auth</groupId>
+            <artifactId>housekeeping-auth-interface</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <!-- Swagger核心包 end -->
     </dependencies>
     <build>

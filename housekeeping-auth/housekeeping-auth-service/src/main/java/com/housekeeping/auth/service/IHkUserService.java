@@ -1,6 +1,8 @@
 package com.housekeeping.auth.service;
 
+
 import com.housekeeping.auth.utils.HkUser;
+import com.housekeeping.common.utils.R;
 
 /**
  * @Author su
@@ -9,4 +11,7 @@ import com.housekeeping.auth.utils.HkUser;
 public interface IHkUserService {
     HkUser byEmail(String email);
     HkUser byPhone(String phone);
+
+
+
 }

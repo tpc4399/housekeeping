@@ -1,8 +1,8 @@
 package com.housekeeping.gateway.client;
 
-import com.housekeeping.admin.api.UserApi;
+import com.housekeeping.admin.api.AdminApi;
 import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient("admin-service")
-public interface UserClient extends UserApi {
+public interface AdminClient extends AdminApi {
 }

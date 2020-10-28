@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.auth.mapper.UserMapper">
+
+	<insert id="insertOne">
+		INSERT INTO `user`(`number`, nickname, `name`, date_of_birth, phone, email, password, create_time, update_time, last_reviser_id, del_flag)
+		VALUES(
+			#{number},
+			#{userDTO.nickname},
+			#{userDTO.name},
+			#{userDTO.dateOfBirth},
+			#{userDTO.phone},
+			#{userDTO.email},
+			#{userDTO.password},
+			now(),
+			now(),
+			#{lastReviserId},
+			0
+		)
+	</insert>
+</mapper>
