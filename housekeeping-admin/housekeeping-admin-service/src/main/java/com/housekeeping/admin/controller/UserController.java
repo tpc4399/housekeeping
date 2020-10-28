@@ -13,12 +13,12 @@ public class UserController {
     private final IUserService userService;
 
     @GetMapping("/byEmail")
-    public R getUserByEmail(String email){
+    public R getUserByEmail(@RequestParam String email){
         return userService.getUserByEmail(email);
     }
 
     @GetMapping("/byPhone")
-    public R getUserByPhone(String phone){
+    public R getUserByPhone(@RequestParam String phone){
         return userService.getUserByPhone(phone);
     }
 
