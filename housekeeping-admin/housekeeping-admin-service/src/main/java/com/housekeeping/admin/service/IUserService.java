@@ -7,4 +7,6 @@ import com.housekeeping.common.utils.R;
 public interface IUserService extends IService<User> {
     R getUserByEmail(String email);
     R getUserByPhone(String phone);
+
+    Boolean checkData(String data, Integer type);
 }

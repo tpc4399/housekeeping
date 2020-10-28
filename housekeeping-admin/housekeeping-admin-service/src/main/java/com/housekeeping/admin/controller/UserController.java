@@ -3,10 +3,7 @@ package com.housekeeping.admin.controller;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.utils.R;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -46,4 +43,20 @@ public class UserController {
                     @RequestParam("code") String code){
         return R.ok("loginByEmailPassword");
     }
+
+    /**
+     *
+     * @param data
+     * @param type 1 手机号 2 邮箱
+     * @return
+     */
+    @GetMapping("/check/{data}/{type}")
+    public R checkDataUser(@PathVariable("data")String data,@PathVariable("type")Integer type){
+        Boolean b = this.userService.checkData(data, type);
+        if(b == null){
+            return R.failed("请求参数错误");
+        }
+        return R.ok(b);
+    }
+
 }

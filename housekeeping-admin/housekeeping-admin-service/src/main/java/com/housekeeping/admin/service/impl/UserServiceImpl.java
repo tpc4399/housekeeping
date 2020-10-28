@@ -7,6 +7,7 @@ import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +37,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<User> userList = baseMapper.selectList(qr);
 
         return CommonUtils.selectOneHandle(userList, "手机号错误或者根本没有此手机号", "通过手机号获取用户成功", "重大问题：数据库数据有误，存在多个用户使用了该手机号");
+    }
+
+    @Override
+    public Boolean checkData(String data, Integer type) {
+        QueryWrapper qr = new QueryWrapper();
+        switch (type){
+            case 1:
+                qr.eq("phone", data);
+                qr.eq("del_flag", 0); //未删除
+                break;
+            case 2 :
+                qr.eq("email", data);
+                qr.eq("del_flag", 0); //未删除
+                break;
+        }
+        return this.userMapper.selectCount(qr) == 0;
     }
 }
