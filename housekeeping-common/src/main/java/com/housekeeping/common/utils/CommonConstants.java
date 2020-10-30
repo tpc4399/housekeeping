@@ -1,8 +1,18 @@
 package com.housekeeping.common.utils;
 
 /**
+ * @Author su
+ * @create 2020/10/29 16:48
  */
 public interface CommonConstants {
+	/***
+	 * redis的key前綴
+	 */
+	String LOGIN_KEY_BY_PHONE = "HK_LOGIN_KEY_BY_PHONE";
+	/***
+	 * red驗證碼緩存有效時間
+	 */
+	Integer VALID_TIME_MINUTES = 3;
 	/**
 	 * 删除
 	 */

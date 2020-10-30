@@ -74,6 +74,18 @@
             <version>1.0.0</version>
         </dependency>
         <!-- Swagger核心包 end -->
+
+        <!--redis支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+        <!--redis支持-->
+
     </dependencies>
     <build>
         <plugins>

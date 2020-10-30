@@ -1,6 +1,6 @@
 package com.housekeeping.auth.mapper;
 
-import com.housekeeping.auth.utils.HkUser;
+import com.housekeeping.common.entity.HkUser;
 
 /**
  * @Author su

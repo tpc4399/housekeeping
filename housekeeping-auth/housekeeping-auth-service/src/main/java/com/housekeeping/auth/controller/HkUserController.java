@@ -1,7 +1,7 @@
 package com.housekeeping.auth.controller;
 
 import com.housekeeping.auth.service.IHkUserService;
-import com.housekeeping.auth.utils.HkUser;
+import com.housekeeping.common.entity.HkUser;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +19,12 @@ public class HkUserController {
     private final IHkUserService hkUserService;
 
     @GetMapping("/byEmail")
-    public HkUser byEmail(String email){
+    public Object byEmail(String email){
         return hkUserService.byEmail(email);
     }
 
     @GetMapping("/byPhone")
-    public HkUser byPhone(String phone){
-        return hkUserService.byEmail(phone);
+    public Object byPhone(String phone){
+        return hkUserService.byPhone(phone);
     }
 }

@@ -9,6 +9,18 @@ spring:
     username: root
     password: snaildy123
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 1
+    host: 47.56.146.107
+    port: 6379
+    password: snaildy123
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 3
+        max-wait: -1
+        min-idle: 0
+    timeout: 1000
 eureka:
   client:
     service-url:

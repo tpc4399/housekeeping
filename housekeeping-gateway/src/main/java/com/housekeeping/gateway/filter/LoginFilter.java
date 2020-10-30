@@ -6,10 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.housekeeping.auth.entity.HkUser;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.gateway.client.AuthClient;
-import com.housekeeping.gateway.client.AdminClient;
 import com.housekeeping.gateway.config.FilterProperties;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -23,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Component
@@ -81,12 +80,12 @@ public class LoginFilter extends ZuulFilter {
             // 设置响应状态码，401
             context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
             // 设置响应信息
-            context.setResponseBody("{\"status\":\"401\", \"text\":\"forget Token!\"}");
+            context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"Forget the token!\"\n}");
             return null;
         }
         /** token信息提取，格式校验 */
         List<String> audience = new ArrayList<>();
-        HkUser user = null;
+        Object user = null;
         try {
             audience = JWT.decode(token).getAudience();
             //手机号不能为空
@@ -122,12 +121,21 @@ public class LoginFilter extends ZuulFilter {
 
 
         /**** 验证token，密码正确性 *****/
+        String password = (String) ((LinkedHashMap)user).get("password");
         JWTVerifier jwtVerifier =
-                JWT.require(Algorithm.HMAC256(user.getPassword())).build();
+                JWT.require(Algorithm.HMAC256(password)).build();
         try {
             jwtVerifier.verify(token);
         } catch (JWTVerificationException e) {
-            throw new RuntimeException("token 失效");
+            // 1.token過期
+            // 2.密碼錯誤
+            // 过滤该请求，不对其进行路由
+            context.setSendZuulResponse(false);
+            // 设置响应状态码，401
+            context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
+            // 设置响应信息
+            context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"Login failed, please login again\"\n}");
+            return null;
         }
         /**** 验证token，密码正确性 *****/
         return null;

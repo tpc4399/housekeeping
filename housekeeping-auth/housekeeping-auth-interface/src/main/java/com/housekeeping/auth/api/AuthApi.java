@@ -1,8 +1,6 @@
 package com.housekeeping.auth.api;
 
-import com.housekeeping.auth.entity.HkUser;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -18,10 +16,10 @@ public interface AuthApi {
     public String getDecryption(@RequestParam String str);
 
     @GetMapping("/hkUser/byEmail")
-    public HkUser getUserByEmail(@RequestParam String email);
+    public Object getUserByEmail(@RequestParam String email);
 
 
     @GetMapping("/hkUser/byPhone")
-    public HkUser getUserByPhone(@RequestParam String phone);
+    public Object getUserByPhone(@RequestParam String phone);
 
 }

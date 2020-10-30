@@ -16,8 +16,6 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.3.0</version>
         </dependency>
-        <!--        admin远程调用支持-->
-        <!--        auth远程调用支持-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -36,6 +34,17 @@
             <artifactId>java-jwt</artifactId>
             <version>3.4.0</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- 使用 阿里云短信 qcloudsms_java 功能 -->
+        <dependency>
+            <groupId>com.github.qcloudsms</groupId>
+            <artifactId>qcloudsms</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <!--redis支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 

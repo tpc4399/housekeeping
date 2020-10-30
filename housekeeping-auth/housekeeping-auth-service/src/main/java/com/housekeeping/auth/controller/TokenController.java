@@ -1,7 +1,7 @@
 package com.housekeeping.auth.controller;
 
 import com.housekeeping.auth.service.ITokenService;
-import com.housekeeping.auth.utils.HkUser;
+import com.housekeeping.common.entity.HkUser;
 import com.housekeeping.common.utils.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,4 +23,5 @@ public class TokenController {
     public R getToken(@RequestBody HkUser hkUser){
         return R.ok(tokenService.getToken(hkUser));
     }
+
 }

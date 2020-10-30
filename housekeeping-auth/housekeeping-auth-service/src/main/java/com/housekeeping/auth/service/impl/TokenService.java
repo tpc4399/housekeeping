@@ -1,8 +1,8 @@
 package com.housekeeping.auth.service.impl;
 
 import com.housekeeping.auth.service.ITokenService;
-import com.housekeeping.auth.utils.HkUser;
-import com.housekeeping.auth.utils.TokenUtils;
+import com.housekeeping.common.entity.HkUser;
+import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
 /**

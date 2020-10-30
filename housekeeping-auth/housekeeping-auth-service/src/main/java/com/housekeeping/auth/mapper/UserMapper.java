@@ -12,5 +12,7 @@ public interface UserMapper {
     void insertOne(@Param("userDTO") UserDTO userDTO,
                    @Param("number") String number,
                    @Param("lastReviserId") Integer lastReviserId);
+    void changePasswordByPhone(@Param("phone") String phone,
+                               @Param("newPassword") String newPassword);
 
 }

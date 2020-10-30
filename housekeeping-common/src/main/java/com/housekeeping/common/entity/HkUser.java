@@ -1,4 +1,4 @@
-package com.housekeeping.auth.utils;
+package com.housekeeping.common.entity;
 
 import lombok.Data;
 

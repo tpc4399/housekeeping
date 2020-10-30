@@ -1,15 +1,13 @@
 package com.housekeeping.auth.controller;
 
 import com.housekeeping.admin.dto.UserDTO;
-import com.housekeeping.auth.service.IHkUserService;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.IUserService;
-import com.housekeeping.auth.service.impl.HkUserService;
-import com.housekeeping.auth.service.impl.LoginService;
-import com.housekeeping.auth.service.impl.UserService;
 import com.housekeeping.common.utils.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 登入接口
@@ -20,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("/login")
 public class LoginController {
-
-    private final IHkUserService hkUserService;
 
     private final IUserService userService;
 
@@ -41,7 +37,7 @@ public class LoginController {
 
     @GetMapping("/SMS")
     public R loginC(@RequestParam("phone") String phone){
-        return R.ok("loginByEmailPassword");
+        return loginService.sendLoginSMSMessage(phone);
     }
     @GetMapping("/byPhoneCode")
     public R loginC(@RequestParam("phone") String phone,
@@ -52,5 +48,15 @@ public class LoginController {
     @PostMapping("/registered")
     public R registered(@RequestBody UserDTO userDTO){
         return userService.register(userDTO);
+    }
+
+    @GetMapping("/changePw")
+    public R changePassword(@RequestParam("newPassword") String newPassword, HttpServletRequest request){
+        return loginService.changePw(newPassword, request);
+    }
+
+    @GetMapping("/logout")
+    public R logout(HttpServletRequest request){
+        return R.ok("注銷成功");
     }
 }

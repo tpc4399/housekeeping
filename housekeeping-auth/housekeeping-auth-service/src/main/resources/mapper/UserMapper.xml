@@ -20,4 +20,9 @@
 			0
 		)
 	</insert>
+	<update id="changePasswordByPhone">
+		UPDATE `user`
+		SET password = #{newPassword}
+		WHERE phone = #{phone}
+	</update>
 </mapper>

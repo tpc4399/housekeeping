@@ -2,10 +2,11 @@ package com.housekeeping.common.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.housekeeping.common.entiity.HkUser;
+import com.housekeeping.common.entity.HkUser;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class TokenUtils {
 
         Date now = new Date();
         long endTimeLong = System.currentTimeMillis() + 1000 * 60 * 60 * 24;//24小时有效时间
+//        long endTimeLong = System.currentTimeMillis() + 1000 * 60 * 3;//3分鐘有效时间
         Date end = new Date(endTimeLong);
 
         if (hkUser.getPhone() == null || "".equals(hkUser.getPhone())
@@ -58,11 +60,13 @@ public class TokenUtils {
      * @return
      */
     public static HkUser parsingToken(String token){
-        return new HkUser();
-    }
+        HkUser hkUser = new HkUser();
+        List<String> audience = JWT.decode(token).getAudience();
+        hkUser.setEmail(audience.get(0));
+        hkUser.setPhone(audience.get(1));
+        hkUser.setAuthType(Integer.valueOf(audience.get(2)));
+        hkUser.setPassword(hkUser.getPassword());
 
-//
-//    public static void main(String[] args) {
-//        TokenUtils.getToken(new HkUser());
-//    }
+        return hkUser;
+    }
 }

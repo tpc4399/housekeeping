@@ -1,8 +1,7 @@
 package com.housekeeping.auth.service;
 
 
-import com.housekeeping.auth.utils.HkUser;
-import com.housekeeping.common.utils.R;
+import com.housekeeping.common.entity.HkUser;
 
 /**
  * @Author su

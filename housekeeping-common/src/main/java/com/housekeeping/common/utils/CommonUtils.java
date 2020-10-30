@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 校验对象是否为空的工具类
@@ -88,6 +89,25 @@ public class CommonUtils {
 		}else {
 			return R.failed(str3);
 		}
+	}
+
+	/***
+	 * 生成六位隨機驗證碼
+	 * @return
+	 */
+	public static String getRandomSixCode(){
+		Random dom = new Random();
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 6; i++) {
+			Integer s = dom.nextInt(10);
+			sb.append(s);
+		}
+		System.out.printf(sb.toString());
+		return sb.toString();
+	}
+
+	public static void main(String[] args) {
+		getRandomSixCode();
 	}
 }
 
