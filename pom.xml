@@ -23,7 +23,6 @@
         <module>housekeeping-admin</module>
         <module>housekeeping-common</module>
         <module>housekeeping-auth</module>
-        <module>housekeeping-log</module>
     </modules>
 
     <properties>

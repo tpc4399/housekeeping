@@ -19,6 +19,7 @@
     <bytecodeTargetLevel>
       <module name="common-core" target="1.8" />
       <module name="housekeeping-interface" target="1.8" />
+      <module name="housekeeping-log" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
