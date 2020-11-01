@@ -3,6 +3,7 @@ package com.housekeeping.auth.controller;
 import com.housekeeping.admin.dto.UserDTO;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.IUserService;
+import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.R;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class LoginController {
 
     private final ILoginService loginService;
 
+    @LogFlag(description = "用戶登入【by：email+pwd】")
     @GetMapping("/byEmailPassword")
     public R loginA(@RequestParam("email") String email,
                     @RequestParam("password") String password){
@@ -39,6 +41,7 @@ public class LoginController {
     public R loginC(@RequestParam("phone") String phone){
         return loginService.sendLoginSMSMessage(phone);
     }
+
     @GetMapping("/byPhoneCode")
     public R loginC(@RequestParam("phone") String phone,
                     @RequestParam("code") String code){
@@ -50,6 +53,7 @@ public class LoginController {
         return userService.register(userDTO);
     }
 
+    @LogFlag(description = "修改密碼")
     @GetMapping("/changePw")
     public R changePassword(@RequestParam("newPassword") String newPassword, HttpServletRequest request){
         return loginService.changePw(newPassword, request);

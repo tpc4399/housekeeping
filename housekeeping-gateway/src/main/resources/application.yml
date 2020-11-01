@@ -15,6 +15,9 @@ eureka:
       defaultZone: http://127.0.0.1:10086/eureka
     registry-fetch-interval-seconds: 5
 zuul:
+  host:
+    connect-timeout-millis: 15000  #HTTP连接超时大于Hystrix的超时时间
+    socket-timeout-millis: 60000   #socket超时
   prefix: /api
   routes:
     admin-service: /admin/**

@@ -5,19 +5,17 @@ import com.housekeeping.auth.mapper.UserMapper;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.ITokenService;
 import com.housekeeping.auth.utils.DESEncryption;
-import com.housekeeping.auth.utils.RedisUtils;
+import com.housekeeping.common.utils.RedisUtils;
 import com.housekeeping.common.entity.HkUser;
 
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author su

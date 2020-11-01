@@ -6,6 +6,7 @@ import com.housekeeping.admin.entity.Log;
 import com.housekeeping.admin.service.ILogService;
 import com.housekeeping.common.utils.R;
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogController {
     private final ILogService logService;
 
+    @PostMapping("/addOne")
+    public void addLog(Log log){
+        logService.addLog(log);
+    }
+
+    @PostMapping("/page")
     public R getAll(IPage page, LogDTO logDTO){
         return logService.getAll(page, logDTO);
     }

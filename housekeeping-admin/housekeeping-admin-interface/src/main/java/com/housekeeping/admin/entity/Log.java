@@ -1,18 +1,22 @@
 package com.housekeeping.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("log")
-public class Log extends Model<Log> {
+public class Log extends Model<Log> implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /* 主键 */
+    @TableId
     private String id;
 
     /* 标题 */
@@ -37,7 +41,7 @@ public class Log extends Model<Log> {
     private String params;
 
     /* 响应用时 */
-    private String time;
+    private Long time;
 
     /* 创建时间 */
     private LocalDateTime createTime;

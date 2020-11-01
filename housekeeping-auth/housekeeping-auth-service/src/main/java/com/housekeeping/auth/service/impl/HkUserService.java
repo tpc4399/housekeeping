@@ -2,7 +2,6 @@ package com.housekeeping.auth.service.impl;
 
 import com.housekeeping.auth.mapper.HkUserMapper;
 import com.housekeeping.auth.service.IHkUserService;
-import com.housekeeping.auth.service.ITokenService;
 import com.housekeeping.common.entity.HkUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,8 @@ public class HkUserService implements IHkUserService {
 
     @Override
     public HkUser byEmail(String email) {
-        return hkUserMapper.byEmail(email);
+        HkUser res = hkUserMapper.byEmail(email);
+        return res;
     }
 
     @Override

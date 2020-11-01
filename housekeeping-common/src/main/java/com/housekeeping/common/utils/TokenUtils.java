@@ -3,11 +3,11 @@ package com.housekeeping.common.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.housekeeping.common.entity.HkUser;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * @Author su
@@ -46,7 +46,8 @@ public class TokenUtils {
                         (hkUser.getEmail() == null || "".equals(hkUser.getEmail()))
                                 ? "" : hkUser.getEmail(),
                         hkUser.getPhone(),
-                        hkUser.getAuthType().toString()
+                        hkUser.getAuthType().toString(),
+                        hkUser.getId().toString()
                 )
                 .withIssuedAt(now)
                 .withExpiresAt(end)
@@ -65,8 +66,20 @@ public class TokenUtils {
         hkUser.setEmail(audience.get(0));
         hkUser.setPhone(audience.get(1));
         hkUser.setAuthType(Integer.valueOf(audience.get(2)));
+        hkUser.setId(Integer.valueOf(audience.get(3)));
         hkUser.setPassword(hkUser.getPassword());
 
         return hkUser;
+    }
+
+    public static Integer getCurrentUserId(){
+        HttpServletRequest request = ((ServletRequestAttributes) Objects
+                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+        if (CommonUtils.isNotEmpty(request.getHeader("Authorization"))){
+            HkUser hkUser = TokenUtils.parsingToken(request.getHeader("Authorization"));
+            return hkUser.getId();
+        }else {
+            return -1;
+        }
     }
 }

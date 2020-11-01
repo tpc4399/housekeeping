@@ -10,7 +10,7 @@ public interface CommonConstants {
 	 */
 	String LOGIN_KEY_BY_PHONE = "HK_LOGIN_KEY_BY_PHONE";
 	/***
-	 * red驗證碼緩存有效時間
+	 * red驗證碼緩存有效時間，分鐘
 	 */
 	Integer VALID_TIME_MINUTES = 3;
 	/**

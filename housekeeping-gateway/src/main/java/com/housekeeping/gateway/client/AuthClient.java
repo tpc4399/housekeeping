@@ -5,8 +5,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 
 /**
  * @Author su
- * @create 2020/10/28 18:39
+ * @create 2020/10/30 17:01
  */
-@FeignClient("auth-service")
+@FeignClient(name = "auth-service")
 public interface AuthClient extends AuthApi {
 }

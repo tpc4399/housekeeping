@@ -23,6 +23,7 @@
         <module>housekeeping-admin</module>
         <module>housekeeping-common</module>
         <module>housekeeping-auth</module>
+        <module>housekeeping-log</module>
     </modules>
 
     <properties>
@@ -79,5 +80,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

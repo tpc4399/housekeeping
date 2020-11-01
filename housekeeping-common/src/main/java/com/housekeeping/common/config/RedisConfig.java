@@ -1,8 +1,9 @@
-package com.housekeeping.auth.config;
+package com.housekeeping.common.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.housekeeping.common.utils.RedisUtils;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -107,5 +108,10 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
         return redisTemplate.opsForZSet();
+    }
+
+    @Bean
+    public RedisUtils redisUtils(RedisTemplate redisTemplate){
+        return new RedisUtils(redisTemplate);
     }
 }
