@@ -8,6 +8,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,7 @@ public class LogController {
 
     @ApiOperation("【查】分页查询")
     @PostMapping("/page")
-    public R getAll(IPage page, LogDTO logDTO){
+    public R getAll(IPage page, @Param("logDTO") LogDTO logDTO){
         return logService.getAll(page, logDTO);
     }
 }

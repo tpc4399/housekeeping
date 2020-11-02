@@ -10,6 +10,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Objects;
 
 
@@ -19,7 +21,7 @@ import java.util.Objects;
  */
 @UtilityClass
 public class LogUtils {
-	public Log getSysLog() {
+	public Log getSysLog() throws UnsupportedEncodingException {
 		HttpServletRequest request = ((ServletRequestAttributes) Objects
 			.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 		Log log = new Log();
@@ -28,7 +30,10 @@ public class LogUtils {
 		log.setRequestUri(URLUtil.getPath(request.getRequestURI()));
 		log.setMethod(request.getMethod());
 		log.setUserAgent(request.getHeader("user-agent"));
-		log.setParams(HttpUtil.toParams(request.getParameterMap()));
+		/**
+		 * params进行URL编码的解码
+		 */
+		log.setParams(URLDecoder.decode(HttpUtil.toParams(request.getParameterMap()), "UTF-8" ));
 
 		return log;
 	}
