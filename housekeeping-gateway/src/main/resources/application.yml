@@ -32,6 +32,13 @@ housekeeping:
       - /api/auth/login/byPhonePassword
       - /api/auth/login/byPhoneCode
       - /api/auth/login/SMS
+      - /v2/api-docs
+      - /swagger-resources/configuration/ui
+      - /swagger-resources
+      - /swagger-resources/configuration/security
+      - /swagger-ui.html
+      - /api/admin/v2/api-docs
+      - /api/auth/v2/api-docs
 ribbon:
   ConnectTimeout: 10000 # ribbon链接超时时长
   ReadTimeout: 10000 # ribbon读取超时时间长

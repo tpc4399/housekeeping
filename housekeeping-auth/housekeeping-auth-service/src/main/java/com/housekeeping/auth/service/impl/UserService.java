@@ -1,10 +1,9 @@
 package com.housekeeping.auth.service.impl;
 
 import com.housekeeping.admin.dto.UserDTO;
-import com.housekeeping.auth.mapper.HkUserMapper;
 import com.housekeeping.auth.mapper.UserMapper;
 import com.housekeeping.auth.service.IUserService;
-import com.housekeeping.auth.utils.DESEncryption;
+import com.housekeeping.common.utils.DESEncryption;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;

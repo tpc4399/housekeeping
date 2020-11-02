@@ -4,7 +4,7 @@ import com.housekeeping.auth.mapper.HkUserMapper;
 import com.housekeeping.auth.mapper.UserMapper;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.ITokenService;
-import com.housekeeping.auth.utils.DESEncryption;
+import com.housekeeping.common.utils.DESEncryption;
 import com.housekeeping.common.utils.RedisUtils;
 import com.housekeeping.common.entity.HkUser;
 

@@ -9,16 +9,19 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public interface AuthApi {
 
-    @GetMapping("/security/encryption")
-    public String getEncryption(@RequestParam String str);
-
-    @GetMapping("/security/decryption")
-    public String getDecryption(@RequestParam String str);
-
+    /**
+     * 用於用戶驗證時，查詢用戶存在性
+     * @param email
+     * @return
+     */
     @GetMapping("/hkUser/byEmail")
     public Object getUserByEmail(@RequestParam String email);
 
-
+    /**
+     * 用於用戶驗證時，查詢用戶存在性
+     * @param phone
+     * @return
+     */
     @GetMapping("/hkUser/byPhone")
     public Object getUserByPhone(@RequestParam String phone);
 

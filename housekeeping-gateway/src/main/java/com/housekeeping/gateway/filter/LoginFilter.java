@@ -6,7 +6,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.housekeeping.auth.api.AuthApi;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.gateway.client.AuthClient;
 import com.housekeeping.gateway.config.FilterProperties;

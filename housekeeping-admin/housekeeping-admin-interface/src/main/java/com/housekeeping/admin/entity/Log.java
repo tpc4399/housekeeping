@@ -1,5 +1,6 @@
 package com.housekeeping.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -16,8 +17,8 @@ public class Log extends Model<Log> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /* 主键 */
-    @TableId
-    private String id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     /* 标题 */
     private String title;
