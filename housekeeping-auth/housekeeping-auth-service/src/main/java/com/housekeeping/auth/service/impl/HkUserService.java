@@ -17,14 +17,14 @@ public class HkUserService implements IHkUserService {
     private HkUserMapper hkUserMapper;
 
     @Override
-    public HkUser byEmail(String email) {
-        HkUser res = hkUserMapper.byEmail(email);
+    public HkUser byEmail(String email, Integer deptId) {
+        HkUser res = hkUserMapper.byEmail(email, deptId);
         return res;
     }
 
     @Override
-    public HkUser byPhone(String phone) {
-        return hkUserMapper.byPhone(phone);
+    public HkUser byPhone(String phone, Integer deptId) {
+        return hkUserMapper.byPhone(phone, deptId);
     }
 
 }

@@ -27,35 +27,97 @@ public class LoginController {
 
     private final ILoginService loginService;
 
-    @ApiOperation("【登入】email+password")
-    @LogFlag(description = "用戶登入【by：email+pwd】")
-    @GetMapping("/byEmailPassword")
-    public R loginA(@RequestParam("email") String email,
+    @ApiOperation("【系统管理员登入】email+password")
+    @LogFlag(description = "系统管理员登入【by：email+pwd】")
+    @GetMapping("/byEmailPassword1")
+    public R loginA1(@RequestParam("email") String email,
                     @RequestParam("password") String password){
-        return loginService.loginByEmailAndPasswordHandle(email, password);
+        return loginService.loginByEmailAndPasswordHandle(email, password, 1);
     }
 
-    @ApiOperation("【登入】phone+password")
-    @LogFlag(description = "用戶登入【by：phone+pwd】")
-    @GetMapping("/byPhonePassword")
-    public R loginB(@RequestParam("phone") String phone,
+    @ApiOperation("【公司人员登入】email+password")
+    @LogFlag(description = "公司人员登入【by：email+pwd】")
+    @GetMapping("/byEmailPassword2")
+    public R loginA2(@RequestParam("email") String email,
                     @RequestParam("password") String password){
-        return loginService.loginByPhoneAndPasswordHandle(phone, password);
+        return loginService.loginByEmailAndPasswordHandle(email, password, 2);
     }
 
-    @ApiOperation("【登入】发送验证码")
-    @LogFlag(description = "手機號登入獲取驗證碼")
-    @GetMapping("/SMS")
-    public R loginC(@RequestParam("phone") String phone){
-        return loginService.sendLoginSMSMessage(phone);
+    @ApiOperation("【顾客登入】email+password")
+    @LogFlag(description = "顾客登入【by：email+pwd】")
+    @GetMapping("/byEmailPassword3")
+    public R loginA3(@RequestParam("email") String email,
+                    @RequestParam("password") String password){
+        return loginService.loginByEmailAndPasswordHandle(email, password, 3);
     }
 
-    @ApiOperation("【登入】phone+code")
-    @LogFlag(description = "用戶登入【by：phone+code】")
-    @GetMapping("/byPhoneCode")
-    public R loginC(@RequestParam("phone") String phone,
+    @ApiOperation("【系统管理员登入】phone+password")
+    @LogFlag(description = "系统管理员登入【by：phone+pwd】")
+    @GetMapping("/byPhonePassword1")
+    public R loginB1(@RequestParam("phone") String phone,
+                    @RequestParam("password") String password){
+        return loginService.loginByPhoneAndPasswordHandle(phone, password, 1);
+    }
+
+    @ApiOperation("【公司人员登入】phone+password")
+    @LogFlag(description = "公司人员登入【by：phone+pwd】")
+    @GetMapping("/byPhonePassword2")
+    public R loginB2(@RequestParam("phone") String phone,
+                    @RequestParam("password") String password){
+        return loginService.loginByPhoneAndPasswordHandle(phone, password, 2);
+    }
+
+    @ApiOperation("【顾客登入】phone+password")
+    @LogFlag(description = "顾客登入【by：phone+pwd】")
+    @GetMapping("/byPhonePassword3")
+    public R loginB3(@RequestParam("phone") String phone,
+                    @RequestParam("password") String password){
+        return loginService.loginByPhoneAndPasswordHandle(phone, password, 3);
+    }
+
+    @ApiOperation("【系统管理员登入】发送验证码")
+    @LogFlag(description = "系统管理员手機號登入獲取驗證碼")
+    @GetMapping("/SMS1")
+    public R loginC1(@RequestParam("phone") String phone){
+        return loginService.sendLoginSMSMessage(phone, 1);
+    }
+
+    @ApiOperation("【公司人员登入】发送验证码")
+    @LogFlag(description = "公司人员手機號登入獲取驗證碼")
+    @GetMapping("/SMS2")
+    public R loginC2(@RequestParam("phone") String phone){
+        return loginService.sendLoginSMSMessage(phone, 2);
+    }
+
+    @ApiOperation("【顾客登入】发送验证码")
+    @LogFlag(description = "顾客手機號登入獲取驗證碼")
+    @GetMapping("/SMS3")
+    public R loginC3(@RequestParam("phone") String phone){
+        return loginService.sendLoginSMSMessage(phone, 3);
+    }
+
+    @ApiOperation("【系统管理员登入】phone+code")
+    @LogFlag(description = "系统管理员登入【by：phone+code】")
+    @GetMapping("/byPhoneCode1")
+    public R loginC1(@RequestParam("phone") String phone,
                     @RequestParam("code") String code){
-        return loginService.loginByPhoneAndCodeHandle(phone, code);
+        return loginService.loginByPhoneAndCodeHandle(phone, code, 1);
+    }
+
+    @ApiOperation("【公司人员登入】phone+code")
+    @LogFlag(description = "公司人员登入【by：phone+code】")
+    @GetMapping("/byPhoneCode2")
+    public R loginC2(@RequestParam("phone") String phone,
+                    @RequestParam("code") String code){
+        return loginService.loginByPhoneAndCodeHandle(phone, code, 2);
+    }
+
+    @ApiOperation("【顾客登入】phone+code")
+    @LogFlag(description = "顾客登入【by：phone+code】")
+    @GetMapping("/byPhoneCode3")
+    public R loginC3(@RequestParam("phone") String phone,
+                    @RequestParam("code") String code){
+        return loginService.loginByPhoneAndCodeHandle(phone, code, 3);
     }
 
     @ApiOperation("【注册】用户注册")

@@ -21,12 +21,12 @@ public class HkUserController {
     private final IHkUserService hkUserService;
 
     @GetMapping("/byEmail")
-    public Object byEmail(String email){
-        return hkUserService.byEmail(email);
+    public Object byEmail(String email, Integer deptId){
+        return hkUserService.byEmail(email, deptId);
     }
 
     @GetMapping("/byPhone")
-    public Object byPhone(String phone){
-        return hkUserService.byPhone(phone);
+    public Object byPhone(String phone, Integer deptId){
+        return hkUserService.byPhone(phone, deptId);
     }
 }

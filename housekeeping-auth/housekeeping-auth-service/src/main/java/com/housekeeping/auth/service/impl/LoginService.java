@@ -40,8 +40,8 @@ public class LoginService implements ILoginService {
     private RedisUtils redisUtils;
 
     @Override
-    public R loginByEmailAndPasswordHandle(String email, String password) {
-        HkUser hkUser = hkUserMapper.byEmail(email);
+    public R loginByEmailAndPasswordHandle(String email, String password, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byEmail(email, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(password)) {
                 if (DESEncryption.getEncryptString(password).equals(hkUser.getPassword())) {
@@ -56,8 +56,8 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R loginByPhoneAndPasswordHandle(String phone, String password) {
-        HkUser hkUser = hkUserMapper.byPhone(phone);
+    public R loginByPhoneAndPasswordHandle(String phone, String password, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(password)) {
                 if (DESEncryption.getEncryptString(password).equals(hkUser.getPassword())) {
@@ -72,12 +72,12 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R sendLoginSMSMessage(String phone) {
-        HkUser hkUser = hkUserMapper.byPhone(phone);
+    public R sendLoginSMSMessage(String phone, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             //生成随即验证码
             String code = CommonUtils.getRandomSixCode();
-            String key = CommonConstants.LOGIN_KEY_BY_PHONE + phone;
+            String key = CommonConstants.LOGIN_KEY_BY_PHONE + deptId + phone;
             //存入redis
             redisUtils.set(key, code);
             redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
@@ -91,12 +91,12 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R loginByPhoneAndCodeHandle(String phone, String code) {
-        HkUser hkUser = hkUserMapper.byPhone(phone);
+    public R loginByPhoneAndCodeHandle(String phone, String code, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(code)) {
                 //判斷redis中的驗證碼是否正確
-                if (code.equals(redisUtils.get(CommonConstants.LOGIN_KEY_BY_PHONE+phone))) {
+                if (code.equals(redisUtils.get(CommonConstants.LOGIN_KEY_BY_PHONE + deptId + phone))) {
                     hkUser.setAuthType(2);
                     //获取token，生成token，返回token
                     return R.ok(tokenService.getToken(hkUser), "登入成功");
