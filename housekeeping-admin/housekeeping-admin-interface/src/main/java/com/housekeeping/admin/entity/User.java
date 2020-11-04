@@ -38,6 +38,9 @@ public class User extends Model<User> {
     /* 密码 */
     private String password;
 
+    /* 部门_id:1系统管理员、2公司人员、3顾客 */
+    private Integer deptId;
+
     /* 创建时间 */
     private LocalDateTime createTime;
 

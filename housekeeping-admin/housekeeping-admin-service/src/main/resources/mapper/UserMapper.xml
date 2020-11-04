@@ -12,6 +12,7 @@
 		<result property="dateOfBirth" column="date_of_birth"/>
 		<result property="phone" column="phone"/>
 		<result property="email" column="email"/>
+		<result property="deptId" column="dept_id"/>
 		<result property="createTime" column="create_time"/>
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
