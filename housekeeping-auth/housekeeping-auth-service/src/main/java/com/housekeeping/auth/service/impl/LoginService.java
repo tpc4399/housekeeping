@@ -56,8 +56,8 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R loginByPhoneAndPasswordHandle(String phone, String password, Integer deptId) {
-        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
+    public R loginByPhoneAndPasswordHandle(String phonePrefix, String phone, String password, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phonePrefix, phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(password)) {
                 if (DESEncryption.getEncryptString(password).equals(hkUser.getPassword())) {
@@ -72,8 +72,8 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R sendLoginSMSMessage(String phone, Integer deptId) {
-        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
+    public R sendLoginSMSMessage(String phonePrefix, String phone, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phonePrefix, phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             //生成随即验证码
             String code = CommonUtils.getRandomSixCode();
@@ -82,8 +82,9 @@ public class LoginService implements ILoginService {
             redisUtils.set(key, code);
             redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
             //发送短信
+            String nationCode = CommonUtils.getPhonePrefix(phonePrefix);
             String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
-            SendMessage.sendMessage("86", phone, params);
+            SendMessage.sendMessage(nationCode, phone, params);
             return R.ok("成功發送短信");
         }else {
             return R.failed("該手機號為註冊");
@@ -91,8 +92,8 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R loginByPhoneAndCodeHandle(String phone, String code, Integer deptId) {
-        HkUser hkUser = hkUserMapper.byPhone(phone, deptId);
+    public R loginByPhoneAndCodeHandle(String phonePrefix, String phone, String code, Integer deptId) {
+        HkUser hkUser = hkUserMapper.byPhone(phonePrefix, phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(code)) {
                 //判斷redis中的驗證碼是否正確

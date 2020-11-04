@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
  * @create 2020/10/27 2:21
  */
 public interface HkUserMapper {
-    HkUser byEmail(@Param("email") String email,@Param("deptId")  Integer deptId);
-    HkUser byPhone(@Param("phone") String phone,@Param("deptId")  Integer deptId);
+    HkUser byEmail(@Param("email") String email, @Param("deptId")  Integer deptId);
+    HkUser byPhone(@Param("phonePrefix") String phonePrefix,
+                   @Param("phone") String phone,
+                   @Param("deptId")  Integer deptId);
 }

@@ -92,6 +92,7 @@ public class LoginFilter extends ZuulFilter {
         List<String> audience = new ArrayList<>();
         Object user = null;
         try {
+            /** {email, phone, authType, id, deptId, phonePrefix} */
             audience = JWT.decode(token).getAudience();
             //手机号不能为空
             if (audience.get(1) == null) {
@@ -109,10 +110,10 @@ public class LoginFilter extends ZuulFilter {
             user = authClient.getUserByEmail(audience.get(0), audience.get(4));
         } else if ("1".equals(audience.get(2))) {
             //phone+password登入方式
-            user = authClient.getUserByPhone(audience.get(1), audience.get(4));
+            user = authClient.getUserByPhone(audience.get(5), audience.get(1), audience.get(4));
         } else if ("2".equals(audience.get(2))) {
             //phone+code登入方式
-            user = authClient.getUserByPhone(audience.get(1), audience.get(4));
+            user = authClient.getUserByPhone(audience.get(5), audience.get(1), audience.get(4));
             if (CommonUtils.isNotEmpty(user)) {
                 return null;
             }

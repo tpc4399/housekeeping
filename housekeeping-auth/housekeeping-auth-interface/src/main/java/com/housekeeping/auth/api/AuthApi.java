@@ -23,6 +23,8 @@ public interface AuthApi {
      * @return
      */
     @GetMapping("/hkUser/byPhone")
-    public Object getUserByPhone(@RequestParam String phone, @RequestParam("deptId") String deptId);
+    public Object getUserByPhone(@RequestParam("phonePrefix") String phonePrefix,
+                                 @RequestParam("phone") String phone,
+                                 @RequestParam("deptId") String deptId);
 
 }

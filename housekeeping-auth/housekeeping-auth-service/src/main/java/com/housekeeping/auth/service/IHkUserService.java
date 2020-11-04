@@ -9,7 +9,7 @@ import com.housekeeping.common.entity.HkUser;
  */
 public interface IHkUserService {
     HkUser byEmail(String email, Integer deptId);
-    HkUser byPhone(String phone, Integer deptId);
+    HkUser byPhone(String phonePrefix, String phone, Integer deptId);
 
 
 

@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ILoginService {
     R loginByEmailAndPasswordHandle(String email, String password, Integer deptId);
-    R loginByPhoneAndPasswordHandle(String phone, String password, Integer deptId);
-    R sendLoginSMSMessage(String phone, Integer deptId);
-    R loginByPhoneAndCodeHandle(String phone, String code, Integer deptId);
+    R loginByPhoneAndPasswordHandle(String phonePrefix, String phone, String password, Integer deptId);
+    R sendLoginSMSMessage(String phonePrefix, String phone, Integer deptId);
+    R loginByPhoneAndCodeHandle(String phonePrefix, String phone, String code, Integer deptId);
     R changePw(String newPassword, HttpServletRequest request);
 }

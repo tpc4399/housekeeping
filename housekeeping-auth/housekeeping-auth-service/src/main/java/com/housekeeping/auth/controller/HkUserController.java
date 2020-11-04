@@ -28,8 +28,9 @@ public class HkUserController {
     }
 
     @GetMapping("/byPhone")
-    public Object byPhone(@RequestParam("phone") String phone,
+    public Object byPhone(@RequestParam("phonePrefix") String phonePrefix,
+                          @RequestParam("phone") String phone,
                           @RequestParam("deptId") Integer deptId){
-        return hkUserService.byPhone(phone, deptId);
+        return hkUserService.byPhone(phonePrefix, phone, deptId);
     }
 }

@@ -106,6 +106,19 @@ public class CommonUtils {
 		return sb.toString();
 	}
 
+	/***
+	 * 由手机号前缀获取区号 如 "+886" => "886"
+	 * @param phonePrefix "+886"&"886"
+	 * @return String "886"
+	 */
+	public static String getPhonePrefix(String phonePrefix){
+		if (phonePrefix.startsWith("+")){
+			return phonePrefix.substring(1, phonePrefix.length());
+		}else {
+			return phonePrefix;
+		}
+	}
+
 	public static void main(String[] args) {
 		getRandomSixCode();
 	}

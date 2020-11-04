@@ -23,8 +23,8 @@ public class HkUserService implements IHkUserService {
     }
 
     @Override
-    public HkUser byPhone(String phone, Integer deptId) {
-        return hkUserMapper.byPhone(phone, deptId);
+    public HkUser byPhone(String phonePrefix, String phone, Integer deptId) {
+        return hkUserMapper.byPhone(phonePrefix, phone, deptId);
     }
 
 }

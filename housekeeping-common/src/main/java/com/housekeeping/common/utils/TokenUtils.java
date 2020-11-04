@@ -42,13 +42,15 @@ public class TokenUtils {
         token = JWT
                 .create()
                 .withHeader(headerClaims)
+                /** {email, phone, authType, id, deptId, phonePrefix} */
                 .withAudience(
                         (hkUser.getEmail() == null || "".equals(hkUser.getEmail()))
                                 ? "" : hkUser.getEmail(),
                         hkUser.getPhone(),
                         hkUser.getAuthType().toString(),
                         hkUser.getId().toString(),
-                        hkUser.getDeptId().toString()
+                        hkUser.getDeptId().toString(),
+                        hkUser.getPhonePrefix()
                 )
                 .withIssuedAt(now)
                 .withExpiresAt(end)

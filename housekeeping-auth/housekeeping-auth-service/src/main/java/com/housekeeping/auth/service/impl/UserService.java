@@ -32,7 +32,7 @@ public class UserService implements IUserService {
         if (CommonUtils.isEmpty(userDTO.getPhone()) || CommonUtils.isEmpty(userDTO.getPassword())){
             return R.failed("必填項為空");
         }
-        if (CommonUtils.isNotEmpty(hkUserService.byPhone(userDTO.getPhone(), userDTO.getDeptId()))){
+        if (CommonUtils.isNotEmpty(hkUserService.byPhone(userDTO.getPhonePrefix(), userDTO.getPhone(), userDTO.getDeptId()))){
             return R.failed("手機號已存在");
         }
         if (CommonUtils.isNotEmpty(userDTO.getEmail())){

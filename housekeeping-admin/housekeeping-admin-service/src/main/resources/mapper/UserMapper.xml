@@ -10,6 +10,7 @@
 		<result property="nickname" column="nickname"/>
 		<result property="name" column="name"/>
 		<result property="dateOfBirth" column="date_of_birth"/>
+		<result property="phonePrefix" column="phone_prefix"/>
 		<result property="phone" column="phone"/>
 		<result property="email" column="email"/>
 		<result property="deptId" column="dept_id"/>

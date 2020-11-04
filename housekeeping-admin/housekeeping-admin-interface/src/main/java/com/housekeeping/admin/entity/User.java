@@ -29,6 +29,9 @@ public class User extends Model<User> {
     /* 出生年月日 */
     private LocalDate dateOfBirth;
 
+    /* 手机号前缀 */
+    private String phonePrefix;
+
     /* 手机号 */
     private String phone;
 
