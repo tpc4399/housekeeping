@@ -47,9 +47,6 @@ public class User extends Model<User> {
     /* 更新时间 */
     private LocalDateTime updateTime;
 
-    /* 区分登陆用户 */
-    private Integer deptId;
-
     /* 最后修改人 */
     private Integer lastReviserId;
 

@@ -53,4 +53,6 @@ public class UserController {
     public R loginC(@RequestParam("phone") String phone){
         return userService.sendRegisterMSMessage(phone);
     }
+
+
 }
