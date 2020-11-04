@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("log")
+@TableName("sys_log")
 public class Log extends Model<Log> implements Serializable {
     private static final long serialVersionUID = 1L;
 

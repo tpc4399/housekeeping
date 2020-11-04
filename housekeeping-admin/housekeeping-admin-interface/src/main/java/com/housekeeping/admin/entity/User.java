@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("user")
+@TableName("sys_user")
 public class User extends Model<User> {
     /* 主键id */
     @TableId

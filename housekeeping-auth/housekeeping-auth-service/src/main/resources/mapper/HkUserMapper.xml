@@ -10,7 +10,7 @@
 			phone as phone,
 			email as email,
 			password as password
-		FROM `user`
+		FROM `sys_user`
 		WHERE email = #{email} and del_flag = false
 	</select>
 	<select id="byPhone" resultType="com.housekeeping.common.entity.HkUser">
@@ -19,7 +19,7 @@
 			phone as phone,
 			email as email,
 			password as password
-		FROM `user`
+		FROM `sys_user`
 		WHERE phone = #{phone} and del_flag = false
 	</select>
 </mapper>

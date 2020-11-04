@@ -5,7 +5,7 @@
 <mapper namespace="com.housekeeping.auth.mapper.UserMapper">
 
 	<insert id="insertOne">
-		INSERT INTO `user`(`number`, nickname, `name`, date_of_birth, phone, email, password, create_time, update_time, last_reviser_id, del_flag)
+		INSERT INTO `sys_user`(`number`, nickname, `name`, date_of_birth, phone, email, password, create_time, update_time, last_reviser_id, del_flag)
 		VALUES(
 			#{number},
 			#{userDTO.nickname},
@@ -21,7 +21,7 @@
 		)
 	</insert>
 	<update id="changePasswordByPhone">
-		UPDATE `user`
+		UPDATE `sys_user`
 		SET password = #{newPassword}
 		WHERE phone = #{phone}
 	</update>
