@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Api(value="用户controller",tags={"用户管理接口"})
 @RestController
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class UserController {
     @ApiOperation("【查】根据Email")
     @LogFlag(description = "查詢用戶信息【by：email】")
     @GetMapping("/byEmail")
-    public User getUserByEmail(@RequestParam String email){
+    public User getUserByEmail(@RequestParam String email, HttpServletRequest request){
         return userService.getUserByEmail(email);
     }
 

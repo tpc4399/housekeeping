@@ -27,11 +27,9 @@ zuul:
 housekeeping:
   filter:
     allowPaths:
-      - /api/auth/login/registered
-      - /api/auth/login/byEmailPassword
-      - /api/auth/login/byPhonePassword
-      - /api/auth/login/byPhoneCode
-      - /api/auth/login/SMS
+      - /api/auth/login/company/*
+      - /api/auth/login/admin/*
+      - /api/auth/login/customer/*
       - /v2/api-docs
       - /swagger-resources/configuration/ui
       - /swagger-resources

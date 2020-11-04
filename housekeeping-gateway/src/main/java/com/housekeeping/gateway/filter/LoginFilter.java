@@ -43,7 +43,7 @@ public class LoginFilter extends ZuulFilter {
 
     @Override
     public int filterOrder() {
-        return 2;
+        return 1;
     }
 
     @Override
@@ -101,13 +101,13 @@ public class LoginFilter extends ZuulFilter {
         }
         if ("0".equals(audience.get(2))) {
             //email+password登入方式
-            user = authClient.getUserByEmail(audience.get(0), audience.get(3));
+            user = authClient.getUserByEmail(audience.get(0), audience.get(4));
         } else if ("1".equals(audience.get(2))) {
             //phone+password登入方式
-            user = authClient.getUserByPhone(audience.get(1), audience.get(3));
+            user = authClient.getUserByPhone(audience.get(1), audience.get(4));
         } else if ("2".equals(audience.get(2))) {
             //phone+code登入方式
-            user = authClient.getUserByPhone(audience.get(1), audience.get(3));
+            user = authClient.getUserByPhone(audience.get(1), audience.get(4));
             if (CommonUtils.isNotEmpty(user)) {
                 return null;
             }
