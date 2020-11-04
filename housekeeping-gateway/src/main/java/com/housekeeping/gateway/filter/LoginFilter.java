@@ -36,6 +36,10 @@ public class LoginFilter extends ZuulFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginFilter.class);
 
+    public LoginFilter() {
+        logger.info("过滤器实例化");
+    }
+
     @Override
     public String filterType() {
         return "pre";
@@ -67,6 +71,7 @@ public class LoginFilter extends ZuulFilter {
 
     @Override
     public Object run() throws ZuulException {
+        logger.info("拦截器运行");
         // 获取zuul提供的上下文对象
         RequestContext context = RequestContext.getCurrentContext();
         // 从上下文对象中获取请求对象

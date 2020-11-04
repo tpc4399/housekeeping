@@ -27,9 +27,9 @@ zuul:
 housekeeping:
   filter:
     allowPaths:
-      - /api/auth/login/company/*
-      - /api/auth/login/admin/*
-      - /api/auth/login/customer/*
+      - /api/auth/login/company/
+      - /api/auth/login/admin/
+      - /api/auth/login/customer/
       - /v2/api-docs
       - /swagger-resources/configuration/ui
       - /swagger-resources

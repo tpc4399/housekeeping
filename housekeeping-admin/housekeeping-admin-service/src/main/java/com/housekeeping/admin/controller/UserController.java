@@ -50,21 +50,21 @@ public class UserController {
 
     @ApiOperation("【平台管理员注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS")
+    @GetMapping("/SMS1")
     public R registerA(@RequestParam("phone") String phone){
         return userService.sendRegisterMSMessage(phone,1);
     }
 
     @ApiOperation("【公司人员注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS")
+    @GetMapping("/SMS2")
     public R registerB(@RequestParam("phone") String phone){
         return userService.sendRegisterMSMessage(phone,2);
     }
 
     @ApiOperation("【客户注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS")
+    @GetMapping("/SMS3")
     public R registerC(@RequestParam("phone") String phone){
         return userService.sendRegisterMSMessage(phone,3);
     }
