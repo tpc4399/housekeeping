@@ -5,6 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.common.entity.HkUser;
+import com.housekeeping.common.sms.SendMessage;
+import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.RedisUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,6 +21,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private UserMapper userMapper;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public User getUserByEmail(String email) {
@@ -49,5 +58,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 break;
         }
         return this.userMapper.selectCount(qr) == 0;
+    }
+
+    @Override
+    public R sendRegisterMSMessage(String phone) {
+        User hkUser = this.getUserByPhone(phone);
+        if (CommonUtils.isEmpty(hkUser)) {
+            //生成随即验证码
+            String code = CommonUtils.getRandomSixCode();
+            String key = CommonConstants.REGISTER_KEY_BY_PHONE + phone;
+            //存入redis
+            redisUtils.set(key, code);
+            redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
+            //发送短信
+            String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
+            SendMessage.sendMessage("86", phone, params);
+            return R.ok("成功發送短信");
+        }else {
+            return R.failed("該手機號為註冊");
+        }
     }
 }

@@ -47,4 +47,10 @@ public class UserController {
         return R.ok(b);
     }
 
+    @ApiOperation("【注册】发送验证码")
+    @LogFlag(description = "手機號注册獲取驗證碼")
+    @GetMapping("/SMS")
+    public R loginC(@RequestParam("phone") String phone){
+        return userService.sendRegisterMSMessage(phone);
+    }
 }
