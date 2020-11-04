@@ -9,7 +9,8 @@
 			nickname as nickName,
 			phone as phone,
 			email as email,
-			password as password
+			password as password,
+			dept_id as deptId
 		FROM `sys_user`
 		WHERE email = #{email} and del_flag = false and dept_id = #{deptId}
 	</select>
@@ -18,7 +19,8 @@
 			nickname as nickName,
 			phone as phone,
 			email as email,
-			password as password
+			password as password,
+			dept_id as deptId
 		FROM `sys_user`
 		WHERE phone = #{phone} and del_flag = false and dept_id = #{deptId}
 	</select>
