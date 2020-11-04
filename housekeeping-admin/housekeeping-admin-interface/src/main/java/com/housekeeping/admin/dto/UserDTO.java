@@ -29,4 +29,7 @@ public class UserDTO {
     /* 密码 */
     private String password;
 
+    /* 部门_id */
+    private Integer deptId;
+
 }
