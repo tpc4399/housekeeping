@@ -5,6 +5,7 @@ import com.housekeeping.common.entity.HkUser;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -21,12 +22,14 @@ public class HkUserController {
     private final IHkUserService hkUserService;
 
     @GetMapping("/byEmail")
-    public Object byEmail(String email, Integer deptId){
+    public Object byEmail(@RequestParam("email") String email,
+                          @RequestParam("deptId") Integer deptId){
         return hkUserService.byEmail(email, deptId);
     }
 
     @GetMapping("/byPhone")
-    public Object byPhone(String phone, Integer deptId){
+    public Object byPhone(@RequestParam("phone") String phone,
+                          @RequestParam("deptId") Integer deptId){
         return hkUserService.byPhone(phone, deptId);
     }
 }

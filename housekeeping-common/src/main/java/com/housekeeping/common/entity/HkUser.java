@@ -13,5 +13,6 @@ public class HkUser {
     private String phone;
     private String email;
     private String password;
-    private Integer authType;
+    private Integer authType; //登入方式
+    private Integer deptId; //登入部门
 }

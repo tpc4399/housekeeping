@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.IUserService;
-import com.housekeeping.common.entity.HkUser;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;

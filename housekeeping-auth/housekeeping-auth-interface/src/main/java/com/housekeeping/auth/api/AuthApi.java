@@ -15,7 +15,7 @@ public interface AuthApi {
      * @return
      */
     @GetMapping("/hkUser/byEmail")
-    public Object getUserByEmail(@RequestParam String email);
+    public Object getUserByEmail(@RequestParam("email") String email, @RequestParam("deptId") String deptId);
 
     /**
      * 用於用戶驗證時，查詢用戶存在性
@@ -23,6 +23,6 @@ public interface AuthApi {
      * @return
      */
     @GetMapping("/hkUser/byPhone")
-    public Object getUserByPhone(@RequestParam String phone);
+    public Object getUserByPhone(@RequestParam String phone, @RequestParam("deptId") String deptId);
 
 }

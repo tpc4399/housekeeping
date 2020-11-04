@@ -47,7 +47,8 @@ public class TokenUtils {
                                 ? "" : hkUser.getEmail(),
                         hkUser.getPhone(),
                         hkUser.getAuthType().toString(),
-                        hkUser.getId().toString()
+                        hkUser.getId().toString(),
+                        hkUser.getDeptId().toString()
                 )
                 .withIssuedAt(now)
                 .withExpiresAt(end)
