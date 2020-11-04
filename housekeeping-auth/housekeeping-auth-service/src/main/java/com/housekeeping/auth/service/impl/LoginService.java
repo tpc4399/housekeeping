@@ -77,14 +77,13 @@ public class LoginService implements ILoginService {
         if (CommonUtils.isNotEmpty(hkUser)) {
             //生成随即验证码
             String code = CommonUtils.getRandomSixCode();
-            String key = CommonConstants.LOGIN_KEY_BY_PHONE + deptId + phone;
+            String key = CommonConstants.LOGIN_KEY_BY_PHONE + "_" + deptId  + "_+" + phonePrefix + "_" +  phone;
             //存入redis
             redisUtils.set(key, code);
             redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
             //发送短信
-            String nationCode = CommonUtils.getPhonePrefix(phonePrefix);
             String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
-            SendMessage.sendMessage(nationCode, phone, params);
+            SendMessage.sendMessage(phonePrefix, phone, params);
             return R.ok("成功發送短信");
         }else {
             return R.failed("該手機號為註冊");
@@ -96,8 +95,8 @@ public class LoginService implements ILoginService {
         HkUser hkUser = hkUserMapper.byPhone(phonePrefix, phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(code)) {
-                //判斷redis中的驗證碼是否正確
-                if (code.equals(redisUtils.get(CommonConstants.LOGIN_KEY_BY_PHONE + deptId + phone))) {
+                //判斷redis中的驗證碼是否正確String key = CommonConstants.LOGIN_KEY_BY_PHONE + "_" + deptId  + "_+" + phonePrefix + "_" +  phone;
+                if (code.equals(redisUtils.get(CommonConstants.LOGIN_KEY_BY_PHONE + "_" + deptId  + "_+" + phonePrefix + "_" +  phone))) {
                     hkUser.setAuthType(2);
                     //获取token，生成token，返回token
                     return R.ok(tokenService.getToken(hkUser), "登入成功");
