@@ -37,6 +37,15 @@ housekeeping:
       - /swagger-ui.html
       - /api/admin/v2/api-docs
       - /api/auth/v2/api-docs
+      - /api/admin/user/checkAdmin
+      - /api/admin/user/checkCus
+      - /api/admin/user/checkEmp
+      - /api/admin/user/AdminSMS
+      - /api/admin/user/EmpSMS
+      - /api/admin/user/CusSMS
+      - /api/admin/user/saveEmp
+      - /api/admin/user/saveCus
+      - /api/admin/user/saveAdmin
 ribbon:
   ConnectTimeout: 10000 # ribbon链接超时时长
   ReadTimeout: 10000 # ribbon读取超时时间长

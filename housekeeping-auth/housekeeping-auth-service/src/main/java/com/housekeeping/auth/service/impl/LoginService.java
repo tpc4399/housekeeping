@@ -34,9 +34,6 @@ public class LoginService implements ILoginService {
     private UserMapper userMapper;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
-    @Autowired
     private RedisUtils redisUtils;
 
     @Override

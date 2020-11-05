@@ -20,23 +20,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private UserMapper userMapper;
+
     @Autowired
     private RedisUtils redisUtils;
 
-    @Override
-    public User getUserByEmail(String email,Integer deptId) {
-        QueryWrapper qr = new QueryWrapper();
-        qr.eq("dept_id",deptId);
-        qr.eq("email", email);
-        qr.eq("del_flag", 0); //未删除
-        User res = baseMapper.selectOne(qr);
-
-        return res;
-    }
 
     @Override
-    public User getUserByPhone(String phone,Integer deptId) {
+    public User getUserByPhone(String phonePrefix,String phone,Integer deptId) {
         QueryWrapper qr = new QueryWrapper();
+        qr.eq("phone_prefix",phonePrefix);
         qr.eq("dept_id",deptId);
         qr.eq("phone", phone);
         qr.eq("del_flag", 0); //未删除
@@ -46,34 +38,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public Boolean checkData(String data, Integer type) {
+    public R checkData(Integer deptId,String data, Integer type) {
         QueryWrapper qr = new QueryWrapper();
         switch (type){
             case 1:
+                qr.eq("dept_id", deptId);
                 qr.eq("phone", data);
                 qr.eq("del_flag", 0); //未删除
                 break;
             case 2 :
+                qr.eq("dept_id", deptId);
                 qr.eq("email", data);
                 qr.eq("del_flag", 0); //未删除
                 break;
         }
-        return this.userMapper.selectCount(qr) == 0;
+        if(this.userMapper.selectCount(qr) == 0){
+            return R.failed("手机号或者邮箱不存在,可以注册");
+        }else {
+            return R.failed("手机号或者邮箱已存在");
+        }
     }
 
     @Override
-    public R sendRegisterMSMessage(String phone,Integer deptId) {
-        User hkUser = this.getUserByPhone(phone,deptId);
+    public R sendRegisterMSMessage(String phonePrefix,String phone,Integer deptId) {
+        User hkUser = this.getUserByPhone(phonePrefix,phone,deptId);
         if (CommonUtils.isEmpty(hkUser)) {
             //生成随即验证码
             String code = CommonUtils.getRandomSixCode();
-            String key = CommonConstants.LOGIN_KEY_BY_PHONE + deptId + phone;
+            String key = CommonConstants.REGISTER_KEY_BY_PHONE + "_" + deptId  + "_+" + phonePrefix + "_" +  phone;
             //存入redis
             redisUtils.set(key, code);
             redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
             //发送短信
             String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
-            SendMessage.sendMessage("86", phone, params);
+            SendMessage.sendMessage(phonePrefix, phone, params);
             return R.ok("成功發送短信");
         }else {
             return R.failed("該手機號為註冊");
@@ -82,12 +80,64 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R saveEmp(RegisterDTO registerDTO) {
-        return null;
+        if(CommonUtils.isNotEmpty(registerDTO)){
+            if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
+                //判斷redis中的驗證碼是否正確
+                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 2  + "_+" + registerDTO.getPhonePrefix() + "_" +  registerDTO.getPhone()))){
+                    if(registerDTO.getPassword().equals(registerDTO.getRepassword())){
+                        User user = new User();
+                        user.setNumber(String.valueOf(System.currentTimeMillis()));
+                        user.setDeptId(2);
+                        user.setName(registerDTO.getName());
+                        user.setPhonePrefix(registerDTO.getPhonePrefix());
+                        user.setPhone(registerDTO.getPhone());
+                        user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
+                        user.setLastReviserId(TokenUtils.getCurrentUserId());
+                        user.setCreateTime(LocalDateTime.now());
+                        user.setUpdateTime(LocalDateTime.now());
+                        this.save(user);
+                    }else {
+                        return R.ok("两次密码不一致");
+                    }
+                }else {
+                    return R.failed("验证码错误");
+                }
+            }else {
+                return R.failed("验证码为空");
+            }
+        }
+        return R.ok("创建平台管理员成功");
     }
 
     @Override
     public R saveCus(RegisterDTO registerDTO) {
-        return null;
+        if(CommonUtils.isNotEmpty(registerDTO)){
+            if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
+                //判斷redis中的驗證碼是否正確
+                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 3  + "_+" + registerDTO.getPhonePrefix() + "_" +  registerDTO.getPhone()))){
+                    if(registerDTO.getPassword().equals(registerDTO.getRepassword())){
+                        User user = new User();
+                        user.setNumber(String.valueOf(System.currentTimeMillis()));
+                        user.setDeptId(3);
+                        user.setName(registerDTO.getName());
+                        user.setPhonePrefix(registerDTO.getPhonePrefix());
+                        user.setPhone(registerDTO.getPhone());
+                        user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
+                        user.setLastReviserId(TokenUtils.getCurrentUserId());
+                        user.setCreateTime(LocalDateTime.now());
+                        user.setUpdateTime(LocalDateTime.now());
+                        this.save(user);
+                    }else {
+                        return R.ok("两次密码不一致");
+                    }
+                }else {
+                    return R.failed("验证码错误");
+                }
+            }else {
+                return R.failed("验证码为空");
+            }
+        }
+        return R.ok("创建平台管理员成功");
     }
 
     @Override
@@ -95,18 +145,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if(CommonUtils.isNotEmpty(registerDTO)){
             if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
                 //判斷redis中的驗證碼是否正確
-                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.LOGIN_KEY_BY_PHONE + 1 + registerDTO.getPhone()))){
+                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 1  + "_+" + registerDTO.getPhonePrefix() + "_" +  registerDTO.getPhone()))){
                     if(registerDTO.getPassword().equals(registerDTO.getRepassword())){
                         User user = new User();
                         user.setNumber(String.valueOf(System.currentTimeMillis()));
                         user.setDeptId(1);
                         user.setName(registerDTO.getName());
+                        user.setPhonePrefix(registerDTO.getPhonePrefix());
                         user.setPhone(registerDTO.getPhone());
                         user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
-                        userMapper.insert(user);
+                        this.save(user);
                     }else {
                         return R.ok("两次密码不一致");
                     }

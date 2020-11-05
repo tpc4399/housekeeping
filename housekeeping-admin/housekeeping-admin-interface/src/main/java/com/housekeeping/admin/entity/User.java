@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
 public class User extends Model<User> {
+
+    private static final long serialVersionUID = 1L;
+
     /* 主键id */
     @TableId
     private Integer id;
@@ -55,4 +58,7 @@ public class User extends Model<User> {
 
     /* 删除标志位 */
     private Integer delFlag;
+
+    /*公司id*/
+    private Integer companyId;
 }

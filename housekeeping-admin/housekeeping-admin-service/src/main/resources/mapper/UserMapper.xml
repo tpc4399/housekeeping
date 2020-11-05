@@ -18,6 +18,7 @@
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
 		<result property="delFlag" column="del_flag"/>
+		<result property="companyId" column="company_id"/>
 	</resultMap>
 
 </mapper>

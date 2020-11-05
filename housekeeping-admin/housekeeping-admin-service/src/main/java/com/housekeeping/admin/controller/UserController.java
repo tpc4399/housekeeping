@@ -18,19 +18,18 @@ public class UserController {
 
     private final IUserService userService;
 
-    @ApiOperation("【查】根据管理员Email")
-    @LogFlag(description = "查詢管理员信息【by：email】")
-    @GetMapping("/byEmail")
-    public User getUserByEmail(@RequestParam String email){
-        return userService.getUserByEmail(email,1);
-    }
 
-    @ApiOperation("【查】根据管理员phone")
-    @LogFlag(description = "查詢管理员信息【by：phone】")
-    @GetMapping("/byPhone")
-    public User getUserByPhone(@RequestParam String phone){
-        User res = userService.getUserByPhone(phone,1);
-        return res;
+    /**
+     *
+     * @param data
+     * @param type 1 手机号 2 邮箱
+     * @return
+     */
+    @ApiOperation("异步检测管理员手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @GetMapping("/checkAdmin/{data}/{type}")
+    public R checkDataAdmin(@PathVariable("data")String data,@PathVariable("type")Integer type){
+        R r = this.userService.checkData(1, data, type);
+        return r;
     }
 
     /**
@@ -39,34 +38,48 @@ public class UserController {
      * @param type 1 手机号 2 邮箱
      * @return
      */
-    @GetMapping("/check/{data}/{type}")
-    public R checkDataUser(@PathVariable("data")String data,@PathVariable("type")Integer type){
-        Boolean b = this.userService.checkData(data, type);
-        if(b == null){
-            return R.failed("请求参数错误");
-        }
-        return R.ok(b);
+    @ApiOperation("异步检测公司手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @GetMapping("/checkEmp/{data}/{type}")
+    public R checkDataEmp(@PathVariable("data")String data,@PathVariable("type")Integer type){
+        R r = this.userService.checkData(2, data, type);
+        return r;
+    }
+
+    /**
+     *
+     * @param data
+     * @param type 1 手机号 2 邮箱
+     * @return
+     */
+    @ApiOperation("异步检测客户手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @GetMapping("/checkCus/{data}/{type}")
+    public R checkDataCus(@PathVariable("data")String data,@PathVariable("type")Integer type){
+        R r = this.userService.checkData(3, data, type);
+        return r;
     }
 
     @ApiOperation("【平台管理员注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS1")
-    public R registerA(@RequestParam("phone") String phone){
-        return userService.sendRegisterMSMessage(phone,1);
+    @GetMapping("/AdminSMS")
+    public R registerA(@RequestParam("phonePrefix") String phonePrefix,
+            @RequestParam("phone") String phone){
+        return userService.sendRegisterMSMessage(phonePrefix,phone,1);
     }
 
     @ApiOperation("【公司人员注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS2")
-    public R registerB(@RequestParam("phone") String phone){
-        return userService.sendRegisterMSMessage(phone,2);
+    @GetMapping("/EmpSMS")
+    public R registerB(@RequestParam("phonePrefix") String phonePrefix,
+                       @RequestParam("phone") String phone){
+        return userService.sendRegisterMSMessage(phonePrefix,phone,2);
     }
 
     @ApiOperation("【客户注册】发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
-    @GetMapping("/SMS3")
-    public R registerC(@RequestParam("phone") String phone){
-        return userService.sendRegisterMSMessage(phone,3);
+    @GetMapping("/CusSMS")
+    public R registerC(@RequestParam("phonePrefix") String phonePrefix,
+                       @RequestParam("phone") String phone){
+        return userService.sendRegisterMSMessage(phonePrefix,phone,3);
     }
 
     @ApiOperation("【注册】公司注册")

@@ -9,6 +9,9 @@ public class RegisterDTO {
     /* 用户姓名 */
     private String name;
 
+    /* 区号 */
+    private String phonePrefix;
+
     /* 电话号码 */
     private String phone;
 

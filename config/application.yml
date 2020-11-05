@@ -6,7 +6,7 @@ spring:
     password: guest
   redis:
     database: 1
-    host: 47.56.146.107
+    host: 118.89.183.89
     port: 6379
     password: snaildy123
     jedis:
