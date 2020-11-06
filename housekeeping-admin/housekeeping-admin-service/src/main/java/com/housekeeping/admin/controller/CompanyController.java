@@ -1,9 +1,7 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.RegisterDTO;
-import com.housekeeping.admin.entity.Company;
+import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.CompanyService;
-import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -22,7 +20,7 @@ public class CompanyController {
     @ApiOperation("新增公司")
     @LogFlag(description = "新增公司")
     @PostMapping("/saveCompany")
-    public R saveCompany(@RequestBody Company company){
+    public R saveCompany(@RequestBody CompanyDetails company){
         boolean result = companyService.save(company);
         if(result){
             return R.ok("新增成功");
@@ -34,7 +32,7 @@ public class CompanyController {
     @ApiOperation("新增公司")
     @LogFlag(description = "新增公司")
     @PostMapping("/updateCompany")
-    public R updateCompany(@RequestBody Company company){
+    public R updateCompany(@RequestBody CompanyDetails company){
         boolean result = companyService.updateById(company);
         if(result){
             return R.ok("修改成功");
