@@ -87,7 +87,7 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private String connectionInstagram;
 
     /* 公司描述 */
-    private String describe;
+    private String describes;
 
     /* 支付方式 */
     private String methodPayment;

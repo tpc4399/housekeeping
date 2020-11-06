@@ -4,34 +4,34 @@
 
 <mapper namespace="com.housekeeping.admin.mapper.CompanyDetailsMapper">
 
-<!--    <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.CompanyDetails">-->
-<!--        <id property="id" column="id"/>-->
-<!--        <result property="number" column="number"/>-->
-<!--        <result property="companyName" column="company_name"/>-->
-<!--        <result property="companySizeId" column="company_size_id"/>-->
-<!--        <result property="companyProfile" column="company_profile"/>-->
-<!--        <result property="mainBusiness" column="main_business"/>-->
-<!--        <result property="preferential" column="preferential"/>-->
-<!--        <result property="activity" column="activity"/>-->
-<!--        <result property="companyStructure" column="company_structure"/>-->
-<!--        <result property="legalPerson" column="legal_person"/>-->
-<!--        <result property="isValidate" column="is_validate"/>-->
-<!--        <result property="industrialNumber" column="industrial_number"/>-->
-<!--        <result property="logoUrl" column="logo_url"/>-->
-<!--        <result property="photos" column="photos"/>-->
-<!--        <result property="region" column="region"/>-->
-<!--        <result property="detailAddress" column="detail_address"/>-->
-<!--        <result property="serviceHotline" column="service_hotline"/>-->
-<!--        <result property="email" column="email"/>-->
-<!--        <result property="webPages" column="web_pages"/>-->
-<!--        <result property="accountLine" column="account_line"/>-->
-<!--        <result property="connectionFacebook" column="connection_facebook"/>-->
-<!--        <result property="connectionInstagram" column="connection_instagram"/>-->
-<!--        <result property="describe" column="describe"/>-->
-<!--        <result property="methodPayment" column="method_payment"/>-->
-<!--        <result property="createTime" column="create_time"/>-->
-<!--        <result property="updateTime" column="update_time"/>-->
-<!--        <result property="lastReviserId" column="last_reviser_id"/>-->
-<!--    </resultMap>-->
+    <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.CompanyDetails">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="companyName" column="company_name"/>
+        <result property="companySizeId" column="company_size_id"/>
+        <result property="companyProfile" column="company_profile"/>
+        <result property="mainBusiness" column="main_business"/>
+        <result property="preferential" column="preferential"/>
+        <result property="activity" column="activity"/>
+        <result property="companyStructure" column="company_structure"/>
+        <result property="legalPerson" column="legal_person"/>
+        <result property="isValidate" column="is_validate"/>
+        <result property="industrialNumber" column="industrial_number"/>
+        <result property="logoUrl" column="logo_url"/>
+        <result property="photos" column="photos"/>
+        <result property="region" column="region"/>
+        <result property="detailAddress" column="detail_address"/>
+        <result property="serviceHotline" column="service_hotline"/>
+        <result property="email" column="email"/>
+        <result property="webPages" column="web_pages"/>
+        <result property="accountLine" column="account_line"/>
+        <result property="connectionFacebook" column="connection_facebook"/>
+        <result property="connectionInstagram" column="connection_instagram"/>
+        <result property="describes" column="describes"/>
+        <result property="methodPayment" column="method_payment"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="lastReviserId" column="last_reviser_id"/>
+    </resultMap>
 
 </mapper>

@@ -104,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
-                        Integer maxCompanyId = (Integer) ((LinkedHashMap) CommonUtils.getMaxId("company_details", companyService)).get("id");
+                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
                         user.setCompanyId(maxCompanyId);
                         this.save(user);
                     }else {
