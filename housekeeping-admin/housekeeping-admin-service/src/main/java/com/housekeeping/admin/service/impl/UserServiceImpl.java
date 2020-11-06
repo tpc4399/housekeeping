@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
@@ -104,7 +105,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
-                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+                        Integer maxCompanyId = (Integer) ((LinkedHashMap) CommonUtils.getMaxId("company_details", companyService)).get("id");
                         user.setCompanyId(maxCompanyId);
                         this.save(user);
                     }else {
