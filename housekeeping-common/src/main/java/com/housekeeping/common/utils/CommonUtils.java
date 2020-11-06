@@ -68,7 +68,7 @@ public class CommonUtils {
 
 	public static  Object getMaxId(String table, IService context) {
 		QueryWrapper wr = new QueryWrapper<>();
-		wr.inSql("id", "select MAX(id) from "+table+" where del_flag=0");
+		wr.inSql("id", "select MAX(id) from "+table);
 		Object maxIepId = context.getOne(wr);
 		return maxIepId;
 	}

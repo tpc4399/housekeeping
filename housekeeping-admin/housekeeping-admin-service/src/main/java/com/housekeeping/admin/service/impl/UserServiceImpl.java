@@ -3,8 +3,10 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
+import com.housekeeping.admin.service.CompanyService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.entity.HkUser;
 import com.housekeeping.common.sms.SendMessage;
@@ -24,7 +26,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private RedisUtils redisUtils;
 
-
+    @Autowired
+    private CompanyService companyService;
     @Override
     public User getUserByPhone(String phonePrefix,String phone,Integer deptId) {
         QueryWrapper qr = new QueryWrapper();
@@ -95,6 +98,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
+                        CompanyDetails companyDetails = new CompanyDetails();
+                        companyDetails.setCompanyName(registerDTO.getName());
+                        companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+                        companyDetails.setCreateTime(LocalDateTime.now());
+                        companyDetails.setUpdateTime(LocalDateTime.now());
+                        companyService.save(companyDetails);
+                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+                        user.setCompanyId(maxCompanyId);
                         this.save(user);
                     }else {
                         return R.ok("两次密码不一致");
