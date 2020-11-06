@@ -6,9 +6,8 @@ import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
-import com.housekeeping.admin.service.CompanyService;
+import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IUserService;
-import com.housekeeping.common.entity.HkUser;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private RedisUtils redisUtils;
 
     @Autowired
-    private CompanyService companyService;
+    private ICompanyDetailsService companyService;
     @Override
     public User getUserByPhone(String phonePrefix,String phone,Integer deptId) {
         QueryWrapper qr = new QueryWrapper();
