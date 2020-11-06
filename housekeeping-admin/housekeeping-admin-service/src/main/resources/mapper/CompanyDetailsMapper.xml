@@ -33,5 +33,15 @@
         <result property="updateTime" column="update_time"/>
         <result property="lastReviserId" column="last_reviser_id"/>
     </resultMap>
+    <update id="updateLogoUrlById">
+        UPDATE company_details
+        SET logo_url = #{logoUrl}
+        WHERE user_id = #{reviserId}
+    </update>
+    <select id="getLogoUrlByUserId" resultType="java.lang.String">
+        SELECT log_url
+        FROM company_details
+        WHERE user_id = #{userId}
+    </select>
 
 </mapper>

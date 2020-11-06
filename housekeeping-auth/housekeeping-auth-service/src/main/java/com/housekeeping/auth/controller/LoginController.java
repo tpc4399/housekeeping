@@ -23,16 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/login")
 public class LoginController {
 
-    private final IUserService userService;
-
     private final ILoginService loginService;
-
-    @ApiOperation("【注册】用户注册")
-    @LogFlag(description = "用戶註冊")
-    @PostMapping("/registered")
-    public R registered(@RequestBody UserDTO userDTO){
-        return userService.register(userDTO);
-    }
 
     @ApiOperation("修改密码")
     @LogFlag(description = "修改密碼")

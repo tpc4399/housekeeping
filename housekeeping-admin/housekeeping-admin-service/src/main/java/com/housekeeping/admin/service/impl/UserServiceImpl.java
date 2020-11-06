@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
@@ -88,6 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 //判斷redis中的驗證碼是否正確
                 if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 2  + "_+" + registerDTO.getPhonePrefix() + "_" +  registerDTO.getPhone()))){
                     if(registerDTO.getPassword().equals(registerDTO.getRepassword())){
+                        //先保存User
                         User user = new User();
                         user.setNumber(String.valueOf(System.currentTimeMillis()));
                         user.setDeptId(2);
@@ -98,15 +98,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
+                        Integer maxUserId = 0;
+                        synchronized (this){
+                            this.save(user);
+                            maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
+                        }
+                        //在保存後台管理員詳情信息
                         CompanyDetails companyDetails = new CompanyDetails();
                         companyDetails.setCompanyName(registerDTO.getName());
+                        companyDetails.setUserId(maxUserId);
                         companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
-                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
-                        user.setCompanyId(maxCompanyId);
-                        this.save(user);
                     }else {
                         return R.ok("两次密码不一致");
                     }
@@ -137,7 +141,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
-                        this.save(user);
+                        Integer maxUserId = 0;
+                        synchronized (this){
+                            this.save(user);
+                            maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
+                        }
+                        //在保存後台管理員詳情信息
+
                     }else {
                         return R.ok("两次密码不一致");
                     }
@@ -168,7 +178,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
-                        this.save(user);
+                        Integer maxUserId = 0;
+                        synchronized (this){
+                            this.save(user);
+                            maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
+                        }
+                        //再保存後台管理員詳情信息
+
                     }else {
                         return R.ok("两次密码不一致");
                     }

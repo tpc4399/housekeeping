@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/login/customer")
-public class LoginCustomer {
+public class LoginCustomerController {
 
     private final ILoginService loginService;
 

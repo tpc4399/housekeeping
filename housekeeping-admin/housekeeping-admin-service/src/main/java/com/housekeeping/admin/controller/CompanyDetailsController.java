@@ -3,13 +3,25 @@ package com.housekeeping.admin.controller;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@Api(value="公司controller",tags={"公司管理接口"})
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+@Api(value="公司controller",tags={"公司详情信息管理接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyDetails")
@@ -31,8 +43,31 @@ public class CompanyDetailsController {
 
     @ApiOperation("公司上传logo")
     @LogFlag(description = "公司上传logo")
-    @GetMapping("/uploadLogo")
-    public R uploadLogo(){
-        return R.ok();
+    @PostMapping("/uploadLogo")
+    public R uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
+        Integer reviserId = TokenUtils.getCurrentUserId();
+        //服务器存储logo
+        String fileName = companyDetailsService.uploadLogo(file, reviserId);
+        //数据库存储logoUrl
+        companyDetailsService.updateLogUrlByUserId(fileName, reviserId);
+        return R.ok("logo保存成功");
+    }
+
+    @ApiOperation("加載logo接口")
+    @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getFile(@RequestParam("userId") Integer userId) throws IOException {
+        String logo_url = companyDetailsService.getLogoUrlByUserId(userId);
+        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV + userId + "/" + logo_url);
+        InputStream in = new FileInputStream(file);
+        byte[] body = null;
+        body = new byte[in.available()];
+        in.read(body);
+
+        HttpHeaders headers = new HttpHeaders();// 设置响应头
+        headers.add("Content-Disposition",
+                "attachment;filename=" + logo_url);
+
+        HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
+        return new ResponseEntity<byte[]>(body, headers, statusCode);
     }
 }
