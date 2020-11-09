@@ -15,4 +15,5 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     R updateLogUrlByUserId(String logoUrl, Integer id);
     R updateFiveImgUrlByUserId(String imgUrl, Integer id);
     String getLogoUrlByUserId(Integer userId);
+    String getPhotosByUserId(Integer userId);
 }

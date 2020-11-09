@@ -16,10 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Api(value="公司controller",tags={"公司详情信息管理接口"})
@@ -57,8 +56,8 @@ public class CompanyDetailsController {
     @ApiOperation("加載logo接口")
     @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getFile(@RequestParam("userId") Integer userId) throws IOException {
-        String logo_url = companyDetailsService.getLogoUrlByUserId(userId);
-        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV + userId + "/" + logo_url);
+        String logoName = companyDetailsService.getLogoUrlByUserId(userId);
+        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV + userId + "/" + logoName);
         InputStream in = new FileInputStream(file);
         byte[] body = null;
         body = new byte[in.available()];
@@ -66,7 +65,7 @@ public class CompanyDetailsController {
 
         HttpHeaders headers = new HttpHeaders();// 设置响应头
         headers.add("Content-Disposition",
-                "attachment;filename=" + logo_url);
+                "attachment;filename=" + logoName);
 
         HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
         return new ResponseEntity<byte[]>(body, headers, statusCode);
@@ -81,6 +80,45 @@ public class CompanyDetailsController {
         //数据库存储圖片Url
         companyDetailsService.updateFiveImgUrlByUserId(fileNames, reviserId);
         return R.ok("圖片上傳成功");
+    }
+
+    @ApiOperation("加載公司照片的接口")
+    @GetMapping("/getPhotos")
+    public R getFiveImg(@RequestParam("userId") Integer userId) throws IOException {
+        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
+        List<ResponseEntity<byte[]>> res = new ArrayList<>();
+        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV + userId);
+        File[] parentFiles = file.listFiles();
+        Arrays.stream(parentFiles).forEach(parentFile -> {
+            String fileName = parentFile.getName();
+            if (fileName.startsWith(photoNamePrefix)){
+                InputStream in = null;
+                try {
+                    in = new FileInputStream(parentFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                byte[] body = null;
+                try {
+                    body = new byte[in.available()];
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    in.read(body);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                HttpHeaders headers = new HttpHeaders();// 设置响应头
+                headers.add("Content-Disposition",
+                        "attachment;filename=" + fileName);
+
+                HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
+                res.add(new ResponseEntity<byte[]>(body, headers, statusCode));
+            }
+        });
+        return R.ok(res);
     }
 
 }

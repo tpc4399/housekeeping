@@ -10,4 +10,5 @@ public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void updateFiveImgUrlByUserId(@Param("imgUrl") String imgUrl,
                                   @Param("reviserId") Integer reviserId);
     String getLogoUrlByUserId(Integer userId);
+    String getPhotosByUserId(Integer userId);
 }

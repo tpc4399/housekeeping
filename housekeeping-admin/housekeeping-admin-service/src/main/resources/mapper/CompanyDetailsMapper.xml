@@ -48,5 +48,9 @@
         FROM company_details
         WHERE user_id = #{userId}
     </select>
-
+    <select id="getPhotosByUserId" resultType="java.lang.String">
+        SELECT photos
+        FROM company_details
+        WHERE user_id = #{userId}
+    </select>
 </mapper>

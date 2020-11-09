@@ -101,4 +101,9 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     public String getLogoUrlByUserId(Integer userId) {
         return baseMapper.getLogoUrlByUserId(userId);
     }
+
+    @Override
+    public String getPhotosByUserId(Integer userId) {
+        return baseMapper.getPhotosByUserId(userId);
+    }
 }
