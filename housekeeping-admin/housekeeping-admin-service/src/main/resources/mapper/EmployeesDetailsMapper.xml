@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.EmployeesDetailsMapper">
+
+	<resultMap id="baseResultMap" type="com.housekeeping.admin.entity.EmployeesDetails">
+		<id property="id" column="id"/>
+		<result property="number" column="number"/>
+		<result property="name" column="name"/>
+		<result property="dateOfBirth" column="date_of_birth"/>
+		<result property="phone" column="phone"/>
+		<result property="realName" column="real_name"/>
+		<result property="email" column="email"/>
+		<result property="schedule" column="schedule"/>
+		<result property="companyId" column="company_id"/>
+		<result property="idCard" column="id_card"/>
+		<result property="location" column="location"/>
+		<result property="address" column="address"/>
+		<result property="workYear" column="work_year"/>
+		<result property="educationBackground" column="education_background"/>
+		<result property="accountLine" column="account_line"/>
+		<result property="describes" column="describes"/>
+		<result property="scopeOfOrder" column="scope_of_order"/>
+		<result property="numberOfOrders" column="number_of_orders"/>
+		<result property="hourlyWage" column="hourly_wage"/>
+		<result property="phoneUrl" column="phone_url"/>
+		<result property="sex" column="sex"/>
+		<result property="tags" column="tags"/>
+		<result property="blacklistFlag" column="blacklist_flag"/>
+		<result property="qrcode" column="qrcode"/>
+		<result property="link" column="link"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="lastReviserId" column="last_reviser_id"/>
+	</resultMap>
+
+	<select id="getScaleById" resultType="java.lang.String">
+		select scale from company_scale where id = #{id}
+	</select>
+
+
+</mapper>

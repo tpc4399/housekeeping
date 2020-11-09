@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.common.utils.R;
@@ -18,4 +19,8 @@ public interface IUserService extends IService<User> {
     R saveCus(RegisterDTO registerDTO);
 
     R saveAdmin(RegisterDTO registerDTO);
+
+    R sendForgetMSMessage(String phonePrefix, String phone, int deptId);
+
+    R updatePwd(ForgetDTO forgetDTO);
 }

@@ -12,6 +12,10 @@ public interface CommonConstants {
 	/***
 	 * redis的key前綴
 	 */
+	String FORGET_KEY_BY_PHONE = "HK_FORGET_KEY_BY_PHONE";
+	/***
+	 * redis的key前綴
+	 */
 	String REGISTER_KEY_BY_PHONE = "HK_REGISTER_KEY_BY_PHONE";
 	/***
 	 * red驗證碼緩存有效時間，分鐘
