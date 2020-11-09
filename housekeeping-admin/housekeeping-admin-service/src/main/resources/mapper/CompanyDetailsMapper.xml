@@ -43,6 +43,26 @@
         SET photos = #{imgUrl}
         WHERE user_id = #{reviserId}
     </update>
+    <update id="updateById">
+        UPDATE company_details
+        SET last_reviser_id = #{lastReviserId},
+            company_profile = #{companyDetailsDTO.companyProfile},
+            main_business = #{companyDetailsDTO.mainBusiness},
+            preferential = #{companyDetailsDTO.preferential},
+            activity = #{companyDetailsDTO.activity},
+            company_structure = #{companyDetailsDTO.companyStructure},
+            region = #{companyDetailsDTO.region},
+            detail_address = #{companyDetailsDTO.detailAddress},
+            service_hotline = #{companyDetailsDTO.serviceHotline},
+            email = #{companyDetailsDTO.email},
+            web_pages = #{companyDetailsDTO.webPages},
+            account_line = #{companyDetailsDTO.accountLine},
+            connection_facebook = #{companyDetailsDTO.connectionFacebook},
+            connection_instagram = #{companyDetailsDTO.connectionInstagram}
+            describes = #{companyDetailsDTO.describes},
+            method_payment = #{companyDetailsDTO.methodPayment}
+        WHERE id = #{companyDetailsDTO.id}
+    </update>
     <select id="getLogoUrlByUserId" resultType="java.lang.String">
         SELECT log_url
         FROM company_details

@@ -16,6 +16,19 @@ spring:
         max-wait: -1
         min-idle: 0
     timeout: 1000
+  mail:
+    host: smtp.163.com
+    username: 18995636120@163.com
+    password: FSHVLROXEIJEUAXQ
+    default-encoding: UTF-8
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 mq:
   exchange: logMessage.direct
   info:
