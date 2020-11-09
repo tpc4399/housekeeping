@@ -57,9 +57,4 @@ public class User extends Model<User> {
     /* 最后修改人 */
     private Integer lastReviserId;
 
-    /* 删除标志位 */
-    private Integer delFlag;
-
-    /*公司id*/
-    private Integer companyId;
 }
