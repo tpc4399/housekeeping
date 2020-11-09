@@ -65,7 +65,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         Arrays.stream(files).forEach(file -> {
             String fileType = file.getOriginalFilename().split("\\.")[1];
             String fileName = nowString + "[" + count.toString() + "]."+ fileType;
-            String fileAbstractPath = catalogue + "/" + nowString+"."+ fileType;
+            String fileAbstractPath = catalogue + "/" + fileName;
             File resource = new File(fileAbstractPath);
             if (!resource.exists()){
                 try {
@@ -93,6 +93,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
 
     @Override
     public R updateFiveImgUrlByUserId(String imgUrl, Integer id) {
+        baseMapper.updateFiveImgUrlByUserId(imgUrl, id);
         return null;
     }
 

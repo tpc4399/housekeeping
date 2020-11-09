@@ -7,5 +7,7 @@ import org.apache.ibatis.annotations.Param;
 public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void updateLogoUrlById(@Param("logoUrl") String logoUrl,
                            @Param("reviserId") Integer reviserId);
+    void updateFiveImgUrlByUserId(@Param("imgUrl") String imgUrl,
+                                  @Param("reviserId") Integer reviserId);
     String getLogoUrlByUserId(Integer userId);
 }

@@ -72,12 +72,12 @@ public class CompanyDetailsController {
         return new ResponseEntity<byte[]>(body, headers, statusCode);
     }
 
-    @ApiOperation("多圖片上傳接口,幾張都可以")
-    @PostMapping("/uploadFiveImg")
-    public R uploadFiveImg(@RequestParam("files") MultipartFile[] files){
+    @ApiOperation("多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @PostMapping(value = "/uploadFiveImg", headers = "content-type=multipart/form-data")
+    public R uploadFiveImg(@RequestParam("file") MultipartFile[] file){
         Integer reviserId = TokenUtils.getCurrentUserId();
         //服务器存储圖片
-        String fileNames = companyDetailsService.uploadFiveImg(files, reviserId);
+        String fileNames = companyDetailsService.uploadFiveImg(file, reviserId);
         //数据库存储圖片Url
         companyDetailsService.updateFiveImgUrlByUserId(fileNames, reviserId);
         return R.ok("圖片上傳成功");

@@ -38,6 +38,11 @@
         SET logo_url = #{logoUrl}
         WHERE user_id = #{reviserId}
     </update>
+    <update id="updateFiveImgUrlByUserId">
+        UPDATE company_details
+        SET photos = #{imgUrl}
+        WHERE user_id = #{reviserId}
+    </update>
     <select id="getLogoUrlByUserId" resultType="java.lang.String">
         SELECT log_url
         FROM company_details
