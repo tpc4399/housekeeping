@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -52,7 +53,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     }
 
     @Override
-    public String uploadFiveImg(List<MultipartFile> files, Integer reviserId) {
+    public String uploadFiveImg(MultipartFile[] files, Integer reviserId) {
         LocalDateTime now = LocalDateTime.now();
         String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String catalogue = CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV + reviserId;
@@ -61,7 +62,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
             mkdir.mkdirs();
         }
         AtomicReference<Integer> count = new AtomicReference<>(0);
-        files.forEach(file -> {
+        Arrays.stream(files).forEach(file -> {
             String fileType = file.getOriginalFilename().split("\\.")[1];
             String fileName = nowString + "[" + count.toString() + "]."+ fileType;
             String fileAbstractPath = catalogue + "/" + nowString+"."+ fileType;

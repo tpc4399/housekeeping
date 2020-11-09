@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ICompanyDetailsService extends IService<CompanyDetails> {
     String uploadLogo(MultipartFile file, Integer id) throws IOException;
-    String uploadFiveImg(List<MultipartFile> files, Integer id);
+    String uploadFiveImg(MultipartFile[] files, Integer id);
     R updateLogUrlByUserId(String logoUrl, Integer id);
     R updateFiveImgUrlByUserId(String imgUrl, Integer id);
     String getLogoUrlByUserId(Integer userId);

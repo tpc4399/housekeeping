@@ -74,7 +74,7 @@ public class CompanyDetailsController {
 
     @ApiOperation("多圖片上傳接口,幾張都可以")
     @PostMapping("/uploadFiveImg")
-    public R uploadFiveImg(@RequestParam("files") List<MultipartFile> files){
+    public R uploadFiveImg(@RequestParam("files") MultipartFile[] files){
         Integer reviserId = TokenUtils.getCurrentUserId();
         //服务器存储圖片
         String fileNames = companyDetailsService.uploadFiveImg(files, reviserId);
