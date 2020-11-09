@@ -111,7 +111,7 @@ public class LoginService implements ILoginService {
     @Override
     public R changePw(String newPassword, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        com.housekeeping.common.entity.HkUser hkUser = TokenUtils.parsingToken(token);
+        HkUser hkUser = TokenUtils.parsingToken(token);
         String phone = hkUser.getPhone();
         String newPasswordEn = DESEncryption.getEncryptString(newPassword);
         userMapper.changePasswordByPhone(phone, newPasswordEn);

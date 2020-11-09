@@ -2,8 +2,10 @@ package com.housekeeping.admin.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.common.utils.R;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,4 +18,5 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     R updateFiveImgUrlByUserId(String imgUrl, Integer id);
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
+    void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
 }

@@ -1,9 +1,12 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,13 +36,9 @@ public class CompanyDetailsController {
     @ApiOperation("修改公司信息")
     @LogFlag(description = "修改公司信息")
     @PostMapping("/update")
-    public R updateCompany(@RequestBody CompanyDetails companyDetails){
-        boolean result = companyDetailsService.updateById(companyDetails);
-        if(result){
-            return R.ok("修改成功");
-        }else {
-            return R.failed("请求参数错误");
-        }
+    public R updateCompany(@RequestBody CompanyDetailsDTO companyDetailsDTO){
+        companyDetailsService.updateById(companyDetailsDTO, TokenUtils.getCurrentUserId());
+        return R.ok("修改成功");
     }
 
     @ApiOperation("公司上传logo")
@@ -119,6 +119,19 @@ public class CompanyDetailsController {
             }
         });
         return R.ok(res);
+    }
+
+    @ApiOperation("获取公司详情信息")
+    @GetMapping("/details")
+    public R getCompanyDetailsByUserId(@RequestParam("userId") Integer userId){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(queryWrapper);
+        if (CommonUtils.isNotEmpty(companyDetails)){
+            return R.ok(companyDetails);
+        } else {
+            return R.failed("公司不存在");
+        }
     }
 
 }

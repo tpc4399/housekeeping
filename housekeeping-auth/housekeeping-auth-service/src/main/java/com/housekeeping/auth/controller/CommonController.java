@@ -1,9 +1,8 @@
 package com.housekeeping.auth.controller;
 
-import com.housekeeping.admin.dto.UserDTO;
 import com.housekeeping.auth.service.ILoginService;
-import com.housekeeping.auth.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.EmailUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,17 +10,19 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 登入注册接口
+ * 其他接口
  * @Author su
  * @create 2020/10/28 16:31
  */
-@Api(value="登入注册controller",tags={"登入注册接口"})
+@Api(value="其他接口controller",tags={"通用接口"})
 @RestController
 @AllArgsConstructor
-@RequestMapping("/login")
-public class LoginController {
+@RequestMapping("/others")
+public class CommonController {
 
     private final ILoginService loginService;
 
@@ -37,5 +38,13 @@ public class LoginController {
     @GetMapping("/logout")
     public R logout(HttpServletRequest request){
         return R.ok("注銷成功");
+    }
+
+    @GetMapping("/绑定登入邮箱--发送邮件验证码")
+    public R validationEmail(String email){
+        Map<String, String> map = new HashMap<>();
+        map.put("code","564535131");
+        EmailUtils.sendCodeToValidationEmail("1220251182@qq.com", null, "验证邮箱");
+        return R.ok();
     }
 }

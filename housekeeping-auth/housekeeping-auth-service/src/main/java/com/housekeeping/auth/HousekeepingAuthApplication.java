@@ -10,7 +10,7 @@ import org.springframework.core.annotation.Order;
  * @Author su
  * @create 2020/10/27 1:05
  */
-@Order(2)
+@Order(3)
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
