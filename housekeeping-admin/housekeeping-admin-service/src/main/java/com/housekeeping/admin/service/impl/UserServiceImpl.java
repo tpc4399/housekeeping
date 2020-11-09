@@ -223,7 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public R updatePwd(ForgetDTO forgetDTO) {
         if (CommonUtils.isNotEmpty(forgetDTO)) {
             if (CommonUtils.isNotEmpty(forgetDTO.getCode())) {
-                if (forgetDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + forgetDTO.getDeptId() + "_+" + forgetDTO.getPhonePrefix() + "_" + forgetDTO.getPhone()))) {
+                if (forgetDTO.getCode().equals(redisUtils.get(CommonConstants.FORGET_KEY_BY_PHONE + "_" + forgetDTO.getDeptId() + "_+" + forgetDTO.getPhonePrefix() + "_" + forgetDTO.getPhone()))) {
                     if(forgetDTO.getPassword().equals(forgetDTO.getRePassword())){
                         User user = this.getUserByPhone(forgetDTO.getPhonePrefix(), forgetDTO.getPhone(), forgetDTO.getDeptId());
                         user.setPassword(DESEncryption.getEncryptString(forgetDTO.getPassword()));
