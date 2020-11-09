@@ -26,6 +26,14 @@ public interface CommonConstants {
 	 */
 	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV = "/usr/local/HKFile/CompanyLogoImg/userId=";
 	/**
+	 * 開發環境的存儲公司五张图片的絕對路徑
+	 */
+	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV = "F:/usr/local/HKFile/CompanyFiveImg/userId=";
+	/**
+	 * 正式環境的存儲公司五张图片的絕對路徑
+	 */
+	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "/usr/local/HKFile/CompanyFiveImg/userId=";
+	/**
 	 * 删除
 	 */
 	String STATUS_DEL = "1";

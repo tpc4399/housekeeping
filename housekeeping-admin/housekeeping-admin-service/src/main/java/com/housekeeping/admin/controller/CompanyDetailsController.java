@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 @Api(value="公司controller",tags={"公司详情信息管理接口"})
 @RestController
@@ -70,4 +71,16 @@ public class CompanyDetailsController {
         HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
         return new ResponseEntity<byte[]>(body, headers, statusCode);
     }
+
+    @ApiOperation("多圖片上傳接口,幾張都可以")
+    @PostMapping("/uploadFiveImg")
+    public R uploadFiveImg(@RequestParam("files") List<MultipartFile> files){
+        Integer reviserId = TokenUtils.getCurrentUserId();
+        //服务器存储圖片
+        String fileNames = companyDetailsService.uploadFiveImg(files, reviserId);
+        //数据库存储圖片Url
+        companyDetailsService.updateFiveImgUrlByUserId(fileNames, reviserId);
+        return R.ok("圖片上傳成功");
+    }
+
 }
