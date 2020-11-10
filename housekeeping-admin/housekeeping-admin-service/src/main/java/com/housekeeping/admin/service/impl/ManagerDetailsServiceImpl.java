@@ -10,7 +10,6 @@ import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
-import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.CommonUtils;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
-@Service("employeesDetailsService")
+@Service("managerDetailsService")
 public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper, ManagerDetails> implements ManagerDetailsService {
 
     @Autowired
