@@ -2,9 +2,9 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.housekeeping.admin.mapper.EmployeesDetailsMapper">
+<mapper namespace="com.housekeeping.admin.mapper.ManagerDetailsMapper">
 
-	<resultMap id="baseResultMap" type="com.housekeeping.admin.vo.EmployeesDetailsVO">
+	<resultMap id="baseResultMap" type="com.housekeeping.admin.vo.ManagerDetailsVO">
 		<id property="id" column="id"/>
 		<result property="number" column="number"/>
 		<result property="name" column="name"/>
@@ -21,13 +21,8 @@
 		<result property="educationBackground" column="education_background"/>
 		<result property="accountLine" column="account_line"/>
 		<result property="describes" column="describes"/>
-		<result property="scopeOfOrder" column="scope_of_order"/>
-		<result property="numberOfOrders" column="number_of_orders"/>
-		<result property="hourlyWage" column="hourly_wage"/>
 		<result property="phoneUrl" column="phone_url"/>
 		<result property="sex" column="sex"/>
-		<result property="tags" column="tags"/>
-		<result property="blacklistFlag" column="blacklist_flag"/>
 		<result property="qrcode" column="qrcode"/>
 		<result property="link" column="link"/>
 		<result property="createTime" column="create_time"/>
@@ -59,13 +54,8 @@
 		ed.education_background,
 		ed.account_line,
 		ed.describes,
-		ed.scope_of_order,
-		ed.number_of_orders,
-		ed.hourly_wage,
 		ed.phone_url,
 		ed.sex,
-		ed.tags,
-		ed.blacklist_flag,
 		ed.qrcode,
 		ed.link,
 		ed.create_time,
@@ -76,7 +66,7 @@
 		s.`name` as username,
 		cd.company_name
 		FROM
-		employees_details as ed
+		manager_details as ed
 		LEFT JOIN sys_user as s ON ed.last_reviser_id = s.id
 		LEFT JOIN company_details as cd ON ed.company_id = cd.id
 		WHERE ed.company_id = #{companyId}
