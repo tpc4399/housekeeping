@@ -30,6 +30,8 @@ housekeeping:
       - /api/auth/login/company/
       - /api/auth/login/admin/
       - /api/auth/login/customer/
+      - /api/auth/Employees/
+      - /api/auth/Manager/
       - /v2/api-docs
       - /swagger-resources/configuration/ui
       - /swagger-resources

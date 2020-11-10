@@ -4,6 +4,8 @@ package com.housekeeping.common.utils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -135,8 +137,13 @@ public class CommonUtils {
 		return new String(sb);
 	}
 
-	public static void main(String[] args) {
-		String s = getMysteriousCode();
+	public static String getRequestPrefix() throws UnknownHostException {
+		String host = InetAddress.getLocalHost().getHostAddress();
+		return "http://"+ host +":10010/api";
+	}
+
+	public static void main(String[] args) throws UnknownHostException {
+		String s = getRequestPrefix();
 		System.out.println(s);
 	}
 }

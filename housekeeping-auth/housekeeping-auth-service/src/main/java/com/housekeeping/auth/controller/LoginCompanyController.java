@@ -55,16 +55,5 @@ public class LoginCompanyController {
         return loginService.loginByPhoneAndCodeHandle(phonePrefix, phone, code, 2);
     }
 
-    @ApiOperation("【员工登入】链接方式")
-    @GetMapping("/Employees/{key}")
-    public R linkToLoginEmployees(@PathVariable String key){
-        return R.ok();
-    }
-
-    @ApiOperation("【经理登入】链接方式")
-    @GetMapping("/Manager/{key}")
-    public R linkToLoginManager(@PathVariable String key){
-        return R.ok();
-    }
 
 }

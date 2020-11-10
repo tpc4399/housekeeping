@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Service("employeesDetailsService")
@@ -69,7 +70,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public R getLinkToLogin(Integer id, Long h, HttpServletRequest request) {
+    public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
         EmployeesDetails employeesDetails = baseMapper.selectById(id);
         if (CommonUtils.isNotEmpty(employeesDetails)){
             String url = "";
@@ -77,9 +78,11 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             String key = CommonConstants.LOGIN_EMPLOYEES_PREFIX + mysteriousCode;
             redisUtils.set(key, id, 60 * 60 * h);//有效期12小时
             //拼接url链接
-
+            url = CommonUtils.getRequestPrefix() + "/auth/Employees/" + mysteriousCode;
+            return R.ok(url);
+        } else {
+            return R.failed("員工不存在，請刷新頁面重試");
         }
-        return null;
     }
 
     /**

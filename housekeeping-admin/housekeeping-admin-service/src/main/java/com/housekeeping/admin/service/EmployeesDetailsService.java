@@ -7,6 +7,7 @@ import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.common.utils.R;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.UnknownHostException;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R saveEmp(EmployeesDetails employeesDetails);
@@ -15,5 +16,5 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     IPage cusPage(Page page, Integer id);
 
-    R getLinkToLogin(Integer id, Long h, HttpServletRequest request);
+    R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
 }

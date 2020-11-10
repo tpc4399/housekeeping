@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.net.UnknownHostException;
 
 @Api(value="員工controller",tags={"員工信息管理接口"})
 @RestController
@@ -50,8 +50,8 @@ public class EmployeesDetailsController {
 
     @ApiOperation("根据id生成登入链接")
     @GetMapping("/getLinkToLogin/{id}")
-    public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h, HttpServletRequest request){
-        return employeesDetailsService.getLinkToLogin(id, h, request);
+    public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
+        return employeesDetailsService.getLinkToLogin(id, h);
     }
 
 }
