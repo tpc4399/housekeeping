@@ -38,6 +38,16 @@ public class SpecialLoginService implements ISpecialLoginService {
 
     @Override
     public R authManager(String key) {
-        return null;
+        key = CommonConstants.LOGIN_MANAGER_PREFIX + key;
+        Object re =  redisUtils.get(key);
+        if (CommonUtils.isNotEmpty(re)){
+//            生成token並返回
+            Map<String, Object> map = new HashMap();
+            map.put("Token", key);
+            map.put("ManagerId", re);
+            return R.ok(map, "登入成功");
+        }else {
+            return R.failed("鏈接失效，請聯繫公司管理員");
+        }
     }
 }

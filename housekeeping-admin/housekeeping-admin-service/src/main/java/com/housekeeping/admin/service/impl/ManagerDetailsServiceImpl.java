@@ -12,12 +12,11 @@ import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Service("managerDetailsService")
@@ -25,6 +24,9 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     @Autowired
     private ICompanyDetailsService companyDetailsService;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public R saveEmp(ManagerDetails managerDetails) {
@@ -66,6 +68,22 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         wrComp.inSql("id","select id from company_details where user_id="+ userId);
         CompanyDetails one = companyDetailsService.getOne(wrComp);
         return baseMapper.cusPage(page,id,one.getId());
+    }
+
+    @Override
+    public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
+        ManagerDetails managerDetails = baseMapper.selectById(id);
+        if (CommonUtils.isNotEmpty(managerDetails)){
+            String url = "";
+            String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
+            String key = CommonConstants.LOGIN_MANAGER_PREFIX + mysteriousCode;
+            redisUtils.set(key, id, 60 * 60 * h);//有效期12小时
+            //拼接url链接
+            url = CommonUtils.getRequestPrefix() + "/auth/Manager/" + mysteriousCode;
+            return R.ok(url);
+        } else {
+            return R.failed("經理不存在，請刷新頁面重試");
+        }
     }
 
     /**

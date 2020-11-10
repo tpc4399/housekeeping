@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.UnknownHostException;
+
 @Api(value="經理controller",tags={"經理信息管理接口"})
 @RestController
 @AllArgsConstructor
@@ -46,5 +48,11 @@ public class ManagerDetailsController {
     @GetMapping("/page")
     public R page(Page page, Integer id){
         return R.ok(managerDetailsService.cusPage(page,id));
+    }
+
+    @ApiOperation("根据id生成登入链接")
+    @GetMapping("/getLinkToLogin/{id}")
+    public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
+        return managerDetailsService.getLinkToLogin(id, h);
     }
 }
