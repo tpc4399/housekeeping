@@ -4,7 +4,7 @@
 
 <mapper namespace="com.housekeeping.admin.mapper.EmployeesDetailsMapper">
 
-	<resultMap id="baseResultMap" type="com.housekeeping.admin.entity.EmployeesDetails">
+	<resultMap id="baseResultMap" type="com.housekeeping.admin.vo.EmployeesDetailsVO">
 		<id property="id" column="id"/>
 		<result property="number" column="number"/>
 		<result property="name" column="name"/>
@@ -33,10 +33,56 @@
 		<result property="createTime" column="create_time"/>
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
+		<result property="lastReviserName" column="username"/>
+		<result property="companyName" column="company_name"/>
 	</resultMap>
 
 	<select id="getScaleById" resultType="java.lang.String">
 		select scale from company_scale where id = #{id}
+	</select>
+
+	<select id="cusPage" resultMap="baseResultMap">
+		SELECT
+			ed.id,
+			ed.number,
+			ed.name,
+			ed.date_of_birth,
+			ed.phone,
+			ed.real_name,
+			ed.email,
+			ed.schedule,
+			ed.company_id,
+			ed.id_card,
+			ed.location,
+			ed.address,
+			ed.work_year,
+			ed.education_background,
+			ed.account_line,
+			ed.describes,
+			ed.scope_of_order,
+			ed.number_of_orders,
+			ed.hourly_wage,
+			ed.phone_url,
+			ed.sex,
+			ed.tags,
+			ed.blacklist_flag,
+			ed.qrcode,
+			ed.link,
+			ed.create_time,
+			ed.update_time,
+			ed.last_reviser_id,
+			ed.account_line,
+			ed.describes,
+			s.`name` as username,
+			cd.company_name
+		FROM
+			employees_details as ed
+		LEFT JOIN sys_user as s ON ed.last_reviser_id = s.id
+		LEFT JOIN company_details as cd ON ed.company_id = cd.id
+		WHERE ed.company_id = #{companyId}
+		<if test=" id != null and  id != ''">
+			and ed.id =  #{id}
+		</if>
 	</select>
 
 

@@ -1,6 +1,9 @@
 package com.housekeeping.admin.controller;
 
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -20,9 +23,30 @@ public class EmployeesDetailsController {
 
     @ApiOperation("新增員工")
     @LogFlag(description = "新增員工")
-    @GetMapping("/SaveEmp")
+    @PostMapping("/saveEmp")
     public R saveEmp(@RequestBody EmployeesDetails employeesDetails){
         return employeesDetailsService.saveEmp(employeesDetails);
+    }
+
+    @ApiOperation("修改員工信息")
+    @LogFlag(description = "修改員工信息")
+    @PostMapping("/updateEmp")
+    public R updateEmp(@RequestBody EmployeesDetails employeesDetails){
+        return employeesDetailsService.updateEmp(employeesDetails);
+    }
+
+    @ApiOperation("刪除員工")
+    @LogFlag(description = "刪除員工")
+    @DeleteMapping("/deleteEmp")
+    public R deleteEmp(@RequestBody EmployeesDetails employeesDetails){
+        return R.ok(employeesDetailsService.removeById(employeesDetails));
+    }
+
+    @ApiOperation("查詢當前公司員工(所有、id)")
+    @LogFlag(description = "查詢員工")
+    @GetMapping("/page")
+    public R page(Page page,Integer id){
+        return R.ok(employeesDetailsService.cusPage(page,id));
     }
 
 }

@@ -91,7 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     if (registerDTO.getPassword().equals(registerDTO.getRepassword())) {
                         //先保存User
                         User user = new User();
-                        user.setNumber(String.valueOf(System.currentTimeMillis()));
+                        String s = String.valueOf(System.currentTimeMillis());
+                        user.setNumber("c"+s);
                         user.setDeptId(2);
                         user.setName(registerDTO.getName());
                         user.setPhonePrefix(registerDTO.getPhonePrefix());

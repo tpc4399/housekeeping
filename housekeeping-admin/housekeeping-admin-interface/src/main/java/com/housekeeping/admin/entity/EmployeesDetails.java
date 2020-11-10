@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,16 +25,16 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String number;
 
     /* 員工姓名 */
-    private Integer name;
+    private System name;
 
     /* 員工生日 */
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
 
     /* 手機號 */
     private Integer phone;
 
     /* 是否實名 */
-    private String realName;
+    private Integer realName;
 
     /* 郵箱 */
     private String email;
@@ -42,7 +43,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String schedule;
 
     /* 所屬公司id */
-    private String companyId;
+    private Integer companyId;
 
     /* 身份證 */
     private String idCard;
@@ -51,7 +52,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String location;
 
     /* 地區 */
-    private Integer address;
+    private String address;
 
     /* 工作年限 */
     private String workYear;
@@ -66,25 +67,25 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String describes;
 
     /* 接單範圍 */
-    private String scopeOfOrder;
+    private Integer scopeOfOrder;
 
     /* 接單次數 */
-    private String numberOfOrders;
+    private Integer numberOfOrders;
 
     /* 時薪 */
-    private String hourlyWage;
+    private Integer hourlyWage;
 
     /* 照片 */
     private String phoneUrl;
 
     /* 性別 */
-    private String sex;
+    private Integer sex;
 
     /* 標簽 */
     private String tags;
 
     /* 是否加入黑名單 */
-    private String blacklistFlag;
+    private Integer blacklistFlag;
 
     /* 登錄二維碼 */
     private String qrcode;
