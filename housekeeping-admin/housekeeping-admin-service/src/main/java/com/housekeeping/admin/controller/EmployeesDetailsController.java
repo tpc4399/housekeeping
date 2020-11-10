@@ -13,6 +13,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Api(value="員工controller",tags={"員工信息管理接口"})
 @RestController
 @AllArgsConstructor
@@ -47,6 +49,12 @@ public class EmployeesDetailsController {
     @GetMapping("/page")
     public R page(Page page,Integer id){
         return R.ok(employeesDetailsService.cusPage(page,id));
+    }
+
+    @ApiOperation("根据id生成登入链接")
+    @GetMapping("/getLinkToLogin/{id}")
+    public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h, HttpServletRequest request){
+        return employeesDetailsService.getLinkToLogin(id, h, request);
     }
 
 }

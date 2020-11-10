@@ -7,10 +7,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -57,4 +54,17 @@ public class LoginCompanyController {
                      @RequestParam("code") String code){
         return loginService.loginByPhoneAndCodeHandle(phonePrefix, phone, code, 2);
     }
+
+    @ApiOperation("【员工登入】链接方式")
+    @GetMapping("/Employees/{key}")
+    public R linkToLoginEmployees(@PathVariable String key){
+        return R.ok();
+    }
+
+    @ApiOperation("【经理登入】链接方式")
+    @GetMapping("/Manager/{key}")
+    public R linkToLoginManager(@PathVariable String key){
+        return R.ok();
+    }
+
 }

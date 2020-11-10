@@ -121,8 +121,23 @@ public class CommonUtils {
 		}
 	}
 
+	/**
+	 * 获取神秘代码
+	 * @return
+	 */
+	public static String getMysteriousCode(){
+		StringBuilder sb = new StringBuilder("");
+		Random random = new Random();
+		for (int i = 0; i < 12; i++) {
+			int index = random.nextInt(100)%CommonConstants.emn.length;
+			sb.append(CommonConstants.emn[index]);
+		}
+		return new String(sb);
+	}
+
 	public static void main(String[] args) {
-		getRandomSixCode();
+		String s = getMysteriousCode();
+		System.out.println(s);
 	}
 }
 

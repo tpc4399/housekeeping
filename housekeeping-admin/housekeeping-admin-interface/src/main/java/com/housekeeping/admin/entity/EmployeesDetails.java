@@ -25,7 +25,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String number;
 
     /* 員工姓名 */
-    private System name;
+    private String name;
 
     /* 員工生日 */
     private LocalDate dateOfBirth;

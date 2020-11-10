@@ -37,6 +37,24 @@ public interface CommonConstants {
 	 * 正式環境的存儲公司五张图片的絕對路徑
 	 */
 	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "/usr/local/HKFile/CompanyFiveImg/userId=";
+
+	/**
+	 * 神秘代码的零件
+	 */
+	String[] emn = new String[]{
+			"0","1","2","3","4","5","6","7","8","9",
+			"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+			"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
+	};
+	/**
+	 * 员工的神秘代码前缀
+	 */
+	String LOGIN_EMPLOYEES_PREFIX = "LOGIN_EMPLOYEES_";
+	/**
+	 * 经理的神秘代码前缀
+	 */
+	String LOGIN_MANAGER_PREFIX = "LOGIN_MANAGER_";
+
 	/**
 	 * 删除
 	 */
