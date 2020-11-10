@@ -1,6 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.housekeeping.common.logs.config.LogAutoConfiguration,\
     com.housekeeping.common.rabbitmq.config.RabbitConfig,\
-    com.housekeeping.common.config.RedisConfig
+    com.housekeeping.common.config.RedisConfig,\
+    com.housekeeping.common.config.EmailConfig
 org.springframework.context.ApplicationContextInitializer=\
     com.housekeeping.common.logs.init.ApplicationLoggerInitializer

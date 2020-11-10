@@ -25,6 +25,7 @@ import java.util.Map;
 public class CommonController {
 
     private final ILoginService loginService;
+    private final EmailUtils emailUtils;
 
     @ApiOperation("修改密码")
     @LogFlag(description = "修改密碼")
@@ -40,11 +41,12 @@ public class CommonController {
         return R.ok("注銷成功");
     }
 
-    @GetMapping("/绑定登入邮箱--发送邮件验证码")
+    @ApiOperation("绑定登入邮箱--发送邮件验证码")
+    @GetMapping("/bindingEMail")
     public R validationEmail(String email){
         Map<String, String> map = new HashMap<>();
         map.put("code","564535131");
-        EmailUtils.sendCodeToValidationEmail("1220251182@qq.com", null, "验证邮箱");
+        emailUtils.sendCodeToValidationEmail(email, map, "验证邮箱");
         return R.ok();
     }
 }

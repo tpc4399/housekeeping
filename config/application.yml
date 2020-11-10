@@ -18,8 +18,9 @@ spring:
     timeout: 1000
   mail:
     host: smtp.163.com
-    username: 18995636120@163.com
-    password: FSHVLROXEIJEUAXQ
+    port: 465
+    username: su18995636120@163.com
+    password: OHNZJMHQUPWTSGYX
     default-encoding: UTF-8
     protocol: smtp
     properties:
