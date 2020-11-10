@@ -1,5 +1,6 @@
 package com.housekeeping.auth.controller;
 
+import com.housekeeping.auth.service.ISpecialLoginService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class SpecialLoginController {
 
+    private final ISpecialLoginService specialLoginService;
+
     @ApiOperation("【员工登入】链接方式")
     @GetMapping("/Employees/{key}")
     public R linkToLoginEmployees(@PathVariable String key){
-        return R.ok();
+        return specialLoginService.authEmployees(key);
     }
 
     @ApiOperation("【经理登入】链接方式")

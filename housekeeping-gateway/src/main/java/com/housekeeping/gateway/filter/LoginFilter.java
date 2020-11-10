@@ -6,7 +6,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.RedisUtils;
 import com.housekeeping.gateway.client.AuthClient;
 import com.housekeeping.gateway.config.FilterProperties;
 import com.netflix.zuul.ZuulFilter;
@@ -33,6 +35,9 @@ public class LoginFilter extends ZuulFilter {
 
     @Autowired
     private AuthClient authClient;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     private static final Logger logger = LoggerFactory.getLogger(LoginFilter.class);
 
@@ -88,6 +93,23 @@ public class LoginFilter extends ZuulFilter {
             context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"Forget the token!\"\n}");
             return null;
         }
+
+        /** 特殊Token格式判斷 */
+        if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX) || token.startsWith(CommonConstants.LOGIN_MANAGER_PREFIX)){
+            /** 判斷token的有效性 */
+            Object re = redisUtils.get(token);
+            if (CommonUtils.isNotEmpty(re)){
+            }else {
+                // 过滤该请求，不对其进行路由
+                context.setSendZuulResponse(false);
+                // 设置响应状态码，401
+                context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
+                // 设置响应信息
+                context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"token失效，請重新聯繫管理員\"\n}");
+            }
+            return null;
+        }
+
         /** token信息提取，格式校验 */
         List<String> audience = new ArrayList<>();
         Object user = null;

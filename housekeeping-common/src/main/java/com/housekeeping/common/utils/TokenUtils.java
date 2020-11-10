@@ -3,6 +3,8 @@ package com.housekeeping.common.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.housekeeping.common.entity.HkUser;
+import org.apache.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,6 +16,14 @@ import java.util.*;
  * @create 2020/10/26 23:15
  */
 public class TokenUtils {
+
+    private static RedisUtils redisUtils;
+
+    @Autowired
+    public void setRedisUtils(RedisUtils redisUtils) {
+        TokenUtils.redisUtils  = redisUtils;
+    }
+
     /***
      * 生成token
      * @param hkUser
@@ -78,9 +88,21 @@ public class TokenUtils {
     public static Integer getCurrentUserId(){
         HttpServletRequest request = ((ServletRequestAttributes) Objects
                 .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        if (CommonUtils.isNotEmpty(request.getHeader("Authorization"))){
-            HkUser hkUser = TokenUtils.parsingToken(request.getHeader("Authorization"));
-            return hkUser.getId();
+        String token = request.getHeader("Authorization");
+        if (CommonUtils.isNotEmpty(token)){
+            if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX) || token.startsWith(CommonConstants.LOGIN_MANAGER_PREFIX)){
+                /** 判斷token的有效性 */
+                Object re = redisUtils.get(token);
+                if (CommonUtils.isNotEmpty(re)){
+                    return Integer.valueOf(re.toString());
+                }else {
+                    //失效導致
+                    return -2;
+                }
+            }else {
+                HkUser hkUser = TokenUtils.parsingToken(token);
+                return hkUser.getId();
+            }
         }else {
             return -1;
         }
