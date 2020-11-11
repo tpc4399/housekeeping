@@ -6,12 +6,15 @@ import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.QrCodeUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 @Api(value="經理controller",tags={"經理信息管理接口"})
@@ -54,5 +57,21 @@ public class ManagerDetailsController {
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return managerDetailsService.getLinkToLogin(id, h);
+    }
+
+    @ApiOperation("根据id生成登入二维码")
+    @GetMapping("/getQrCodeToLogin/{id}")
+    public void getQrCodeToLogin(@PathVariable Integer id,
+                                 @RequestParam("h") Long h,
+                                 HttpServletResponse response) {
+        try {
+            OutputStream os = response.getOutputStream();
+            //从配置文件读取需要生成二维码的连接
+            String url = (String) managerDetailsService.getLinkToLogin(id, h).getData();
+            //requestUrl:需要生成二维码的连接，logoPath：内嵌图片的路径，os：响应输出流，needCompress:是否压缩内嵌的图片
+            QrCodeUtils.encode(url, "", os, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
