@@ -1,9 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
-import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.QrCodeUtils;
