@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 
-@Api(value="員工controller",tags={"員工信息管理接口"})
+@Api(value="員工controller",tags={"【公司】员工详情信息接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/employeesDetails")

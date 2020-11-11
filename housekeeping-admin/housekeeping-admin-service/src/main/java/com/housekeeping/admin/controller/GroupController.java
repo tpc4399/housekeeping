@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 
-@Api(value="分組controller",tags={"分組管理接口"})
+@Api(value="分組controller",tags={"【公司】分組管理接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/group")

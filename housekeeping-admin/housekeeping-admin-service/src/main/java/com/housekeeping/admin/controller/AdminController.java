@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value="管理員controller",tags={"管理員管理接口"})
+@Api(value="管理員controller",tags={"【管理員】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin")

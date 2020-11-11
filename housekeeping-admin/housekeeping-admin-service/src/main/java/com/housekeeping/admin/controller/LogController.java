@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value="日志controller",tags={"日志管理接口"})
+@Api(value="日志controller",tags={"【工具】日志管理接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/log")

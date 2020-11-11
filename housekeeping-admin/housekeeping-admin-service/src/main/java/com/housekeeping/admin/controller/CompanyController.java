@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value="公司人員controller",tags={"公司人員管理接口"})
+@Api(value="公司人員controller",tags={"【公司】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyHuman")

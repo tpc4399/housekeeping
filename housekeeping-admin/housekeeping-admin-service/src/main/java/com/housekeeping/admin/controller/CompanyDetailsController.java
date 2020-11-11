@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Api(value="公司controller",tags={"公司详情信息管理接口"})
+@Api(value="公司controller",tags={"【公司】详情信息接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyDetails")
