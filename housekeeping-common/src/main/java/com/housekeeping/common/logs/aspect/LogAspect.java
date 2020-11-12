@@ -47,7 +47,6 @@ public class LogAspect {
         log.setTitle(logFlag.description());
         log.setTime(endTime - startTime);
         log.setCreateTime(LocalDateTime.now());
-        log.setDelFlag(0);
 
         /** 异步任务：发送MQ消息 */
         Long startTime1 = System.currentTimeMillis();

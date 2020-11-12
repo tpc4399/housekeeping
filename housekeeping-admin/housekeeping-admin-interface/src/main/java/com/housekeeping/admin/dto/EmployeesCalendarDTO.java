@@ -3,6 +3,7 @@ package com.housekeeping.admin.dto;
 import com.housekeeping.admin.vo.TimeSlotVo;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.List;
 
 /**

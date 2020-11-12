@@ -97,8 +97,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
         String[] split = scaleById.split("~");
         Integer companyMaxsize;
-        if(split[1]=="n"){
-            companyMaxsize = 1000000000;
+        if("n".equals(split[1])){
+            companyMaxsize = Integer.MAX_VALUE;
         }else {
             companyMaxsize = Integer.parseInt(split[1]);
         }

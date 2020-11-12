@@ -33,14 +33,8 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     /* 手機號 */
     private Integer phone;
 
-    /* 是否實名 */
-    private Integer realName;
-
     /* 郵箱 */
     private String email;
-
-    /* 時間表 */
-    private String schedule;
 
     /* 所屬公司id */
     private Integer companyId;
@@ -75,6 +69,12 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     /* 時薪 */
     private Integer hourlyWage;
 
+    /* 时薪单位数字代码 */
+    private String code;
+
+    /* 时薪单位英文代码 */
+    private String engName;
+
     /* 照片 */
     private String phoneUrl;
 
@@ -86,12 +86,6 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
 
     /* 是否加入黑名單 */
     private Integer blacklistFlag;
-
-    /* 登錄二維碼 */
-    private String qrcode;
-
-    /* 登錄鏈接 */
-    private String link;
 
     /* 创建时间 */
     private LocalDateTime createTime;

@@ -15,7 +15,6 @@
 		<result property="params" column="params"/>
 		<result property="time" column="time"/>
 		<result property="createTime" column="create_time"/>
-		<result property="delFlag" column="del_flag"/>
 	</resultMap>
 
 </mapper>

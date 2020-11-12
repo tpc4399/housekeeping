@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -21,37 +22,19 @@ import java.time.LocalTime;
 @TableName("employees_worksheet_plan")
 public class EmployeesWorksheetPlan extends Model<EmployeesWorksheetPlan> {
 
-    /* 主鍵id */
+
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;
-
-    /* 员工_id */
-    private Integer employeesId;
-
-    /* 日期 */
-    private LocalDate data;
-
-    /* 时间段开始 */
-    private LocalTime timeSlotStart;
-
-    /* 时间段长度(小时) */
-    private Float timeSlotLength;
-
-    /* 时薪标准，是否默认值 */
-    private Boolean hourlySalaryStandard;
-
-    /* 时薪 */
-    private String hourlyWage;
-
-    /* 时薪单位代码，币种代码 */
-    private String code;
-
-    /* 是否法定节假日 */
-    private Boolean isLegalHolidays;
-
-    /* 是否请假 */
-    private Boolean isLeave;
-
-    /* 任务_id */
-    private Integer taskId;
+    private Integer id;                     /* 主鍵id */
+    private Integer employeesId;            /* 员工_id */
+    private LocalDate data;                 /* 日期 */
+    private LocalTime timeSlotStart;        /* 时间段开始 */
+    private Float timeSlotLength;           /* 时间段长度(小时) */
+    private Boolean hourlySalaryStandard;   /* 时薪标准，是否默认值 */
+    private String hourlyWage;              /* 时薪 */
+    private String code;                    /* 时薪单位代码，币种代码 */
+    private Boolean isLegalHolidays;        /* 是否法定节假日 */
+    private Boolean isLeave;                /* 是否请假 */
+    private Integer taskId;                 /* 任务_id */
+    private Boolean isPerform;              /* 是否执行 */
+    private LocalDateTime byTheTime;        /* 顾客确认截止时间 */
 }

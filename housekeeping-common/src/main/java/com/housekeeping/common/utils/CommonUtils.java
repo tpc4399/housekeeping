@@ -3,14 +3,16 @@ package com.housekeeping.common.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.common.entity.PeriodOfTime;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.tomcat.jni.Local;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.time.LocalTime;
+import java.time.Period;
+import java.util.*;
 
 /**
  * 校验对象是否为空的工具类
@@ -142,9 +144,70 @@ public class CommonUtils {
 		return "http://"+ host +":10010/api";
 	}
 
+	/***
+	 * 时间段查重，相邻也不重复
+	 * start1===========end1
+	 * start2===========end2
+	 * 重复的条件: start2∈(start1, end1) || end2∈(start1, end1)
+	 * 		  || start1∈(start2, end2) || end1∈(start2, end2)
+	 * 		  || (start1 = start2 && end1 = end2)
+	 * @param existing
+	 * @param target
+	 * @return true表示重复，false表示不重复
+	 */
+	public static Boolean doRechecking(PeriodOfTime existing, PeriodOfTime target){
+		LocalTime start1 = existing.getTimeSlotStart();
+		Float length1 = existing.getTimeSlotLength();
+		LocalTime end1 = start1.plusHours((int) (length1/1)).plusMinutes((long) ((length1%1)* 60));
+
+		LocalTime start2 = target.getTimeSlotStart();
+		Float length2 = target.getTimeSlotLength();
+		LocalTime end2 = start2.plusHours((int) (length2/1)).plusMinutes((long) ((length2%1)* 60));
+		return timeConflict(start2, start1, end1) ||
+				timeConflict(end2, start1, end1) ||
+				timeConflict(start1, start2, end2) ||
+				timeConflict(end1, start2, end2) ||
+				(start1.equals(start2) && end1.equals(end2));
+	}
+
+	/***
+	 * localTime1∈(localTime2, localTime3)
+	 * @param localTime1
+	 * @param localTime2
+	 * @param localTime3
+	 * @return
+	 */
+	public static Boolean timeConflict(LocalTime localTime1, LocalTime localTime2, LocalTime localTime3){
+		// 1>2 && 1<3
+		return localTime1.isAfter(localTime2) && localTime1.isBefore(localTime3);
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 		String s = getRequestPrefix();
 		System.out.println(s);
+
+		Float e = 4.5f;
+		float f = 4.5f;
+		System.out.println(e%1);			//0.5
+		System.out.println((int) (e/1)); 	//4
+
+		LocalTime localTime1 = LocalTime.of(6, 0, 0);
+		LocalTime localTime2 = LocalTime.of(6, 0, 0);
+		System.out.println(localTime1.isAfter(localTime2));
+		System.out.println(localTime1.isBefore(localTime2));
+		System.out.println(localTime1.equals(localTime2));
+
+		List<Integer> w = new ArrayList<>();
+		w.add(1);
+		w.add(1);
+		w.add(1);
+		w.add(1);
+		w.add(1);
+		w.add(1);
+		w.add(1);
+		System.out.println(w.toString());
+
+
 	}
 }
 

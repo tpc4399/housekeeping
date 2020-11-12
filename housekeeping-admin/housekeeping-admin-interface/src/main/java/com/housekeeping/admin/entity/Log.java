@@ -47,6 +47,4 @@ public class Log extends Model<Log> implements Serializable {
     /* 创建时间 */
     private LocalDateTime createTime;
 
-    /* 删除标记 */
-    private Integer delFlag;
 }
