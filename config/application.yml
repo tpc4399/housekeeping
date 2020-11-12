@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://118.89.183.89:3306/housekeeping?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: LeVMmmNnHTW1WVDT
+    driver-class-name: com.mysql.cj.jdbc.Driver
   rabbitmq:
     host: 176.122.166.247
     port: 5672
