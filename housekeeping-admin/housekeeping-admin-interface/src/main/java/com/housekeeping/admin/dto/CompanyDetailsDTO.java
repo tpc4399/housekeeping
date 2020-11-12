@@ -1,9 +1,12 @@
 package com.housekeeping.admin.dto;
 
+import lombok.Data;
+
 /**
  * @Author su
  * @create 2020/11/9 14:20
  */
+@Data
 public class CompanyDetailsDTO {
 
     /* 主键 */
