@@ -14,6 +14,7 @@ import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -119,8 +120,43 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     public R setCalendarDate(EmployeesCalendarDateDTO employeesCalendarDateDTO) {
 
         /* 检查日期的重复性 **/
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("stander", 0);
+        queryWrapper.eq("employees_id", employeesCalendarDateDTO.getEmployeesId());
+        List<EmployeesCalendar> exists = baseMapper.selectList(queryWrapper);
+        List<Map> res = new ArrayList<>();
+        exists.forEach(x -> {
+            LocalDate existsDate = x.getData();
+            employeesCalendarDateDTO.getDate().forEach(y -> {
+                if (existsDate.equals(y)){
+                    PeriodOfTime periodOfTime1 = new PeriodOfTime();
+                    periodOfTime1.setTimeSlotStart(x.getTimeSlotStart());
+                    periodOfTime1.setTimeSlotLength(x.getTimeSlotLength());
+                    employeesCalendarDateDTO.getTimeSlots().forEach(z -> {
+                        PeriodOfTime periodOfTime2 = new PeriodOfTime();
+                        periodOfTime2.setTimeSlotStart(z.getTimeSlotStart());
+                        periodOfTime2.setTimeSlotLength(z.getTimeSlotLength());
+                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
+                            Map<String, Object> entity = new HashMap<>();
+                            entity.put("date", y);
+                            entity.put("exists", periodOfTime1);
+                            entity.put("target", periodOfTime2);
+                            res.add(entity);
+                        }
+                    });
+                }
+            });
+        });
 
         /* 检查日期的重复性 **/
+
+        /** 检查重复度 */
+        if (res.size() == 0){
+            //什么都不做
+        }else {
+            return R.failed(res, "設置失敗，時間段衝突");
+        }
+        /** 检查重复度 */
 
         /* 初始化和插入新的值 **/
         employeesCalendarDateDTO.getDate().forEach(x -> {
