@@ -28,15 +28,26 @@ public class EmployeesCalendarController {
         return employeesCalendarService.setCalendar(employeesCalendarDTO);
     }
 
+    /***
+     * 按周設置會默認刪除通用的工作時間
+     * @param employeesCalendarWeekDTO
+     * @return
+     */
+    @ApiOperation("按周几设置员工最每日工作时间")
+    @PutMapping("/setCalendarWeek")
+    public R setCalendarWeek(@RequestBody EmployeesCalendarWeekDTO employeesCalendarWeekDTO){
+        return employeesCalendarService.setCalendarWeek(employeesCalendarWeekDTO);
+    }
+
     @ApiOperation("按日期设置员工最每日工作时间")
     @PutMapping("/setCalendarDate")
     public R setCalendarDate(@RequestBody EmployeesCalendarDateDTO employeesCalendarDateDTO){
         return employeesCalendarService.setCalendarDate(employeesCalendarDateDTO);
     }
 
-    @ApiOperation("按周几设置员工最每日工作时间")
-    @PutMapping("/setCalendarWeek")
-    public R setCalendarWeek(@RequestBody EmployeesCalendarWeekDTO employeesCalendarWeekDTO){
-        return employeesCalendarService.setCalendarWeek(employeesCalendarWeekDTO);
+    @ApiOperation("获取员工日程表")
+    @GetMapping("/getCalendar/{employeesId}")
+    private R getCalendarByEmployees(@PathVariable("employeesId") Integer employeesId){
+        return employeesCalendarService.getCalendarByEmployees(employeesId);
     }
 }

@@ -15,4 +15,5 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R setCalendar(EmployeesCalendarDTO employeesCalendarDTO);
     R setCalendarWeek(EmployeesCalendarWeekDTO employeesCalendarWeekDTO);
     R setCalendarDate(EmployeesCalendarDateDTO employeesCalendarOneDateDTO);
+    R getCalendarByEmployees(Integer employeesId);
 }

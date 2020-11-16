@@ -97,7 +97,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
         /** 检查重复度 */
 
-        /* 初始化和插入新的值 **/
+        /** 刪除通用的 */
+        QueryWrapper queryWrapper2 = new QueryWrapper();
+        queryWrapper.eq("stander", null);
+        queryWrapper.eq("employees_id", employeesCalendarWeekDTO.getEmployeesId());
+        baseMapper.delete(queryWrapper2);
+        /** 刪除通用的 */
+
+        /** 初始化和插入新的值 **/
         employeesCalendarWeekDTO.getTimeSlots().forEach(timeSlotVo -> {
             EmployeesCalendar employeesCalendar = new EmployeesCalendar();
             employeesCalendar.setEmployeesId(employeesCalendarWeekDTO.getEmployeesId());
@@ -111,7 +118,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             employeesCalendar.setTimeSlotLength(timeSlotVo.getTimeSlotLength());
             baseMapper.insert(employeesCalendar);
         });
-        /* 初始化和插入新的值 **/
+        /** 初始化和插入新的值 **/
 
         return R.ok("設置成功");
     }
@@ -173,5 +180,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 初始化和插入新的值 **/
 
         return R.ok("更新成功");
+    }
+
+    @Override
+    public R getCalendarByEmployees(Integer employeesId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("employees_id", employeesId);
+        return R.ok(baseMapper.selectList(queryWrapper));
     }
 }
