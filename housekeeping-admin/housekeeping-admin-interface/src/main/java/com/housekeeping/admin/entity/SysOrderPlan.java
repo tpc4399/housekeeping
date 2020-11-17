@@ -23,7 +23,7 @@ public class SysOrderPlan extends Model<SysOrderPlan> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;                     /* 主键id */
     private Integer orderId;                /* 订单id */
-    private LocalDate data;                 /* 日期 */
+    private LocalDate date;                 /* 日期 */
     private LocalTime timeSlotStart;        /* 时间段开始 */
     private Float timeSlotLength;           /* 时间段长度(小时) */
 }

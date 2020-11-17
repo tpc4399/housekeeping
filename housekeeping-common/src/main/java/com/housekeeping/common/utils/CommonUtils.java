@@ -3,7 +3,9 @@ package com.housekeeping.common.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.SysOrderPlanDTO;
 import com.housekeeping.admin.entity.SysOrderPlan;
+import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.tomcat.jni.Local;
@@ -185,81 +187,18 @@ public class CommonUtils {
 	}
 
 	public static void main(String[] args) throws UnknownHostException {
-//		String s = getRequestPrefix();
-//		System.out.println(s);
-//
-//		Float e = 4.5f;
-//		float f = 4.5f;
-//		System.out.println(e%1);			//0.5
-//		System.out.println((int) (e/1)); 	//4
-//
-//		LocalTime localTime1 = LocalTime.of(6, 0, 0);
-//		LocalTime localTime2 = LocalTime.of(6, 0, 0);
-//		System.out.println(localTime1.isAfter(localTime2));
-//		System.out.println(localTime1.isBefore(localTime2));
-//		System.out.println(localTime1.equals(localTime2));
-//
-//		List<Integer> w = new ArrayList<>();
-//		w.add(1);
-//		w.add(1);
-//		w.add(1);
-//		w.add(1);
-//		w.add(1);
-//		w.add(1);
-//		w.add(1);
-//		System.out.println(w.toString());
-//
-//		LocalDate localDate = LocalDate.of(2020, 11,16);
-//		System.out.println(localDate.toString());
-//		System.out.println(localDate.getDayOfWeek().getValue());
-//
-//		System.out.println(localDate.plusDays(6).toString());
-//		System.out.println(localDate.plusDays(6).getDayOfWeek().getValue());
-		Thread thread1 = new Thread(()-> {
-			System.out.println("a");
-		}, "a");
-		Thread thread2 = new Thread(()-> {
-			System.out.println("b");
-		}, "b");
-		Thread thread3 = new Thread(()-> {
-			System.out.println("c");
-		}, "c");
-		Thread thread4 = new Thread(()-> {
-			System.out.println("d");
-		}, "d");
-		Thread thread5 = new Thread(()-> {
-			System.out.println("e");
-		}, "e");
-		thread3.run();
-		thread4.run();
-		thread5.run();
-		thread1.run();
-		thread2.run();
-
-		System.out.println("end");
-
-		List<SysOrderPlan> sysOrderPlanList = new ArrayList<>();
-
-		SysOrderPlan sysOrderPlan1 = new SysOrderPlan();
-		sysOrderPlan1.setData(LocalDate.of(2020,6,7));
-		sysOrderPlan1.setId(1);
-		sysOrderPlanList.add(sysOrderPlan1);
-
-		SysOrderPlan sysOrderPlan2 = new SysOrderPlan();
-		sysOrderPlan2.setData(LocalDate.of(2020,6,3));
-		sysOrderPlan2.setId(2);
-		sysOrderPlanList.add(sysOrderPlan2);
-
-		SysOrderPlan sysOrderPlan3 = new SysOrderPlan();
-		sysOrderPlan3.setData(LocalDate.of(2020,6,13));
-		sysOrderPlan3.setId(3);
-		sysOrderPlanList.add(sysOrderPlan3);
-
-		sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
-				s1.getData().compareTo(s2.getData())
-		);
-
-		System.out.println("21351545");
+		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
+		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();
+		rulesMonthlyVo.setStart(LocalDate.of(2020, 02,03));
+		rulesMonthlyVo.setEnd(LocalDate.of(2021, 02,03));
+		sysOrderPlanDTO.setRulesMonthlyVo(rulesMonthlyVo);
+		Object ba = OptionalBean.ofNullable(sysOrderPlanDTO)
+				.getBean(SysOrderPlanDTO::getRulesMonthlyVo)
+				.getBean(RulesMonthlyVo::getStart).get();
+		Object ba2 = OptionalBean.ofNullable(sysOrderPlanDTO)
+				.getBean(SysOrderPlanDTO::getRulesMonthlyVo)
+				.getBean(RulesMonthlyVo::getEnd).get();
+		System.out.println("ssdaw");
 	}
 }
 

@@ -8,14 +8,17 @@ import com.housekeeping.admin.entity.SysOrderPlan;
 import com.housekeeping.admin.mapper.SysOrderPlanMapper;
 import com.housekeeping.admin.service.ISysOrderPlanService;
 import com.housekeeping.admin.service.ISysOrderService;
+import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.admin.vo.TimeSlotVo;
+import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.OptionalBean;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -36,7 +39,13 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
     public R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) {
 
         /** 包月規則查驗：工作日>=8h、休息日不做限制、跨度不少於30天 */
-        if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo().getStart()) && CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo().getEnd())){
+        LocalDate start0 = OptionalBean.ofNullable(sysOrderPlanDTO)
+                .getBean(SysOrderPlanDTO::getRulesMonthlyVo)
+                .getBean(RulesMonthlyVo::getStart).get();
+        LocalDate end0 = OptionalBean.ofNullable(sysOrderPlanDTO)
+                .getBean(SysOrderPlanDTO::getRulesMonthlyVo)
+                .getBean(RulesMonthlyVo::getEnd).get();
+        if (CommonUtils.isNotEmpty(start0) && CommonUtils.isNotEmpty(end0)){
             if (sysOrderPlanDTO.getRulesMonthlyVo().getStart().plusMonths(1).isAfter(sysOrderPlanDTO.getRulesMonthlyVo().getEnd())){
                 return R.failed("包月服務少於一個月，無法發佈");
             }else {
@@ -61,7 +70,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         AtomicReference<Integer> maxId = new AtomicReference<>(0);
         synchronized (this){
             sysOrderService.releaseOrder(sysOrder);
-            maxId.set(((SysOrder) CommonUtils.getMaxId("sys_order", this)).getId());
+            maxId.set(((SysOrder) CommonUtils.getMaxId("sys_order", sysOrderService)).getId());
         }
         /** 创建订单 */
 
@@ -84,7 +93,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                 timeSlotVoDays.forEach(x -> {
                     SysOrderPlan sysOrderPlan = new SysOrderPlan();
                     sysOrderPlan.setOrderId(maxId.get());
-                    sysOrderPlan.setData(finalCurrent);
+                    sysOrderPlan.setDate(finalCurrent);
                     sysOrderPlan.setTimeSlotStart(x.getTimeSlotStart());
                     sysOrderPlan.setTimeSlotLength(x.getTimeSlotLength());
                     baseMapper.insert(sysOrderPlan);
@@ -106,7 +115,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                         x.getTimeSlotVos().forEach(y -> {
                             SysOrderPlan sysOrderPlan = new SysOrderPlan();
                             sysOrderPlan.setOrderId(maxId.get());
-                            sysOrderPlan.setData(finalCurrent);
+                            sysOrderPlan.setDate(finalCurrent);
                             sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
                             sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
                             baseMapper.insert(sysOrderPlan);
@@ -124,7 +133,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                 x.getTimeSlotVos().forEach(y -> {
                     SysOrderPlan sysOrderPlan = new SysOrderPlan();
                     sysOrderPlan.setOrderId(maxId.get());
-                    sysOrderPlan.setData(x.getDate());
+                    sysOrderPlan.setDate(x.getDate());
                     sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
                     sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
                     baseMapper.insert(sysOrderPlan);
@@ -134,20 +143,50 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         /* 單次服務規則存儲 */
         /** 创建订单计划 */
 
-        thread1.run();
-        thread2.run();
-        thread3.run();
+        thread1.start();
+        thread2.start();
+        thread3.start();
 
-        /** 查重 */
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("order_id", maxId.get());
-        List<SysOrderPlan> sysOrderPlanList = baseMapper.selectList(queryWrapper);
-        sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
-            s1.getData().compareTo(s2.getData())
-        );
 
         /** 查重 */
+        List<Map> res = new ArrayList<>();
+        List<SysOrderPlan> sysOrderPlanList = baseMapper.selectList(queryWrapper);
+        sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
+            s1.getDate().compareTo(s2.getDate())
+        );
+        for (int i = 1; i < sysOrderPlanList.size(); i++) {
+            if (sysOrderPlanList.size() == 0 || sysOrderPlanList.size() == 1){
+                break;
+            }else {
+                for (int j = 0; j < i; j++) {
+                    PeriodOfTime periodOfTime1 = new PeriodOfTime();
+                    periodOfTime1.setTimeSlotStart(sysOrderPlanList.get(i).getTimeSlotStart());
+                    periodOfTime1.setTimeSlotLength(sysOrderPlanList.get(i).getTimeSlotLength());
+                    PeriodOfTime periodOfTime2 = new PeriodOfTime();
+                    periodOfTime2.setTimeSlotStart(sysOrderPlanList.get(j).getTimeSlotStart());
+                    periodOfTime2.setTimeSlotLength(sysOrderPlanList.get(j).getTimeSlotLength());
+                    if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
+                        Map<String, Object> entity = new HashMap<>();
+                        entity.put("date", sysOrderPlanList.get(i).getDate());
+                        entity.put("periodOfTime1", periodOfTime1);
+                        entity.put("periodOfTime2", periodOfTime2);
+                        res.add(entity);
+                    }
+                }
+            }
+        }
+        /** 查重 */
 
-        return null;
+        /** 查重結果處理 */
+        if (res.size() == 0){
+            return R.ok("查重完成，並已上傳訂單");
+        }else {
+            baseMapper.delete(queryWrapper);
+            return R.failed(res, "存在重複，清先解決時間段衝突");
+        }
+        /** 查重結果處理 */
+
     }
 }
