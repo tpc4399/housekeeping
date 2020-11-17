@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.BrokenBarrierException;
+
 
 /**
  * @Author su
@@ -26,7 +28,7 @@ public class SysOrderPlanController {
 
     @ApiOperation("订单计划创建（发布需求）")
     @PostMapping
-    public R releaseOrderPlan(@RequestBody SysOrderPlanDTO sysOrderPlanDTO){
+    public R releaseOrderPlan(@RequestBody SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
         return R.ok(sysOrderPlanService.releaseOrderPlan(sysOrderPlanDTO));
     }
 

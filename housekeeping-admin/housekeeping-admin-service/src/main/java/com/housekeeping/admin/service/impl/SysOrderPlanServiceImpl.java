@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -36,7 +38,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
      * @return
      */
     @Override
-    public R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) {
+    public R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
 
         /** 包月規則查驗：工作日>=8h、休息日不做限制、跨度不少於30天 */
         LocalDate start0 = OptionalBean.ofNullable(sysOrderPlanDTO)
@@ -74,6 +76,8 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         }
         /** 创建订单 */
 
+        final CyclicBarrier barrier = new CyclicBarrier(3);
+
         /** 创建订单计划 */
         /* 包月規則存儲 */
         Thread thread1  = new Thread(()->{
@@ -99,7 +103,14 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                     baseMapper.insert(sysOrderPlan);
                 });
                 current1 = current1.plusDays(1);
-            }while (!start1.equals(end1));
+            }while (!current1.equals(end1));
+            try {
+                barrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }, "rulesMonthlySave");
         /* 包月規則存儲 */
 
@@ -122,8 +133,15 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                         });
                     }
                     current = current.plusDays(1);
-                }while (!start.equals(end));
+                }while (!current.equals(end));
             });
+            try {
+                barrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }, "rulesWeekSave");
         /* 定期服務規則存儲 */
 
@@ -139,6 +157,13 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                     baseMapper.insert(sysOrderPlan);
                 });
             });
+            try {
+                barrier.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }, "rulesDateSave");
         /* 單次服務規則存儲 */
         /** 创建订单计划 */
@@ -147,6 +172,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         thread2.start();
         thread3.start();
 
+        barrier.await();//等待三个线程执行完毕
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("order_id", maxId.get());
 
@@ -161,18 +187,20 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                 break;
             }else {
                 for (int j = 0; j < i; j++) {
-                    PeriodOfTime periodOfTime1 = new PeriodOfTime();
-                    periodOfTime1.setTimeSlotStart(sysOrderPlanList.get(i).getTimeSlotStart());
-                    periodOfTime1.setTimeSlotLength(sysOrderPlanList.get(i).getTimeSlotLength());
-                    PeriodOfTime periodOfTime2 = new PeriodOfTime();
-                    periodOfTime2.setTimeSlotStart(sysOrderPlanList.get(j).getTimeSlotStart());
-                    periodOfTime2.setTimeSlotLength(sysOrderPlanList.get(j).getTimeSlotLength());
-                    if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
-                        Map<String, Object> entity = new HashMap<>();
-                        entity.put("date", sysOrderPlanList.get(i).getDate());
-                        entity.put("periodOfTime1", periodOfTime1);
-                        entity.put("periodOfTime2", periodOfTime2);
-                        res.add(entity);
+                    if (sysOrderPlanList.get(i).getDate().equals(sysOrderPlanList.get(j).getDate())){
+                        PeriodOfTime periodOfTime1 = new PeriodOfTime();
+                        periodOfTime1.setTimeSlotStart(sysOrderPlanList.get(i).getTimeSlotStart());
+                        periodOfTime1.setTimeSlotLength(sysOrderPlanList.get(i).getTimeSlotLength());
+                        PeriodOfTime periodOfTime2 = new PeriodOfTime();
+                        periodOfTime2.setTimeSlotStart(sysOrderPlanList.get(j).getTimeSlotStart());
+                        periodOfTime2.setTimeSlotLength(sysOrderPlanList.get(j).getTimeSlotLength());
+                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
+                            Map<String, Object> entity = new HashMap<>();
+                            entity.put("date", sysOrderPlanList.get(i).getDate());
+                            entity.put("periodOfTime1", periodOfTime1);
+                            entity.put("periodOfTime2", periodOfTime2);
+                            res.add(entity);
+                        }
                     }
                 }
             }
