@@ -1,5 +1,7 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.entity.SysOrder;
 import com.housekeeping.common.utils.R;
@@ -11,5 +13,7 @@ import com.housekeeping.common.utils.R;
 public interface ISysOrderService extends IService<SysOrder> {
 
     R releaseOrder(SysOrder sysOrder);
+
+    IPage<SysOrder> page(IPage<SysOrder> page, SysOrder sysOrder);
 
 }
