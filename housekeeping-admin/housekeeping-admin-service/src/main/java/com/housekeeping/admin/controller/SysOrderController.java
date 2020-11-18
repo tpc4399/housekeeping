@@ -6,6 +6,7 @@ import com.housekeeping.admin.entity.SysOrder;
 import com.housekeeping.admin.service.ISysOrderService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class SysOrderController {
 
     private final ISysOrderService sysOrderService;
 
+    @ApiOperation("分頁查詢訂單")
     @GetMapping("pageOfSysOrder")
     public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO){
         return sysOrderService.page(page, sysOrderDTO);
