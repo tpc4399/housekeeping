@@ -45,7 +45,7 @@ public class SysOrderServiceImpl extends ServiceImpl<SysOrderMapper, SysOrder> i
     }
 
     @Override
-    public IPage<SysOrder> page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO) {
+    public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO) {
         QueryWrapper queryWrapper = new QueryWrapper();
         if (CommonUtils.isNotEmpty(sysOrderDTO.getNumber())){
             queryWrapper.like("number", sysOrderDTO.getNumber());
@@ -74,6 +74,6 @@ public class SysOrderServiceImpl extends ServiceImpl<SysOrderMapper, SysOrder> i
         if (CommonUtils.isNotEmpty(sysOrderDTO.getTotalTimeMax())){
             queryWrapper.le("total_time", sysOrderDTO.getTotalTimeMax());
         }
-        return baseMapper.selectPage(page, queryWrapper);
+        return R.ok(baseMapper.selectPage(page, queryWrapper), "查詢成功");
     }
 }

@@ -15,6 +15,6 @@ public interface ISysOrderService extends IService<SysOrder> {
 
     R releaseOrder(SysOrder sysOrder);
 
-    IPage<SysOrder> page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO);
+    R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO);
 
 }
