@@ -10,9 +10,7 @@
 		<result property="name" column="name"/>
 		<result property="dateOfBirth" column="date_of_birth"/>
 		<result property="phone" column="phone"/>
-		<result property="realName" column="real_name"/>
 		<result property="email" column="email"/>
-		<result property="schedule" column="schedule"/>
 		<result property="companyId" column="company_id"/>
 		<result property="idCard" column="id_card"/>
 		<result property="location" column="location"/>
@@ -28,8 +26,6 @@
 		<result property="sex" column="sex"/>
 		<result property="tags" column="tags"/>
 		<result property="blacklistFlag" column="blacklist_flag"/>
-		<result property="qrcode" column="qrcode"/>
-		<result property="link" column="link"/>
 		<result property="createTime" column="create_time"/>
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
@@ -48,9 +44,7 @@
 		ed.name,
 		ed.date_of_birth,
 		ed.phone,
-		ed.real_name,
 		ed.email,
-		ed.schedule,
 		ed.company_id,
 		ed.id_card,
 		ed.location,
@@ -66,13 +60,9 @@
 		ed.sex,
 		ed.tags,
 		ed.blacklist_flag,
-		ed.qrcode,
-		ed.link,
 		ed.create_time,
 		ed.update_time,
 		ed.last_reviser_id,
-		ed.account_line,
-		ed.describes,
 		s.`name` as username,
 		cd.company_name
 		FROM
