@@ -17,5 +17,7 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
 
     R addToTheWorkList(CompanyWorkListDTO companyWorkListDTO);
     R page(IPage<CompanyWorkList> page, CompanyWorkListQueryDTO companyWorkListQueryDTO);
+    R matchTheOrder(Integer orderId);
+    R dispatchOrder(Integer orderId);
 
 }

@@ -21,4 +21,5 @@ public class SysOrderPlanDTO {
     private List<RulesWeekVo> rulesWeekVos; /* 定期服务规则 */
     private RulesMonthlyVo rulesMonthlyVo;  /* 包月规则 */
     private Integer addressId;              /* 服务地址_id */
+    private String jobContendIds;              /* 工作内容_ids */
 }

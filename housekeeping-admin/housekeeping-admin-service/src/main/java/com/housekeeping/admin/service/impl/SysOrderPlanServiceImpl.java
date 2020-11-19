@@ -69,6 +69,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             sysOrder.setCompanyId(sysOrderPlanDTO.getCompanyId());
         }
         sysOrder.setAddressId(sysOrderPlanDTO.getAddressId());
+        sysOrder.setJobContendIds(sysOrderPlanDTO.getJobContendIds());
         AtomicReference<Integer> maxId = new AtomicReference<>(0);
         synchronized (this){
             sysOrderService.releaseOrder(sysOrder);

@@ -6,14 +6,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyWorkListDTO;
 import com.housekeeping.admin.dto.CompanyWorkListQueryDTO;
 import com.housekeeping.admin.entity.CompanyWorkList;
+import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.entity.SysOrder;
 import com.housekeeping.admin.mapper.CompanyWorkListMapper;
 import com.housekeeping.admin.service.ICompanyWorkListService;
+import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**
@@ -22,6 +25,10 @@ import java.time.LocalDateTime;
  */
 @Service("companyWorkListService")
 public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMapper, CompanyWorkList> implements ICompanyWorkListService {
+
+    @Resource
+    private ManagerDetailsService managerDetailsService;
+
     @Override
     public R addToTheWorkList(CompanyWorkListDTO companyWorkListDTO) {
         if (CommonUtils.isNotEmpty(companyWorkListDTO.getGroupId())
@@ -56,5 +63,21 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             queryWrapper.eq("last_reviser_id", companyWorkListQueryDTO.getLastReviserId());
         }
         return R.ok(baseMapper.selectPage(page, queryWrapper));
+    }
+
+    @Override
+    public R matchTheOrder(Integer orderId) {
+        /**
+         * 匹配可以做订单的员工 :: 只能通过经理来做
+         */
+        Integer managerId = TokenUtils.getCurrentUserId();
+
+        return R.ok();
+    }
+
+    @Override
+    public R dispatchOrder(Integer orderId) {
+
+        return R.ok();
     }
 }

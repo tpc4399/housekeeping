@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("group_details")
-public class Group extends Model<Group> {
+public class GroupDetails extends Model<GroupDetails> {
 
     private static final long serialVersionUID = 1L;
 

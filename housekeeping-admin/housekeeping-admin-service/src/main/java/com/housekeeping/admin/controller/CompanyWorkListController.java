@@ -3,7 +3,7 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.CompanyWorkListDTO;
 import com.housekeeping.admin.dto.CompanyWorkListQueryDTO;
-import com.housekeeping.admin.entity.SysOrder;
+import com.housekeeping.admin.entity.CompanyWorkList;
 import com.housekeeping.admin.service.ICompanyWorkListService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -31,8 +31,20 @@ public class CompanyWorkListController {
 
     @ApiOperation("分頁查詢工作列表")
     @GetMapping("/pageOfWorkList")
-    public R page(IPage<SysOrder> page, CompanyWorkListQueryDTO companyWorkListQueryDTO){
+    public R page(IPage<CompanyWorkList> page, CompanyWorkListQueryDTO companyWorkListQueryDTO){
+        return companyWorkListService.page(page, companyWorkListQueryDTO);
+    }
+
+    @ApiOperation("經理匹配可以做订单的员工")
+    @GetMapping("/dispatchOrder")
+    public R matchTheOrder(Integer orderId){
         return R.ok();
+    }
+
+    @ApiOperation("經理分派訂單")
+    @GetMapping("/dispatchOrder")
+    public R dispatchOrder(Integer orderId){
+        return companyWorkListService.dispatchOrder(orderId);
     }
 
 }
