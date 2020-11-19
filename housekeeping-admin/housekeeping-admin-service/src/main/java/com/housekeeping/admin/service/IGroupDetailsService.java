@@ -5,9 +5,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.entity.Group;
+import com.housekeeping.admin.entity.GroupDetails;
 
-public interface GroupService extends IService<Group> {
+public interface IGroupDetailsService extends IService<GroupDetails> {
 
     R cusRemove(Integer id);
 

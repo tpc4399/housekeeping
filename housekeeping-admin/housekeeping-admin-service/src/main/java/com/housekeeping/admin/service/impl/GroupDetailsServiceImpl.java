@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.entity.Group;
-import com.housekeeping.admin.mapper.GroupMapper;
-import com.housekeeping.admin.service.GroupService;
+import com.housekeeping.admin.entity.GroupDetails;
+import com.housekeeping.admin.mapper.GroupDetailsMapper;
+import com.housekeeping.admin.service.IGroupDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service("groupService")
-public class GroupServiceImpl extends ServiceImpl<GroupMapper, Group> implements GroupService {
+public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, GroupDetails> implements IGroupDetailsService {
 
     @Override
     public R cusRemove(Integer id) {
