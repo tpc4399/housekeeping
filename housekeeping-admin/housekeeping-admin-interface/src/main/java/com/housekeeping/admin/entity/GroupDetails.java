@@ -16,22 +16,11 @@ public class GroupDetails extends Model<GroupDetails> {
 
     private static final long serialVersionUID = 1L;
 
-    /* 主键id */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
-    /* 組名 */
-    private String groupName;
-
-    /* 組所屬經理id */
-    private Integer groupManagerId;
-
-    /* 組包括員工id */
-    private Integer groupEmployeesIds;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
-
-    private Integer lastReviserId;
+    private Integer id;/* 主键id */
+    private Integer companyId; /* 所屬公司id */
+    private String groupName;/* 組名 */
+    private LocalDateTime createTime;/* 創建時間 */
+    private LocalDateTime updateTime;/* 修改時間 */
+    private Integer lastReviserId;/* 最後修改人id */
 }

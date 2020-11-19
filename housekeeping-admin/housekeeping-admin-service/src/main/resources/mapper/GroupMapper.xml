@@ -4,8 +4,42 @@
 
 <mapper namespace="com.housekeeping.admin.mapper.GroupMapper">
 
+    <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.Group">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="groupName" column="group_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="lastReviserId" column="last_reviser_id"/>
+    </resultMap>
 
-    <delete id="cusRemove">
-        DELETE FROM group_details WHERE group_manager_id = #{groupManagerId}
+    <insert id="addMan">
+        insert into group_manager (group_id,manager_id) VALUES (#{groupId},#{managerId})
+    </insert>
+
+    <delete id="removeEmp">
+        delete from group_employees where group_id = #{id}
     </delete>
+
+    <delete id="removeMan">
+        delete from group_manager where group_id = #{id}
+    </delete>
+
+    <select id="getGroup" resultMap="baseResultMap">
+        select
+        id,
+        company_id,
+        group_name,
+        create_time,
+        update_time,
+        last_reviser_id,
+        from
+        group_details
+        <if test=" id != null and  id != ''">
+            where id =  #{id}
+        </if>
+        <if test=" companyId != null and  companyId != ''">
+            and company_id =  #{companyId}
+        </if>
+    </select>
 </mapper>

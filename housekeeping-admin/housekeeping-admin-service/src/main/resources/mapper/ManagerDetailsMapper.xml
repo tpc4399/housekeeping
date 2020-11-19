@@ -61,8 +61,6 @@
 		ed.create_time,
 		ed.update_time,
 		ed.last_reviser_id,
-		ed.account_line,
-		ed.describes,
 		s.`name` as username,
 		cd.company_name
 		FROM
