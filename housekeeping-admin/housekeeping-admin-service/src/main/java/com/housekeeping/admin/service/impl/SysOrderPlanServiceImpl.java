@@ -218,4 +218,11 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         /** 查重結果處理 */
 
     }
+
+    @Override
+    public R getAllByOrderId(Integer orderId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("order_id", orderId);
+        return R.ok(baseMapper.selectList(queryWrapper), "獲取訂單" + orderId + "計劃成功");
+    }
 }

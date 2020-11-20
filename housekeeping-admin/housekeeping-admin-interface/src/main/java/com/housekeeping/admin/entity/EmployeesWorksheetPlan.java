@@ -22,7 +22,6 @@ import java.time.LocalTime;
 @TableName("employees_worksheet_plan")
 public class EmployeesWorksheetPlan extends Model<EmployeesWorksheetPlan> {
 
-
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;                     /* 主鍵id */
     private Integer employeesId;            /* 员工_id */

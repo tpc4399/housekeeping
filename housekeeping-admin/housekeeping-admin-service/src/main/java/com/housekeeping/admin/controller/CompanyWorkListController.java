@@ -43,8 +43,8 @@ public class CompanyWorkListController {
 
     @ApiOperation("經理分派訂單")
     @GetMapping("/dispatchOrder")
-    public R dispatchOrder(Integer orderId){
-        return companyWorkListService.dispatchOrder(orderId);
+    public R dispatchOrder(Integer orderId, Integer employeesId){
+        return companyWorkListService.dispatchOrder(orderId, employeesId);
     }
 
 }

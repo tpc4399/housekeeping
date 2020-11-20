@@ -16,4 +16,6 @@ public interface ISysOrderPlanService extends IService<SysOrderPlan> {
 
     R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException;
 
+    R getAllByOrderId(Integer orderId);
+
 }
