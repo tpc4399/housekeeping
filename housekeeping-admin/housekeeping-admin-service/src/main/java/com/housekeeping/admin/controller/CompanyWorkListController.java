@@ -36,7 +36,7 @@ public class CompanyWorkListController {
     }
 
     @ApiOperation("經理匹配可以做订单的员工")
-    @GetMapping("/dispatchOrder")
+    @GetMapping("/matchTheOrder")
     public R matchTheOrder(Integer orderId){
         return companyWorkListService.matchTheOrder(orderId);
     }
