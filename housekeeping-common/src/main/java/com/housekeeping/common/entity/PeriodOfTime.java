@@ -15,4 +15,7 @@ import java.time.LocalTime;
 public class PeriodOfTime {
     private LocalTime timeSlotStart;    /* 时间段开始点 */
     private Float timeSlotLength;    /* 时间段长度（h） */
+
+    public PeriodOfTime() {
+    }
 }

@@ -189,12 +189,8 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             }else {
                 for (int j = 0; j < i; j++) {
                     if (sysOrderPlanList.get(i).getDate().equals(sysOrderPlanList.get(j).getDate())){
-                        PeriodOfTime periodOfTime1 = new PeriodOfTime();
-                        periodOfTime1.setTimeSlotStart(sysOrderPlanList.get(i).getTimeSlotStart());
-                        periodOfTime1.setTimeSlotLength(sysOrderPlanList.get(i).getTimeSlotLength());
-                        PeriodOfTime periodOfTime2 = new PeriodOfTime();
-                        periodOfTime2.setTimeSlotStart(sysOrderPlanList.get(j).getTimeSlotStart());
-                        periodOfTime2.setTimeSlotLength(sysOrderPlanList.get(j).getTimeSlotLength());
+                        PeriodOfTime periodOfTime1 = new PeriodOfTime(sysOrderPlanList.get(i).getTimeSlotStart(),sysOrderPlanList.get(i).getTimeSlotLength());
+                        PeriodOfTime periodOfTime2 = new PeriodOfTime(sysOrderPlanList.get(j).getTimeSlotStart(),sysOrderPlanList.get(j).getTimeSlotLength());
                         if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
                             Map<String, Object> entity = new HashMap<>();
                             entity.put("date", sysOrderPlanList.get(i).getDate());
