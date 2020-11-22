@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
@@ -28,14 +29,22 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     private RedisUtils redisUtils;
 
     @Override
-    public R saveEmp(EmployeesDetails employeesDetails) {
+    public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO) {
         if(this.addEmployee()){
-            if(CommonUtils.isNotEmpty(employeesDetails)){
+            if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
+                EmployeesDetails employeesDetails = new EmployeesDetails();
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-                wrComp.inSql("id","select id from company_details where user_id="+ TokenUtils.getCurrentUserId());
+                wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
                 CompanyDetails one = companyDetailsService.getOne(wrComp);
                 String s = String.valueOf(System.currentTimeMillis());
                 employeesDetails.setNumber("emp"+s);
+                employeesDetails.setName(employeesDetailsDTO.getName());
+                employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
+                employeesDetails.setPhone(employeesDetailsDTO.getPhone());
+                employeesDetails.setEmail(employeesDetailsDTO.getEmail());
+                employeesDetails.setAddress(employeesDetailsDTO.getAddress());
+                employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+                employeesDetails.setSex(employeesDetailsDTO.getSex());
                 employeesDetails.setUpdateTime(LocalDateTime.now());
                 employeesDetails.setCreateTime(LocalDateTime.now());
                 employeesDetails.setCompanyId(one.getId());
@@ -49,7 +58,16 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public R updateEmp(EmployeesDetails employeesDetails) {
+    public R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) {
+        EmployeesDetails employeesDetails = new EmployeesDetails();
+        employeesDetails.setId(employeesDetailsDTO.getId());
+        employeesDetails.setName(employeesDetailsDTO.getName());
+        employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
+        employeesDetails.setPhone(employeesDetailsDTO.getPhone());
+        employeesDetails.setEmail(employeesDetailsDTO.getEmail());
+        employeesDetails.setAddress(employeesDetailsDTO.getAddress());
+        employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+        employeesDetails.setSex(employeesDetailsDTO.getSex());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
         employeesDetails.setUpdateTime(LocalDateTime.now());
         if(this.updateById(employeesDetails)){

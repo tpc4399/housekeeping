@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -26,15 +27,15 @@ public class EmployeesDetailsController {
     @ApiOperation("新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
-    public R saveEmp(@RequestBody EmployeesDetails employeesDetails){
-        return employeesDetailsService.saveEmp(employeesDetails);
+    public R saveEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.saveEmp(employeesDetailsDTO);
     }
 
     @ApiOperation("修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
-    public R updateEmp(@RequestBody EmployeesDetails employeesDetails){
-        return employeesDetailsService.updateEmp(employeesDetails);
+    public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.updateEmp(employeesDetailsDTO);
     }
 
     @ApiOperation("刪除員工")

@@ -31,7 +31,7 @@ public class ManagerDetails extends Model<EmployeesDetails> {
     private LocalDate dateOfBirth;
 
     /* 手機號 */
-    private Integer phone;
+    private String phone;
 
     /* 是否實名 */
     private Integer realName;
@@ -70,7 +70,7 @@ public class ManagerDetails extends Model<EmployeesDetails> {
     private String phoneUrl;
 
     /* 性別 */
-    private Integer sex;
+    private Boolean sex;
 
     /* 登錄二維碼 */
     private String qrcode;

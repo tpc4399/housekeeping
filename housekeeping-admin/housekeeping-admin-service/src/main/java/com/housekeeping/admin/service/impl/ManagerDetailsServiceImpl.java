@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.ManagerDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
@@ -27,14 +28,21 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     private RedisUtils redisUtils;
 
     @Override
-    public R saveEmp(ManagerDetails managerDetails) {
+    public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
         if(this.addManager()){
-            if(CommonUtils.isNotEmpty(managerDetails)){
+            if(CommonUtils.isNotEmpty(managerDetailsDTO)){
+                ManagerDetails managerDetails = new ManagerDetails();
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-                wrComp.inSql("id","select id from company_details where user_id="+ TokenUtils.getCurrentUserId());
+                wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
                 CompanyDetails one = companyDetailsService.getOne(wrComp);
                 String s = String.valueOf(System.currentTimeMillis());
                 managerDetails.setNumber("man"+s);
+                managerDetails.setName(managerDetailsDTO.getName());
+                managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
+                managerDetails.setPhone(managerDetailsDTO.getPhone());
+                managerDetails.setAddress(managerDetailsDTO.getAddress());
+                managerDetails.setDescribes(managerDetailsDTO.getDescribes());
+                managerDetails.setSex(managerDetailsDTO.getSex());
                 managerDetails.setUpdateTime(LocalDateTime.now());
                 managerDetails.setCreateTime(LocalDateTime.now());
                 managerDetails.setCompanyId(one.getId());
@@ -48,8 +56,17 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     }
 
     @Override
-    public R updateEmp(ManagerDetails managerDetails) {
+    public R updateEmp(ManagerDetailsDTO managerDetailsDTO) {
+        ManagerDetails managerDetails = new ManagerDetails();
+        managerDetails.setId(managerDetailsDTO.getId());
+        managerDetails.setName(managerDetailsDTO.getName());
+        managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
+        managerDetails.setPhone(managerDetailsDTO.getPhone());
+        managerDetails.setAddress(managerDetailsDTO.getAddress());
+        managerDetails.setDescribes(managerDetailsDTO.getDescribes());
+        managerDetails.setSex(managerDetailsDTO.getSex());
         managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        managerDetails.setCreateTime(LocalDateTime.now());
         managerDetails.setUpdateTime(LocalDateTime.now());
         if(this.updateById(managerDetails)){
             return R.ok("修改成功");
@@ -90,8 +107,8 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
      */
     public Boolean addManager(){
         Integer userId = TokenUtils.getCurrentUserId();
-        QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-        wrComp.inSql("id","select id from company_details where user_id="+ userId);
+        QueryWrapper<CompanyDetails> wrComp = new QueryWrapper<>();
+        wrComp.inSql("id","select id from company_details where user_id=" + userId);
         CompanyDetails one = companyDetailsService.getOne(wrComp);
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
         String[] split = scaleById.split("~");

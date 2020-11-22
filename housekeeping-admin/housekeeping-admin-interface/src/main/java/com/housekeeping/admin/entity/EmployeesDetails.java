@@ -31,7 +31,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private LocalDate dateOfBirth;
 
     /* 手機號 */
-    private Integer phone;
+    private String phone;
 
     /* 郵箱 */
     private String email;
@@ -79,7 +79,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String phoneUrl;
 
     /* 性別 */
-    private Integer sex;
+    private Boolean sex;
 
     /* 標簽 */
     private String tags;
