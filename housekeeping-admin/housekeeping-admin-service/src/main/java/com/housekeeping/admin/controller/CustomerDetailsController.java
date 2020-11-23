@@ -1,6 +1,6 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.CustomerAddressAddDTO;
+import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/customerDetails")
 public class CustomerDetailsController {
 
+    private final ICustomerDetailsService customerDetailsService;
+
     @ApiOperation("设置为默认地址")
     @PutMapping("/toDefault")
-    public R updateAddress(Integer id){
-        return R.ok();
+    public R toDefault(Integer id){
+        return customerDetailsService.toDefault(id);
     }
 
 }

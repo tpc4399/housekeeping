@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.CustomerAddressAddDTO;
 import com.housekeeping.admin.dto.CustomerAddressUpdateDTO;
+import com.housekeeping.admin.service.ICustomerAddressService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,17 +19,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/customerAddress")
 public class CustomerAddressController {
 
+    private final ICustomerAddressService customerAddressService;
 
     @ApiOperation("添加地址")
     @PostMapping
     public R addAddress(@RequestBody CustomerAddressAddDTO customerAddressAddDTO){
-        return R.ok();
+        return customerAddressService.addAddress(customerAddressAddDTO);
     }
 
     @ApiOperation("修改地址")
     @PutMapping
     public R updateAddress(@RequestBody CustomerAddressUpdateDTO customerAddressUpdateDTO){
-        return R.ok();
+        return customerAddressService.updateAddress(customerAddressUpdateDTO);
     }
 
 

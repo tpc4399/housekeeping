@@ -27,7 +27,7 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
     private ICustomerAddressService customerAddressService;
 
     @Override
-    public R updateAddress(Integer id) {
+    public R toDefault(Integer id) {
         Integer userId = TokenUtils.getCurrentUserId();
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id", userId);
