@@ -82,29 +82,31 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         /** 创建订单计划 */
         /* 包月規則存儲 */
         Thread thread1  = new Thread(()->{
-            LocalDate start1 = sysOrderPlanDTO.getRulesMonthlyVo().getStart();
-            LocalDate current1 = start1;
-            LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd();
-            do {
-                LocalDate finalCurrent = current1;
-                List<TimeSlotVo> timeSlotVoDays = null;
-                if (current1.getDayOfWeek().getValue() == 6 || current1.getDayOfWeek().getValue() == 7){
-                    //節假日
-                    timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoHolidayDays();
-                }else {
-                    //工作日
-                    timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoWorkingDays();
-                }
-                timeSlotVoDays.forEach(x -> {
-                    SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                    sysOrderPlan.setOrderId(maxId.get());
-                    sysOrderPlan.setDate(finalCurrent);
-                    sysOrderPlan.setTimeSlotStart(x.getTimeSlotStart());
-                    sysOrderPlan.setTimeSlotLength(x.getTimeSlotLength());
-                    baseMapper.insert(sysOrderPlan);
-                });
-                current1 = current1.plusDays(1);
-            }while (!current1.equals(end1));
+            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo())){
+                LocalDate start1 = sysOrderPlanDTO.getRulesMonthlyVo().getStart();
+                LocalDate current1 = start1;
+                LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd();
+                do {
+                    LocalDate finalCurrent = current1;
+                    List<TimeSlotVo> timeSlotVoDays = null;
+                    if (current1.getDayOfWeek().getValue() == 6 || current1.getDayOfWeek().getValue() == 7){
+                        //節假日
+                        timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoHolidayDays();
+                    }else {
+                        //工作日
+                        timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoWorkingDays();
+                    }
+                    timeSlotVoDays.forEach(x -> {
+                        SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                        sysOrderPlan.setOrderId(maxId.get());
+                        sysOrderPlan.setDate(finalCurrent);
+                        sysOrderPlan.setTimeSlotStart(x.getTimeSlotStart());
+                        sysOrderPlan.setTimeSlotLength(x.getTimeSlotLength());
+                        baseMapper.insert(sysOrderPlan);
+                    });
+                    current1 = current1.plusDays(1);
+                }while (!current1.equals(end1));
+            }
             try {
                 barrier.await();
             } catch (InterruptedException e) {
@@ -117,25 +119,27 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
 
         /* 定期服務規則存儲 */
         Thread thread2  = new Thread(()->{
-            sysOrderPlanDTO.getRulesWeekVos().forEach(x -> {
-                LocalDate start = x.getStart();
-                LocalDate current = start;
-                LocalDate end = x.getEnd();
-                do {
-                    if (x.getWeek().contains(String.valueOf(current.getDayOfWeek().getValue()))){
-                        LocalDate finalCurrent = current;
-                        x.getTimeSlotVos().forEach(y -> {
-                            SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                            sysOrderPlan.setOrderId(maxId.get());
-                            sysOrderPlan.setDate(finalCurrent);
-                            sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
-                            sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
-                            baseMapper.insert(sysOrderPlan);
-                        });
-                    }
-                    current = current.plusDays(1);
-                }while (!current.equals(end));
-            });
+            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesWeekVos())){
+                sysOrderPlanDTO.getRulesWeekVos().forEach(x -> {
+                    LocalDate start = x.getStart();
+                    LocalDate current = start;
+                    LocalDate end = x.getEnd();
+                    do {
+                        if (x.getWeek().contains(String.valueOf(current.getDayOfWeek().getValue()))){
+                            LocalDate finalCurrent = current;
+                            x.getTimeSlotVos().forEach(y -> {
+                                SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                                sysOrderPlan.setOrderId(maxId.get());
+                                sysOrderPlan.setDate(finalCurrent);
+                                sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
+                                sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
+                                baseMapper.insert(sysOrderPlan);
+                            });
+                        }
+                        current = current.plusDays(1);
+                    }while (!current.equals(end));
+                });
+            }
             try {
                 barrier.await();
             } catch (InterruptedException e) {
@@ -148,16 +152,18 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
 
         /* 單次服務規則存儲 */
         Thread thread3  = new Thread(()->{
-            sysOrderPlanDTO.getRulesDateVos().forEach(x -> {
-                x.getTimeSlotVos().forEach(y -> {
-                    SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                    sysOrderPlan.setOrderId(maxId.get());
-                    sysOrderPlan.setDate(x.getDate());
-                    sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
-                    sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
-                    baseMapper.insert(sysOrderPlan);
+            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesDateVos())){
+                sysOrderPlanDTO.getRulesDateVos().forEach(x -> {
+                    x.getTimeSlotVos().forEach(y -> {
+                        SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                        sysOrderPlan.setOrderId(maxId.get());
+                        sysOrderPlan.setDate(x.getDate());
+                        sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
+                        sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
+                        baseMapper.insert(sysOrderPlan);
+                    });
                 });
-            });
+            }
             try {
                 barrier.await();
             } catch (InterruptedException e) {
@@ -180,28 +186,52 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         /** 查重 */
         List<Map> res = new ArrayList<>();
         List<SysOrderPlan> sysOrderPlanList = baseMapper.selectList(queryWrapper);
-        sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
-            s1.getDate().compareTo(s2.getDate())
-        );
-        for (int i = 1; i < sysOrderPlanList.size(); i++) {
-            if (sysOrderPlanList.size() == 0 || sysOrderPlanList.size() == 1){
-                break;
-            }else {
-                for (int j = 0; j < i; j++) {
-                    if (sysOrderPlanList.get(i).getDate().equals(sysOrderPlanList.get(j).getDate())){
-                        PeriodOfTime periodOfTime1 = new PeriodOfTime(sysOrderPlanList.get(i).getTimeSlotStart(),sysOrderPlanList.get(i).getTimeSlotLength());
-                        PeriodOfTime periodOfTime2 = new PeriodOfTime(sysOrderPlanList.get(j).getTimeSlotStart(),sysOrderPlanList.get(j).getTimeSlotLength());
+        Map<Object, List<SysOrderPlan>> maps = new HashMap<>();
+        sysOrderPlanList.forEach(x -> {
+            List<SysOrderPlan> te = null;
+            te = maps.getOrDefault(x.getDate(), new ArrayList<>());
+            te.add(x);
+            maps.put(x.getDate(), te);
+        });
+        maps.values().forEach(x -> {
+            x.forEach(y -> {
+                x.forEach(z -> {
+                    if (y.getId() != z.getId()){
+                        PeriodOfTime periodOfTime1 = new PeriodOfTime(y.getTimeSlotStart(), y.getTimeSlotLength());
+                        PeriodOfTime periodOfTime2 = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength());
                         if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
                             Map<String, Object> entity = new HashMap<>();
-                            entity.put("date", sysOrderPlanList.get(i).getDate());
+                            entity.put("date", y.getDate());
                             entity.put("periodOfTime1", periodOfTime1);
                             entity.put("periodOfTime2", periodOfTime2);
                             res.add(entity);
                         }
                     }
-                }
-            }
-        }
+                });
+            });
+        });
+//        sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
+//            s1.getDate().compareTo(s2.getDate())
+//        );
+//        for (int i = 1; i < sysOrderPlanList.size(); i++) {
+//            if (sysOrderPlanList.size() == 0 || sysOrderPlanList.size() == 1){
+//                break;
+//            }else {
+//                for (int j = 0; j < i; j++) {
+//                    if (sysOrderPlanList.get(i).getDate().equals(sysOrderPlanList.get(j).getDate())){
+//                        PeriodOfTime periodOfTime1 = new PeriodOfTime(sysOrderPlanList.get(i).getTimeSlotStart(),sysOrderPlanList.get(i).getTimeSlotLength());
+//                        PeriodOfTime periodOfTime2 = new PeriodOfTime(sysOrderPlanList.get(j).getTimeSlotStart(),sysOrderPlanList.get(j).getTimeSlotLength());
+//                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
+//                            Map<String, Object> entity = new HashMap<>();
+//                            entity.put("date", sysOrderPlanList.get(i).getDate());
+//                            entity.put("periodOfTime1", periodOfTime1);
+//                            entity.put("periodOfTime2", periodOfTime2);
+//                            res.add(entity);
+//                        }
+//                    }
+//                }
+//            }
+//        }
         /** 查重 */
 
         /** 查重結果處理 */
