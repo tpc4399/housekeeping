@@ -14,7 +14,7 @@ import java.util.concurrent.BrokenBarrierException;
  */
 public interface ISysOrderPlanService extends IService<SysOrderPlan> {
 
-    R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException;
+    R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO);
 
     R getAllByOrderId(Integer orderId);
 

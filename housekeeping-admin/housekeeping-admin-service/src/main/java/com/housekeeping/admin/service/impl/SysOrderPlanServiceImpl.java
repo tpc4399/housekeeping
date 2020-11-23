@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -38,7 +36,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
      * @return
      */
     @Override
-    public R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
+    public R releaseOrderPlan(SysOrderPlanDTO sysOrderPlanDTO){
 
         /** 包月規則查驗：工作日>=8h、休息日不做限制、跨度不少於30天 */
         LocalDate start0 = OptionalBean.ofNullable(sysOrderPlanDTO)
@@ -77,109 +75,76 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         }
         /** 创建订单 */
 
-        final CyclicBarrier barrier = new CyclicBarrier(3);
-
         /** 创建订单计划 */
         /* 包月規則存儲 */
-        Thread thread1  = new Thread(()->{
-            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo())){
-                LocalDate start1 = sysOrderPlanDTO.getRulesMonthlyVo().getStart();
-                LocalDate current1 = start1;
-                LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd();
+        if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo())){
+            LocalDate start1 = sysOrderPlanDTO.getRulesMonthlyVo().getStart();
+            LocalDate current1 = start1;
+            LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd();
+            do {
+                LocalDate finalCurrent = current1;
+                List<TimeSlotVo> timeSlotVoDays = null;
+                if (current1.getDayOfWeek().getValue() == 6 || current1.getDayOfWeek().getValue() == 7){
+                    //節假日
+                    timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoHolidayDays();
+                }else {
+                    //工作日
+                    timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoWorkingDays();
+                }
+                timeSlotVoDays.forEach(x -> {
+                    SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                    sysOrderPlan.setOrderId(maxId.get());
+                    sysOrderPlan.setDate(finalCurrent);
+                    sysOrderPlan.setTimeSlotStart(x.getTimeSlotStart());
+                    sysOrderPlan.setTimeSlotLength(x.getTimeSlotLength());
+                    baseMapper.insert(sysOrderPlan);
+                });
+                current1 = current1.plusDays(1);
+            }while (!current1.equals(end1));
+        }
+        /* 包月規則存儲 */
+
+        /* 定期服務規則存儲 */
+        if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesWeekVos())){
+            sysOrderPlanDTO.getRulesWeekVos().forEach(x -> {
+                LocalDate start = x.getStart();
+                LocalDate current = start;
+                LocalDate end = x.getEnd();
                 do {
-                    LocalDate finalCurrent = current1;
-                    List<TimeSlotVo> timeSlotVoDays = null;
-                    if (current1.getDayOfWeek().getValue() == 6 || current1.getDayOfWeek().getValue() == 7){
-                        //節假日
-                        timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoHolidayDays();
-                    }else {
-                        //工作日
-                        timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoWorkingDays();
+                    if (x.getWeek().contains(String.valueOf(current.getDayOfWeek().getValue()))){
+                        LocalDate finalCurrent = current;
+                        x.getTimeSlotVos().forEach(y -> {
+                            SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                            sysOrderPlan.setOrderId(maxId.get());
+                            sysOrderPlan.setDate(finalCurrent);
+                            sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
+                            sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
+                            baseMapper.insert(sysOrderPlan);
+                        });
                     }
-                    timeSlotVoDays.forEach(x -> {
-                        SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                        sysOrderPlan.setOrderId(maxId.get());
-                        sysOrderPlan.setDate(finalCurrent);
-                        sysOrderPlan.setTimeSlotStart(x.getTimeSlotStart());
-                        sysOrderPlan.setTimeSlotLength(x.getTimeSlotLength());
-                        baseMapper.insert(sysOrderPlan);
-                    });
-                    current1 = current1.plusDays(1);
-                }while (!current1.equals(end1));
-            }
-            try {
-                barrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-        }, "rulesMonthlySave");
-        /* 包月規則存儲 */
-
-        /* 定期服務規則存儲 */
-        Thread thread2  = new Thread(()->{
-            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesWeekVos())){
-                sysOrderPlanDTO.getRulesWeekVos().forEach(x -> {
-                    LocalDate start = x.getStart();
-                    LocalDate current = start;
-                    LocalDate end = x.getEnd();
-                    do {
-                        if (x.getWeek().contains(String.valueOf(current.getDayOfWeek().getValue()))){
-                            LocalDate finalCurrent = current;
-                            x.getTimeSlotVos().forEach(y -> {
-                                SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                                sysOrderPlan.setOrderId(maxId.get());
-                                sysOrderPlan.setDate(finalCurrent);
-                                sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
-                                sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
-                                baseMapper.insert(sysOrderPlan);
-                            });
-                        }
-                        current = current.plusDays(1);
-                    }while (!current.equals(end));
-                });
-            }
-            try {
-                barrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-        }, "rulesWeekSave");
+                    current = current.plusDays(1);
+                }while (!current.equals(end));
+            });
+        }
         /* 定期服務規則存儲 */
 
         /* 單次服務規則存儲 */
-        Thread thread3  = new Thread(()->{
-            if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesDateVos())){
-                sysOrderPlanDTO.getRulesDateVos().forEach(x -> {
-                    x.getTimeSlotVos().forEach(y -> {
-                        SysOrderPlan sysOrderPlan = new SysOrderPlan();
-                        sysOrderPlan.setOrderId(maxId.get());
-                        sysOrderPlan.setDate(x.getDate());
-                        sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
-                        sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
-                        baseMapper.insert(sysOrderPlan);
-                    });
+        if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesDateVos())){
+            sysOrderPlanDTO.getRulesDateVos().forEach(x -> {
+                x.getTimeSlotVos().forEach(y -> {
+                    SysOrderPlan sysOrderPlan = new SysOrderPlan();
+                    sysOrderPlan.setOrderId(maxId.get());
+                    sysOrderPlan.setDate(x.getDate());
+                    sysOrderPlan.setTimeSlotStart(y.getTimeSlotStart());
+                    sysOrderPlan.setTimeSlotLength(y.getTimeSlotLength());
+                    baseMapper.insert(sysOrderPlan);
                 });
-            }
-            try {
-                barrier.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (BrokenBarrierException e) {
-                e.printStackTrace();
-            }
-        }, "rulesDateSave");
+            });
+        }
         /* 單次服務規則存儲 */
         /** 创建订单计划 */
 
-        thread1.start();
-        thread2.start();
-        thread3.start();
 
-        barrier.await();//等待三个线程执行完毕
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("order_id", maxId.get());
 
@@ -210,28 +175,6 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
                 });
             });
         });
-//        sysOrderPlanList.sort((SysOrderPlan s1, SysOrderPlan s2) ->
-//            s1.getDate().compareTo(s2.getDate())
-//        );
-//        for (int i = 1; i < sysOrderPlanList.size(); i++) {
-//            if (sysOrderPlanList.size() == 0 || sysOrderPlanList.size() == 1){
-//                break;
-//            }else {
-//                for (int j = 0; j < i; j++) {
-//                    if (sysOrderPlanList.get(i).getDate().equals(sysOrderPlanList.get(j).getDate())){
-//                        PeriodOfTime periodOfTime1 = new PeriodOfTime(sysOrderPlanList.get(i).getTimeSlotStart(),sysOrderPlanList.get(i).getTimeSlotLength());
-//                        PeriodOfTime periodOfTime2 = new PeriodOfTime(sysOrderPlanList.get(j).getTimeSlotStart(),sysOrderPlanList.get(j).getTimeSlotLength());
-//                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
-//                            Map<String, Object> entity = new HashMap<>();
-//                            entity.put("date", sysOrderPlanList.get(i).getDate());
-//                            entity.put("periodOfTime1", periodOfTime1);
-//                            entity.put("periodOfTime2", periodOfTime2);
-//                            res.add(entity);
-//                        }
-//                    }
-//                }
-//            }
-//        }
         /** 查重 */
 
         /** 查重結果處理 */
