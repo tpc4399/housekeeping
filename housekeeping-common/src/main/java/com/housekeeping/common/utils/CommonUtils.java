@@ -9,6 +9,8 @@ import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.tomcat.jni.Local;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -199,6 +201,14 @@ public class CommonUtils {
 				.getBean(SysOrderPlanDTO::getRulesMonthlyVo)
 				.getBean(RulesMonthlyVo::getEnd).get();
 		System.out.println("ssdaw");
+
+		PasswordEncoder ENCODER = new BCryptPasswordEncoder();
+		System.out.println(ENCODER.encode("Qawe1"));
+		System.out.println(ENCODER.encode("Qawe1"));
+		System.out.println(ENCODER.encode("Qawe1"));
+		System.out.println(ENCODER.encode("Qawe1"));
+		System.out.println(ENCODER.encode("Qawe1"));
+
 	}
 }
 

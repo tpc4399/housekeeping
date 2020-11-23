@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
@@ -124,7 +125,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 return R.failed("验证码为空");
             }
         }
-        return R.ok("创建平台管理员成功");
+        return R.ok("创建公司账户成功");
     }
 
     @Override
@@ -150,7 +151,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                             maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
                         }
                         //在保存後台管理員詳情信息
-
+                        CustomerDetails customerDetails = new CustomerDetails();
+                        customerDetails.setPhonePrefix(registerDTO.getPhonePrefix());
+                        customerDetails.setPhone(registerDTO.getPhone());
+                        customerDetails.setUserId(maxUserId);
+                        customerDetails.setBlacklistFlag(false);//默认值false
+                        customerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+                        customerDetails.setCreateTime(LocalDateTime.now());
+                        customerDetails.setUpdateTime(LocalDateTime.now());
                     } else {
                         return R.ok("两次密码不一致");
                     }
@@ -161,7 +169,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 return R.failed("验证码为空");
             }
         }
-        return R.ok("创建平台管理员成功");
+        return R.ok("创建客户成功");
     }
 
     @Override
