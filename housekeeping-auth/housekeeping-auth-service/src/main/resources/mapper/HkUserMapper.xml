@@ -29,4 +29,16 @@
 				and phone = #{phone}
 				and dept_id = #{deptId}
 	</select>
+	<select id="byPhoneLogin" resultType="com.housekeeping.common.entity.HkUser">
+		SELECT id as id,
+			nickname as nickName,
+			phone_prefix as phonePrefix,
+			phone as phone,
+			email as email,
+			password as password,
+			dept_id as deptId
+		FROM `sys_user`
+		WHERE phone = #{phone}
+				and dept_id = #{deptId}
+	</select>
 </mapper>

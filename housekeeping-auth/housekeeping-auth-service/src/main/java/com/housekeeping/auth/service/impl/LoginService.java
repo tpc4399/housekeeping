@@ -54,7 +54,7 @@ public class LoginService implements ILoginService {
 
     @Override
     public R loginByPhoneAndPasswordHandle(String phonePrefix, String phone, String password, Integer deptId) {
-        HkUser hkUser = hkUserMapper.byPhone(phonePrefix, phone, deptId);
+        HkUser hkUser = hkUserMapper.byPhoneLogin(phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             if (CommonUtils.isNotEmpty(password)) {
                 if (DESEncryption.getEncryptString(password).equals(hkUser.getPassword())) {
