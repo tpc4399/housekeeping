@@ -21,5 +21,5 @@ public interface GroupDetailsMapper extends BaseMapper<GroupDetails> {
 
     IPage<List<GroupDetails>> getGroup(Page page,@Param("companyId") Integer companyId,@Param("id") Integer id);
 
-    R addMan(@Param("groupId") Integer groupId,@Param("managerId") Integer managerId);
+    void addMan(@Param("groupId") Integer groupId,@Param("managerId") Integer managerId);
 }
