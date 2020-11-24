@@ -10,6 +10,7 @@ import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
@@ -31,6 +32,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private ICompanyDetailsService companyService;
+
+    @Resource
+    private ICustomerDetailsService customerDetailsService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -159,6 +163,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         customerDetails.setCreateTime(LocalDateTime.now());
                         customerDetails.setUpdateTime(LocalDateTime.now());
+                        customerDetailsService.save(customerDetails);
                     } else {
                         return R.ok("两次密码不一致");
                     }

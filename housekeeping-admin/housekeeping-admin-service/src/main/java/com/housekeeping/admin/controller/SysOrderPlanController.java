@@ -29,7 +29,7 @@ public class SysOrderPlanController {
     @ApiOperation("订单计划创建（发布需求）")
     @PostMapping
     public R releaseOrderPlan(@RequestBody SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
-        return R.ok(sysOrderPlanService.releaseOrderPlan(sysOrderPlanDTO));
+        return sysOrderPlanService.releaseOrderPlan(sysOrderPlanDTO);
     }
 
 }
