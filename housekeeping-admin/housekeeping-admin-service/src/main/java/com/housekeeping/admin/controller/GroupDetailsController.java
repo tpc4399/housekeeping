@@ -44,13 +44,13 @@ public class GroupDetailsController {
 
     @ApiOperation("查看分組")
     @GetMapping("/getGroup")
-    public R getGroup(Page page, Integer companyId,Integer id){
+    public R getGroup(Page page, Integer companyId, Integer id){
         return R.ok(groupDetailsService.getGroup(page,companyId, id));
     }
 
     @ApiOperation("分組新增經理")
     @PostMapping("/addMan")
-    public R addMan(@RequestParam Integer groupId,@RequestParam Integer managerId){
+    public R addMan(@RequestParam Integer groupId, @RequestParam Integer managerId){
         return groupDetailsService.addMan(groupId,managerId);
     }
 

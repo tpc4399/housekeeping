@@ -15,7 +15,6 @@ import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.AutoPopulatingList;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -53,7 +52,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         groupDetails.setCreateTime(LocalDateTime.now());
         groupDetails.setUpdateTime(LocalDateTime.now());
         groupDetails.setLastReviserId(userId);
-        return R.ok(baseMapper.insert(groupDetails));
+        return R.ok(baseMapper.insert(groupDetails), "成功添加分組");
     }
 
     @Override
