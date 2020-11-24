@@ -61,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 break;
         }
         if (this.userMapper.selectCount(qr) == 0) {
-            return R.failed("手机号或者邮箱不存在,可以注册");
+            return R.ok("手机号或者邮箱不存在,可以注册");
         } else {
             return R.failed("手机号或者邮箱已存在");
         }
@@ -120,7 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
                     } else {
-                        return R.ok("两次密码不一致");
+                        return R.failed("两次密码不一致");
                     }
                 } else {
                     return R.failed("验证码错误");
@@ -202,7 +202,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         //再保存後台管理員詳情信息
 
                     } else {
-                        return R.ok("两次密码不一致");
+                        return R.failed("两次密码不一致");
                     }
                 } else {
                     return R.failed("验证码错误");
@@ -215,7 +215,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R sendForgetMSMessage(String phonePrefix, String phone, int deptId) {
+    public R sendForgetMSMessage(String phonePrefix, String phone, Integer deptId) {
         User hkUser = this.getUserByPhone(phonePrefix, phone, deptId);
         if (CommonUtils.isNotEmpty(hkUser)) {
             //生成随即验证码
@@ -255,5 +255,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return R.ok("密碼修改成功");
     }
 
+    @Override
+    public R verfifyCode(String phonePrefix, String phone, String code,Integer deptId) {
+        if (code.equals(redisUtils.get(CommonConstants.FORGET_KEY_BY_PHONE + "_" + deptId + "_+" + phonePrefix + "_" + phone))){
+            return R.ok("验证码通过");
+        }
+        return R.failed("验证码错误");
+    }
 
 }

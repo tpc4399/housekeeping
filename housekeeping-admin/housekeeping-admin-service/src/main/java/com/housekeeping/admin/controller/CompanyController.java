@@ -63,4 +63,12 @@ public class CompanyController {
         return userService.updatePwd(forgetDTO);
     }
 
+    @ApiOperation("校验验证码")
+    @GetMapping("/verfifyCompanyCode")
+    public R verfifyAdminCode(@RequestParam("phonePrefix") String phonePrefix,
+                              @RequestParam("phone") String phone,
+                              @RequestParam("code")String code){
+        return userService.verfifyCode(phonePrefix, phone,code,2);
+    }
+
 }
