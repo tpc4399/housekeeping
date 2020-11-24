@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.UserMapper;
@@ -35,6 +36,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private ICustomerDetailsService customerDetailsService;
+
+    @Autowired
+    private CustomerAddressServiceImpl customerAddressService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -164,6 +168,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerDetails.setCreateTime(LocalDateTime.now());
                         customerDetails.setUpdateTime(LocalDateTime.now());
                         customerDetailsService.save(customerDetails);
+                        CustomerAddress customerAddress = new CustomerAddress();
+                        customerAddress.setAddress(registerDTO.getLocaltion());
+                        customerAddress.setCustomerId(maxUserId);
+                        customerAddress.setIsDefault(true);
+                        customerAddress.setName("注册地址");
+                        customerAddressService.save(customerAddress);
                     } else {
                         return R.ok("两次密码不一致");
                     }

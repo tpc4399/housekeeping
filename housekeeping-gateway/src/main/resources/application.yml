@@ -54,6 +54,9 @@ housekeeping:
       - /api/admin/companyHuman/EmpUpdatePwd
       - /api/admin/customer/CusForgetSMS
       - /api/admin/customer/CusUpdatePwd
+      - /api/admin/companyHuman/verfifyCompanyCode
+      - /api/admin/customer/verfifyCustomerCode
+      - /api/admin/admin/verfifyAdminCode
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
