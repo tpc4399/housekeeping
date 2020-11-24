@@ -62,4 +62,12 @@ public class AdminController {
         return userService.updatePwd(forgetDTO);
     }
 
+    @ApiOperation("校验验证码")
+    @GetMapping("/verfifyAdminCode")
+    public R verfifyAdminCode(@RequestParam("phonePrefix") String phonePrefix,
+                              @RequestParam("phone") String phone,
+                              @RequestParam("code")String code){
+        return userService.verfifyCode(phonePrefix, phone,code,1);
+    }
+
 }

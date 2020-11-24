@@ -20,7 +20,9 @@ public interface IUserService extends IService<User> {
 
     R saveAdmin(RegisterDTO registerDTO);
 
-    R sendForgetMSMessage(String phonePrefix, String phone, int deptId);
+    R sendForgetMSMessage(String phonePrefix, String phone, Integer deptId);
 
     R updatePwd(ForgetDTO forgetDTO);
+
+    R verfifyCode(String phonePrefix, String phone,String code,Integer deptId);
 }
