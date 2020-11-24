@@ -182,6 +182,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             return R.ok("查重完成，並已上傳訂單");
         }else {
             baseMapper.delete(queryWrapper);
+            sysOrderService.removeById(maxId.get());
             return R.failed(res, "存在重複，清先解決時間段衝突");
         }
         /** 查重結果處理 */

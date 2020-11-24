@@ -12,4 +12,6 @@ public interface HkUserMapper {
     HkUser byPhone(@Param("phonePrefix") String phonePrefix,
                    @Param("phone") String phone,
                    @Param("deptId")  Integer deptId);
+    HkUser byPhoneLogin(@Param("phone") String phone,
+                        @Param("deptId")  Integer deptId);
 }

@@ -1,10 +1,15 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
 
     private final IUserService userService;
+    private final ICompanyDetailsService companyDetailsService;
 
     /**
      *
@@ -69,6 +75,20 @@ public class CompanyController {
                               @RequestParam("phone") String phone,
                               @RequestParam("code")String code){
         return userService.verfifyCode(phonePrefix, phone,code,2);
+    }
+
+    @ApiOperation("获取公司详情信息")
+    @GetMapping("/info")
+    public R getCompanyDetailsByUserId(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(queryWrapper);
+        if (CommonUtils.isNotEmpty(companyDetails)){
+            return R.ok(companyDetails);
+        } else {
+            return R.failed("公司不存在,请用公司账户获取信息");
+        }
     }
 
 }
