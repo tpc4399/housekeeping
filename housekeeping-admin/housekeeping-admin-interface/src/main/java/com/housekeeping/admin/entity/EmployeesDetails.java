@@ -42,11 +42,10 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     /* 身份證 */
     private String idCard;
 
-    /* 地址 */
-    private String location;
-
-    /* 地區 */
-    private String address;
+    private String address1;/* 省 */
+    private String address2;/* 市 */
+    private String address3;/* 區 */
+    private String address4;/* 詳細地址 */
 
     /* 工作年限 */
     private String workYear;
@@ -54,17 +53,11 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     /* 學歷 */
     private String educationBackground;
 
-    /* line賬號 */
-    private String accountLine;
+    private String accountLine;    /* line賬號 */
+    private String describes;    /* 描述 */
+    private Integer scopeOfOrder;    /* 接單範圍 */
+    private Integer numberOfOrders;    /* 接單次數 */
 
-    /* 描述 */
-    private String describes;
-
-    /* 接單範圍 */
-    private Integer scopeOfOrder;
-
-    /* 接單次數 */
-    private Integer numberOfOrders;
 
     /* 時薪 */
     private Integer hourlyWage;
@@ -78,21 +71,13 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     /* 照片 */
     private String phoneUrl;
 
-    /* 性別 */
-    private Boolean sex;
+    private Boolean sex;    /* 性別 */
+    private String tags;    /* 標簽 */
+    private String workExperience;    /* 工作經驗 */
+    private String recordOfFormalSchooling; /* 学历 */
+    private Integer blacklistFlag;    /* 是否加入黑名單 */
 
-    /* 標簽 */
-    private String tags;
-
-    /* 是否加入黑名單 */
-    private Integer blacklistFlag;
-
-    /* 创建时间 */
-    private LocalDateTime createTime;
-
-    /* 修改时间 */
-    private LocalDateTime updateTime;
-
-    /* 最后修改人 */
-    private Integer lastReviserId;
+    private LocalDateTime createTime;    /* 创建时间 */
+    private LocalDateTime updateTime;    /* 修改时间 */
+    private Integer lastReviserId;    /* 最后修改人 */
 }

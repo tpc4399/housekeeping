@@ -36,15 +36,22 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
                 wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
                 CompanyDetails one = companyDetailsService.getOne(wrComp);
-                String s = String.valueOf(System.currentTimeMillis());
-                employeesDetails.setNumber("emp"+s);
+                employeesDetails.setNumber(employeesDetailsDTO.getNumber());
                 employeesDetails.setName(employeesDetailsDTO.getName());
-                employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
-                employeesDetails.setPhone(employeesDetailsDTO.getPhone());
-                employeesDetails.setEmail(employeesDetailsDTO.getEmail());
-                employeesDetails.setAddress(employeesDetailsDTO.getAddress());
-                employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
                 employeesDetails.setSex(employeesDetailsDTO.getSex());
+                employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
+                employeesDetails.setIdCard(employeesDetailsDTO.getIdCard());
+                employeesDetails.setAddress1(employeesDetailsDTO.getAddress1());
+                employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
+                employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
+                employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
+                employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
+                employeesDetails.setWorkExperience(employeesDetailsDTO.getWorkExperience());
+                employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+                employeesDetails.setPhone(employeesDetailsDTO.getPhone());
+                employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
+                employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+
                 employeesDetails.setUpdateTime(LocalDateTime.now());
                 employeesDetails.setCreateTime(LocalDateTime.now());
                 employeesDetails.setCompanyId(one.getId());
@@ -61,15 +68,24 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     public R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) {
         EmployeesDetails employeesDetails = new EmployeesDetails();
         employeesDetails.setId(employeesDetailsDTO.getId());
+        employeesDetails.setNumber(employeesDetailsDTO.getNumber());
         employeesDetails.setName(employeesDetailsDTO.getName());
-        employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
-        employeesDetails.setPhone(employeesDetailsDTO.getPhone());
-        employeesDetails.setEmail(employeesDetailsDTO.getEmail());
-        employeesDetails.setAddress(employeesDetailsDTO.getAddress());
-        employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
         employeesDetails.setSex(employeesDetailsDTO.getSex());
-        employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
+        employeesDetails.setIdCard(employeesDetailsDTO.getIdCard());
+        employeesDetails.setAddress1(employeesDetailsDTO.getAddress1());
+        employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
+        employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
+        employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
+        employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
+        employeesDetails.setWorkExperience(employeesDetailsDTO.getWorkExperience());
+        employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+        employeesDetails.setPhone(employeesDetailsDTO.getPhone());
+        employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
+        employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+
         employeesDetails.setUpdateTime(LocalDateTime.now());
+        employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
         if(this.updateById(employeesDetails)){
             return R.ok("修改成功");
         }else {
