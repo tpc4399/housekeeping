@@ -2,12 +2,14 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.mapper.GroupEmployeesMapper;
 import com.housekeeping.admin.service.IGroupEmployeesService;
-import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Author su
@@ -15,6 +17,32 @@ import org.springframework.stereotype.Service;
  */
 @Service("groupEmployeesService")
 public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper, GroupEmployees> implements IGroupEmployeesService {
+    @Override
+    public R add(GroupEmployeesDTO groupEmployeesDTO) {
+        AtomicReference<Integer> count = new AtomicReference<>(0);
+        groupEmployeesDTO.getEmployeesId().forEach(x -> {
+            GroupEmployees groupEmployees = new GroupEmployees();
+            groupEmployees.setEmployeesId(x);
+            groupEmployees.setGroupId(groupEmployeesDTO.getGroupId());
+            baseMapper.insert(groupEmployees);
+            count.getAndSet(count.get() + 1);
+        });
+        return R.ok("分組成功添加"+count.get()+"個員工");
+    }
+
+    @Override
+    public R delete(GroupEmployeesDTO groupEmployeesDTO) {
+        AtomicReference<Integer> count = new AtomicReference<>(0);
+        groupEmployeesDTO.getEmployeesId().forEach(x -> {
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
+            queryWrapper.eq("employees_id", x);
+            baseMapper.delete(queryWrapper);
+            count.getAndSet(count.get() + 1);
+        });
+        return R.ok("分組成功刪除"+count.get()+"個員工");
+    }
+
     @Override
     public R matchTheEmployees(Integer managerId) {
         QueryWrapper queryWrapper = new QueryWrapper();

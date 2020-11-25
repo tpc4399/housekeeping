@@ -3,6 +3,9 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.GroupDetailsDTO;
+import com.housekeeping.admin.dto.GroupDetailsUpdateDTO;
+import com.housekeeping.admin.dto.GroupEmployeesDTO;
+import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.entity.GroupDetails;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.common.utils.R;
@@ -12,7 +15,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 
 
 @Api(value="分組controller",tags={"【公司】分組管理接口"})
@@ -31,14 +33,13 @@ public class GroupDetailsController {
 
     @ApiOperation("修改分組")
     @PostMapping("/updateGroup")
-    public R updateGroup(@RequestBody GroupDetails group){
-        group.setUpdateTime(LocalDateTime.now());
-        return R.ok(groupDetailsService.updateById(group));
+    public R updateGroup(@RequestBody GroupDetailsUpdateDTO groupDetailsUpdateDTO){
+        return groupDetailsService.updateGroup(groupDetailsUpdateDTO);
     }
 
     @ApiOperation("刪除分組")
-    @DeleteMapping("/deleteGroup/{id}")
-    public R deleteGroup(@PathVariable("id")Integer id){
+    @DeleteMapping("/groupDetails/{id}")
+    public R deleteGroupDetails(@PathVariable("id") Integer id){
         return groupDetailsService.cusRemove(id);
     }
 
@@ -47,12 +48,5 @@ public class GroupDetailsController {
     public R getGroup(Page page, Integer companyId, Integer id){
         return R.ok(groupDetailsService.getGroup(page,companyId, id));
     }
-
-    @ApiOperation("分組新增經理")
-    @PostMapping("/addMan")
-    public R addMan(@RequestParam Integer groupId, @RequestParam Integer managerId){
-        return groupDetailsService.addMan(groupId,managerId);
-    }
-
 
 }

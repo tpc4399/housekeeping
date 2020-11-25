@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.GroupDetailsDTO;
+import com.housekeeping.admin.dto.GroupDetailsUpdateDTO;
+import com.housekeeping.admin.dto.GroupEmployeesDTO;
+import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.GroupDetails;
 import com.housekeeping.admin.mapper.GroupDetailsMapper;
@@ -56,6 +59,34 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     }
 
     @Override
+    public R updateGroup(GroupDetailsUpdateDTO groupDetailsUpdateDTO) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(queryWrapper);
+        Integer companyId = companyDetails.getId();
+        /** 检查组名重复性 */
+        List<GroupDetails> groupDetailsList = new ArrayList<>();
+        QueryWrapper queryWrapper1 = new QueryWrapper();
+        queryWrapper1.eq("company_id", companyId);
+        groupDetailsList = baseMapper.selectList(queryWrapper1);
+
+        for (int i = 0; i < groupDetailsList.size(); i++) {
+            if (groupDetailsList.get(i).getGroupName().equals(groupDetailsUpdateDTO.getGroupName())){
+                return R.failed("贵公司组名"+ groupDetailsUpdateDTO.getGroupName() +"已经被占有");
+            }
+        }
+
+        GroupDetails groupDetails = new GroupDetails();
+        groupDetails.setId(groupDetailsUpdateDTO.getId());
+        groupDetails.setGroupName(groupDetailsUpdateDTO.getGroupName());
+        groupDetails.setUpdateTime(LocalDateTime.now());
+        groupDetails.setLastReviserId(userId);
+        baseMapper.updateGroup(groupDetails);
+        return R.ok("成功修改分組");
+    }
+
+    @Override
     public R cusRemove(Integer id) {
         if(id != null){
             this.removeById(id);
@@ -72,9 +103,4 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         return baseMapper.getGroup(page,companyId,id);
     }
 
-    @Override
-    public R addMan(Integer groupId, Integer managerId) {
-        baseMapper.addMan(groupId, managerId);
-        return R.ok("添加成功");
-    }
 }
