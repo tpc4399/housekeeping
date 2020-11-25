@@ -9,6 +9,7 @@ import com.housekeeping.admin.service.IGroupEmployeesService;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -24,10 +25,22 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
             GroupEmployees groupEmployees = new GroupEmployees();
             groupEmployees.setEmployeesId(x);
             groupEmployees.setGroupId(groupEmployeesDTO.getGroupId());
-            baseMapper.insert(groupEmployees);
-            count.getAndSet(count.get() + 1);
+            //判断是否存在
+            QueryWrapper queryWrapper = new QueryWrapper();
+            queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
+            queryWrapper.eq("employees_id", x);
+            List<GroupEmployees> res = baseMapper.selectList(queryWrapper);
+            if ( res == null || res.size() == 0){
+                baseMapper.insert(groupEmployees);
+                count.getAndSet(count.get() + 1);
+            }
         });
-        return R.ok("分組成功添加"+count.get()+"個員工");
+        Integer s = groupEmployeesDTO.getEmployeesId().size() - count.get();
+        if (s == 0){
+            return R.ok("分組成功添加"+count.get()+"個員工");
+        }else {
+            return R.ok("分組成功添加"+count.get()+"個員工,有" + s + "个员工是已经存在于该分组的");
+        }
     }
 
     @Override

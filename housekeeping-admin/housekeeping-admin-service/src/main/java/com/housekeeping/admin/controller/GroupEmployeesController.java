@@ -29,7 +29,7 @@ public class GroupEmployeesController {
     @ApiOperation("分组批量刪除员工")
     @DeleteMapping
     public R delete(@RequestBody GroupEmployeesDTO groupEmployeesDTO){
-        return R.ok();
+        return groupEmployeesService.delete(groupEmployeesDTO);
     }
 
 }
