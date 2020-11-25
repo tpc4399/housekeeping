@@ -27,7 +27,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     public String uploadLogo(MultipartFile file, Integer reviserId) throws IOException {
         LocalDateTime now = LocalDateTime.now();
         String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String catalogue = CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV + reviserId;
+        String catalogue = CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + reviserId;
         File mkdir = new File(catalogue);
         if (!mkdir.exists()){
             mkdir.mkdirs();
@@ -57,7 +57,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     public String uploadFiveImg(MultipartFile[] files, Integer reviserId) {
         LocalDateTime now = LocalDateTime.now();
         String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String catalogue = CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV + reviserId;
+        String catalogue = CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + reviserId;
         File mkdir = new File(catalogue);
         if (!mkdir.exists()){
             mkdir.mkdirs();

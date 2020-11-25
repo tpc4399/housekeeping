@@ -57,7 +57,7 @@ public class CompanyDetailsController {
     @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getFile(@RequestParam("userId") Integer userId) throws IOException {
         String logoName = companyDetailsService.getLogoUrlByUserId(userId);
-        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV + userId + "/" + logoName);
+        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + userId + "/" + logoName);
         InputStream in = new FileInputStream(file);
         byte[] body = null;
         body = new byte[in.available()];
@@ -87,7 +87,7 @@ public class CompanyDetailsController {
     public R getFiveImg(@RequestParam("userId") Integer userId) throws IOException {
         String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
         List<ResponseEntity<byte[]>> res = new ArrayList<>();
-        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV + userId);
+        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
         File[] parentFiles = file.listFiles();
         Arrays.stream(parentFiles).forEach(parentFile -> {
             String fileName = parentFile.getName();
