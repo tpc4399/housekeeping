@@ -9,52 +9,18 @@ import lombok.Data;
 @Data
 public class CompanyDetailsDTO {
 
-    /* 主键 */
-    private Integer id;
-
-    /* 公司简介 */
-    private String companyProfile;
-
-    /* 主打业务 */
-    private String mainBusiness;
-
-    /* 优惠 */
-    private String preferential;
-
-    /* 活动 */
-    private String activity;
-
-    /* 公司架构 */
-    private String companyStructure;
-
-    /* 地区 */
-    private String region;
-
-    /* 详细地址 */
-    private String detailAddress;
-
-    /* 服务热线 */
-    private String serviceHotline;
-
-    /* 公司邮箱 */
-    private String email;
-
-    /* 网页 */
-    private String webPages;
-
-    /* LINE账号 */
-    private String accountLine;
-
-    /* facebook链接 */
-    private String connectionFacebook;
-
-    /* Instagram链接 */
-    private String connectionInstagram;
-
-    /* 公司描述 */
-    private String describes;
-
-    /* 支付方式 */
-    private String methodPayment;
+    private Integer id;    /* 主键 */
+    private String address1;/* 省 */
+    private String address2;/* 市 */
+    private String address3;/* 區 */
+    private String address4;/* 詳細地址 */
+    private String serviceHotline;    /* 服务热线 */
+    private String email;    /* 公司邮箱 */
+    private String webPages;    /* 网页 */
+    private String accountLine;    /* LINE账号 */
+    private String connectionFacebook;    /* facebook链接 */
+    private String connectionInstagram;    /* Instagram链接 */
+    private String describes;    /* 公司描述 */
+    private String methodPayment;    /* 支付方式 */
 
 }

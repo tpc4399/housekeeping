@@ -36,8 +36,10 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private String industrialNumber;    /* 工商注册编号 */
     private String logoUrl;    /* logo url */
     private String photos;    /* 五张照片url拼接 */
-    private String region;    /* 地区 */
-    private String detailAddress;    /* 详细地址 */
+    private String address1;/* 省 */
+    private String address2;/* 市 */
+    private String address3;/* 區 */
+    private String address4;/* 詳細地址 */
     private String serviceHotline;    /* 服务热线 */
     private String email;    /* 公司邮箱 */
     private String webPages;    /* 网页 */

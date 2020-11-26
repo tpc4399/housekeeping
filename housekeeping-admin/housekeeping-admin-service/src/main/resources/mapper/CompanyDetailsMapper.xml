@@ -3,36 +3,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.housekeeping.admin.mapper.CompanyDetailsMapper">
-
-    <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.CompanyDetails">
-        <id property="id" column="id"/>
-        <result property="number" column="number"/>
-        <result property="companyName" column="company_name"/>
-        <result property="companySizeId" column="company_size_id"/>
-        <result property="companyProfile" column="company_profile"/>
-        <result property="mainBusiness" column="main_business"/>
-        <result property="preferential" column="preferential"/>
-        <result property="activity" column="activity"/>
-        <result property="companyStructure" column="company_structure"/>
-        <result property="legalPerson" column="legal_person"/>
-        <result property="isValidate" column="is_validate"/>
-        <result property="industrialNumber" column="industrial_number"/>
-        <result property="logoUrl" column="logo_url"/>
-        <result property="photos" column="photos"/>
-        <result property="region" column="region"/>
-        <result property="detailAddress" column="detail_address"/>
-        <result property="serviceHotline" column="service_hotline"/>
-        <result property="email" column="email"/>
-        <result property="webPages" column="web_pages"/>
-        <result property="accountLine" column="account_line"/>
-        <result property="connectionFacebook" column="connection_facebook"/>
-        <result property="connectionInstagram" column="connection_instagram"/>
-        <result property="describes" column="describes"/>
-        <result property="methodPayment" column="method_payment"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="lastReviserId" column="last_reviser_id"/>
-    </resultMap>
     <update id="updateLogoUrlById">
         UPDATE company_details
         SET logo_url = #{logoUrl}
@@ -46,19 +16,16 @@
     <update id="updateById">
         UPDATE company_details
         SET last_reviser_id = #{lastReviserId},
-            company_profile = #{companyDetailsDTO.companyProfile},
-            main_business = #{companyDetailsDTO.mainBusiness},
-            preferential = #{companyDetailsDTO.preferential},
-            activity = #{companyDetailsDTO.activity},
-            company_structure = #{companyDetailsDTO.companyStructure},
-            region = #{companyDetailsDTO.region},
-            detail_address = #{companyDetailsDTO.detailAddress},
+            address1 = #{companyDetailsDTO.address1},
+            address2 = #{companyDetailsDTO.address2},
+            address3 = #{companyDetailsDTO.address3},
+            address4 = #{companyDetailsDTO.address4},
             service_hotline = #{companyDetailsDTO.serviceHotline},
             email = #{companyDetailsDTO.email},
             web_pages = #{companyDetailsDTO.webPages},
             account_line = #{companyDetailsDTO.accountLine},
             connection_facebook = #{companyDetailsDTO.connectionFacebook},
-            connection_instagram = #{companyDetailsDTO.connectionInstagram}
+            connection_instagram = #{companyDetailsDTO.connectionInstagram},
             describes = #{companyDetailsDTO.describes},
             method_payment = #{companyDetailsDTO.methodPayment}
         WHERE id = #{companyDetailsDTO.id}

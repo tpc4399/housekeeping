@@ -24,7 +24,4 @@ public class RegisterDTO {
     /* 确认密码 */
     private String repassword;
 
-    /* 定位 */
-    private String localtion;
-
 }
