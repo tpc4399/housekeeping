@@ -31,7 +31,7 @@
         WHERE id = #{companyDetailsDTO.id}
     </update>
     <select id="getLogoUrlByUserId" resultType="java.lang.String">
-        SELECT log_url
+        SELECT logo_url
         FROM company_details
         WHERE user_id = #{userId}
     </select>
