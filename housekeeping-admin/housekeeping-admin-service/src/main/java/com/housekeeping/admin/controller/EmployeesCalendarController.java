@@ -22,7 +22,7 @@ public class EmployeesCalendarController {
 
     private final IEmployeesCalendarService employeesCalendarService;
 
-    @ApiOperation("设置员工最通用的每日工作时间")
+    @ApiOperation("【员工】设置员工最通用的每日工作时间")
     @PutMapping("/setCalendar")
     public R setCalendar(@RequestBody EmployeesCalendarDTO employeesCalendarDTO){
         return employeesCalendarService.setCalendar(employeesCalendarDTO);
@@ -33,19 +33,19 @@ public class EmployeesCalendarController {
      * @param employeesCalendarWeekDTO
      * @return
      */
-    @ApiOperation("按周几设置员工最每日工作时间")
+    @ApiOperation("【员工】按周几设置员工最每日工作时间")
     @PutMapping("/setCalendarWeek")
     public R setCalendarWeek(@RequestBody EmployeesCalendarWeekDTO employeesCalendarWeekDTO){
         return employeesCalendarService.setCalendarWeek(employeesCalendarWeekDTO);
     }
 
-    @ApiOperation("按日期设置员工最每日工作时间")
+    @ApiOperation("【员工】按日期设置员工最每日工作时间")
     @PutMapping("/setCalendarDate")
     public R setCalendarDate(@RequestBody EmployeesCalendarDateDTO employeesCalendarDateDTO){
         return employeesCalendarService.setCalendarDate(employeesCalendarDateDTO);
     }
 
-    @ApiOperation("获取员工日程表")
+    @ApiOperation("【员工】获取员工日程表")
     @GetMapping("/getCalendar/{employeesId}")
     private R getCalendarByEmployees(@PathVariable("employeesId") Integer employeesId){
         return employeesCalendarService.getCalendarByEmployees(employeesId);

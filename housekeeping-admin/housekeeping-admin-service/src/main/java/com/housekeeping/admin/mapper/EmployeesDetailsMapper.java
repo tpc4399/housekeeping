@@ -13,5 +13,4 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
 
     String getScaleById(Integer id);
 
-    IPage<List<EmployeesDetailsVO>> cusPage(Page page, @Param("id") Integer id,@Param("companyId")Integer companyId);
 }

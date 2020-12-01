@@ -209,6 +209,20 @@ public class CommonUtils {
 		System.out.println(ENCODER.encode("Qawe1"));
 		System.out.println(ENCODER.encode("Qawe1"));
 
+		Integer a = 127;
+		Integer b = 127;
+		Integer c = 128;
+		Integer d = 128;
+		System.out.println(a == b);  //true
+		System.out.println(c == d);	 //false
+
+		Integer aa = -128;
+		Integer bb = -128;
+		Integer cc = -129;
+		Integer dd = -129;
+		System.out.println(aa == bb);  //true
+		System.out.println(cc == dd);  //false
+
 	}
 }
 

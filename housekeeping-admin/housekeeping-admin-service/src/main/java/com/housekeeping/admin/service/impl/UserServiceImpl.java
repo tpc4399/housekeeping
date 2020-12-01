@@ -169,7 +169,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerDetails.setUpdateTime(LocalDateTime.now());
                         customerDetailsService.save(customerDetails);
                         CustomerAddress customerAddress = new CustomerAddress();
-                        customerAddress.setAddress(registerDTO.getLocaltion());
                         customerAddress.setCustomerId(maxUserId);
                         customerAddress.setIsDefault(true);
                         customerAddress.setName("注册地址");

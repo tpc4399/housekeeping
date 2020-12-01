@@ -37,7 +37,7 @@
 		select scale from company_scale where id = #{id}
 	</select>
 
-	<select id="cusPage" resultMap="baseResultMap">
+	<select id="cusPage" resultType="com.baomidou.mybatisplus.core.metadata.IPage">
 		SELECT
 		ed.id,
 		ed.number,

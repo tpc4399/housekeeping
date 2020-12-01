@@ -31,7 +31,7 @@ public class AdminController {
         return r;
     }
 
-    @ApiOperation("【平台管理员注册】发送验证码")
+    @ApiOperation("註冊1发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
     @GetMapping("/AdminSMS")
     public R registerA(@RequestParam("phonePrefix") String phonePrefix,
@@ -39,14 +39,14 @@ public class AdminController {
         return userService.sendRegisterMSMessage(phonePrefix,phone,1);
     }
 
-    @ApiOperation("【注册】管理员注册")
+    @ApiOperation("註冊2發送资料")
     @LogFlag(description = "注册管理员账号")
     @PostMapping("/saveAdmin")
     public R saveAdmin(@RequestBody RegisterDTO registerDTO){
         return userService.saveAdmin(registerDTO);
     }
 
-    @ApiOperation("【平台管理员忘記密碼】发送验证码")
+    @ApiOperation("忘记密码1发送验证码")
     @LogFlag(description = "平台管理员忘記密碼")
     @GetMapping("/AdminForgetSMS")
     public R adminForgetSMS(@RequestParam("phonePrefix") String phonePrefix,
@@ -54,7 +54,7 @@ public class AdminController {
         return userService.sendForgetMSMessage(phonePrefix,phone,1);
     }
 
-    @ApiOperation("管理員忘記密碼,修改密碼")
+    @ApiOperation("忘记密码1发送新密码")
     @LogFlag(description = "管理員忘記密碼,修改密碼")
     @PostMapping("/AdminUpdatePwd")
     public R adminUpdatePwd(@RequestBody ForgetDTO forgetDTO){

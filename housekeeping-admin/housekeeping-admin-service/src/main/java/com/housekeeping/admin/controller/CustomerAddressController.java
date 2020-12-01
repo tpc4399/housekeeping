@@ -21,13 +21,13 @@ public class CustomerAddressController {
 
     private final ICustomerAddressService customerAddressService;
 
-    @ApiOperation("添加地址")
+    @ApiOperation("【客户】添加地址")
     @PostMapping
     public R addAddress(@RequestBody CustomerAddressAddDTO customerAddressAddDTO){
         return customerAddressService.addAddress(customerAddressAddDTO);
     }
 
-    @ApiOperation("修改地址")
+    @ApiOperation("【客户】修改地址")
     @PutMapping
     public R updateAddress(@RequestBody CustomerAddressUpdateDTO customerAddressUpdateDTO){
         return customerAddressService.updateAddress(customerAddressUpdateDTO);

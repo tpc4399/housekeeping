@@ -24,7 +24,7 @@ public class SysOrderController {
 
     private final ISysOrderService sysOrderService;
 
-    @ApiOperation("分頁查詢訂單")
+    @ApiOperation("【公司】【经理】分頁查詢訂單")
     @GetMapping("pageOfSysOrder")
     public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO){
         return sysOrderService.page(page, sysOrderDTO);

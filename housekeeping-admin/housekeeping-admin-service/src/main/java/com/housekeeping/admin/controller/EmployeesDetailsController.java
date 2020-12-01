@@ -24,41 +24,41 @@ public class EmployeesDetailsController {
 
     private final EmployeesDetailsService employeesDetailsService;
 
-    @ApiOperation("新增員工")
+    @ApiOperation("【公司】新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
     public R saveEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
         return employeesDetailsService.saveEmp(employeesDetailsDTO);
     }
 
-    @ApiOperation("修改員工信息")
+    @ApiOperation("【公司】修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
         return employeesDetailsService.updateEmp(employeesDetailsDTO);
     }
 
-    @ApiOperation("刪除員工")
+    @ApiOperation("【公司】【經理】刪除員工")
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(@RequestBody EmployeesDetails employeesDetails){
         return R.ok(employeesDetailsService.removeById(employeesDetails));
     }
 
-    @ApiOperation("查詢當前公司員工(所有、id)")
+    @ApiOperation("【公司】【經理】查詢當前公司員工(所有、id)")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page")
-    public R page(Page page,Integer id){
-        return R.ok(employeesDetailsService.cusPage(page,id));
+    public R page(Page page, EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, employeesDetailsDTO);
     }
 
-    @ApiOperation("根据id生成登入链接")
+    @ApiOperation("【公司】【經理】根据id生成登入链接")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return employeesDetailsService.getLinkToLogin(id, h);
     }
 
-    @ApiOperation("根据id生成登入二维码")
+    @ApiOperation("【公司】【經理】根据id生成登入二维码")
     @GetMapping("/getQrCodeToLogin/{id}")
     public void getQrCodeToLogin(@PathVariable Integer id,
                               @RequestParam("h") Long h,

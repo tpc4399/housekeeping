@@ -95,12 +95,55 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public IPage cusPage(Page page, Integer id) {
-        Integer userId = TokenUtils.getCurrentUserId();
-        QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-        wrComp.inSql("id","select id from company_details where user_id="+ userId);
-        CompanyDetails one = companyDetailsService.getOne(wrComp);
-        return baseMapper.cusPage(page,id,one.getId());
+    public R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO) {
+        QueryWrapper  queryWrapper = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getNumber())){
+            queryWrapper.like("number", employeesDetailsDTO.getNumber());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getName())){
+            queryWrapper.like("name", employeesDetailsDTO.getName());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getSex())){
+            queryWrapper.eq("sex", employeesDetailsDTO.getSex());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getDateOfBirth())){
+            queryWrapper.eq("date_of_birth", employeesDetailsDTO.getDateOfBirth());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getIdCard())){
+            queryWrapper.like("id_card", employeesDetailsDTO.getIdCard());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress1())){
+            queryWrapper.like("address1", employeesDetailsDTO.getAddress1());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress2())){
+            queryWrapper.like("address2", employeesDetailsDTO.getAddress2());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress3())){
+            queryWrapper.like("address3", employeesDetailsDTO.getAddress3());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress4())){
+            queryWrapper.like("address4", employeesDetailsDTO.getAddress4());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getScopeOfOrder())){
+            queryWrapper.le("scope_of_order", employeesDetailsDTO.getScopeOfOrder());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getWorkExperience())){
+            queryWrapper.like("work_experience", employeesDetailsDTO.getWorkExperience());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getRecordOfFormalSchooling())){
+            queryWrapper.like("record_of_formal_schooling", employeesDetailsDTO.getRecordOfFormalSchooling());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getPhone())){
+            queryWrapper.like("phone", employeesDetailsDTO.getPhone());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAccountLine())){
+            queryWrapper.like("account_line", employeesDetailsDTO.getAccountLine());
+        }
+        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getDescribes())){
+            queryWrapper.like("describe", employeesDetailsDTO.getDescribes());
+        }
+        IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
 
     @Override
