@@ -24,41 +24,41 @@ public class ManagerDetailsController {
 
     private final ManagerDetailsService managerDetailsService;
 
-    @ApiOperation("新增經理")
+    @ApiOperation("【公司】新增經理")
     @LogFlag(description = "新增經理")
     @PostMapping("/saveEmp")
     public R saveEmp(@RequestBody ManagerDetailsDTO managerDetailsDTO){
         return managerDetailsService.saveEmp(managerDetailsDTO);
     }
 
-    @ApiOperation("修改經理信息")
+    @ApiOperation("【公司】修改經理信息")
     @LogFlag(description = "修改經理信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody ManagerDetailsDTO managerDetailsDTO){
         return managerDetailsService.updateEmp(managerDetailsDTO);
     }
 
-    @ApiOperation("刪除經理")
+    @ApiOperation("【公司】刪除經理")
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(@RequestBody ManagerDetails managerDetails){
         return R.ok(managerDetailsService.removeById(managerDetails));
     }
 
-    @ApiOperation("查詢當前公司經理(所有、id)")
+    @ApiOperation("【公司】查詢當前公司經理(所有、id)")
     @LogFlag(description = "查詢經理")
     @GetMapping("/page")
     public R page(Page page, Integer id){
         return R.ok(managerDetailsService.cusPage(page,id));
     }
 
-    @ApiOperation("根据id生成登入链接")
+    @ApiOperation("【公司】根据id生成登入链接")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return managerDetailsService.getLinkToLogin(id, h);
     }
 
-    @ApiOperation("根据id生成登入二维码")
+    @ApiOperation("【公司】根据id生成登入二维码")
     @GetMapping("/getQrCodeToLogin/{id}")
     public void getQrCodeToLogin(@PathVariable Integer id,
                                  @RequestParam("h") Long h,

@@ -24,14 +24,14 @@ public class AdminController {
      * @param type 1 手机号 2 邮箱
      * @return
      */
-    @ApiOperation("异步检测管理员手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @ApiOperation("【管理员】异步检测管理员手机号或者邮箱是否重复(1 手机号 2 邮箱)")
     @GetMapping("/checkAdmin/{data}/{type}")
     public R checkDataAdmin(@PathVariable("data")String data, @PathVariable("type")Integer type){
         R r = this.userService.checkData(1, data, type);
         return r;
     }
 
-    @ApiOperation("註冊1发送验证码")
+    @ApiOperation("【管理员】註冊1发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
     @GetMapping("/AdminSMS")
     public R registerA(@RequestParam("phonePrefix") String phonePrefix,
@@ -39,14 +39,14 @@ public class AdminController {
         return userService.sendRegisterMSMessage(phonePrefix,phone,1);
     }
 
-    @ApiOperation("註冊2發送资料")
+    @ApiOperation("【管理员】註冊2發送资料")
     @LogFlag(description = "注册管理员账号")
     @PostMapping("/saveAdmin")
     public R saveAdmin(@RequestBody RegisterDTO registerDTO){
         return userService.saveAdmin(registerDTO);
     }
 
-    @ApiOperation("忘记密码1发送验证码")
+    @ApiOperation("【管理员】忘记密码1发送验证码")
     @LogFlag(description = "平台管理员忘記密碼")
     @GetMapping("/AdminForgetSMS")
     public R adminForgetSMS(@RequestParam("phonePrefix") String phonePrefix,
@@ -54,7 +54,7 @@ public class AdminController {
         return userService.sendForgetMSMessage(phonePrefix,phone,1);
     }
 
-    @ApiOperation("忘记密码1发送新密码")
+    @ApiOperation("【管理员】忘记密码1发送新密码")
     @LogFlag(description = "管理員忘記密碼,修改密碼")
     @PostMapping("/AdminUpdatePwd")
     public R adminUpdatePwd(@RequestBody ForgetDTO forgetDTO){
@@ -62,7 +62,7 @@ public class AdminController {
         return userService.updatePwd(forgetDTO);
     }
 
-    @ApiOperation("校验验证码")
+    @ApiOperation("【管理员】校验验证码")
     @GetMapping("/verfifyAdminCode")
     public R verfifyAdminCode(@RequestParam("phonePrefix") String phonePrefix,
                               @RequestParam("phone") String phone,

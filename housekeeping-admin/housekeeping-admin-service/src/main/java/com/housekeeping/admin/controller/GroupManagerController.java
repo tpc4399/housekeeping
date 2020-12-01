@@ -22,13 +22,13 @@ public class GroupManagerController {
 
     private final IGroupManagerService groupManagerService;
 
-    @ApiOperation("分组批量添加员工")
+    @ApiOperation("【公司】分组批量添加员工")
     @PostMapping
     public R add(@RequestBody GroupManagerDTO groupManagerDTO){
         return groupManagerService.add(groupManagerDTO);
     }
 
-    @ApiOperation("分组批量刪除员工")
+    @ApiOperation("【公司】分组批量刪除员工")
     @DeleteMapping
     public R delete(@RequestBody GroupManagerDTO groupManagerDTO){
         return groupManagerService.delete(groupManagerDTO);

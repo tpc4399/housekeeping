@@ -19,7 +19,7 @@ public class CustomerDetailsController {
 
     private final ICustomerDetailsService customerDetailsService;
 
-    @ApiOperation("设置为默认地址")
+    @ApiOperation("【客户】设置为默认地址")
     @PutMapping("/toDefault")
     public R toDefault(Integer id){
         return customerDetailsService.toDefault(id);

@@ -33,7 +33,7 @@ public class CompanyDetailsController {
 
    private final ICompanyDetailsService companyDetailsService;
 
-    @ApiOperation("修改公司信息")
+    @ApiOperation("【公司】修改公司信息")
     @LogFlag(description = "修改公司信息")
     @PostMapping("/update")
     public R updateCompany(@RequestBody CompanyDetailsDTO companyDetailsDTO){
@@ -41,7 +41,7 @@ public class CompanyDetailsController {
         return R.ok("修改成功");
     }
 
-    @ApiOperation("公司上传logo")
+    @ApiOperation("【公司】公司上传logo")
     @LogFlag(description = "公司上传logo")
     @PostMapping("/uploadLogo")
     public R uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
@@ -71,7 +71,7 @@ public class CompanyDetailsController {
         return new ResponseEntity<byte[]>(body, headers, statusCode);
     }
 
-    @ApiOperation("多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @ApiOperation("【公司】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/uploadFiveImg", headers = "content-type=multipart/form-data")
     public R uploadFiveImg(@RequestParam("file") MultipartFile[] file){
         Integer reviserId = TokenUtils.getCurrentUserId();
@@ -121,7 +121,7 @@ public class CompanyDetailsController {
         return R.ok(res);
     }
 
-    @ApiOperation("获取公司详情信息")
+    @ApiOperation("【公司】获取公司详情信息")
     @GetMapping("/details")
     public R getCompanyDetailsByUserId(@RequestParam("userId") Integer userId){
         QueryWrapper queryWrapper = new QueryWrapper();

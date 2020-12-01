@@ -23,14 +23,14 @@ public class CustomerController {
      * @param type 1 手机号 2 邮箱
      * @return
      */
-    @ApiOperation("异步检测客户手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @ApiOperation("【客户】异步检测客户手机号或者邮箱是否重复(1 手机号 2 邮箱)")
     @GetMapping("/checkCus/{data}/{type}")
     public R checkDataCus(@PathVariable("data")String data, @PathVariable("type")Integer type){
         R r = this.userService.checkData(3, data, type);
         return r;
     }
 
-    @ApiOperation("【客户注册】发送验证码")
+    @ApiOperation("【客户】注册1发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
     @GetMapping("/CusSMS")
     public R registerC(@RequestParam("phonePrefix") String phonePrefix,
@@ -38,7 +38,7 @@ public class CustomerController {
         return userService.sendRegisterMSMessage(phonePrefix,phone,3);
     }
 
-    @ApiOperation("【注册】客户注册")
+    @ApiOperation("【客户】注册2发送注册信息")
     @LogFlag(description = "注册客户账号")
     @PostMapping("/saveCus")
     public R saveCus(@RequestBody RegisterDTO registerDTO){
@@ -46,7 +46,7 @@ public class CustomerController {
     }
 
 
-    @ApiOperation("【客户忘記密碼】发送验证码")
+    @ApiOperation("【客户】忘记密码1发送验证码")
     @LogFlag(description = "客户忘記密碼")
     @GetMapping("/CusForgetSMS")
     public R cusForgetSMS(@RequestParam("phonePrefix") String phonePrefix,
@@ -54,7 +54,7 @@ public class CustomerController {
         return userService.sendForgetMSMessage(phonePrefix,phone,3);
     }
 
-    @ApiOperation("客户忘記密碼,修改密碼")
+    @ApiOperation("【客户】忘记密码2发送新密码")
     @LogFlag(description = "客户忘記密碼,修改密碼")
     @PostMapping("/CusUpdatePwd")
     public R cusUpdatePwd(@RequestBody ForgetDTO forgetDTO){
@@ -62,7 +62,7 @@ public class CustomerController {
         return userService.updatePwd(forgetDTO);
     }
 
-    @ApiOperation("校验验证码")
+    @ApiOperation("【客户】校验验证码")
     @GetMapping("/verfifyCustomerCode")
     public R verfifyAdminCode(@RequestParam("phonePrefix") String phonePrefix,
                               @RequestParam("phone") String phone,

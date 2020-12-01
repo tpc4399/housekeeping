@@ -20,13 +20,13 @@ public class GroupEmployeesController {
 
     private final IGroupEmployeesService groupEmployeesService;
 
-    @ApiOperation("分组批量添加员工")
+    @ApiOperation("【公司】分组批量添加员工")
     @PostMapping
     public R add(@RequestBody GroupEmployeesDTO groupEmployeesDTO){
         return groupEmployeesService.add(groupEmployeesDTO);
     }
 
-    @ApiOperation("分组批量刪除员工")
+    @ApiOperation("【公司】分组批量刪除员工")
     @DeleteMapping
     public R delete(@RequestBody GroupEmployeesDTO groupEmployeesDTO){
         return groupEmployeesService.delete(groupEmployeesDTO);
