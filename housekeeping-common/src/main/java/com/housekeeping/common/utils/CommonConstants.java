@@ -56,6 +56,31 @@ public interface CommonConstants {
 	String LOGIN_MANAGER_PREFIX = "LOGIN_MANAGER_";
 
 	/**
+	 * 管理员请求标志
+	 */
+	String REQUEST_ORIGIN_ADMIN = "REQUEST_ORIGIN_ADMIN";
+
+	/**
+	 * 管理员请求标志
+	 */
+	String REQUEST_ORIGIN_COMPANY = "REQUEST_ORIGIN_COMPANY";
+
+	/**
+	 * 经理请求标志
+	 */
+	String REQUEST_ORIGIN_MANAGER = "REQUEST_ORIGIN_MANAGER";
+
+	/**
+	 * 员工请求标志
+	 */
+	String REQUEST_ORIGIN_EMPLOYEES = "REQUEST_ORIGIN_EMPLOYEES";
+
+	/**
+	 * 客户请求标志
+	 */
+	String REQUEST_ORIGIN_CUSTOMER = "REQUEST_ORIGIN_CUSTOMER";
+
+	/**
 	 * 删除
 	 */
 	String STATUS_DEL = "1";

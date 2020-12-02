@@ -73,7 +73,6 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
 
     private Boolean sex;    /* 性別 */
     private String tags;    /* 標簽 */
-    private String workExperience;    /* 工作經驗 */
     private String recordOfFormalSchooling; /* 学历 */
     private Integer blacklistFlag;    /* 是否加入黑名單 */
 

@@ -5,6 +5,7 @@ import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.QrCodeUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -45,11 +46,25 @@ public class EmployeesDetailsController {
         return R.ok(employeesDetailsService.removeById(employeesDetails));
     }
 
-    @ApiOperation("【公司】【經理】查詢當前公司員工(所有、id)")
+    @ApiOperation("【管理员】查詢所有公司員工")
     @LogFlag(description = "查詢員工")
-    @GetMapping("/page")
-    public R page(Page page, EmployeesDetailsDTO employeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, employeesDetailsDTO);
+    @GetMapping("/page1")
+    public R page1(Page page, EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
+    }
+
+    @ApiOperation("【公司】查詢该公司所有員工")
+    @LogFlag(description = "查詢員工")
+    @GetMapping("/page2")
+    public R page2(Page page, EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
+    }
+
+    @ApiOperation("【经理】查詢所在公司所有員工")
+    @LogFlag(description = "查詢員工")
+    @GetMapping("/page3")
+    public R page3(Page page, EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
     @ApiOperation("【公司】【經理】根据id生成登入链接")

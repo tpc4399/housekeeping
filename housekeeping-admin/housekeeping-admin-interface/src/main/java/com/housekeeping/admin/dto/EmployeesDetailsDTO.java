@@ -1,8 +1,10 @@
 package com.housekeeping.admin.dto;
 
+import com.housekeeping.admin.entity.EmployeesWorkExperience;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @Author su
@@ -22,10 +24,11 @@ public class EmployeesDetailsDTO {
     private String address3;    /* 區 */
     private String address4;    /* 詳細地址 */
     private Integer scopeOfOrder;    /* 接單範圍(米) */
-    private String workExperience;    /* 工作經驗 */
     private String recordOfFormalSchooling; /* 学历，直接传本科 */
     private String phone;    /* 手機號 */
     private String accountLine;    /* line賬號 */
     private String describes;    /* 描述 */
+    private String workYear;     /* 工作年限 */
+    private List<EmployeesWorkExperienceDTO> workExperiencesDTO; /* 工作经验 */
 
 }

@@ -13,7 +13,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     R updateEmp(EmployeesDetailsDTO employeesDetailsDTO);
 
-    R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO);
+    R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO, String type);
 
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
 }

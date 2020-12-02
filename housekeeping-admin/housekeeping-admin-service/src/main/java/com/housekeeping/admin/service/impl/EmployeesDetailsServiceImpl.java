@@ -8,26 +8,34 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 
 @Service("employeesDetailsService")
 public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMapper, EmployeesDetails> implements EmployeesDetailsService {
 
-    @Autowired
+    @Resource
     private ICompanyDetailsService companyDetailsService;
 
     @Autowired
     private RedisUtils redisUtils;
 
+    @Resource
+    private IEmployeesWorkExperienceService employeesWorkExperienceService;
+
+    @Transactional
     @Override
     public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO) {
         if(this.addEmployee()){
@@ -46,17 +54,32 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
                 employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
                 employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
-                employeesDetails.setWorkExperience(employeesDetailsDTO.getWorkExperience());
                 employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
                 employeesDetails.setPhone(employeesDetailsDTO.getPhone());
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
                 employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+                employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
 
                 employeesDetails.setUpdateTime(LocalDateTime.now());
                 employeesDetails.setCreateTime(LocalDateTime.now());
                 employeesDetails.setCompanyId(one.getId());
                 employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
-                this.save(employeesDetails);
+                Integer maxEmployeesId = 0;
+                Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+                try {
+                    synchronized (this){
+                        this.save(employeesDetails);
+                        maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
+                    }
+                    /**
+                     * 工作经验保存
+                     */
+                    employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
+                } catch (Exception e){
+                    TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
+                    return R.failed("添加失敗");
+                }
+
             }
         }else {
             return R.failed("公司員工人數達到上綫，請升級公司規模");
@@ -78,24 +101,34 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
         employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
         employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
-        employeesDetails.setWorkExperience(employeesDetailsDTO.getWorkExperience());
         employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
         employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+        employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
-        if(this.updateById(employeesDetails)){
-            return R.ok("修改成功");
-        }else {
+
+        Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+        try {
+            this.updateById(employeesDetails);
+
+            /**
+             * 工作经验修改
+             */
+            employeesWorkExperienceService.updateEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
+        }catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
             return R.failed("修改失敗");
         }
+        return R.ok("修改成功");
+
 
     }
 
     @Override
-    public R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO) {
+    public R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO, String type) {
         QueryWrapper  queryWrapper = new QueryWrapper();
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getNumber())){
             queryWrapper.like("number", employeesDetailsDTO.getNumber());
@@ -127,9 +160,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getScopeOfOrder())){
             queryWrapper.le("scope_of_order", employeesDetailsDTO.getScopeOfOrder());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getWorkExperience())){
-            queryWrapper.like("work_experience", employeesDetailsDTO.getWorkExperience());
-        }
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getRecordOfFormalSchooling())){
             queryWrapper.like("record_of_formal_schooling", employeesDetailsDTO.getRecordOfFormalSchooling());
         }
@@ -142,6 +172,14 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getDescribes())){
             queryWrapper.like("describe", employeesDetailsDTO.getDescribes());
         }
+
+        if (type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+
+        }
+        if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+
+        }
+
         IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
         return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
