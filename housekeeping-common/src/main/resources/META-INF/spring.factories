@@ -3,6 +3,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.housekeeping.common.rabbitmq.config.RabbitConfig,\
     com.housekeeping.common.config.RedisConfig,\
     com.housekeeping.common.config.EmailConfig,\
-    com.housekeeping.common.config.DateformatConfig
+    com.housekeeping.common.config.DateformatConfig,\
+    com.housekeeping.common.config.InsertStaticVariable
 org.springframework.context.ApplicationContextInitializer=\
     com.housekeeping.common.logs.init.ApplicationLoggerInitializer

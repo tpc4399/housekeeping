@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -87,7 +88,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         List<GroupEmployees> groupEmployeesList = (List<GroupEmployees>) groupEmployeesService.matchTheEmployees(managerId).getData();
         List<Integer> employeesList = (List<Integer>) groupEmployeesList.stream().map(x -> {
             return x.getEmployeesId();
-        });
+        }).collect(Collectors.toList());
         /* 獲取我的所有組裡面的所有員工 */
 
         //詳細訂單計劃
@@ -109,6 +110,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
             /** 2.1.1 不滿足日程表的員工检索 */
             List<SysOrderPlan> sysOrderPlanListByCalendar = sysOrderPlanList;
+            List<SysOrderPlan> sysOrderPlanListByCalendar2 = null;
             Map<Boolean, List<EmployeesCalendar>> map= new HashMap<>();
             employeesCalendarList.forEach(y -> {
                 List<EmployeesCalendar> te = map.getOrDefault(y.getStander(), new ArrayList<>());
@@ -117,7 +119,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             });
             //特殊日期規則判斷
             if (map.containsKey(false)){
-                sysOrderPlanListByCalendar.stream().filter(y -> {
+                sysOrderPlanListByCalendar2 = sysOrderPlanListByCalendar.stream().filter(y -> {
                     AtomicReference<Boolean> existsFlag = new AtomicReference<>(true);
                     List<EmployeesCalendar> dateRules = map.get(false);
                     dateRules.forEach(z -> {
@@ -135,10 +137,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                         }
                     });
                     return existsFlag.get();
-                });
+                }).collect(Collectors.toList());
             }
             if (map.containsKey(true)){
-                sysOrderPlanListByCalendar.forEach(y -> {
+                sysOrderPlanListByCalendar2.forEach(y -> {
                     List<EmployeesCalendar> dateRules = map.get(true);
                     dateRules.forEach(z -> {
                         if (z.getWeek().contains(String.valueOf(y.getDate().getDayOfWeek().getValue()))){
@@ -155,7 +157,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     });
                 });
             }else {
-                sysOrderPlanListByCalendar.forEach(y -> {
+                sysOrderPlanListByCalendar2.forEach(y -> {
                     List<EmployeesCalendar> dateRules = map.get(true);
                     dateRules.forEach(z -> {
                         PeriodOfTime periodOfTime1 = new PeriodOfTime(y.getTimeSlotStart(), y.getTimeSlotLength());
