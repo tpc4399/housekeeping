@@ -2,6 +2,7 @@ package com.housekeeping.admin.service.impl;
 
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
@@ -111,5 +112,13 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     @Override
     public void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId) {
         baseMapper.updateById(companyDetailsDTO, lastReviserId);
+    }
+
+    @Override
+    public Integer getCompanyIdByUserId(Integer userId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = baseMapper.selectOne(queryWrapper);
+        return companyDetails.getId();
     }
 }

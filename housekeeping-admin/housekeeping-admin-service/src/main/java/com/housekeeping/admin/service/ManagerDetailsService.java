@@ -18,4 +18,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
 
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
 
+    Integer getCompanyIdByManagerId(Integer managerId);
+
 }

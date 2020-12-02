@@ -13,6 +13,7 @@ import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
+import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private ICompanyDetailsService companyDetailsService;
+
+    @Resource
+    private ManagerDetailsService managerDetailsService;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -53,7 +57,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
                 employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
                 employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
-                employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
                 employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
                 employeesDetails.setPhone(employeesDetailsDTO.getPhone());
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
@@ -100,7 +103,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
         employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
         employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
-        employeesDetails.setScopeOfOrder(employeesDetailsDTO.getScopeOfOrder());
         employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
@@ -157,9 +159,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress4())){
             queryWrapper.like("address4", employeesDetailsDTO.getAddress4());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getScopeOfOrder())){
-            queryWrapper.le("scope_of_order", employeesDetailsDTO.getScopeOfOrder());
-        }
         if (CommonUtils.isNotEmpty(employeesDetailsDTO.getRecordOfFormalSchooling())){
             queryWrapper.like("record_of_formal_schooling", employeesDetailsDTO.getRecordOfFormalSchooling());
         }
@@ -174,10 +173,15 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         }
 
         if (type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
-
+            Integer userId = TokenUtils.getCurrentUserId();
+            Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+            queryWrapper.eq("company_id", companyId);
         }
-        if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
 
+        if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            Integer managerId = TokenUtils.getCurrentUserId();
+            Integer companyId = managerDetailsService.getCompanyIdByManagerId(managerId);
+            queryWrapper.eq("company_id", companyId);
         }
 
         IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);

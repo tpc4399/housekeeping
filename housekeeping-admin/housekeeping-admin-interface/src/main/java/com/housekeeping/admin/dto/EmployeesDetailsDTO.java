@@ -1,6 +1,5 @@
 package com.housekeeping.admin.dto;
 
-import com.housekeeping.admin.entity.EmployeesWorkExperience;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -23,7 +22,6 @@ public class EmployeesDetailsDTO {
     private String address2;    /* 市 */
     private String address3;    /* 區 */
     private String address4;    /* 詳細地址 */
-    private Integer scopeOfOrder;    /* 接單範圍(米) */
     private String recordOfFormalSchooling; /* 学历，直接传本科 */
     private String phone;    /* 手機號 */
     private String accountLine;    /* line賬號 */

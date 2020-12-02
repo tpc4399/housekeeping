@@ -101,6 +101,12 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         }
     }
 
+    @Override
+    public Integer getCompanyIdByManagerId(Integer managerId) {
+        ManagerDetails managerDetails = baseMapper.selectById(managerId);
+        return managerDetails.getCompanyId();
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return

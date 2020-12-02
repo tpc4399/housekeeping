@@ -19,4 +19,5 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
     void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
+    Integer getCompanyIdByUserId(Integer userId);
 }
