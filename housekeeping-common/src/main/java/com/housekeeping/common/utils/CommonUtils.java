@@ -188,6 +188,32 @@ public class CommonUtils {
 		return localTime1.isAfter(localTime2) && localTime1.isBefore(localTime3);
 	}
 
+	/***
+	 * 时间段包含a包含b
+	 * a start1================end1
+	 * b   start2===========end2
+	 * 包含的条件  start1<=start2 && end2<=end1
+	 * 	也就是  !start1>start2 && !end2>end1
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static Boolean periodOfTimeAContainsPeriodOfTimeB(PeriodOfTime a, PeriodOfTime b){
+		LocalTime start1 = a.getTimeSlotStart();
+		Float length1 = a.getTimeSlotLength();
+		LocalTime end1 = start1.plusHours((int) (length1/1)).plusMinutes((long) ((length1%1)* 60));
+
+		LocalTime start2 = b.getTimeSlotStart();
+		Float length2 = b.getTimeSlotLength();
+		LocalTime end2 = start2.plusHours((int) (length2/1)).plusMinutes((long) ((length2%1)* 60));
+
+		if (!start1.isAfter(start2) && !end2.isAfter(end1)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
 		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();
@@ -222,6 +248,11 @@ public class CommonUtils {
 		Integer dd = -129;
 		System.out.println(aa == bb);  //true
 		System.out.println(cc == dd);  //false
+
+		char sss = '1';
+
+		Integer ss = Integer.valueOf(String.valueOf(sss));
+		System.out.println(ss);
 
 	}
 }

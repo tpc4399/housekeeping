@@ -8,6 +8,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 /**
+ * 用於注入static變量
  * @Author su
  * @Date 2020/12/2 15:16
  */
@@ -19,7 +20,6 @@ public class InsertStaticVariable implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        //springboot启动完成后执行
         TokenUtils.setRedisUtils(redisUtils);
     }
 }
