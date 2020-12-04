@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,7 +33,7 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private String activity;    /* 活动 */
     private String companyStructure;    /* 公司架构 */
     private String legalPerson;    /* 法人创始人 */
-    private Integer isValidate;    /* 是否验证企业信息 */
+    private Boolean isValidate;    /* 是否验证企业信息 */
     private String industrialNumber;    /* 工商注册编号 */
     private String logoUrl;    /* logo url */
     private String photos;    /* 五张照片url拼接 */

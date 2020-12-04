@@ -3,6 +3,7 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.common.utils.R;
 
@@ -13,7 +14,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     R updateEmp(EmployeesDetailsDTO employeesDetailsDTO);
 
-    R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO, String type);
+    R cusPage(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO, String type);
 
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
 }

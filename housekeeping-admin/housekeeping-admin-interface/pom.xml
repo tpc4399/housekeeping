@@ -36,5 +36,10 @@
             <version>1.5.20</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.housekeeping.parent</groupId>
+            <artifactId>housekeeping-interfaces</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>

@@ -3,12 +3,14 @@ package com.housekeeping.admin.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
@@ -120,5 +122,66 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         queryWrapper.eq("user_id", userId);
         CompanyDetails companyDetails = baseMapper.selectOne(queryWrapper);
         return companyDetails.getId();
+    }
+
+    @Override
+    public R pageOfCompany(IPage<CompanyDetails> page, CompanyDetailsDTO companyDetailsDTO) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
+
+        }
+
+        return null;
     }
 }

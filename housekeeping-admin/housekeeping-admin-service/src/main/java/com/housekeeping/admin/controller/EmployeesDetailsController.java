@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -49,22 +50,22 @@ public class EmployeesDetailsController {
     @ApiOperation("【管理员】查詢所有公司員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page1")
-    public R page1(Page page, EmployeesDetailsDTO employeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
+    public R page1(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
     }
 
     @ApiOperation("【公司】查詢该公司所有員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page2")
-    public R page2(Page page, EmployeesDetailsDTO employeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
+    public R page2(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
     @ApiOperation("【经理】查詢所在公司所有員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page3")
-    public R page3(Page page, EmployeesDetailsDTO employeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, employeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
+    public R page3(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
+        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
     @ApiOperation("【公司】【經理】根据id生成登入链接")

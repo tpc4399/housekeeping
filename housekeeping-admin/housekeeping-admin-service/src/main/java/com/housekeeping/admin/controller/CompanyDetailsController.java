@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
@@ -132,6 +133,12 @@ public class CompanyDetailsController {
         } else {
             return R.failed("公司不存在");
         }
+    }
+
+    @ApiOperation("【管理员】分页查询所有公司")
+    @GetMapping("/pageOfCompany")
+    public R pageOfCompany(IPage<CompanyDetails> page, CompanyDetailsDTO companyDetailsDTO){
+        return R.ok();
     }
 
 }

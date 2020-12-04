@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
@@ -145,46 +146,46 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public R cusPage(Page page, EmployeesDetailsDTO employeesDetailsDTO, String type) {
+    public R cusPage(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO, String type) {
         QueryWrapper  queryWrapper = new QueryWrapper();
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getNumber())){
-            queryWrapper.like("number", employeesDetailsDTO.getNumber());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getNumber())){
+            queryWrapper.like("number", pageOfEmployeesDetailsDTO.getNumber());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getName())){
-            queryWrapper.like("name", employeesDetailsDTO.getName());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getName())){
+            queryWrapper.like("name", pageOfEmployeesDetailsDTO.getName());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getSex())){
-            queryWrapper.eq("sex", employeesDetailsDTO.getSex());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getSex())){
+            queryWrapper.eq("sex", pageOfEmployeesDetailsDTO.getSex());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getDateOfBirth())){
-            queryWrapper.eq("date_of_birth", employeesDetailsDTO.getDateOfBirth());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getDateOfBirth())){
+            queryWrapper.eq("date_of_birth", pageOfEmployeesDetailsDTO.getDateOfBirth());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getIdCard())){
-            queryWrapper.like("id_card", employeesDetailsDTO.getIdCard());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getIdCard())){
+            queryWrapper.like("id_card", pageOfEmployeesDetailsDTO.getIdCard());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress1())){
-            queryWrapper.like("address1", employeesDetailsDTO.getAddress1());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress1())){
+            queryWrapper.like("address1", pageOfEmployeesDetailsDTO.getAddress1());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress2())){
-            queryWrapper.like("address2", employeesDetailsDTO.getAddress2());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress2())){
+            queryWrapper.like("address2", pageOfEmployeesDetailsDTO.getAddress2());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress3())){
-            queryWrapper.like("address3", employeesDetailsDTO.getAddress3());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress3())){
+            queryWrapper.like("address3", pageOfEmployeesDetailsDTO.getAddress3());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAddress4())){
-            queryWrapper.like("address4", employeesDetailsDTO.getAddress4());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress4())){
+            queryWrapper.like("address4", pageOfEmployeesDetailsDTO.getAddress4());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getRecordOfFormalSchooling())){
-            queryWrapper.like("record_of_formal_schooling", employeesDetailsDTO.getRecordOfFormalSchooling());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getRecordOfFormalSchooling())){
+            queryWrapper.like("record_of_formal_schooling", pageOfEmployeesDetailsDTO.getRecordOfFormalSchooling());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getPhone())){
-            queryWrapper.like("phone", employeesDetailsDTO.getPhone());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getPhone())){
+            queryWrapper.like("phone", pageOfEmployeesDetailsDTO.getPhone());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getAccountLine())){
-            queryWrapper.like("account_line", employeesDetailsDTO.getAccountLine());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAccountLine())){
+            queryWrapper.like("account_line", pageOfEmployeesDetailsDTO.getAccountLine());
         }
-        if (CommonUtils.isNotEmpty(employeesDetailsDTO.getDescribes())){
-            queryWrapper.like("describe", employeesDetailsDTO.getDescribes());
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getDescribes())){
+            queryWrapper.like("describe", pageOfEmployeesDetailsDTO.getDescribes());
         }
 
         if (type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
