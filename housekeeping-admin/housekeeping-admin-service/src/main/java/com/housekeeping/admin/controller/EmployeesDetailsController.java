@@ -58,7 +58,7 @@ public class EmployeesDetailsController {
     @LogFlag(description = "查詢員工")
     @GetMapping("/page2")
     public R page2(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
+        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
     @ApiOperation("【经理】查詢所在公司所有員工")

@@ -197,7 +197,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
             QueryWrapper queryWrapper2 = new QueryWrapper();
             queryWrapper2.eq("user_id", TokenUtils.getCurrentUserId());
-            ManagerDetails managerDetails = managerDetailsService.getOne(queryWrapper);
+            ManagerDetails managerDetails = managerDetailsService.getOne(queryWrapper2);
             Integer managerId = managerDetails.getId();
             Integer companyId = managerDetailsService.getCompanyIdByManagerId(managerId);
             queryWrapper.eq("company_id", companyId);
