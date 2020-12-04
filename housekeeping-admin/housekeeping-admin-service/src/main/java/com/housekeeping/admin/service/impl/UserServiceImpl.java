@@ -171,7 +171,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         CustomerAddress customerAddress = new CustomerAddress();
                         customerAddress.setCustomerId(maxUserId);
                         customerAddress.setIsDefault(true);
-                        customerAddress.setName("注册地址");
+                        customerAddress.setName("註冊地址");
+                        customerAddress.setAddress(registerDTO.getAddress());
                         customerAddressService.save(customerAddress);
                     } else {
                         return R.ok("两次密码不一致");
