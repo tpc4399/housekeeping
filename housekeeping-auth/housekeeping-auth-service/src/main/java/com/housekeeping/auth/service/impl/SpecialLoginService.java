@@ -29,7 +29,7 @@ public class SpecialLoginService implements ISpecialLoginService {
 //            生成token並返回
             Map<String, Object> map = new HashMap();
             map.put("Token", key);
-            map.put("EmployeesId", re);
+            map.put("UserId", re);
             return R.ok(map, "登入成功");
         }else {
             return R.failed("鏈接失效，請聯繫公司管理員");
@@ -44,7 +44,7 @@ public class SpecialLoginService implements ISpecialLoginService {
 //            生成token並返回
             Map<String, Object> map = new HashMap();
             map.put("Token", key);
-            map.put("ManagerId", re);
+            map.put("UserId", re);
             return R.ok(map, "登入成功");
         }else {
             return R.failed("鏈接失效，請聯繫公司管理員");

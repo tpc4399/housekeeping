@@ -8,10 +8,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.ManagerDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.*;
+import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,17 +28,34 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     private ICompanyDetailsService companyDetailsService;
 
     @Autowired
+    private IUserService userService;
+
+    @Autowired
     private RedisUtils redisUtils;
 
     @Override
     public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
         if(this.addManager()){
             if(CommonUtils.isNotEmpty(managerDetailsDTO)){
+                //先保存User
+                User user = new User();
+                String ss = String.valueOf(System.currentTimeMillis());
+                user.setNumber("c"+ss);
+                user.setDeptId(4);
+                user.setLastReviserId(TokenUtils.getCurrentUserId());
+                user.setCreateTime(LocalDateTime.now());
+                user.setUpdateTime(LocalDateTime.now());
+                Integer maxUserId = 0;
+                synchronized (this) {
+                    userService.save(user);
+                    maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
+                }
                 ManagerDetails managerDetails = new ManagerDetails();
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
                 wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
                 CompanyDetails one = companyDetailsService.getOne(wrComp);
                 String s = String.valueOf(System.currentTimeMillis());
+                managerDetails.setUserId(maxUserId);
                 managerDetails.setNumber("man"+s);
                 managerDetails.setName(managerDetailsDTO.getName());
                 managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
@@ -92,7 +112,8 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
             String url = "";
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
             String key = CommonConstants.LOGIN_MANAGER_PREFIX + mysteriousCode;
-            redisUtils.set(key, id, 60 * 60 * h);//有效期12小时
+            Integer value = managerDetails.getUserId();
+            redisUtils.set(key, value, 60 * 60 * h);//有效期12小时
             //拼接url链接
             url = CommonUtils.getRequestPrefix() + "/auth/Manager/" + mysteriousCode;
             return R.ok(url);

@@ -8,12 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
-import com.housekeeping.admin.service.EmployeesDetailsService;
-import com.housekeeping.admin.service.ICompanyDetailsService;
-import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
-import com.housekeeping.admin.service.ManagerDetailsService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private ManagerDetailsService managerDetailsService;
 
+    @Resource
+    private IUserService userService;
+
     @Autowired
     private RedisUtils redisUtils;
 
@@ -44,10 +45,24 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO) {
         if(this.addEmployee()){
             if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
+                //先保存User
+                User user = new User();
+                String ss = String.valueOf(System.currentTimeMillis());
+                user.setNumber("c"+ss);
+                user.setDeptId(5);
+                user.setLastReviserId(TokenUtils.getCurrentUserId());
+                user.setCreateTime(LocalDateTime.now());
+                user.setUpdateTime(LocalDateTime.now());
+                Integer maxUserId = 0;
+                synchronized (this) {
+                    userService.save(user);
+                    maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
+                }
                 EmployeesDetails employeesDetails = new EmployeesDetails();
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
                 wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
                 CompanyDetails one = companyDetailsService.getOne(wrComp);
+                employeesDetails.setUserId(maxUserId);
                 employeesDetails.setNumber(employeesDetailsDTO.getNumber());
                 employeesDetails.setName(employeesDetailsDTO.getName());
                 employeesDetails.setSex(employeesDetailsDTO.getSex());
@@ -179,7 +194,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         }
 
         if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
-            Integer managerId = TokenUtils.getCurrentUserId();
+            QueryWrapper queryWrapper2 = new QueryWrapper();
+            queryWrapper2.eq("user_id", TokenUtils.getCurrentUserId());
+            ManagerDetails managerDetails = managerDetailsService.getOne(queryWrapper);
+            Integer managerId = managerDetails.getId();
             Integer companyId = managerDetailsService.getCompanyIdByManagerId(managerId);
             queryWrapper.eq("company_id", companyId);
         }
@@ -195,7 +213,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             String url = "";
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
             String key = CommonConstants.LOGIN_EMPLOYEES_PREFIX + mysteriousCode;
-            redisUtils.set(key, id, 60 * 60 * h);//有效期12小时
+            Integer value = employeesDetails.getUserId();
+            redisUtils.set(key, value, 60 * 60 * h);//有效期12小时
             //拼接url链接
             url = CommonUtils.getRequestPrefix() + "/auth/Employees/" + mysteriousCode;
             return R.ok(url);

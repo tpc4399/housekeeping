@@ -17,12 +17,10 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
 
     private static final long serialVersionUID = 1L;
 
-    /* 主鍵id */
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;
-
-    /* 員工编号 */
-    private String number;
+    private Integer id;    /* 主鍵id */
+    private Integer userId; //用户_id
+    private String number;    /* 員工编号 */
 
     /* 員工姓名 */
     private String name;

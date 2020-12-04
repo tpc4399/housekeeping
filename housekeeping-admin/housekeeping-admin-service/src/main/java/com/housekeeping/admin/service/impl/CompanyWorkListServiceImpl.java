@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private IEmployeesCalendarService employeesCalendarService;
     @Resource
     private IEmployeesWorksheetPlanService employeesWorksheetPlanService;
+    @Resource
+    private ManagerDetailsService managerDetailsService;
 
     @Override
     public R addToTheWorkList(CompanyWorkListDTO companyWorkListDTO) {
@@ -85,7 +88,11 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     public R matchTheOrder(Integer orderId) {
 
         /** 1.獲取我的所有組裡面的所有員工 */
-        Integer managerId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", TokenUtils.getCurrentUserId());
+        ManagerDetails managerDetails = managerDetailsService.getOne(queryWrapper);
+        Integer managerId = managerDetails.getId();
+
         List<GroupEmployees> groupEmployeesList = (List<GroupEmployees>) groupEmployeesService.matchTheEmployees(managerId).getData();
         List<Integer> employeesList = (List<Integer>) groupEmployeesList.stream().map(x -> {
             return x.getEmployeesId();
@@ -126,7 +133,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 Map<LocalDate, List<PeriodOfTime>> map1 = new HashMap<>();
                 map.get(false).forEach(dateRule -> {
                     List list = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
-                    list.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
+//                    list.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
+                    list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
                     map1.put(dateRule.getData(), list);
                 });
                 sysOrderPlanListByCalendar2 = sysOrderPlanListByCalendar.stream().filter(y -> {
@@ -169,7 +177,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     for (int i = 0; i < weekString.length(); i++) {
                         Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
                         List list = map2.getOrDefault(weekInteger, new ArrayList<>());
-                        list.add(new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
+//                        list.add(new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
+                        list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
                         map2.put(weekInteger, list);
                     }
                 });
@@ -268,5 +277,31 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     public R dispatchOrder(Integer orderId, Integer employeesId) {
 
         return R.ok();
+    }
+
+    private List<PeriodOfTime> insertPeriodOfTimeListOneDay(List<PeriodOfTime> periodOfTimeList, PeriodOfTime periodOfTime){
+        List<PeriodOfTime> res = periodOfTimeList;
+        periodOfTimeList.forEach(x ->  {
+            LocalTime periodOfTimeStart = periodOfTime.getTimeSlotStart();
+            LocalTime periodOfTimeEnd = periodOfTime.getTimeSlotStart().plusHours((int) (periodOfTime.getTimeSlotLength()/1)).plusMinutes((long) ((periodOfTime.getTimeSlotLength()%1)* 60));
+            LocalTime xStart = x.getTimeSlotStart();
+            LocalTime xEnd = x.getTimeSlotStart().plusHours((int) (x.getTimeSlotLength()/1)).plusMinutes((long) ((x.getTimeSlotLength()%1)* 60));
+            if (periodOfTimeEnd.equals(xStart)){
+                PeriodOfTime periodOfTimeRes = new PeriodOfTime();
+                periodOfTimeRes.setTimeSlotStart(periodOfTimeStart);
+                periodOfTimeRes.setTimeSlotLength(x.getTimeSlotLength()+periodOfTime.getTimeSlotLength());
+                res.remove(x);
+                res.add(periodOfTimeRes);
+            }else if (xEnd.equals(periodOfTimeStart)){
+                PeriodOfTime periodOfTimeRes = new PeriodOfTime();
+                periodOfTimeRes.setTimeSlotStart(x.getTimeSlotStart());
+                periodOfTimeRes.setTimeSlotLength(x.getTimeSlotLength()+periodOfTime.getTimeSlotLength());
+                res.remove(x);
+                res.add(periodOfTimeRes);
+            }else {
+                res.add(periodOfTime);
+            }
+        });
+        return res;
     }
 }
