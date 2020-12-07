@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
+import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
@@ -125,63 +126,69 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     }
 
     @Override
-    public R pageOfCompany(IPage<CompanyDetails> page, CompanyDetailsDTO companyDetailsDTO) {
+    public R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailsPageDTO) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getNumber())){
+            queryWrapper.like("number", companyDetailsPageDTO.getNumber());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getCompanyName())){
+            queryWrapper.like("company_name", companyDetailsPageDTO.getCompanyName());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getCompanySizeId())){
+            queryWrapper.eq("company_size_id", companyDetailsPageDTO.getCompanySizeId());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getLegalPerson())){
+            queryWrapper.eq("legal_person", companyDetailsPageDTO.getLegalPerson());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getIsValidate())){
+            queryWrapper.eq("is_validate", companyDetailsPageDTO.getIsValidate());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getIndustrialNumber())){
+            queryWrapper.eq("industrial_number", companyDetailsPageDTO.getIndustrialNumber());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getAddress1())){
+            queryWrapper.like("address1", companyDetailsPageDTO.getAddress1());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getAddress2())){
+            queryWrapper.like("address2", companyDetailsPageDTO.getAddress2());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getAddress3())){
+            queryWrapper.like("address3", companyDetailsPageDTO.getAddress3());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getAddress4())){
+            queryWrapper.like("address4", companyDetailsPageDTO.getAddress4());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getServiceHotline())){
+            queryWrapper.like("service_hotline", companyDetailsPageDTO.getServiceHotline());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getEmail())){
+            queryWrapper.like("email", companyDetailsPageDTO.getEmail());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getWebPages())){
+            queryWrapper.like("web_pages", companyDetailsPageDTO.getWebPages());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getAccountLine())){
+            queryWrapper.like("account_line", companyDetailsPageDTO.getAccountLine());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getConnectionFacebook())){
+            queryWrapper.like("connection_facebook", companyDetailsPageDTO.getConnectionFacebook());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getConnectionInstagram())){
+            queryWrapper.like("connection_instagram", companyDetailsPageDTO.getConnectionInstagram());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getDescribes())){
+            queryWrapper.like("describes", companyDetailsPageDTO.getDescribes());
         }
-        if (CommonUtils.isNotEmpty(companyDetailsDTO.getAddress1())){
-
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getMethodPayment())){
+            queryWrapper.like("method_payment", companyDetailsPageDTO.getMethodPayment());
         }
-
-        return null;
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getCreateTimeStart())){
+            queryWrapper.ge("create_time", companyDetailsPageDTO.getCreateTimeStart());
+        }
+        if (CommonUtils.isNotEmpty(companyDetailsPageDTO.getCreateTimeEnd())){
+            queryWrapper.le("create_time", companyDetailsPageDTO.getCreateTimeEnd());
+        }
+        IPage<CompanyDetails> companyDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(companyDetailsIPage, "查詢公司成功");
     }
 }

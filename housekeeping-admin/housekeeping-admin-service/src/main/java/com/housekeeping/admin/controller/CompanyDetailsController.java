@@ -1,8 +1,9 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
+import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -137,8 +138,8 @@ public class CompanyDetailsController {
 
     @ApiOperation("【管理员】分页查询所有公司")
     @GetMapping("/pageOfCompany")
-    public R pageOfCompany(IPage<CompanyDetails> page, CompanyDetailsDTO companyDetailsDTO){
-        return R.ok();
+    public R pageOfCompany(Page page, CompanyDetailsPageDTO companyDetailsPageDTO){
+        return companyDetailsService.pageOfCompanyByAdmin(page, companyDetailsPageDTO);
     }
 
 }

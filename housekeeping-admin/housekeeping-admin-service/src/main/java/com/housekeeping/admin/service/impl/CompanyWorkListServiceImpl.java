@@ -131,21 +131,58 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                  * 先将特殊日期的按日期形成HashMap
                  */
                 Map<LocalDate, List<PeriodOfTime>> map1 = new HashMap<>();
+                Map<LocalDate, List<PeriodOfTime>> map11 = new HashMap<>();
                 map.get(false).forEach(dateRule -> {
                     List list = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
-//                    list.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
-                    list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
+                    list.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
+//                    list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
                     map1.put(dateRule.getData(), list);
+                });
+                //对map1进行处理，相邻时间段合并
+                map1.forEach((date, list) -> {
+                    List<PeriodOfTime> periodOfTimes = list;
+                    if (list.size() == 0 || list.size() == 1){
+                        //什么也不做
+                    }else {
+                        for (int i = 0; i < list.size()-1; i++) {
+                            LocalTime xStart = list.get(i).getTimeSlotStart();
+                            LocalTime xEnd = list.get(i).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i).getTimeSlotLength()%1)* 60));
+                            LocalTime yStart = list.get(i+1).getTimeSlotStart();
+                            LocalTime yEnd = list.get(i+1).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i+1).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i+1).getTimeSlotLength()%1)* 60));
+                            if (xEnd.equals(yStart)){
+                                PeriodOfTime z = new PeriodOfTime();
+                                z.setTimeSlotStart(xStart);
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                //需要干点啥
+                                periodOfTimes.add(z);
+                            }else if (yEnd.equals(xStart)){
+                                PeriodOfTime z = new PeriodOfTime();
+                                z.setTimeSlotStart(yStart);
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                //需要干点啥
+                                periodOfTimes.remove(i);
+                                periodOfTimes.remove(i+1);
+                                periodOfTimes.add(z);
+                            }else {
+                                //没检测到相邻的，啥也不干
+                            }
+                        }
+                    }
+                    map11.put(date, periodOfTimes);
                 });
                 sysOrderPlanListByCalendar2 = sysOrderPlanListByCalendar.stream().filter(y -> {
                     AtomicReference<Boolean> keepFlag = new AtomicReference<>(true);
                     AtomicReference<Boolean> couldYouArrange = new AtomicReference<>(true);
-                    if (map1.containsKey(y.getDate())){
+                    if (map11.containsKey(y.getDate())){
                         //删掉订单里面的该记录，不用进行后续判断了，以这个为主
                         keepFlag.set(false);
                         couldYouArrange.set(false);
                         PeriodOfTime periodOfTime1 = new PeriodOfTime(y.getTimeSlotStart(), y.getTimeSlotLength()); //订单的时间段
-                        List<PeriodOfTime> periodOfTimesList = map1.get(y.getDate()); //日程表的时间段：特殊日期
+                        List<PeriodOfTime> periodOfTimesList = map11.get(y.getDate()); //日程表的时间段：特殊日期
                         periodOfTimesList.forEach(z -> {
                             PeriodOfTime periodOfTime2 = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength()); //日程表的时间段
                             if (CommonUtils.periodOfTimeAContainsPeriodOfTimeB(periodOfTime2, periodOfTime1)){
@@ -172,21 +209,60 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                  * 先将周日程表的按星期几形成HashMap
                  */
                 Map<Integer, List<PeriodOfTime>> map2 = new HashMap<>();
+                Map<Integer, List<PeriodOfTime>> map22 = new HashMap<>();
                 map.get(true).forEach(weekRule -> {
                     String weekString = weekRule.getWeek();
                     for (int i = 0; i < weekString.length(); i++) {
                         Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
                         List list = map2.getOrDefault(weekInteger, new ArrayList<>());
-//                        list.add(new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
-                        list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
+                        list.add(new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
+//                        list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength()));
                         map2.put(weekInteger, list);
                     }
                 });
+                //对map1进行处理，相邻时间段合并
+                map2.forEach((week, list) -> {
+                    List<PeriodOfTime> periodOfTimes = list;
+                    if (list.size() == 0 || list.size() == 1){
+                        //什么也不做
+                    }else {
+                        for (int i = 0; i < list.size()-1; i++) {
+                            LocalTime xStart = list.get(i).getTimeSlotStart();
+                            LocalTime xEnd = list.get(i).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i).getTimeSlotLength()%1)* 60));
+                            LocalTime yStart = list.get(i+1).getTimeSlotStart();
+                            LocalTime yEnd = list.get(i+1).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i+1).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i+1).getTimeSlotLength()%1)* 60));
+                            if (xEnd.equals(yStart)){
+                                PeriodOfTime z = new PeriodOfTime();
+                                z.setTimeSlotStart(xStart);
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                //需要干点啥
+                                periodOfTimes.remove(i);
+                                periodOfTimes.remove(i+1);
+                                periodOfTimes.add(z);
+                            }else if (yEnd.equals(xStart)){
+                                PeriodOfTime z = new PeriodOfTime();
+                                z.setTimeSlotStart(yStart);
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                //需要干点啥
+                                periodOfTimes.remove(i);
+                                periodOfTimes.remove(i+1);
+                                periodOfTimes.add(z);
+                            }else {
+                                //没检测到相邻的，啥也不干
+                            }
+                        }
+                    }
+                    map22.put(week, periodOfTimes);
+                });
                 sysOrderPlanListByCalendar2.forEach(y -> {//遍歷訂單計劃
                     AtomicReference<Boolean> couldYouArrange = new AtomicReference<>(false); //默认不给过
-                    if (map2.containsKey(y.getDate().getDayOfWeek().getValue())){
+                    if (map22.containsKey(y.getDate().getDayOfWeek().getValue())){
                         PeriodOfTime periodOfTime1 = new PeriodOfTime(y.getTimeSlotStart(), y.getTimeSlotLength()); //订单的时间段
-                        List<PeriodOfTime> periodOfTimesList = map2.get(y.getDate().getDayOfWeek().getValue()); //周日程表的时间段
+                        List<PeriodOfTime> periodOfTimesList = map22.get(y.getDate().getDayOfWeek().getValue()); //周日程表的时间段
                         periodOfTimesList.forEach(z -> {
                             PeriodOfTime periodOfTime2 = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength()); //日程表的时间段
                             if (CommonUtils.periodOfTimeAContainsPeriodOfTimeB(periodOfTime2, periodOfTime1)){
@@ -302,6 +378,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 res.add(periodOfTime);
             }
         });
+        if(periodOfTimeList.size() == 0){
+            res.add(periodOfTime);
+        }
         return res;
     }
 }
