@@ -24,6 +24,7 @@
         <module>housekeeping-common</module>
         <module>housekeeping-auth</module>
         <module>housekeeping-interfaces</module>
+        <module>housekeeping-im</module>
     </modules>
 
     <properties>

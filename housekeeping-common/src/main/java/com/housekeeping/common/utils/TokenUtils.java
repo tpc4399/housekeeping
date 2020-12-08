@@ -108,4 +108,25 @@ public class TokenUtils {
             return -1;
         }
     }
+
+    public static Integer getUserId(String token){
+        if (CommonUtils.isNotEmpty(token)){
+            if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX) || token.startsWith(CommonConstants.LOGIN_MANAGER_PREFIX)){
+                /** 判斷token的有效性 */
+                Object re = redisUtils.get(token);
+                if (CommonUtils.isNotEmpty(re)){
+                    return Integer.valueOf(re.toString());
+                }else {
+                    //失效導致
+                    return -2;
+                }
+            }else {
+                HkUser hkUser = TokenUtils.parsingToken(token);
+                return hkUser.getId();
+            }
+        }else {
+            return -1;
+        }
+    }
+
 }

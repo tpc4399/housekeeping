@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.housekeeping.im.mapper.ImUserMapper">
+    <resultMap id="baseResultMap" type="com.housekeeping.im.entity.ImUser">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="nickname" column="nickname"/>
+        <result property="name" column="name"/>
+        <result property="dateOfBirth" column="date_of_birth"/>
+        <result property="phonePrefix" column="phone_prefix"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="lastReviserId" column="last_reviser_id"/>
+    </resultMap>
+    <select id="getUserGroups" parameterType="string" resultType="com.housekeeping.im.entity.ImChatGroup">
+        SELECT
+            id,
+            name,
+            avatar
+        FROM im_chat_group
+        WHERE id IN (SELECT cg.chat_group_id
+                     FROM im_chat_group_user cg
+                     WHERE cg.user_id = #{userId})
+    </select>
+    <select id="getChatUserList" parameterType="string" resultType="com.housekeeping.im.entity.ImUser">
+       SELECT
+            id,
+            name
+        FROM sys_user
+        WHERE id IN (SELECT cg.user_id
+                     FROM im_chat_group_user cg
+                     WHERE cg.chat_group_id = #{chatId})
+    </select>
+</mapper>

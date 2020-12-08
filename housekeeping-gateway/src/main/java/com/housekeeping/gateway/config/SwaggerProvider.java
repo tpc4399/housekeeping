@@ -22,7 +22,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
         List<SwaggerResource> resources = new ArrayList<>();
         resources.add(swaggerResource("admin-service", "/api/admin/"+API_URI, "2.0"));
         resources.add(swaggerResource("auth-service", "/api/auth/"+API_URI, "2.0"));
-
+        resources.add(swaggerResource("im-service", "/api/im/"+API_URI, "2.0"));
         return resources;
     }
 
