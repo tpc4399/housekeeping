@@ -35,9 +35,8 @@ public class SysEnterpriseAuthenticationMessage extends Model<SysEnterpriseAuthe
     private Integer lastReviserId;  /* 最后修改人 */
     /***
      * 审核状态:
-     * 0->编辑中的草稿
-     * 1->已发布审核申请
-     * 2->审核中
+     * 0->编辑中的草稿、或者撤銷後的申請單
+     * 1->已发布审核申请、审核中
      * 3->已审核通过
      * 4->已审核未通过
      */

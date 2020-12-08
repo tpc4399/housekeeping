@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.SysEnterpriseAuthenticationMessagePostDTO;
 import com.housekeeping.admin.service.ISysEnterpriseAuthenticationMessageService;
 import com.housekeeping.common.utils.R;
@@ -33,6 +34,30 @@ public class SysEnterpriseAuthenticationMessageController {
     @PostMapping
     public R sendAuthMessage(SysEnterpriseAuthenticationMessagePostDTO authMessageDTO){
         return sysEnterpriseAuthenticationMessageService.sendAuthMessage(authMessageDTO);
+    }
+
+    @ApiOperation("【公司】查看我的申請")
+    @GetMapping("/viewMine")
+    public R viewMine(){
+        return R.ok();
+    }
+
+    @ApiOperation("【公司】撤銷申請成為草稿")
+    @GetMapping("/undo")
+    public R undo(){
+        return R.ok();
+    }
+
+    @ApiOperation("【管理員】按時間順序分頁查詢申請信息")
+    @GetMapping("/query")
+    public R query(Page page){
+        return R.ok();
+    }
+
+    @ApiOperation("【管理員】按時間順序分頁查詢申請信息")
+    @GetMapping("/doAudit")
+    public R doAudit(Integer id, Boolean isThrough){
+        return R.ok();
     }
 
 }
