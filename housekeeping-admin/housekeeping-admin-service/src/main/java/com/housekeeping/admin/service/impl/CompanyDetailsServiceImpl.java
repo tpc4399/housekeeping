@@ -191,4 +191,9 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         IPage<CompanyDetails> companyDetailsIPage = baseMapper.selectPage(page, queryWrapper);
         return R.ok(companyDetailsIPage, "查詢公司成功");
     }
+
+    @Override
+    public void authSuccess(Integer companyId) {
+        baseMapper.authSuccess(companyId);
+    }
 }

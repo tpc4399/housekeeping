@@ -40,4 +40,10 @@
         FROM company_details
         WHERE user_id = #{userId}
     </select>
+
+    <update id="authSuccess">
+        UPDATE company_details
+        SET is_validate = true
+        WHERE id = #{companyId}
+    </update>
 </mapper>
