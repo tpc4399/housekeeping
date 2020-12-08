@@ -144,28 +144,28 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     if (list.size() == 0 || list.size() == 1){
                         //什么也不做
                     }else {
-                        for (int i = 0; i < list.size()-1; i++) {
+                        for (int i = list.size() - 1; i > 0; i--) {
                             LocalTime xStart = list.get(i).getTimeSlotStart();
                             LocalTime xEnd = list.get(i).getTimeSlotStart()
                                     .plusHours((int) (list.get(i).getTimeSlotLength()/1))
                                     .plusMinutes((long) ((list.get(i).getTimeSlotLength()%1)* 60));
-                            LocalTime yStart = list.get(i+1).getTimeSlotStart();
-                            LocalTime yEnd = list.get(i+1).getTimeSlotStart()
-                                    .plusHours((int) (list.get(i+1).getTimeSlotLength()/1))
-                                    .plusMinutes((long) ((list.get(i+1).getTimeSlotLength()%1)* 60));
+                            LocalTime yStart = list.get(i-1).getTimeSlotStart();
+                            LocalTime yEnd = list.get(i-1).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i-1).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i-1).getTimeSlotLength()%1)* 60));
                             if (xEnd.equals(yStart)){
                                 PeriodOfTime z = new PeriodOfTime();
                                 z.setTimeSlotStart(xStart);
-                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i-1).getTimeSlotLength());
                                 //需要干点啥
                                 periodOfTimes.add(z);
                             }else if (yEnd.equals(xStart)){
                                 PeriodOfTime z = new PeriodOfTime();
                                 z.setTimeSlotStart(yStart);
-                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i-1).getTimeSlotLength());
                                 //需要干点啥
                                 periodOfTimes.remove(i);
-                                periodOfTimes.remove(i+1);
+                                periodOfTimes.remove(i-1);
                                 periodOfTimes.add(z);
                             }else {
                                 //没检测到相邻的，啥也不干
@@ -226,30 +226,30 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     if (list.size() == 0 || list.size() == 1){
                         //什么也不做
                     }else {
-                        for (int i = 0; i < list.size()-1; i++) {
+                        for (int i = list.size() - 1; i > 0; i--) {
                             LocalTime xStart = list.get(i).getTimeSlotStart();
                             LocalTime xEnd = list.get(i).getTimeSlotStart()
                                     .plusHours((int) (list.get(i).getTimeSlotLength()/1))
                                     .plusMinutes((long) ((list.get(i).getTimeSlotLength()%1)* 60));
-                            LocalTime yStart = list.get(i+1).getTimeSlotStart();
-                            LocalTime yEnd = list.get(i+1).getTimeSlotStart()
-                                    .plusHours((int) (list.get(i+1).getTimeSlotLength()/1))
-                                    .plusMinutes((long) ((list.get(i+1).getTimeSlotLength()%1)* 60));
+                            LocalTime yStart = list.get(i-1).getTimeSlotStart();
+                            LocalTime yEnd = list.get(i-1).getTimeSlotStart()
+                                    .plusHours((int) (list.get(i-1).getTimeSlotLength()/1))
+                                    .plusMinutes((long) ((list.get(i-1).getTimeSlotLength()%1)* 60));
                             if (xEnd.equals(yStart)){
                                 PeriodOfTime z = new PeriodOfTime();
                                 z.setTimeSlotStart(xStart);
-                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i-1).getTimeSlotLength());
                                 //需要干点啥
                                 periodOfTimes.remove(i);
-                                periodOfTimes.remove(i+1);
+                                periodOfTimes.remove(i-1);
                                 periodOfTimes.add(z);
                             }else if (yEnd.equals(xStart)){
                                 PeriodOfTime z = new PeriodOfTime();
                                 z.setTimeSlotStart(yStart);
-                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i+1).getTimeSlotLength());
+                                z.setTimeSlotLength(list.get(i).getTimeSlotLength() + list.get(i-1).getTimeSlotLength());
                                 //需要干点啥
                                 periodOfTimes.remove(i);
-                                periodOfTimes.remove(i+1);
+                                periodOfTimes.remove(i-1);
                                 periodOfTimes.add(z);
                             }else {
                                 //没检测到相邻的，啥也不干
