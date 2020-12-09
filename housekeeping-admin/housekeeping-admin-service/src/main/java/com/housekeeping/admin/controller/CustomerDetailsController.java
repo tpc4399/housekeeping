@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/23 11:28
  */
-@Api(value="客戶controller",tags={"【客戶】客户详情接口"})
+@Api(value="客戶controller",tags={"【客户详情】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/customerDetails")

@@ -18,7 +18,7 @@ import java.util.concurrent.BrokenBarrierException;
  * @Author su
  * @create 2020/11/16 14:01
  */
-@Api(value="订单controller",tags={"【订单】订单计划详细接口"})
+@Api(value="订单controller",tags={"【订单计划】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/sysOrderPlan")

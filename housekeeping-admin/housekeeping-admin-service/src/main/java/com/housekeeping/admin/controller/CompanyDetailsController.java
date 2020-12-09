@@ -21,13 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Api(value="公司controller",tags={"【公司】详情信息接口"})
+@Api(value="公司controller",tags={"【公司详情】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyDetails")
@@ -57,20 +60,12 @@ public class CompanyDetailsController {
 
     @ApiOperation("加載logo接口")
     @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<byte[]> getFile(@RequestParam("userId") Integer userId) throws IOException {
+    public void getFile(@RequestParam("userId") Integer userId, HttpServletResponse response) throws IOException {
         String logoName = companyDetailsService.getLogoUrlByUserId(userId);
         File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + userId + "/" + logoName);
-        InputStream in = new FileInputStream(file);
-        byte[] body = null;
-        body = new byte[in.available()];
-        in.read(body);
-
-        HttpHeaders headers = new HttpHeaders();// 设置响应头
-        headers.add("Content-Disposition",
-                "attachment;filename=" + logoName);
-
-        HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
-        return new ResponseEntity<byte[]>(body, headers, statusCode);
+        BufferedImage image = ImageIO.read(file);
+        OutputStream os = response.getOutputStream();
+        ImageIO.write(image, "JPG", os);
     }
 
     @ApiOperation("【公司】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
@@ -84,43 +79,45 @@ public class CompanyDetailsController {
         return R.ok("圖片上傳成功");
     }
 
+    @ApiOperation("獲取公司照片數量")
+    @GetMapping("/getPhotosNumber")
+    public R getPhotosNumber(@RequestParam("userId") Integer userId){
+        Integer number = 0;
+        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
+        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
+        File[] parentFiles = file.listFiles();
+        for (File parentFile : parentFiles) {
+            String fileName = parentFile.getName();
+            if (fileName.startsWith(photoNamePrefix)){
+                number ++;
+            }
+        }
+        return R.ok(number, "圖片張數獲取成功");
+    }
+
     @ApiOperation("加載公司照片的接口")
     @GetMapping("/getPhotos")
-    public R getFiveImg(@RequestParam("userId") Integer userId) throws IOException {
+    public void getFiveImg(@RequestParam("userId") Integer userId,
+                           @RequestParam("index") Integer index,
+                           HttpServletResponse response) throws IOException {
         String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
-        List<ResponseEntity<byte[]>> res = new ArrayList<>();
+        String fileNamePrefix = photoNamePrefix + "["+ index +"]";
         File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
         File[] parentFiles = file.listFiles();
         Arrays.stream(parentFiles).forEach(parentFile -> {
             String fileName = parentFile.getName();
-            if (fileName.startsWith(photoNamePrefix)){
-                InputStream in = null;
+            if (fileName.startsWith(fileNamePrefix)){
+                BufferedImage image = null;
+                OutputStream os = null;
                 try {
-                    in = new FileInputStream(parentFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                byte[] body = null;
-                try {
-                    body = new byte[in.available()];
+                    image = ImageIO.read(parentFile);
+                    os = response.getOutputStream();
+                    ImageIO.write(image, "JPG", os);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    in.read(body);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                HttpHeaders headers = new HttpHeaders();// 设置响应头
-                headers.add("Content-Disposition",
-                        "attachment;filename=" + fileName);
-
-                HttpStatus statusCode = HttpStatus.OK;// 设置响应吗
-                res.add(new ResponseEntity<byte[]>(body, headers, statusCode));
             }
         });
-        return R.ok(res);
     }
 
     @ApiOperation("【公司】获取公司详情信息")

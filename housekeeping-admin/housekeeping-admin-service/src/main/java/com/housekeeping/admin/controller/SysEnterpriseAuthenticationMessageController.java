@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Author su
  * @Date 2020/12/8 14:35
  */
-@Api(tags={"【企业认证】相关接口"})
+@Api(tags={"【企业认证】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/comAuth")

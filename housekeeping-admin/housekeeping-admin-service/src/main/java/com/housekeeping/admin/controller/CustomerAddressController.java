@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/23 14:12
  */
-@Api(value="客戶controller",tags={"【客戶】客户地址接口"})
+@Api(value="客戶controller",tags={"【客户地址】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/customerAddress")

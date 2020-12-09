@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/25 14:58
  */
-@Api(value="分組controller",tags={"【公司】分組经理接口"})
+@Api(value="分組controller",tags={"【分組&经理】中間表接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/groupManager")

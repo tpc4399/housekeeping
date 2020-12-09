@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/12 16:24
  */
-@Api(value="员工日程表controller",tags={"【公司】员工日程表接口"})
+@Api(value="员工日程表controller",tags={"【员工日程表】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/employeesCalendar")

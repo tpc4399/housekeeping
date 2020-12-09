@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/18 16:12
  */
-@Api(value="公司controller",tags={"【公司】工作列表接口"})
+@Api(value="公司controller",tags={"【工作列表】接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyWorkList")
