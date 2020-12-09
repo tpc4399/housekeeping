@@ -1,9 +1,8 @@
 package com.housekeeping.admin.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CompanyWorkListDTO;
 import com.housekeeping.admin.dto.CompanyWorkListQueryDTO;
-import com.housekeeping.admin.entity.CompanyWorkList;
 import com.housekeeping.admin.service.ICompanyWorkListService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -31,7 +30,7 @@ public class CompanyWorkListController {
 
     @ApiOperation("【经理】分頁查詢工作列表")
     @GetMapping("/pageOfWorkList")
-    public R page(IPage<CompanyWorkList> page, CompanyWorkListQueryDTO companyWorkListQueryDTO){
+    public R page(Page page, CompanyWorkListQueryDTO companyWorkListQueryDTO){
         return companyWorkListService.page(page, companyWorkListQueryDTO);
     }
 

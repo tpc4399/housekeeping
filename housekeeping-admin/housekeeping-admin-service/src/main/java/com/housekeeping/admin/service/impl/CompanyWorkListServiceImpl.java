@@ -49,7 +49,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 && CommonUtils.isNotEmpty(companyWorkListDTO.getOrderId())){
             CompanyWorkList companyWorkList = new CompanyWorkList();
             companyWorkList.setGroupId(companyWorkListDTO.getGroupId());
-            companyWorkList.setOrderId(companyWorkList.getOrderId());
+            companyWorkList.setOrderId(companyWorkListDTO.getOrderId());
             companyWorkList.setCreateTime(LocalDateTime.now());
             companyWorkList.setLastReviserId(TokenUtils.getCurrentUserId());
             return R.ok(baseMapper.insert(companyWorkList), "添加成功");
