@@ -1,8 +1,11 @@
 package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
@@ -271,6 +274,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return R.ok("验证码通过");
         }
         return R.failed("验证码错误");
+    }
+
+    @Override
+    public R getAllUser(IPage<User> page, AdminPageDTO adminPageDTO,Integer deptId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("dept_id",deptId);
+        if (CommonUtils.isNotEmpty(adminPageDTO.getId())){
+            queryWrapper.eq("id", adminPageDTO.getId());
+        }
+        if (CommonUtils.isNotEmpty(adminPageDTO.getNumber())){
+            queryWrapper.like("number", adminPageDTO.getNumber());
+        }
+        if (CommonUtils.isNotEmpty(adminPageDTO.getNickname())){
+            queryWrapper.like("nickname", adminPageDTO.getNickname());
+        }
+        if (CommonUtils.isNotEmpty(adminPageDTO.getName())){
+            queryWrapper.like("name", adminPageDTO.getName());
+        }
+        if (CommonUtils.isNotEmpty(adminPageDTO.getEmail())){
+            queryWrapper.like("email", adminPageDTO.getEmail());
+        }
+        if (CommonUtils.isNotEmpty(adminPageDTO.getPhone())){
+            queryWrapper.like("phone", adminPageDTO.getPhone());
+        }
+        IPage<User> companyDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(companyDetailsIPage, "查詢管理员成功");
     }
 
 }

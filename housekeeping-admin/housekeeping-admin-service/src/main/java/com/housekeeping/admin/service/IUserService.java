@@ -1,6 +1,8 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.User;
@@ -25,4 +27,6 @@ public interface IUserService extends IService<User> {
     R updatePwd(ForgetDTO forgetDTO);
 
     R verfifyCode(String phonePrefix, String phone,String code,Integer deptId);
+
+    R getAllUser(IPage<User> page, AdminPageDTO adminPageDTO,Integer deptId);
 }

@@ -46,7 +46,7 @@ mq:
     queue: error
 oss:
   endpoint: http://oss-cn-shanghai.aliyuncs.com
-  accessKeyId: LTAIvfGRxaG1K42v
-  accessKeySecret: Wqn4hHHOebjXmKfgUfFkcCYQwnBl0L
+  accessKeyId: UAlClM+FccyHfzGjBX5Njx8kB9Ww/4zb
+  accessKeySecret: wJCEnxvmPFxBzvw4QaPFM7clYNLZFE0NOKyn9y1sV10=
   bucketName: test-live-video
   urlPrefix: https://test-live-video.oss-cn-shanghai.aliyuncs.com/

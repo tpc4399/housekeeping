@@ -1,6 +1,7 @@
 package com.housekeeping.common.config;
 
 import com.aliyun.oss.OSSClient;
+import com.housekeeping.common.utils.DESEncryption;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ public class OSSConfig {
 
     @Bean("ossClient")
     public OSSClient ossClient(){
-        return new OSSClient(endpoint, accessKeyId, accessKeySecret);
+        return new OSSClient(endpoint, DESEncryption.getDecryptString(accessKeyId), DESEncryption.getDecryptString(accessKeySecret));
     }
 
 }

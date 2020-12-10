@@ -1,6 +1,8 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
@@ -91,4 +93,9 @@ public class CompanyController {
         }
     }
 
+    @GetMapping("/getAllCompany")
+    @ApiOperation("【管理员】查询所有公司賬戶")
+    public R getAllCompany(Page page, AdminPageDTO adminPageDTO){
+        return userService.getAllUser(page,adminPageDTO,2);
+    }
 }

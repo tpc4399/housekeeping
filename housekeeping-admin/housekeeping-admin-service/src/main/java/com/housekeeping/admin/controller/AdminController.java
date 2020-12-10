@@ -1,5 +1,7 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.service.IUserService;
@@ -68,6 +70,12 @@ public class AdminController {
                               @RequestParam("phone") String phone,
                               @RequestParam("code")String code){
         return userService.verfifyCode(phonePrefix, phone,code,1);
+    }
+
+    @GetMapping("/getAllAdmin")
+    @ApiOperation("【管理员】查询所有管理员")
+    public R getAllAdmin(Page page, AdminPageDTO adminPageDTO){
+        return userService.getAllUser(page,adminPageDTO,1);
     }
 
 }
