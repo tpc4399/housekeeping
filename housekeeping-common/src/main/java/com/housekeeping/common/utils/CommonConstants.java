@@ -28,7 +28,7 @@ public interface CommonConstants {
 	/**
 	 * 正式環境的存儲公司logoUrl的絕對路徑
 	 */
-	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV = "/usr/local/HKFile/CompanyLogoImg/userId=";
+	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyLogoImg/userId=";
 	/**
 	 * 開發環境的存儲公司五张图片的絕對路徑
 	 */
@@ -36,7 +36,7 @@ public interface CommonConstants {
 	/**
 	 * 正式環境的存儲公司五张图片的絕對路徑
 	 */
-	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "/usr/local/HKFile/CompanyFiveImg/userId=";
+	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyFiveImg/userId=";
 
 	/**
 	 * 神秘代码的零件

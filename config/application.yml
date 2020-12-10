@@ -44,3 +44,9 @@ mq:
   error:
     routerKey: errorKey
     queue: error
+oss:
+  endpoint: http://oss-cn-shanghai.aliyuncs.com
+  accessKeyId: LTAIvfGRxaG1K42v
+  accessKeySecret: Wqn4hHHOebjXmKfgUfFkcCYQwnBl0L
+  bucketName: test-live-video
+  urlPrefix: https://test-live-video.oss-cn-shanghai.aliyuncs.com/

@@ -1,5 +1,7 @@
 package com.housekeeping.admin.controller;
 
+import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.model.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
@@ -14,6 +16,7 @@ import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
@@ -36,7 +40,16 @@ import java.util.List;
 @RequestMapping("/companyDetails")
 public class CompanyDetailsController {
 
-   private final ICompanyDetailsService companyDetailsService;
+    private final ICompanyDetailsService companyDetailsService;
+
+    @Resource
+    private OSSClient ossClient;
+
+    @Value("${oss.bucketName}")
+    private String bucketName;
+
+    @Value("${oss.urlPrefix}")
+    private String urlPrefix;
 
     @ApiOperation("【公司】修改公司信息")
     @LogFlag(description = "修改公司信息")
@@ -58,15 +71,15 @@ public class CompanyDetailsController {
         return R.ok("logo保存成功");
     }
 
-    @ApiOperation("加載logo接口")
-    @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
-    public void getFile(@RequestParam("userId") Integer userId, HttpServletResponse response) throws IOException {
-        String logoName = companyDetailsService.getLogoUrlByUserId(userId);
-        File file = new File(CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + userId + "/" + logoName);
-        BufferedImage image = ImageIO.read(file);
-        OutputStream os = response.getOutputStream();
-        ImageIO.write(image, "JPG", os);
-    }
+//    @ApiOperation("加載logo接口")
+//    @GetMapping(value = "/getLogo",produces = MediaType.IMAGE_JPEG_VALUE)
+//    public void getFile(@RequestParam("userId") Integer userId, HttpServletResponse response) throws IOException {
+//        String logoName = companyDetailsService.getLogoUrlByUserId(userId);
+//        OSSObject ossObject = ossClient.getObject(bucketName, CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + userId + "/" + logoName);
+//        BufferedImage image = ImageIO.read(ossObject.getObjectContent());
+//        OutputStream os = response.getOutputStream();
+//        ImageIO.write(image, "JPG", os);
+//    }
 
     @ApiOperation("【公司】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/uploadFiveImg", headers = "content-type=multipart/form-data")
@@ -79,46 +92,59 @@ public class CompanyDetailsController {
         return R.ok("圖片上傳成功");
     }
 
-    @ApiOperation("獲取公司照片數量")
-    @GetMapping("/getPhotosNumber")
-    public R getPhotosNumber(@RequestParam("userId") Integer userId){
-        Integer number = 0;
-        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
-        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
-        File[] parentFiles = file.listFiles();
-        for (File parentFile : parentFiles) {
-            String fileName = parentFile.getName();
-            if (fileName.startsWith(photoNamePrefix)){
-                number ++;
-            }
-        }
-        return R.ok(number, "圖片張數獲取成功");
-    }
+//    @ApiOperation("獲取公司照片數量")
+//    @GetMapping("/getPhotosNumber")
+//    public R getPhotosNumber(@RequestParam("userId") Integer userId){
+//        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
+//        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
+//        // 构造ListObjectsRequest请求
+//        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
+//        //Delimiter 设置为 “/” 时，罗列该文件夹下的文件
+//        listObjectsRequest.setDelimiter("/");
+//        //Prefix 设为某个文件夹名，罗列以此 Prefix 开头的文件
+//        listObjectsRequest.setPrefix(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
+//        ObjectListing listing = ossClient.listObjects(listObjectsRequest);
+//        ArrayList<String> list = new ArrayList<String>();
+//        // 遍历所有Object:目录下的文件
+//        for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
+//            String key = objectSummary.getKey();
+//            list.add(key);
+//        }
+//        ossClient.shutdown();
+////        File[] parentFiles = file.listFiles();
+////        for (File parentFile : parentFiles) {
+////            String fileName = parentFile.getName();
+////            if (fileName.startsWith(photoNamePrefix)){
+////                number ++;
+////            }
+////        }
+//        return R.ok(list.size(), "圖片張數獲取成功");
+//    }
 
-    @ApiOperation("加載公司照片的接口")
-    @GetMapping("/getPhotos")
-    public void getFiveImg(@RequestParam("userId") Integer userId,
-                           @RequestParam("index") Integer index,
-                           HttpServletResponse response) throws IOException {
-        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
-        String fileNamePrefix = photoNamePrefix + "["+ index +"]";
-        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
-        File[] parentFiles = file.listFiles();
-        Arrays.stream(parentFiles).forEach(parentFile -> {
-            String fileName = parentFile.getName();
-            if (fileName.startsWith(fileNamePrefix)){
-                BufferedImage image = null;
-                OutputStream os = null;
-                try {
-                    image = ImageIO.read(parentFile);
-                    os = response.getOutputStream();
-                    ImageIO.write(image, "JPG", os);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+//    @ApiOperation("加載公司照片的接口")
+//    @GetMapping("/getPhotos")
+//    public void getFiveImg(@RequestParam("userId") Integer userId,
+//                           @RequestParam("index") Integer index,
+//                           HttpServletResponse response) throws IOException {
+//        String photoNamePrefix = companyDetailsService.getPhotosByUserId(userId);
+//        String fileNamePrefix = photoNamePrefix + "["+ index +"]";
+//        File file = new File(CommonConstants.HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV + userId);
+//        File[] parentFiles = file.listFiles();
+//        Arrays.stream(parentFiles).forEach(parentFile -> {
+//            String fileName = parentFile.getName();
+//            if (fileName.startsWith(fileNamePrefix)){
+//                BufferedImage image = null;
+//                OutputStream os = null;
+//                try {
+//                    image = ImageIO.read(parentFile);
+//                    os = response.getOutputStream();
+//                    ImageIO.write(image, "JPG", os);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//    }
 
     @ApiOperation("【公司】获取公司详情信息")
     @GetMapping("/details")
