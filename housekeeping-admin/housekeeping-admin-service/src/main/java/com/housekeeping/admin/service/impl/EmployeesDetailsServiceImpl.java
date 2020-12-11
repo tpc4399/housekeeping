@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
@@ -151,6 +152,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 //        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getNumber())){
 //            queryWrapper.like("number", pageOfEmployeesDetailsDTO.getNumber());
 //        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getId())){
+            queryWrapper.eq("id", pageOfEmployeesDetailsDTO.getId());
+        }
         if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getName())){
             queryWrapper.like("name", pageOfEmployeesDetailsDTO.getName());
         }
@@ -222,6 +226,58 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         } else {
             return R.failed("員工不存在，請刷新頁面重試");
         }
+    }
+
+    @Override
+    public R cusPage1(Page page, PageOfEmployeesDTO pageOfEmployeesDTO, String type) {
+        QueryWrapper  queryWrapper = new QueryWrapper();
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getNumber())){
+//            queryWrapper.like("number", pageOfEmployeesDetailsDTO.getNumber());
+//        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getId())){
+            queryWrapper.eq("id", pageOfEmployeesDTO.getId());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getName())){
+            queryWrapper.like("name", pageOfEmployeesDTO.getName());
+        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getSex())){
+//            queryWrapper.eq("sex", pageOfEmployeesDetailsDTO.getSex());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getDateOfBirth())){
+//            queryWrapper.eq("date_of_birth", pageOfEmployeesDetailsDTO.getDateOfBirth());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getIdCard())){
+//            queryWrapper.like("id_card", pageOfEmployeesDetailsDTO.getIdCard());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress1())){
+//            queryWrapper.like("address1", pageOfEmployeesDetailsDTO.getAddress1());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress2())){
+//            queryWrapper.like("address2", pageOfEmployeesDetailsDTO.getAddress2());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress3())){
+//            queryWrapper.like("address3", pageOfEmployeesDetailsDTO.getAddress3());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAddress4())){
+//            queryWrapper.like("address4", pageOfEmployeesDetailsDTO.getAddress4());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getRecordOfFormalSchooling())){
+//            queryWrapper.like("record_of_formal_schooling", pageOfEmployeesDetailsDTO.getRecordOfFormalSchooling());
+//        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getPhone())){
+//            queryWrapper.like("phone", pageOfEmployeesDetailsDTO.getPhone());
+//        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getAccountLine())){
+            queryWrapper.like("account_line", pageOfEmployeesDTO.getAccountLine());
+        }
+//        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getDescribes())){
+//            queryWrapper.like("describe", pageOfEmployeesDetailsDTO.getDescribes());
+//        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getCompanyId())){
+            queryWrapper.like("company_id", pageOfEmployeesDTO.getCompanyId());
+        }
+        IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
 
     /**

@@ -7,10 +7,10 @@ import lombok.Data;
  * @Date 2020/12/4 17:47
  */
 @Data
-public class PageOfEmployeesDetailsDTO {
+public class PageOfManagerDetailsDTO {
 
-    private Integer id; /* 員工id */
-    private String name;    /* 員工姓名 */
+    private Integer id; /* 經理id */
+    private String name;    /* 經理姓名 */
     private String accountLine;    /* line賬號 */
 
 }
