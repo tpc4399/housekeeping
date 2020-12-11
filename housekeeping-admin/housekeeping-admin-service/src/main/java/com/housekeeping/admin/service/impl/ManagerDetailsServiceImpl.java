@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.ManagerDetailsDTO;
+import com.housekeeping.admin.dto.PageOfManagerDTO;
+import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
@@ -14,7 +17,6 @@ import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.*;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,14 +98,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     }
 
-    @Override
-    public IPage cusPage(Page page, Integer id) {
-        Integer userId = TokenUtils.getCurrentUserId();
-        QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-        wrComp.inSql("id","select id from company_details where user_id="+ userId);
-        CompanyDetails one = companyDetailsService.getOne(wrComp);
-        return baseMapper.cusPage(page,id,one.getId());
-    }
+
 
     @Override
     public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
@@ -126,6 +121,46 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     public Integer getCompanyIdByManagerId(Integer managerId) {
         ManagerDetails managerDetails = baseMapper.selectById(managerId);
         return managerDetails.getCompanyId();
+    }
+
+    @Override
+    public R cusPage1(Page page, PageOfManagerDTO pageOfEmployeesDTO, String requestOriginAdmin) {
+        QueryWrapper  queryWrapper = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getId())){
+            queryWrapper.eq("id", pageOfEmployeesDTO.getId());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getName())){
+            queryWrapper.like("name", pageOfEmployeesDTO.getName());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getAccountLine())){
+            queryWrapper.like("account_line", pageOfEmployeesDTO.getAccountLine());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDTO.getCompanyId())){
+            queryWrapper.like("company_id", pageOfEmployeesDTO.getCompanyId());
+        }
+        IPage<ManagerDetails> managerDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(managerDetailsIPage, "分頁查詢成功");
+    }
+
+    @Override
+    public R cusPage(Page page, PageOfManagerDetailsDTO pageOfEmployeesDetailsDTO, String type) {
+        QueryWrapper  queryWrapper = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getId())){
+            queryWrapper.eq("id", pageOfEmployeesDetailsDTO.getId());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getName())){
+            queryWrapper.like("name", pageOfEmployeesDetailsDTO.getName());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAccountLine())){
+            queryWrapper.like("account_line", pageOfEmployeesDetailsDTO.getAccountLine());
+        }
+        if (type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            Integer userId = TokenUtils.getCurrentUserId();
+            Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+            queryWrapper.eq("company_id", companyId);
+        }
+        IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+        return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
 
     /**

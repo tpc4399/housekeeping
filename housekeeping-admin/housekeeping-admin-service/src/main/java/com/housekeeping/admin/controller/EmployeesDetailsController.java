@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
@@ -50,8 +51,8 @@ public class EmployeesDetailsController {
     @ApiOperation("【管理员】查詢所有公司員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page1")
-    public R page1(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
-        return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
+    public R page1(Page page, PageOfEmployeesDTO pageOfEmployeesDTO){
+        return employeesDetailsService.cusPage1(page, pageOfEmployeesDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
     }
 
     @ApiOperation("【公司】查詢该公司所有員工")
