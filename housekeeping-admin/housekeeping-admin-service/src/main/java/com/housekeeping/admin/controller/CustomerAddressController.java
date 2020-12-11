@@ -1,9 +1,11 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CustomerAddressAddDTO;
 import com.housekeeping.admin.dto.CustomerAddressUpdateDTO;
 import com.housekeeping.admin.service.ICustomerAddressService;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -33,5 +35,23 @@ public class CustomerAddressController {
         return customerAddressService.updateAddress(customerAddressUpdateDTO);
     }
 
+
+    @ApiOperation("【客户】查询我的地址列表")
+    @GetMapping("/mine")
+    public R getAddressByUserId(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        return customerAddressService.getAddressByUserId(userId);
+    }
+
+    @ApiOperation("【客戶】設置為默認地址")
+    @GetMapping("/setDefault")
+    public R setDefault(Integer addressId){
+        return customerAddressService.setDefault(addressId);
+    }
+
+    @ApiOperation("【管理員】查詢所有用戶地址")
+    public R getAll(Page page){
+        return customerAddressService.getAll(page);
+    }
 
 }

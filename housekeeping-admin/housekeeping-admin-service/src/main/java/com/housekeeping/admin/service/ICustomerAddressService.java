@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.CustomerAddressAddDTO;
 import com.housekeeping.admin.dto.CustomerAddressUpdateDTO;
@@ -15,4 +16,10 @@ public interface ICustomerAddressService extends IService<CustomerAddress> {
     R addAddress(CustomerAddressAddDTO customerAddressAddDTO);
 
     R updateAddress(CustomerAddressUpdateDTO customerAddressUpdateDTO);
+
+    R getAddressByUserId(Integer userId);
+
+    R setDefault(Integer addressId);
+
+    R getAll(Page page);
 }

@@ -11,8 +11,8 @@ import java.util.List;
  */
 @Data
 public class RulesWeekVo {
-    private LocalDate start;
-    private LocalDate end;
-    private String week;
-    private List<TimeSlotVo> timeSlotVos;
+    private LocalDate start;     //定期服务开始时间
+    private LocalDate end;      //定期服务结束时间
+    private String week;      //周数如135表示每周一周三周五
+    private List<TimeSlotVo> timeSlotVos;  //时间段
 }

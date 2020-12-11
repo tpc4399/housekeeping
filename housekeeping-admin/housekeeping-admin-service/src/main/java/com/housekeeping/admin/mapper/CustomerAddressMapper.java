@@ -11,4 +11,8 @@ import com.housekeeping.admin.entity.CustomerAddress;
 public interface CustomerAddressMapper extends BaseMapper<CustomerAddress> {
 
     void updateAddress(CustomerAddressUpdateDTO customerAddressUpdateDTO);
+
+    void setNotDefault(Integer customerId);
+
+    void setDefault(Integer id);
 }
