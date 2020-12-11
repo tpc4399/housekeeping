@@ -1,12 +1,19 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.CustomerDetails;
+import com.housekeeping.admin.pojo.Customer;
+import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -18,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/customer")
 public class CustomerController {
     private final IUserService userService;
+    private final ICustomerDetailsService customerDetailsService;
 
     /**
      *
@@ -70,6 +78,20 @@ public class CustomerController {
                               @RequestParam("phone") String phone,
                               @RequestParam("code")String code){
         return userService.verfifyCode(phonePrefix, phone,code,3);
+    }
+
+    @ApiOperation("【客戶】获取客戶详情信息")
+    @GetMapping("/info")
+    public R getCustomerDetailsByUserId(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CustomerDetails customerDetails = customerDetailsService.getOne(queryWrapper);
+        if (CommonUtils.isNotEmpty(customerDetails)){
+            return R.ok(customerDetails);
+        } else {
+            return R.failed("客戶不存在,请用客戶账户获取信息");
+        }
     }
 
     @GetMapping("/getAllCustomer")

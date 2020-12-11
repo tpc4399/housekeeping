@@ -22,6 +22,9 @@ public class SysJobContendServiceImpl
         implements ISysJobContendService {
     @Override
     public R add(String contend) {
+        if (CommonUtils.isNotEmpty(contend)){
+            return R.failed("contend不能為空");
+        }
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("contend", contend);
         SysJobContend exist = baseMapper.selectOne(queryWrapper);

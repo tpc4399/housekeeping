@@ -5,6 +5,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.housekeeping.common.config.EmailConfig,\
     com.housekeeping.common.config.DateformatConfig,\
     com.housekeeping.common.config.InsertStaticVariable,\
-    com.housekeeping.common.config.OSSConfig
+    com.housekeeping.common.config.OSSConfig,\
+    com.housekeeping.common.config.GlobalExceptionHandler
 org.springframework.context.ApplicationContextInitializer=\
     com.housekeeping.common.logs.init.ApplicationLoggerInitializer
