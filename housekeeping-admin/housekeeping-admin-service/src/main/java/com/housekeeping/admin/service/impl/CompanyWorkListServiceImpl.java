@@ -283,10 +283,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 });
             }else {
                 //如果沒有true存在，那麼“”默認的規則就需要生效
-                if (map.containsKey("")){
+                if (map.containsKey(null)){
                     sysOrderPlanListByCalendar2.forEach(y -> {
                         AtomicReference<Boolean> couldYouArrange = new AtomicReference<>(false);
-                        List<EmployeesCalendar> dateRules = map.get("");
+                        List<EmployeesCalendar> dateRules = map.get(null);
                         PeriodOfTime periodOfTime1 = new PeriodOfTime(y.getTimeSlotStart(), y.getTimeSlotLength());
                         dateRules.forEach(z -> {
                             PeriodOfTime periodOfTime2 = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength());

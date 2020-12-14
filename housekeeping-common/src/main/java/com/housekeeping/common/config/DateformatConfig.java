@@ -33,7 +33,7 @@ public class DateformatConfig {
     /**
      * Time格式化字符串
      */
-    private static final String TIME_FORMAT = "HH:mm";
+    private static final String TIME_FORMAT = "HH:mm:ss";
 
     /**
      * 自定义Bean

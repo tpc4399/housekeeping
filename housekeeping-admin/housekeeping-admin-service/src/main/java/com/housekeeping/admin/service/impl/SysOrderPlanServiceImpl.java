@@ -80,7 +80,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         if (CommonUtils.isNotEmpty(sysOrderPlanDTO.getRulesMonthlyVo())){
             LocalDate start1 = sysOrderPlanDTO.getRulesMonthlyVo().getStart();
             LocalDate current1 = start1;
-            LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd();
+            LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd().plusDays(1);
             do {
                 LocalDate finalCurrent = current1;
                 List<TimeSlotVo> timeSlotVoDays = null;
@@ -109,7 +109,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             sysOrderPlanDTO.getRulesWeekVos().forEach(x -> {
                 LocalDate start = x.getStart();
                 LocalDate current = start;
-                LocalDate end = x.getEnd();
+                LocalDate end = x.getEnd().plusDays(1);
                 do {
                     if (x.getWeek().contains(String.valueOf(current.getDayOfWeek().getValue()))){
                         LocalDate finalCurrent = current;
