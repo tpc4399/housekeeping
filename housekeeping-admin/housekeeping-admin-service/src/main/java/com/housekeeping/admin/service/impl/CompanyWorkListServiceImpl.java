@@ -355,32 +355,4 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         return R.ok();
     }
 
-    private List<PeriodOfTime> insertPeriodOfTimeListOneDay(List<PeriodOfTime> periodOfTimeList, PeriodOfTime periodOfTime){
-        List<PeriodOfTime> res = periodOfTimeList;
-        periodOfTimeList.forEach(x ->  {
-            LocalTime periodOfTimeStart = periodOfTime.getTimeSlotStart();
-            LocalTime periodOfTimeEnd = periodOfTime.getTimeSlotStart().plusHours((int) (periodOfTime.getTimeSlotLength()/1)).plusMinutes((long) ((periodOfTime.getTimeSlotLength()%1)* 60));
-            LocalTime xStart = x.getTimeSlotStart();
-            LocalTime xEnd = x.getTimeSlotStart().plusHours((int) (x.getTimeSlotLength()/1)).plusMinutes((long) ((x.getTimeSlotLength()%1)* 60));
-            if (periodOfTimeEnd.equals(xStart)){
-                PeriodOfTime periodOfTimeRes = new PeriodOfTime();
-                periodOfTimeRes.setTimeSlotStart(periodOfTimeStart);
-                periodOfTimeRes.setTimeSlotLength(x.getTimeSlotLength()+periodOfTime.getTimeSlotLength());
-                res.remove(x);
-                res.add(periodOfTimeRes);
-            }else if (xEnd.equals(periodOfTimeStart)){
-                PeriodOfTime periodOfTimeRes = new PeriodOfTime();
-                periodOfTimeRes.setTimeSlotStart(x.getTimeSlotStart());
-                periodOfTimeRes.setTimeSlotLength(x.getTimeSlotLength()+periodOfTime.getTimeSlotLength());
-                res.remove(x);
-                res.add(periodOfTimeRes);
-            }else {
-                res.add(periodOfTime);
-            }
-        });
-        if(periodOfTimeList.size() == 0){
-            res.add(periodOfTime);
-        }
-        return res;
-    }
 }
