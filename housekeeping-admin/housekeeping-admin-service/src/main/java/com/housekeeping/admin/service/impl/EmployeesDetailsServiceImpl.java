@@ -79,7 +79,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
                 employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
                 employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
-                employeesDetails.setStarRating(6); //新增的员工默认为三星级，中等好评
+                employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
                 employeesDetails.setBlacklistFlag(false);
 
                 employeesDetails.setUpdateTime(LocalDateTime.now());
