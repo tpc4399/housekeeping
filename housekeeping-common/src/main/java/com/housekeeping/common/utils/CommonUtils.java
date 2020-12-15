@@ -8,6 +8,8 @@ import com.housekeeping.admin.entity.SysOrderPlan;
 import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.apache.tomcat.jni.Local;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -258,6 +260,45 @@ public class CommonUtils {
 		map.put("1", "2");
 		String res = map.put("1", "3");
 		System.out.println(res);
+
+//		String host = "https://ali-waihui.showapi.com";
+//		String path = "/list";
+//		String method = "GET";
+//		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
+//		Map<String, String> headers = new HashMap<String, String>();
+//		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+//		headers.put("Authorization", "APPCODE " + appcode);
+//		Map<String, String> querys = new HashMap<String, String>();
+
+		String host = "https://ali-waihui.showapi.com";
+		String path = "/waihui-list";
+		String method = "GET";
+		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
+		Map<String, String> headers = new HashMap<String, String>();
+		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+		headers.put("Authorization", "APPCODE " + appcode);
+		Map<String, String> querys = new HashMap<String, String>();
+//		querys.put("code", "CNY");
+
+
+		try {
+			/**
+			 * 重要提示如下:
+			 * HttpUtils请从
+			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
+			 * 下载
+			 *
+			 * 相应的依赖请参照
+			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
+			 */
+			HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+			System.out.println(response.toString());
+			//获取response的body
+			System.out.println(EntityUtils.toString(response.getEntity()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 
 	}
 }
