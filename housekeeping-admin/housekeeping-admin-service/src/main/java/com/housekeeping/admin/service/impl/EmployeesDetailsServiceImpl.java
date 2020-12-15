@@ -79,6 +79,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
                 employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
                 employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
+                employeesDetails.setStarRating(6); //新增的员工默认为三星级，中等好评
+                employeesDetails.setBlacklistFlag(false);
 
                 employeesDetails.setUpdateTime(LocalDateTime.now());
                 employeesDetails.setCreateTime(LocalDateTime.now());
@@ -129,18 +131,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
 
-        Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
-        try {
-            this.updateById(employeesDetails);
+        this.updateById(employeesDetails);
+        /**
+         * 工作经验修改
+         */
+        employeesWorkExperienceService.updateEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
 
-            /**
-             * 工作经验修改
-             */
-            employeesWorkExperienceService.updateEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
-        }catch (Exception e){
-            TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-            return R.failed("修改失敗");
-        }
         return R.ok("修改成功");
 
 

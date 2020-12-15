@@ -3,11 +3,17 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.EmployeesWorkExperience;
 import com.housekeeping.admin.mapper.EmployeesWorkExperienceMapper;
+import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
+import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 
@@ -17,6 +23,10 @@ import java.util.List;
  */
 @Service("employeesWorkExperienceService")
 public class EmployeesWorkExperienceServiceImpl extends ServiceImpl<EmployeesWorkExperienceMapper, EmployeesWorkExperience> implements IEmployeesWorkExperienceService {
+
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
+
     @Override
     public void saveEmployeesWorkExperience(List<EmployeesWorkExperienceDTO> employeesWorkExperienceDTOS, Integer employeesId) {
         //删掉原先的
@@ -55,5 +65,12 @@ public class EmployeesWorkExperienceServiceImpl extends ServiceImpl<EmployeesWor
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("employees_id", employeesId);
         baseMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public R getAll(Integer employeesId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        return R.ok(baseMapper.selectList(qw), "查詢成功");
     }
 }

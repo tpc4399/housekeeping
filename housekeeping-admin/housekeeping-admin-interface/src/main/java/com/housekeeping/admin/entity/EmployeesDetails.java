@@ -44,7 +44,8 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private Boolean sex;    /* 性別 */
     private String tags;    /* 標簽 */
     private String recordOfFormalSchooling; /* 学历 */
-    private Integer blacklistFlag;    /* 是否加入黑名單 */
+    private Boolean blacklistFlag;    /* 是否加入黑名單 */
+    private Integer starRating;     /* 星级 0 1 2 3 4 5 6 7 8 9 10 */
     private LocalDateTime createTime;    /* 创建时间 */
     private LocalDateTime updateTime;    /* 修改时间 */
     private Integer lastReviserId;    /* 最后修改人 */

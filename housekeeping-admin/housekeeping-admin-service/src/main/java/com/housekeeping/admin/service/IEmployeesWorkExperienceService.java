@@ -3,6 +3,7 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
 import com.housekeeping.admin.entity.EmployeesWorkExperience;
+import com.housekeeping.common.utils.R;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface IEmployeesWorkExperienceService extends IService<EmployeesWorkE
                                      Integer employeesId);
 
     void deleteByEmployeesId(Integer employeesId);
+
+    R getAll(Integer employeesId);
 }

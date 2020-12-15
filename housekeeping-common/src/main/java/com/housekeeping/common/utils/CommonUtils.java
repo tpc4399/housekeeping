@@ -254,6 +254,11 @@ public class CommonUtils {
 		Integer ss = Integer.valueOf(String.valueOf(sss));
 		System.out.println(ss);
 
+		Map<String, String> map = new HashMap<>();
+		map.put("1", "2");
+		String res = map.put("1", "3");
+		System.out.println(res);
+
 	}
 }
 
