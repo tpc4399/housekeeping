@@ -7,7 +7,9 @@ import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
@@ -20,4 +22,8 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
 
     R cusPage1(Page page, PageOfEmployeesDTO pageOfEmployeesDTO, String type);
+
+    String uploadHead(MultipartFile file, Integer id) throws IOException;
+
+    R updateHeadUrlByUserId(String headUrl, Integer id);
 }

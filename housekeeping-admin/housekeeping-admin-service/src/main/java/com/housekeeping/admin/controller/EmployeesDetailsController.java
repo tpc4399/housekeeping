@@ -10,12 +10,15 @@ import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.QrCodeUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 
@@ -69,13 +72,13 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
-    @ApiOperation("【公司】【經理】根据id生成登入链接")
+    @ApiOperation("【公司】【經理】根据id生成员工登入链接")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return employeesDetailsService.getLinkToLogin(id, h);
     }
 
-    @ApiOperation("【公司】【經理】根据id生成登入二维码")
+    @ApiOperation("【公司】【經理】根据id生成员工登入二维码")
     @GetMapping("/getQrCodeToLogin/{id}")
     public void getQrCodeToLogin(@PathVariable Integer id,
                               @RequestParam("h") Long h,
@@ -89,5 +92,16 @@ public class EmployeesDetailsController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @ApiOperation("【员工】上传头像")
+    @PostMapping("/uploadHead")
+    public R uploadHead(@RequestParam("file") MultipartFile file) throws IOException {
+        Integer reviserId = TokenUtils.getCurrentUserId();
+        //服务器存储head
+        String fileName = employeesDetailsService.uploadHead(file, reviserId);
+        //数据库存储headUrl
+        employeesDetailsService.updateHeadUrlByUserId(fileName, reviserId);
+        return R.ok("頭像保存成功");
     }
 }

@@ -13,4 +13,7 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
 
     String getScaleById(Integer id);
 
+    void updateHeadUrlById(@Param("headUrl") String headUrl,
+                           @Param("userId") Integer userId);
+
 }

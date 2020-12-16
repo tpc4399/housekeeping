@@ -45,7 +45,6 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String catalogue = CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV + reviserId;
         String type = file.getOriginalFilename().split("\\.")[1];
-        String fileName = nowString+"."+ type;
         String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
 
         try {
@@ -92,7 +91,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     @Override
     public R updateLogUrlByUserId(String logoUrl, Integer id) {
         baseMapper.updateLogoUrlById(logoUrl, id);
-        return R.ok("");
+        return R.ok();
     }
 
     @Override

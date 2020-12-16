@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.Order;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@Order(1)
+@Order(10)
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableZuulProxy

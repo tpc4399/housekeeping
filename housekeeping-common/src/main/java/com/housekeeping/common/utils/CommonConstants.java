@@ -22,21 +22,17 @@ public interface CommonConstants {
 	 */
 	Integer VALID_TIME_MINUTES = 3;
 	/**
-	 * 開發環境的存儲公司logoUrl的絕對路徑
-	 */
-	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_DEV = "F:/usr/local/HKFile/CompanyLogoImg/userId=";
-	/**
 	 * 正式環境的存儲公司logoUrl的絕對路徑
 	 */
 	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyLogoImg/userId=";
 	/**
-	 * 開發環境的存儲公司五张图片的絕對路徑
-	 */
-	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_DEV = "F:/usr/local/HKFile/CompanyFiveImg/userId=";
-	/**
 	 * 正式環境的存儲公司五张图片的絕對路徑
 	 */
 	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyFiveImg/userId=";
+	/**
+	 * 正式環境的存儲员工头像的絕對路徑
+	 */
+	String HK_EMPLOYEES_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/EmployeesHead/userId=";
 
 	/**
 	 * 神秘代码的零件
