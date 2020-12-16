@@ -39,7 +39,7 @@
         group_name,
         create_time,
         update_time,
-        last_reviser_id,
+        last_reviser_id
         from
         group_details
         <if test=" id != null and  id != ''">
