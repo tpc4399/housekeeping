@@ -12,12 +12,15 @@ import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.QrCodeUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 
@@ -84,5 +87,16 @@ public class ManagerDetailsController {
     @GetMapping("/page2")
     public R page2(Page page, PageOfManagerDetailsDTO pageOfEmployeesDetailsDTO){
         return managerDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_COMPANY);
+    }
+
+    @ApiOperation("【经理】上传头像")
+    @PostMapping("/uploadHead")
+    public R uploadHead(@RequestParam("file") MultipartFile file) throws IOException {
+        Integer reviserId = TokenUtils.getCurrentUserId();
+        //服务器存储head
+        String fileName = managerDetailsService.uploadHead(file, reviserId);
+        //数据库存储headUrl
+        managerDetailsService.updateHeadUrlByUserId(fileName, reviserId);
+        return R.ok("頭像保存成功");
     }
 }

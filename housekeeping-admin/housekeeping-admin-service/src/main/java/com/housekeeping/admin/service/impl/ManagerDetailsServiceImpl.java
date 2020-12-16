@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service.impl;
 
 
+import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -18,10 +19,16 @@ import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service("managerDetailsService")
 public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper, ManagerDetails> implements ManagerDetailsService {
@@ -34,6 +41,15 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Resource
+    private OSSClient ossClient;
+
+    @Value("${oss.bucketName}")
+    private String bucketName;
+
+    @Value("${oss.urlPrefix}")
+    private String urlPrefix;
 
     @Override
     public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
@@ -163,6 +179,33 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
 
+    @Override
+    public String uploadHead(MultipartFile file, Integer id) throws IOException {
+        String res = "";
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_MANAGER_HEAD_ABSTRACT_PATH_PREFIX_PROV + id;
+        String type = file.getOriginalFilename().split("\\.")[1];
+        String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
+
+        try {
+            ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+            res = urlPrefix + fileAbstractPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error upload";
+        }
+
+        return res;
+    }
+
+    @Override
+    public R updateHeadUrlByUserId(String headUrl, Integer id) {
+        baseMapper.updateHeadUrlById(headUrl, id);
+        return R.ok();
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return
@@ -175,8 +218,8 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
         String[] split = scaleById.split("~");
         Integer companyMaxsize;
-        if(split[1]=="n"){
-            companyMaxsize = 1000000000;
+        if(split[1].equals("n")){
+            companyMaxsize = Integer.MAX_VALUE;
         }else {
             companyMaxsize = Integer.parseInt(split[1]);
         }

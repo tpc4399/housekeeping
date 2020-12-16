@@ -7,7 +7,9 @@ import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 
 public interface ManagerDetailsService extends IService<ManagerDetails> {
@@ -22,4 +24,8 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     R cusPage1(Page page, PageOfManagerDTO pageOfEmployeesDTO, String type);
 
     R cusPage(Page page, PageOfManagerDetailsDTO pageOfEmployeesDetailsDTO, String type);
+
+    String uploadHead(MultipartFile file, Integer id) throws IOException;
+
+    R updateHeadUrlByUserId(String headUrl, Integer id);
 }

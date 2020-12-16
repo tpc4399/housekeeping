@@ -26,6 +26,7 @@ public class CustomerDetails extends Model<CustomerDetails> {
     private String phonePrefix;     /* 手机号前缀 */
     private String phone;           /* 手机号 */
     private String email;           /* 邮箱 */
+    private String headUrl;         /* 头像 */
     private String address;         /* 地址 */
     private Integer numberOfReservations;/* 预约单数量 */
     private Integer numberOfDemand; /* 需求单数量 */

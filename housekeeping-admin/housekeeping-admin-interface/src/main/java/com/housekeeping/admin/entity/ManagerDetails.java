@@ -33,11 +33,9 @@ public class ManagerDetails extends Model<EmployeesDetails> {
     /* 是否實名 */
     private Integer realName;
 
-    /* 郵箱 */
-    private String email;
-
-    /* 時間表 */
-    private String schedule;
+    private String email;    /* 郵箱 */
+    private String headUrl; /* 头像 */
+    private String schedule; /* 時間表 */
 
     /* 所屬公司id */
     private Integer companyId;

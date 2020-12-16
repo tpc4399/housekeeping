@@ -33,6 +33,14 @@ public interface CommonConstants {
 	 * 正式環境的存儲员工头像的絕對路徑
 	 */
 	String HK_EMPLOYEES_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/EmployeesHead/userId=";
+	/**
+	 * 正式環境的存儲经理头像的絕對路徑
+	 */
+	String HK_MANAGER_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/ManagerHead/userId=";
+	/**
+	 * 正式環境的存儲客户头像的絕對路徑
+	 */
+	String HK_CUSTOMER_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CustomerHead/userId=";
 
 	/**
 	 * 神秘代码的零件

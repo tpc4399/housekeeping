@@ -15,4 +15,7 @@ public interface ManagerDetailsMapper extends BaseMapper<ManagerDetails> {
     String getScaleById(Integer id);
 
     IPage<List<EmployeesDetailsVO>> cusPage(Page page, @Param("id") Integer id,@Param("companyId")Integer companyId);
+
+    void updateHeadUrlById(@Param("headUrl") String headUrl,
+                           @Param("userId") Integer userId);
 }

@@ -73,5 +73,9 @@
 		</if>
 	</select>
 
-
+	<update id="updateHeadUrlById">
+		UPDATE manager_details
+		SET head_url = #{headUrl}
+		WHERE user_id = #{userId}
+    </update>
 </mapper>
