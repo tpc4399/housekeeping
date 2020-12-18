@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service("employeesDetailsService")
 public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMapper, EmployeesDetails> implements EmployeesDetailsService {
@@ -344,4 +345,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             return false;
         }
     }
+
+    public List<Integer> getAllIdsByCompanyId(Integer companyId){
+        return baseMapper.getAllIdsByCompanyId(companyId);
+    }
+
 }

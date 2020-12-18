@@ -6,10 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.GroupDetailsDTO;
 import com.housekeeping.admin.dto.GroupDetailsUpdateDTO;
-import com.housekeeping.admin.dto.GroupEmployeesDTO;
-import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.entity.GroupDetails;
+import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public interface IGroupDetailsService extends IService<GroupDetails> {
 
@@ -21,4 +24,9 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
 
     IPage getGroup(Page page, Integer companyId, Integer id);
 
+    String uploadLogo(MultipartFile file, Integer groupId) throws IOException;
+
+    R updateLogUrlByGroupId(String fileName, Integer groupId);
+
+    R getGroupData(Integer companyId, Integer id);
 }

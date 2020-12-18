@@ -7,6 +7,7 @@
     <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.GroupDetails">
         <id property="id" column="id"/>
         <result property="companyId" column="company_id"/>
+        <result property="headUrl" column="head_url"/>
         <result property="groupName" column="group_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -36,6 +37,7 @@
         select
         id,
         company_id,
+        head_url,
         group_name,
         create_time,
         update_time,

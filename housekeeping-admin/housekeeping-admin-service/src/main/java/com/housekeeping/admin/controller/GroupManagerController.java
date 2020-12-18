@@ -1,8 +1,7 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.GroupEmployeesDTO;
+import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupManagerDTO;
-import com.housekeeping.admin.service.IGroupEmployeesService;
 import com.housekeeping.admin.service.IGroupManagerService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -34,4 +33,15 @@ public class GroupManagerController {
         return groupManagerService.delete(groupManagerDTO);
     }
 
+    @GetMapping("getAllEmp")
+    @ApiOperation("【公司】分状态获取公司及组下经理")
+    public R getAllEmp(GroupDTO groupDTO){
+        return groupManagerService.getAllMan(groupDTO);
+    }
+
+    @GetMapping("getAllEmpById")
+    @ApiOperation("【公司】通过组id获取组下所有经理")
+    public R getAllEmpById(Integer groupId){
+        return groupManagerService.getAllEmpById(groupId);
+    }
 }

@@ -19,6 +19,7 @@ public class GroupDetails extends Model<GroupDetails> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;/* 主键id */
     private Integer companyId; /* 所屬公司id */
+    private String headUrl; /* 组图像 */
     private String groupName;/* 組名 */
     private LocalDateTime createTime;/* 創建時間 */
     private LocalDateTime updateTime;/* 修改時間 */

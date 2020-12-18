@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.service.IGroupEmployeesService;
 import com.housekeeping.common.utils.R;
@@ -32,4 +33,15 @@ public class GroupEmployeesController {
         return groupEmployeesService.delete(groupEmployeesDTO);
     }
 
+    @GetMapping("getAllEmp")
+    @ApiOperation("【公司】分状态获取公司及组下员工")
+    public R getAllEmp(GroupDTO groupDTO){
+        return groupEmployeesService.getAllEmp(groupDTO);
+    }
+
+    @GetMapping("getAllEmpById")
+    @ApiOperation("【公司】通过组id获取组下所有员工")
+    public R getAllEmpById(Integer groupId){
+        return groupEmployeesService.getAllEmpById(groupId);
+    }
 }
