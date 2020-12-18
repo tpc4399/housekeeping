@@ -11,6 +11,7 @@ import com.housekeeping.common.utils.R;
  * @Date 2020/12/8 14:33
  */
 public interface ISysEnterpriseAuthenticationMessageService extends IService<SysEnterpriseAuthenticationMessage> {
+    R isValidate();
     R loadingTheDraft();
     R sendAuthMessage(SysEnterpriseAuthenticationMessagePostDTO authMessageDTO);
     R viewMine();

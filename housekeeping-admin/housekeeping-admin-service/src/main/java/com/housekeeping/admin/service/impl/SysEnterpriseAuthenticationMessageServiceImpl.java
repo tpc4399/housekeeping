@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.SysEnterpriseAuthenticationMessagePostDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.SysEnterpriseAuthenticationMessage;
 import com.housekeeping.admin.mapper.SysEnterpriseAuthenticationMessageMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
@@ -27,6 +28,15 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
 
     @Resource
     private ICompanyDetailsService companyDetailsService;
+
+    @Override
+    public R isValidate() {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(queryWrapper);
+        return R.ok(companyDetails.getIsValidate(), "獲取成功");
+    }
 
     /***
      * 加載我的草稿

@@ -24,6 +24,12 @@ public class SysEnterpriseAuthenticationMessageController {
 
     private final ISysEnterpriseAuthenticationMessageService sysEnterpriseAuthenticationMessageService;
 
+    @ApiOperation("【公司】是否验证")
+    @GetMapping("/isValidate")
+    public R isValidate(){
+        return sysEnterpriseAuthenticationMessageService.isValidate();
+    }
+
     @ApiOperation("【公司】加載申請和材料表單草稿")
     @GetMapping("/mineDraft")
     public R loadingTheDraft(){
