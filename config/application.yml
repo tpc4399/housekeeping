@@ -23,10 +23,9 @@ spring:
         min-idle: 0
     timeout: 1000
   mail:
-    host: smtp.163.com
-    port: 465
-    username: 18995636120@163.com
-    password: WSYXZUKQMFAAXAVM
+    host: smtp.qq.com
+    username: 1213225994@qq.com
+    password: iyhijjjyvqxkifie
     default-encoding: UTF-8
     protocol: smtp
     properties:

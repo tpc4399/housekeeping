@@ -30,7 +30,7 @@ public class EmailUtils {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             //true表示需要创建一个multipart message
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setFrom("HouseKeeping");
+            helper.setFrom("1213225994@qq.com");
             helper.setTo(receiverMail);
             helper.setSubject(subject);
 
