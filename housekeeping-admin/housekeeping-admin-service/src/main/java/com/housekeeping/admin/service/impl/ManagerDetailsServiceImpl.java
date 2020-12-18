@@ -120,14 +120,12 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
         ManagerDetails managerDetails = baseMapper.selectById(id);
         if (CommonUtils.isNotEmpty(managerDetails)){
-            String url = "";
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
             String key = CommonConstants.LOGIN_MANAGER_PREFIX + mysteriousCode;
             Integer value = managerDetails.getUserId();
             redisUtils.set(key, value, 60 * 60 * h);//有效期12小时
             //拼接url链接
-            url = CommonUtils.getRequestPrefix() + "/auth/Manager/" + mysteriousCode;
-            return R.ok(url);
+            return R.ok(mysteriousCode);
         } else {
             return R.failed("經理不存在，請刷新頁面重試");
         }

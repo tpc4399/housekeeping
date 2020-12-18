@@ -351,7 +351,24 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
     @Override
     public R dispatchOrder(Integer orderId, Integer employeesId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("order_id", orderId);
+        List<EmployeesCalendar> employeesCalendarList = (List<EmployeesCalendar>) employeesCalendarService.getCalendarByEmployees(employeesId).getData();
+        Map<Boolean, List<EmployeesCalendar>> employeesCalendarMap= new HashMap<>();
+        employeesCalendarList.forEach(y -> {
+            List<EmployeesCalendar> te = employeesCalendarMap.getOrDefault(y.getStander(), new ArrayList<>());
+            te.add(y);
+            employeesCalendarMap.put(y.getStander(), te);
+        });
+        List<SysOrderPlan> sysOrderPlanList = sysOrderPlanService.list(queryWrapper);
+        sysOrderPlanList.forEach(x -> {
+            LocalDate date = x.getDate();
+            employeesCalendarMap.get(false).forEach(y -> {
+                if (y.getData().equals(date)){
 
+                }
+            });
+        });
         return R.ok();
     }
 
