@@ -72,7 +72,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
-    @ApiOperation("【公司】【經理】根据id生成员工登入链接")
+    @ApiOperation("【公司】【經理】根据id生成员工登入参数")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return employeesDetailsService.getLinkToLogin(id, h);

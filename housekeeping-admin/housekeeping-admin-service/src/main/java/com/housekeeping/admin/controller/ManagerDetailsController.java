@@ -53,7 +53,7 @@ public class ManagerDetailsController {
         return R.ok(managerDetailsService.removeById(managerDetails));
     }
 
-    @ApiOperation("【公司】根据id生成登入链接")
+    @ApiOperation("【公司】根据id生成登入参数")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return managerDetailsService.getLinkToLogin(id, h);

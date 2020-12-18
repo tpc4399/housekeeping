@@ -41,7 +41,7 @@ public class CommonController {
         return R.ok("注銷成功");
     }
 
-    @ApiOperation("绑定登入邮箱--发送邮件验证码")
+    @ApiOperation("绑定登入邮箱1--发送邮件验证码")
     @GetMapping("/bindingEMail")
     public R validationEmail(String email){
         Map<String, String> map = new HashMap<>();
