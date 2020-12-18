@@ -28,5 +28,5 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
 
     R updateLogUrlByGroupId(String fileName, Integer groupId);
 
-    R getGroupData(Integer companyId, Integer id);
+    R getGroupData(Integer companyId, Integer id,String groupName);
 }

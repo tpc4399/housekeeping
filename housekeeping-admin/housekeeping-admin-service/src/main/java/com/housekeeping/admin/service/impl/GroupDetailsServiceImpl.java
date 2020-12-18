@@ -15,10 +15,14 @@ import com.housekeeping.admin.mapper.GroupDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
+import com.housekeeping.admin.vo.EmpVo;
 import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +34,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service("groupService")
 public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, GroupDetails> implements IGroupDetailsService {
@@ -154,12 +160,14 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     }
 
     @Override
-    public R getGroupData(Integer companyId, Integer id) {
+    public R getGroupData(Integer companyId, Integer id,String groupName) {
         QueryWrapper<GroupDetails> qw = new QueryWrapper<>();
         qw.eq("company_id",companyId);
         List<GroupDetails> list = this.list(qw);
+        if(CollectionUtils.isEmpty(list)){
+            return R.ok(null);
+        }
         ArrayList<GroupVO> groupVOS = new ArrayList<>();
-        if(id == null){
             for (int i = 0; i < list.size(); i++) {
                 GroupVO groupVO = new GroupVO();
                 groupVO.setGroupId(list.get(i).getId());
@@ -169,35 +177,52 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
                 groupVO.setEmpNum(groupEmployeesServiceImpl.count(list.get(i).getId()));
                 List<Integer> manIds = groupManagerService.getManIdsByGroupId(list.get(i).getId());
                 StringBuilder sb = new StringBuilder();
-                for (int j = 0; j < manIds.size(); j++) {
-                    ManagerDetails byId = managerDetailsService.getById(manIds.get(j));
-                    sb.append(byId.getName()).append(",");
+                if(CollectionUtils.isEmpty(manIds)){
+                    groupVO.setResponsible("");
+                }else {
+                    for (int j = 0; j < manIds.size(); j++) {
+                        ManagerDetails byId = managerDetailsService.getById(manIds.get(j));
+                        sb.append(byId.getName()).append(",");
+                    }
+                    String s = sb.toString();
+                    groupVO.setResponsible(s.substring(0, s.length() - 1));
                 }
-                String s = sb.toString();
-                groupVO.setResponsible(s.substring(0, s.length() - 1));
                 groupVOS.add(groupVO);
             }
-        }else {
-            GroupDetails byId1 = this.getById(id);
-            GroupVO groupVO = new GroupVO();
-            groupVO.setGroupId(byId1.getId());
-            groupVO.setGroupName(byId1.getGroupName());
-            groupVO.setHeadUrl(byId1.getHeadUrl());
-            groupVO.setManNum(groupManagerService.count(id));
-            groupVO.setEmpNum(groupEmployeesServiceImpl.count(id));
-            List<Integer> manIds = groupManagerService.getManIdsByGroupId(id);
-            StringBuilder sb = new StringBuilder();
-            for (int j = 0; j < manIds.size(); j++) {
-                ManagerDetails byId = managerDetailsService.getById(manIds.get(j));
-                sb.append(byId.getName()).append(",");
+            if(CommonUtils.isNotEmpty(id)){
+                List<GroupVO> groupVOS1 = search2(id, groupVOS);
+                return R.ok(groupVOS1);
             }
-            String s = sb.toString();
-            groupVO.setResponsible(s.substring(0, s.length() - 1));
-            groupVOS.add(groupVO);
+            if(StringUtils.isNotEmpty(groupName)){
+            List<GroupVO> search = search(groupName, groupVOS);
+            return R.ok(search);
         }
         return R.ok(groupVOS);
     }
 
+    public List<GroupVO> search(String name, List<GroupVO> list){
+        List<GroupVO> results = new ArrayList();
+        Pattern pattern = Pattern.compile(name);
+        for(int i=0; i < list.size(); i++){
+            Matcher matcher = pattern.matcher(((GroupVO)list.get(i)).getGroupName());
+            if(matcher.find()){
+                results.add(list.get(i));
+            }
+        }
+        return results;
+    }
+
+    public List<GroupVO> search2(Integer id,List<GroupVO> list){
+        List<GroupVO> results = new ArrayList();
+        Pattern pattern = Pattern.compile(id.toString());
+        for(int i=0; i < list.size(); i++){
+            Matcher matcher = pattern.matcher(((GroupVO)list.get(i)).getGroupId().toString());
+            if(matcher.matches()){
+                results.add(list.get(i));
+            }
+        }
+        return results;
+    }
 
 
 }
