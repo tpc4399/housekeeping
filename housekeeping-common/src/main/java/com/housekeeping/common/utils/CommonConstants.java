@@ -18,7 +18,7 @@ public interface CommonConstants {
 	 */
 	String REGISTER_KEY_BY_PHONE = "HK_REGISTER_KEY_BY_PHONE";
 	/***
-	 * red驗證碼緩存有效時間，分鐘
+	 * redis驗證碼緩存有效時間，分鐘
 	 */
 	Integer VALID_TIME_MINUTES = 3;
 	/**
@@ -87,6 +87,11 @@ public interface CommonConstants {
 	 * 客户请求标志
 	 */
 	String REQUEST_ORIGIN_CUSTOMER = "REQUEST_ORIGIN_CUSTOMER";
+
+	/**
+	 * 绑定邮箱的验证代码前缀
+	 */
+	String BINDING_EMAIL_PREFIX = "BINDING_EMAIL_";
 
 	/**
 	 * 删除

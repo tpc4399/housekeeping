@@ -10,7 +10,6 @@ public interface AdminApi {
     @GetMapping("/user/byEmail")
     public User getUserByEmail(@RequestParam String email);
 
-
     @GetMapping("/user/byPhone")
     public User getUserByPhone(@RequestParam String phone);
 

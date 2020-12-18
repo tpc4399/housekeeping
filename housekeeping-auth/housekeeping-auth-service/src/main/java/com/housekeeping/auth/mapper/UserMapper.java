@@ -15,4 +15,7 @@ public interface UserMapper {
     void changePasswordByPhone(@Param("phone") String phone,
                                @Param("newPassword") String newPassword);
 
+    void bindingEmailByUserId(@Param("userId") Integer userId,
+                              @Param("email") String email);
+
 }

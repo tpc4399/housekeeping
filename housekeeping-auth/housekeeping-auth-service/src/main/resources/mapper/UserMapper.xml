@@ -24,4 +24,10 @@
 		SET password = #{newPassword}
 		WHERE phone = #{phone}
 	</update>
+
+	<update id="bindingEmailByUserId">
+		UPDATE sys_user
+		SET email = #{email}
+		WHERE id = #{userId}
+    </update>
 </mapper>

@@ -44,4 +44,9 @@ public class UserService implements IUserService {
         userMapper.insertOne(userDTO, "User4399", 1);
         return R.ok("註冊成功");
     }
+
+    @Override
+    public void bindingEmailByUserId(Integer userId, String email) {
+        userMapper.bindingEmailByUserId(userId, email);
+    }
 }
