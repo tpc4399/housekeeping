@@ -1,6 +1,7 @@
 package com.housekeeping.auth.service.impl;
 
 import com.housekeeping.admin.dto.UserDTO;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.auth.mapper.UserMapper;
 import com.housekeeping.auth.service.IUserService;
 import com.housekeeping.common.utils.DESEncryption;
@@ -48,5 +49,15 @@ public class UserService implements IUserService {
     @Override
     public void bindingEmailByUserId(Integer userId, String email) {
         userMapper.bindingEmailByUserId(userId, email);
+    }
+
+    @Override
+    public Integer getDeptIdByUserId(Integer userId) {
+        return userMapper.getDeptIdByUserId(userId);
+    }
+
+    @Override
+    public User getOne(Integer deptId, String email) {
+        return userMapper.getOne(deptId, email);
     }
 }

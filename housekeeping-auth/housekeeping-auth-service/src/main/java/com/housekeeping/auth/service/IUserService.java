@@ -1,6 +1,7 @@
 package com.housekeeping.auth.service;
 
 import com.housekeeping.admin.dto.UserDTO;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.common.utils.R;
 import org.apache.ibatis.annotations.Param;
 
@@ -11,4 +12,6 @@ import org.apache.ibatis.annotations.Param;
 public interface IUserService {
     R register(UserDTO userDTO);
     void bindingEmailByUserId(Integer userId, String email);
+    Integer getDeptIdByUserId(Integer userId);
+    User getOne(Integer deptId, String email);
 }

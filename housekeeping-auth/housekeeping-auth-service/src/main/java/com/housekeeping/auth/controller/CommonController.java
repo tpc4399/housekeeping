@@ -1,5 +1,6 @@
 package com.housekeeping.auth.controller;
 
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -47,6 +48,14 @@ public class CommonController {
     @GetMapping("/bindingEMail1")
     public R validationEmail1(String email){
         Integer userId = TokenUtils.getCurrentUserId();
+        //判断email的存在性
+        //得到deptId
+        Integer deptId = userService.getDeptIdByUserId(userId);
+        //根绝deptId和email获取user
+        User user = userService.getOne(deptId, email);
+        if (CommonUtils.isNotEmpty(user)){
+            return R.failed("該郵箱已經被註冊");
+        }
         Map<String, String> map = new HashMap<>();
         String key = CommonConstants.BINDING_EMAIL_PREFIX + userId;
         String code = CommonUtils.getRandomSixCode();
@@ -54,7 +63,7 @@ public class CommonController {
         redisUtils.set(key, value, CommonConstants.VALID_TIME_MINUTES * 60);//三分钟
         map.put("code", code);
         emailUtils.sendCodeToValidationEmail(email, map, "验证邮箱");
-        return R.ok();
+        return R.ok("成功發送驗證碼");
     }
 
     @ApiOperation("绑定登入邮箱2--提交")
