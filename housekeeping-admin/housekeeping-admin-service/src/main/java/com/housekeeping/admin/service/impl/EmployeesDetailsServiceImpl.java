@@ -227,14 +227,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
         EmployeesDetails employeesDetails = baseMapper.selectById(id);
         if (CommonUtils.isNotEmpty(employeesDetails)){
-            String url = "";
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
             String key = CommonConstants.LOGIN_EMPLOYEES_PREFIX + mysteriousCode;
             Integer value = employeesDetails.getUserId();
             redisUtils.set(key, value, 60 * 60 * h);//有效期12小时
             //拼接url链接
-            url = CommonUtils.getRequestPrefix() + "/auth/Employees/" + mysteriousCode;
-            return R.ok(url);
+            return R.ok(mysteriousCode);
         } else {
             return R.failed("員工不存在，請刷新頁面重試");
         }

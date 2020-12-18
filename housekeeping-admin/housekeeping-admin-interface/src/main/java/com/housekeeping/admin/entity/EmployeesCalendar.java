@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -20,26 +21,23 @@ import java.time.LocalTime;
 @TableName("employees_calendar")
 public class EmployeesCalendar extends Model<EmployeesCalendar> {
 
-    /* 主鍵id */
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;
+    private Integer id;    /* 主鍵id */
 
-    /* 计量标准 */
-    private Boolean stander;
+    private Boolean stander;    /* 计量标准 */
 
-    /* 日期 */
-    private LocalDate data;
+    private LocalDate data;    /* 日期 */
 
-    /* 周数 */
-    private String week;
+    private String week;    /* 周数 */
 
-    /* 员工_id */
-    private Integer employeesId;
+    private Integer employeesId;    /* 员工_id */
 
-    /* 时间段开始 */
-    private LocalTime timeSlotStart;
+    private LocalTime timeSlotStart;    /* 时间段开始 */
 
-    /* 时间段长度(小时) */
-    private Float timeSlotLength;
+    private Float timeSlotLength;    /* 时间段长度(小时) */
+
+    private BigDecimal hourlyWage; /* 时薪 */
+
+    private String code; /* 时薪货币代码 */
 
 }

@@ -122,6 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         CompanyDetails companyDetails = new CompanyDetails();
                         companyDetails.setCompanyName(registerDTO.getName());
                         companyDetails.setUserId(maxUserId);
+                        companyDetails.setIsValidate(false);
                         companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());

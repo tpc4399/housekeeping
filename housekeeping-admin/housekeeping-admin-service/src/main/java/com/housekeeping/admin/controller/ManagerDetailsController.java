@@ -53,26 +53,10 @@ public class ManagerDetailsController {
         return R.ok(managerDetailsService.removeById(managerDetails));
     }
 
-    @ApiOperation("【公司】根据id生成登入链接")
+    @ApiOperation("【公司】根据id生成登入参数")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return managerDetailsService.getLinkToLogin(id, h);
-    }
-
-    @ApiOperation("【公司】根据id生成登入二维码")
-    @GetMapping("/getQrCodeToLogin/{id}")
-    public void getQrCodeToLogin(@PathVariable Integer id,
-                                 @RequestParam("h") Long h,
-                                 HttpServletResponse response) {
-        try {
-            OutputStream os = response.getOutputStream();
-            //从配置文件读取需要生成二维码的连接
-            String url = (String) managerDetailsService.getLinkToLogin(id, h).getData();
-            //requestUrl:需要生成二维码的连接，logoPath：内嵌图片的路径，os：响应输出流，needCompress:是否压缩内嵌的图片
-            QrCodeUtils.encode(url, "", os, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @ApiOperation("【管理员】查詢所有公司經理")
