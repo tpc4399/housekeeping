@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service("managerDetailsService")
 public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper, ManagerDetails> implements ManagerDetailsService {
@@ -202,6 +203,11 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     public R updateHeadUrlByUserId(String headUrl, Integer id) {
         baseMapper.updateHeadUrlById(headUrl, id);
         return R.ok();
+    }
+
+    @Override
+    public List<Integer> getManIdsByCompId(Integer id) {
+        return baseMapper.getManIdsByCompId(id);
     }
 
     /**

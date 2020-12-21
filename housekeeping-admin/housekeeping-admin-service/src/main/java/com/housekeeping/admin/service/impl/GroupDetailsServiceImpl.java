@@ -15,7 +15,6 @@ import com.housekeeping.admin.mapper.GroupDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
-import com.housekeeping.admin.vo.EmpVo;
 import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;

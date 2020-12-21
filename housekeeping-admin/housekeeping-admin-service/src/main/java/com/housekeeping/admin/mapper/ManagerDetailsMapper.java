@@ -18,4 +18,6 @@ public interface ManagerDetailsMapper extends BaseMapper<ManagerDetails> {
 
     void updateHeadUrlById(@Param("headUrl") String headUrl,
                            @Param("userId") Integer userId);
+
+    List<Integer> getManIdsByCompId(Integer id);
 }

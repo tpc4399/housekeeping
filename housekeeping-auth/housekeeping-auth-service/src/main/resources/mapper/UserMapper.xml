@@ -24,4 +24,22 @@
 		SET password = #{newPassword}
 		WHERE phone = #{phone}
 	</update>
+
+	<update id="bindingEmailByUserId">
+		UPDATE sys_user
+		SET email = #{email}
+		WHERE id = #{userId}
+    </update>
+
+	<select id="getDeptIdByUserId" resultType="java.lang.Integer">
+		SELECT dept_id
+		FROM sys_user
+		WHERE id = #{userId}
+	</select>
+
+	<select id="getOne" resultType="com.housekeeping.admin.entity.User">
+		SELECT *
+		FROM sys_user
+		WHERE dept_id = #{deptId}, email = #{email}
+	</select>
 </mapper>

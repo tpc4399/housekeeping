@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.mapper.GroupManagerMapper;
@@ -35,7 +34,7 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
     @Resource
     private CompanyDetailsServiceImpl companyDetailsService;
     @Resource
-    private ManagerDetailsService managerDetailsService;
+    private ManagerDetailsServiceImpl managerDetailsService;
 
     @Override
     public R add(GroupManagerDTO groupManagerDTO) {
@@ -90,7 +89,8 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
         Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
         queryWrapper.eq("id", companyId);
         CompanyDetails one = companyDetailsService.getOne(queryWrapper);
-        List<Integer> ids = this.getManIdsByGroupId(one.getId());
+
+        List<Integer> ids = managerDetailsService.getManIdsByCompId(one.getId());
         List<Integer> idsByGroupId = this.getManIdsByGroupId(groupDTO.getGroupId());
         ArrayList<EmpVo> empVos = new ArrayList<>();
         ids.removeAll(idsByGroupId);
@@ -123,7 +123,7 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
     }
 
     @Override
-    public R getAllEmpById(Integer groupId) {
+    public R getAllManById(Integer groupId) {
         ArrayList<ManagerDetails> ms = new ArrayList<>();
         List<Integer> manIdsByGroupId = this.getManIdsByGroupId(groupId);
         for (int i = 0; i < manIdsByGroupId.size(); i++) {

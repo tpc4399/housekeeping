@@ -3,14 +3,12 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ManagerDetailsDTO;
 
-import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.QrCodeUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
@@ -19,9 +17,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.UnknownHostException;
 
 @Api(value="經理controller",tags={"【经理详情】接口"})

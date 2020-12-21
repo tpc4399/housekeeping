@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 public interface ManagerDetailsService extends IService<ManagerDetails> {
     R saveEmp(ManagerDetailsDTO managerDetailsDTO);
@@ -28,4 +29,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     String uploadHead(MultipartFile file, Integer id) throws IOException;
 
     R updateHeadUrlByUserId(String headUrl, Integer id);
+
+    List<Integer> getManIdsByCompId(Integer id);
 }

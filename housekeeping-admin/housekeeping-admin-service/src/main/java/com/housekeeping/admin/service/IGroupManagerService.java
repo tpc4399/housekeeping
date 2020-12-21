@@ -18,5 +18,5 @@ public interface IGroupManagerService extends IService<GroupManager> {
 
     R getAllMan(GroupDTO groupDTO);
 
-    R getAllEmpById(Integer groupId);
+    R getAllManById(Integer groupId);
 }
