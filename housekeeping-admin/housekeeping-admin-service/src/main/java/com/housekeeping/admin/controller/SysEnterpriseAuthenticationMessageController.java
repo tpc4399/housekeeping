@@ -7,10 +7,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -38,7 +35,7 @@ public class SysEnterpriseAuthenticationMessageController {
 
     @ApiOperation("【公司】发布企业认证申请和材料")
     @PostMapping
-    public R sendAuthMessage(SysEnterpriseAuthenticationMessagePostDTO authMessageDTO){
+    public R sendAuthMessage(@RequestBody SysEnterpriseAuthenticationMessagePostDTO authMessageDTO){
         return sysEnterpriseAuthenticationMessageService.sendAuthMessage(authMessageDTO);
     }
 
