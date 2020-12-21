@@ -37,41 +37,22 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
     private ManagerDetailsServiceImpl managerDetailsService;
 
     @Override
-    public R add(GroupManagerDTO groupManagerDTO) {
-        AtomicReference<Integer> count = new AtomicReference<>(0);
+    public R save(GroupManagerDTO groupManagerDTO) {
+
+        //先删
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("group_id", groupManagerDTO.getGroupId());
+        baseMapper.delete(queryWrapper);
+
+        //再加
         groupManagerDTO.getManagerId().forEach(x -> {
             GroupManager groupManager = new GroupManager();
             groupManager.setManagerId(x);
             groupManager.setGroupId(groupManagerDTO.getGroupId());
-            //判断是否存在
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("group_id", groupManagerDTO.getGroupId());
-            queryWrapper.eq("manager_id", x);
-            List<GroupManager> res = baseMapper.selectList(queryWrapper);
-            if ( res == null || res.size() == 0){
-                baseMapper.insert(groupManager);
-                count.getAndSet(count.get() + 1);
-            }
+            baseMapper.insert(groupManager);
         });
-        Integer s = groupManagerDTO.getManagerId().size() - count.get();
-        if (s == 0){
-            return R.ok("分組成功添加"+count.get()+"個经理");
-        }else {
-            return R.ok("分組成功添加"+count.get()+"個经理,有" + s + "个经理是已经存在于该分组的");
-        }
-    }
+        return R.ok("經理保存成功");
 
-    @Override
-    public R delete(GroupManagerDTO groupManagerDTO) {
-        AtomicReference<Integer> count = new AtomicReference<>(0);
-        groupManagerDTO.getManagerId().forEach(x -> {
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("group_id", groupManagerDTO.getGroupId());
-            queryWrapper.eq("manager_id", x);
-            baseMapper.delete(queryWrapper);
-            count.getAndSet(count.get() + 1);
-        });
-        return R.ok("分組成功删除"+count.get()+"個经理");
     }
 
     public Integer count(Integer groupId){

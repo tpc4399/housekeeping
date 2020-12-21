@@ -13,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 public interface IGroupEmployeesService extends IService<GroupEmployees> {
 
-    R add(@RequestBody GroupEmployeesDTO groupEmployeesDTO);
-
-    R delete(@RequestBody GroupEmployeesDTO groupEmployeesDTO);
+    R save(GroupEmployeesDTO groupEmployeesDTO);
 
     R matchTheEmployees(Integer managerId);
 

@@ -36,41 +36,22 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
     private EmployeesDetailsServiceImpl employeesDetailsService;
 
     @Override
-    public R add(GroupEmployeesDTO groupEmployeesDTO) {
-        AtomicReference<Integer> count = new AtomicReference<>(0);
+    public R save(GroupEmployeesDTO groupEmployeesDTO) {
+
+        //刪
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
+        baseMapper.delete(queryWrapper);
+
+        //增
         groupEmployeesDTO.getEmployeesId().forEach(x -> {
             GroupEmployees groupEmployees = new GroupEmployees();
             groupEmployees.setEmployeesId(x);
             groupEmployees.setGroupId(groupEmployeesDTO.getGroupId());
-            //判断是否存在
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
-            queryWrapper.eq("employees_id", x);
-            List<GroupEmployees> res = baseMapper.selectList(queryWrapper);
-            if ( res == null || res.size() == 0){
-                baseMapper.insert(groupEmployees);
-                count.getAndSet(count.get() + 1);
-            }
+            baseMapper.insert(groupEmployees);
         });
-        Integer s = groupEmployeesDTO.getEmployeesId().size() - count.get();
-        if (s == 0){
-            return R.ok("分組成功添加"+count.get()+"個員工");
-        }else {
-            return R.ok("分組成功添加"+count.get()+"個員工,有" + s + "个员工是已经存在于该分组的");
-        }
-    }
+        return R.ok("員工修改成功");
 
-    @Override
-    public R delete(GroupEmployeesDTO groupEmployeesDTO) {
-        AtomicReference<Integer> count = new AtomicReference<>(0);
-        groupEmployeesDTO.getEmployeesId().forEach(x -> {
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
-            queryWrapper.eq("employees_id", x);
-            baseMapper.delete(queryWrapper);
-            count.getAndSet(count.get() + 1);
-        });
-        return R.ok("分組成功刪除"+count.get()+"個員工");
     }
 
     @Override

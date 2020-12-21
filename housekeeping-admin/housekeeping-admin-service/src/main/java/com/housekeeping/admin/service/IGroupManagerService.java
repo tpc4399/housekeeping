@@ -12,9 +12,7 @@ import com.housekeeping.common.utils.R;
  * @create 2020/11/25 14:51
  */
 public interface IGroupManagerService extends IService<GroupManager> {
-    R add(GroupManagerDTO groupManagerDTO);
-
-    R delete(GroupManagerDTO groupManagerDTO);
+    R save(GroupManagerDTO groupManagerDTO);
 
     R getAllMan(GroupDTO groupDTO);
 
