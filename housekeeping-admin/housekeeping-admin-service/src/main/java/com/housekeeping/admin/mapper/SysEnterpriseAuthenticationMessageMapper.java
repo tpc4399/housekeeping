@@ -8,4 +8,5 @@ import com.housekeeping.admin.entity.SysEnterpriseAuthenticationMessage;
  * @Date 2020/12/8 14:32
  */
 public interface SysEnterpriseAuthenticationMessageMapper extends BaseMapper<SysEnterpriseAuthenticationMessage> {
+    void undo(Integer companyId);
 }

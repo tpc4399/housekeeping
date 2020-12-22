@@ -28,7 +28,7 @@ public class SysEnterpriseAuthenticationMessage extends Model<SysEnterpriseAuthe
     private String legalName; /* 负责人、法人 */
     private String phonePrefix; /* 电话号码前缀 */
     private String phone; /* 电话号码 */
-    private String RegisterAddress; /* 注册地址 */
+    private String registerAddress; /* 注册地址 */
 
     private LocalDateTime createTime;  /* 创建时间 */
     private LocalDateTime updateTime;  /* 修改时间 */

@@ -64,6 +64,9 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
      */
     @Override
     public R sendAuthMessage(SysEnterpriseAuthenticationMessagePostDTO authMessageDTO) {
+        if ((Boolean) this.isValidate().getData()){
+            return R.failed("貴公司已經認證");
+        }
         SysEnterpriseAuthenticationMessage authMessage = new SysEnterpriseAuthenticationMessage();
         Integer userId = TokenUtils.getCurrentUserId();
         Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
@@ -87,6 +90,10 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
         authMessage.setCreateTime(LocalDateTime.now());
         authMessage.setUpdateTime(LocalDateTime.now());
         authMessage.setLastReviserId(userId);
+        //先删除再加
+        QueryWrapper qwDelete= new QueryWrapper();
+        qwDelete.eq("company_id", companyId);
+        baseMapper.delete(qwDelete);
         if (authMessageDTO.getIsSend()){
             authMessage.setAuditStatus(1);
             baseMapper.insert(authMessage);
@@ -131,8 +138,7 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
         SysEnterpriseAuthenticationMessage sysEnterpriseAuthenticationMessage = baseMapper.selectOne(queryWrapper);
         if (CommonUtils.isNotEmpty(sysEnterpriseAuthenticationMessage)){
             if (sysEnterpriseAuthenticationMessage.getAuditStatus() == 1){
-                sysEnterpriseAuthenticationMessage.setAuditStatus(0);
-                baseMapper.updateById(sysEnterpriseAuthenticationMessage);
+                baseMapper.undo(sysEnterpriseAuthenticationMessage.getCompanyId());
                 return R.ok("撤銷成功");
             }else {
                 return R.failed(sysEnterpriseAuthenticationMessage.getAuditStatus()+":您的申請單不是已發佈狀態");
