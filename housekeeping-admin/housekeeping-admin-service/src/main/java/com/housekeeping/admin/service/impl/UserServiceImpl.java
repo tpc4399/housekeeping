@@ -303,4 +303,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         return R.ok(companyDetailsIPage, "查詢管理员成功");
     }
 
+    @Override
+    public User getUserByIdAndDept(Integer id, int i) {
+        return baseMapper.getUserByIdAndDept(id,i);
+    }
+
 }

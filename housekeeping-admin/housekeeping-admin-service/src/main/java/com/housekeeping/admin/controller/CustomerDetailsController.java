@@ -40,4 +40,9 @@ public class CustomerDetailsController {
         return R.ok("頭像保存成功");
     }
 
+    @ApiOperation("【公司】获取客户列表")
+    @GetMapping("/getCustomerList")
+    public R getCustomerList(Integer cid,String name){
+        return customerDetailsService.getCustomerList(cid,name);
+    }
 }

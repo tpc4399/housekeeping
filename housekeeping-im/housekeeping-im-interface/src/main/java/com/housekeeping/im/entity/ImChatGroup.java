@@ -38,6 +38,6 @@ public class ImChatGroup extends Model<ImChatGroup> implements Serializable {
 
     private LocalDateTime createDate;
 
-
+    private Integer companyId;
 
 }

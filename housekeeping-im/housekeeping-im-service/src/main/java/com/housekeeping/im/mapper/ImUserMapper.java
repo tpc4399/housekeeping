@@ -4,6 +4,7 @@ package com.housekeeping.im.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.im.entity.ImChatGroup;
 import com.housekeeping.im.entity.ImUser;
+import org.omg.CORBA.INTERNAL;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -28,4 +29,14 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
      * @return 用户List
      */
     List<ImUser> getChatUserList(String chatId);
+
+    List<Integer> getGroupsById(Integer id);
+
+    List<Integer> getMansByGroupId(Integer gid);
+
+    Integer getCompanyId(int id);
+
+    Integer getUserId(Integer id);
+
+    Integer getEmpId(int parseInt);
 }

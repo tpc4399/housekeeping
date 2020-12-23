@@ -18,5 +18,8 @@
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
 	</resultMap>
+    <select id="getUserByIdAndDept" resultType="com.housekeeping.admin.entity.User">
+		SELECT * FROM sys_user WHERE id = #{id} AND dept_id = #{i}
+	</select>
 
 </mapper>

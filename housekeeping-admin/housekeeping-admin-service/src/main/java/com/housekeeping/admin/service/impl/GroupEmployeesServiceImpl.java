@@ -10,6 +10,7 @@ import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.mapper.GroupEmployeesMapper;
 import com.housekeeping.admin.service.IGroupEmployeesService;
 import com.housekeeping.admin.vo.EmpVo;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -95,7 +96,7 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
             empVo.setName(byId.getName());
             empVo.setStatus(0);
             empVos.add(empVo);
-        }if(groupDTO.getId() != null){
+        }if(CommonUtils.isNotEmpty(groupDTO.getId())){
             List<EmpVo> empVos1 = search2(groupDTO.getId(), empVos);
             return R.ok(empVos1);
         }if(StringUtils.isNotBlank(groupDTO.getName())){
