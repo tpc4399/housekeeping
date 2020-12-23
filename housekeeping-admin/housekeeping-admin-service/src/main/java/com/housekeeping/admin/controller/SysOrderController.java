@@ -8,9 +8,8 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author su
@@ -28,6 +27,17 @@ public class SysOrderController {
     @GetMapping("pageOfSysOrder")
     public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO){
         return sysOrderService.page(page, sysOrderDTO);
+    }
+
+
+    @ApiOperation("【客户】评价发布接口")
+    @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
+    public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,
+                          @RequestParam("evaluationStar") Float evaluationStar,
+                          @RequestParam("evaluationContent") String evaluationContent,
+                          @RequestParam("orderId") Integer orderId){
+
+        return sysOrderService.doEvaluation(file, evaluationStar, evaluationContent, orderId);
     }
 
 }

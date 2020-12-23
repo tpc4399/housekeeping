@@ -45,6 +45,10 @@ public interface CommonConstants {
 	 * 正式環境的存儲客户头像的絕對路徑
 	 */
 	String HK_CUSTOMER_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CustomerHead/userId=";
+	/**
+	 * 正式環境的订单评价照片的絕對路徑
+	 */
+	String HK_ORDER_EVALUATION_IMAGE_ABSTRACT_PATH_PREFIX_PROV = "HKFile/OrderEvaluationImage/orderId=";
 
 	/**
 	 * 神秘代码的零件

@@ -29,6 +29,11 @@ public class SysOrder extends Model<SysOrder> {
     private LocalDateTime createTime;           /* 订单创建时间 */
     private Float totalTime;                    /* 订单服务总时长 */
     private String jobContendIds;               /* 工作内容_ids */
-
+    private String evaluationStar;              /* 评价星级 */
+    private String evaluationContent;           /* 评价内容 */
+    private String evaluationImage;             /* 评价多张图片 */
+    private LocalDateTime evaluationTime;       /* 评价时间 */
+    private Boolean evaluationType;             /* 是否到时自动评价 */
+    private LocalDateTime evaluationDeadTime;   /* 评价截止时间,默认评价生效时间 */
 
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -179,6 +180,10 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
 
         /** 查重結果處理 */
         if (res.size() == 0){
+            /** 评价截止时间植入,默認評價植入。評價時間過了生效 */
+            LocalDateTime evaluationDeadTime = sysOrderService.getEvaluationDeadTime(maxId.get());
+            sysOrderService.setEvaluationDeadTime(evaluationDeadTime, maxId.get());
+            /** 评价截止时间植入 */
             return R.ok("查重完成，並已上傳訂單");
         }else {
             baseMapper.delete(queryWrapper);
