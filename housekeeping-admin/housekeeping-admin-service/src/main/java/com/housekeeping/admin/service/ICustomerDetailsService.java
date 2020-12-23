@@ -18,4 +18,6 @@ public interface ICustomerDetailsService extends IService<CustomerDetails> {
     String uploadHead(MultipartFile file, Integer id) throws IOException;
 
     R updateHeadUrlByUserId(String headUrl, Integer id);
+
+    R getCustomerList(Integer cid, String name);
 }

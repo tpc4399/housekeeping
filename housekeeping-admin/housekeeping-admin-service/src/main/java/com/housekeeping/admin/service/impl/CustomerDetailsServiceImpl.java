@@ -3,15 +3,21 @@ package com.housekeeping.admin.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.CustomerDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.CustomerDetailsMapper;
 import com.housekeeping.admin.service.ICustomerAddressService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
+import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +27,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +44,12 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
 
     @Resource
     private OSSClient ossClient;
+
+    @Resource
+    private CompanyDetailsServiceImpl companyDetailsService;
+
+    @Resource
+    private IUserService userService;
 
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -95,5 +112,73 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
     public R updateHeadUrlByUserId(String headUrl, Integer id) {
         baseMapper.updateHeadUrlById(headUrl, id);
         return R.ok();
+    }
+
+    @Override
+    public R getCustomerList(Integer cid, String name) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        List<Integer> ids = baseMapper.getIdbyByCompanyId(companyId);
+        List<Integer> ids5 = new ArrayList<>();
+        List<CustomerDetails> userIds3 = new ArrayList<>();
+        if(CollectionUtils.isEmpty(ids)){
+            return R.ok(null);
+        }
+        else {
+            Set<Integer> userIds = new HashSet<>();
+            for (int i = 0; i < ids.size(); i++) {
+                List<Integer> users = baseMapper.getUserIdByGId(ids.get(i));
+                for (int j = 0; j < users.size(); j++) {
+                    userIds.add(users.get(j));
+                }
+            }
+            QueryWrapper<User> qw = new QueryWrapper<>();
+            for (Integer id : userIds) {
+                User one = userService.getUserByIdAndDept(id,3);
+                if(CommonUtils.isNotEmpty(one)){
+                    ids5.add(one.getId());
+                }
+            }
+            for (int i = 0; i < ids5.size(); i++) {
+                QueryWrapper<CustomerDetails> qw3 = new QueryWrapper<>();
+                qw3.eq("user_id",ids5.get(i));
+                CustomerDetails one = this.getOne(qw3);
+                userIds3.add(one);
+            }
+            if(CommonUtils.isNotEmpty(cid)){
+                List<CustomerDetails> users = search2(cid, userIds3);
+                return R.ok(users);
+            }
+            if(CommonUtils.isNotEmpty(name)){
+                List<CustomerDetails> search = search(name, userIds3);
+                return R.ok(search);
+            }else {
+                return R.ok(userIds3);
+            }
+        }
+    }
+
+    public List<CustomerDetails> search(String name, List<CustomerDetails> list){
+        List<CustomerDetails> results = new ArrayList();
+        Pattern pattern = Pattern.compile(name);
+        for(int i=0; i < list.size(); i++){
+            Matcher matcher = pattern.matcher(((CustomerDetails)list.get(i)).getName());
+            if(matcher.find()){
+                results.add(list.get(i));
+            }
+        }
+        return results;
+    }
+
+    public List<CustomerDetails> search2(Integer id,List<CustomerDetails> list){
+        List<CustomerDetails> results = new ArrayList();
+        Pattern pattern = Pattern.compile(id.toString());
+        for(int i=0; i < list.size(); i++){
+            Matcher matcher = pattern.matcher(((CustomerDetails)list.get(i)).getId().toString());
+            if(matcher.matches()){
+                results.add(list.get(i));
+            }
+        }
+        return results;
     }
 }

@@ -9,4 +9,12 @@
 		SET head_url = #{headUrl}
 		WHERE user_id = #{userId}
     </update>
+
+    <select id="getIdbyByCompanyId" resultType="java.lang.Integer">
+		SELECT id FROM im_chat_group WHERE company_id = #{companyId}
+	</select>
+
+    <select id="getUserIdByGId" resultType="java.lang.Integer">
+		SELECT user_id FROM im_chat_group_user WHERE chat_group_id = #{gid}
+	</select>
 </mapper>

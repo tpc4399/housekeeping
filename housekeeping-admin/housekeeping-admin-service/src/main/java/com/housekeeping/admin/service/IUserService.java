@@ -29,4 +29,6 @@ public interface IUserService extends IService<User> {
     R verfifyCode(String phonePrefix, String phone,String code,Integer deptId);
 
     R getAllUser(IPage<User> page, AdminPageDTO adminPageDTO,Integer deptId);
+
+    User getUserByIdAndDept(Integer id, int i);
 }

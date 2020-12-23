@@ -108,7 +108,8 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         groupDetails.setGroupName(groupDetailsUpdateDTO.getGroupName());
         groupDetails.setUpdateTime(LocalDateTime.now());
         groupDetails.setLastReviserId(userId);
-        baseMapper.updateGroup(groupDetails);
+        /*baseMapper.updateGroup(groupDetails);*/
+        this.updateById(groupDetails);
         return R.ok("成功修改分組");
     }
 

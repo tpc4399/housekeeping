@@ -298,11 +298,7 @@ public class CommonUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		LocalTime localTime = LocalTime.of(23, 59, 59);
-		System.out.println(localTime);
-		System.out.println(localTime.plusHours(10));
-
 	}
+
 }
 

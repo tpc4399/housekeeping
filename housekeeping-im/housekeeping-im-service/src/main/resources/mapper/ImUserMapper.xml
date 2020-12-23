@@ -34,4 +34,24 @@
                      FROM im_chat_group_user cg
                      WHERE cg.chat_group_id = #{chatId})
     </select>
+
+    <select id="getGroupsById" resultType="java.lang.Integer">
+        SELECT group_id FROM group_employees WHERE employees_id = #{id}
+    </select>
+
+    <select id="getMansByGroupId" resultType="java.lang.Integer">
+        SELECT manager_id FROM group_manager WHERE group_id = #{gid}
+    </select>
+
+    <select id="getCompanyId" resultType="java.lang.Integer">
+        SELECT company_id FROM employees_details WHERE id = #{id}
+    </select>
+
+    <select id="getUserId" resultType="java.lang.Integer">
+        SELECT user_id FROM manager_details WHERE id = #{id}
+    </select>
+
+    <select id="getEmpId" resultType="java.lang.Integer">
+        SELECT user_id FROM employees_details WHERE id = #{id}
+    </select>
 </mapper>
