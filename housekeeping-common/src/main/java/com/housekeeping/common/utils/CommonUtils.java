@@ -295,15 +295,30 @@ public class CommonUtils {
 //		headers.put("Authorization", "APPCODE " + appcode);
 //		Map<String, String> querys = new HashMap<String, String>();
 
+//		String host = "https://ali-waihui.showapi.com";
+//		String path = "/waihui-list";
+//		String method = "GET";
+//		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
+//		Map<String, String> headers = new HashMap<String, String>();
+//		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+//		headers.put("Authorization", "APPCODE " + appcode);
+//		Map<String, String> querys = new HashMap<String, String>();
+////		querys.put("code", "CNY");
+
+
+
+
 		String host = "https://ali-waihui.showapi.com";
-		String path = "/waihui-list";
+		String path = "/waihui-transform";
 		String method = "GET";
 		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
 		Map<String, String> headers = new HashMap<String, String>();
 		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
 		headers.put("Authorization", "APPCODE " + appcode);
 		Map<String, String> querys = new HashMap<String, String>();
-//		querys.put("code", "CNY");
+		querys.put("fromCode", "USD");
+		querys.put("money", "100");
+		querys.put("toCode", "CNY");
 
 
 		try {
@@ -317,15 +332,14 @@ public class CommonUtils {
 			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
 			 */
 			HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-			System.out.println(response.toString());
+//			System.out.println(response.toString());
 			//获取response的body
 			System.out.println(EntityUtils.toString(response.getEntity()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		LocalTime dddd = LocalTime.of(1,30,0);
-		System.out.println((float) dddd.toSecondOfDay()/3600);
+
 	}
 
 }

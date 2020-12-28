@@ -49,3 +49,9 @@ oss:
   accessKeySecret: wJCEnxvmPFxBzvw4QaPFM7clYNLZFE0NOKyn9y1sV10=
   bucketName: test-live-video
   urlPrefix: https://test-live-video.oss-cn-shanghai.aliyuncs.com/
+currency:
+  exchangeRate:
+    host: https://ali-waihui.showapi.com
+    path: /waihui-transform
+    method: GET
+    appcode: 74bf2f4aaa8e4bb3a67d287c53509cda

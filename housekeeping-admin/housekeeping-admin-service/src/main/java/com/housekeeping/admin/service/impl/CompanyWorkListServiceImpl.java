@@ -388,7 +388,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
                     PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
                     CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
-                    customerDemandPlan.setOrderId(x.getId());
+                    customerDemandPlan.setOrderId(orderId);
                     customerDemandPlan.setEmployeesId(employeesId);
                     customerDemandPlan.setDate(x.getDate());
                     customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
@@ -417,7 +417,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                         PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
                         PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
                         CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
-                        customerDemandPlan.setOrderId(x.getId());
+                        customerDemandPlan.setOrderId(orderId);
                         customerDemandPlan.setEmployeesId(employeesId);
                         customerDemandPlan.setDate(x.getDate());
                         customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
@@ -443,7 +443,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                             PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
                             PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
                             CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
-                            customerDemandPlan.setOrderId(x.getId());
+                            customerDemandPlan.setOrderId(orderId);
                             customerDemandPlan.setEmployeesId(employeesId);
                             customerDemandPlan.setDate(x.getDate());
                             customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());

@@ -19,7 +19,7 @@ import java.time.LocalTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_order")
+@TableName("customer_demand_plan")
 public class CustomerDemandPlan extends Model<CustomerDemandPlan> {
 
     @TableId(value = "id", type = IdType.AUTO)
