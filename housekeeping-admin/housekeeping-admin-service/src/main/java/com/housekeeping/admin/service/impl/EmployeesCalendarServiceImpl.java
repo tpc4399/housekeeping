@@ -36,6 +36,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             employeesCalendar.setEmployeesId(employeesCalendarDTO.getEmployeesId());
             employeesCalendar.setTimeSlotStart(timeSlotVo.getTimeSlotStart());
             employeesCalendar.setTimeSlotLength(timeSlotVo.getTimeSlotLength());
+            employeesCalendar.setHourlyWage(timeSlotVo.getHourlyWage());
+            employeesCalendar.setCode(timeSlotVo.getCode());
             /* 初始化 **/
 
             /* 删除原先 **/
@@ -116,6 +118,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             employeesCalendar.setWeek(week.get());
             employeesCalendar.setTimeSlotStart(timeSlotVo.getTimeSlotStart());
             employeesCalendar.setTimeSlotLength(timeSlotVo.getTimeSlotLength());
+            employeesCalendar.setHourlyWage(timeSlotVo.getHourlyWage());
+            employeesCalendar.setCode(timeSlotVo.getCode());
             baseMapper.insert(employeesCalendar);
         });
         /** 初始化和插入新的值 **/
@@ -174,6 +178,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 employeesCalendar.setData(x);
                 employeesCalendar.setTimeSlotStart(y.getTimeSlotStart());
                 employeesCalendar.setTimeSlotLength(y.getTimeSlotLength());
+                employeesCalendar.setHourlyWage(y.getHourlyWage());
+                employeesCalendar.setCode(y.getCode());
                 baseMapper.insert(employeesCalendar);
             });
         });

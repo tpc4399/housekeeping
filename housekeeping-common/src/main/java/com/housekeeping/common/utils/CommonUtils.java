@@ -216,6 +216,31 @@ public class CommonUtils {
 		}
 	}
 
+	/***
+	 * 得到相交的时间段
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static PeriodOfTime getIntersectionTimeSlot(PeriodOfTime a, PeriodOfTime b){
+		LocalTime start1 = a.getTimeSlotStart();
+		Float length1 = a.getTimeSlotLength();
+		LocalTime end1 = start1.plusHours((int) (length1/1)).plusMinutes((long) ((length1%1)* 60));
+
+		LocalTime start2 = b.getTimeSlotStart();
+		Float length2 = b.getTimeSlotLength();
+		LocalTime end2 = start2.plusHours((int) (length2/1)).plusMinutes((long) ((length2%1)* 60));
+
+		LocalTime start;
+		LocalTime end;
+		start = start1.isBefore(start2) ? start2 : start1;
+		end = end1.isBefore(end2) ? end1 : end2;
+
+		int second = end.toSecondOfDay() - start.toSecondOfDay();
+
+		return new PeriodOfTime(start, (float)second/3600);
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
 		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();
@@ -298,6 +323,9 @@ public class CommonUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		LocalTime dddd = LocalTime.of(1,30,0);
+		System.out.println((float) dddd.toSecondOfDay()/3600);
 	}
 
 }

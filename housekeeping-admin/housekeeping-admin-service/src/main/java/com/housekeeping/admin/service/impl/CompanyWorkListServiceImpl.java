@@ -8,6 +8,7 @@ import com.housekeeping.admin.dto.CompanyWorkListQueryDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.CompanyWorkListMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -42,6 +43,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private IEmployeesWorksheetPlanService employeesWorksheetPlanService;
     @Resource
     private ManagerDetailsService managerDetailsService;
+    @Resource
+    private ICustomerDemandPlanService customerDemandPlanService;
 
     @Override
     public R addToTheWorkList(CompanyWorkListDTO companyWorkListDTO) {
@@ -361,15 +364,102 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             employeesCalendarMap.put(y.getStander(), te);
         });
         List<SysOrderPlan> sysOrderPlanList = sysOrderPlanService.list(queryWrapper);
-        sysOrderPlanList.forEach(x -> {
+        List<CustomerDemandPlan> customerDemandPlans = new ArrayList<>();
+        sysOrderPlanList.forEach(x -> { //遍历订单
+            /** 获取时段的时薪 */
             LocalDate date = x.getDate();
+            //需要计算orderPlanSlot的时薪，可能还需要拆分
+            PeriodOfTime orderPlanSlot = new PeriodOfTime(x.getTimeSlotStart(), x.getTimeSlotLength());
+            List<EmployeesCalendar> employeesCalendarListDate = new ArrayList<>();
             employeesCalendarMap.get(false).forEach(y -> {
                 if (y.getData().equals(date)){
-
+                    //如果满足特殊日期
+                    employeesCalendarListDate.add(y);
                 }
             });
+            if (employeesCalendarListDate.size() > 0){
+                //找到与订单时间段有交集的时间段
+                employeesCalendarListDate.stream().filter(calendar -> {
+                    PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                    return CommonUtils.doRechecking(orderPlanSlot, calendarPeriodOfTime);//重复则保留
+                }).collect(Collectors.toList());
+                employeesCalendarListDate.forEach(calendar -> {
+                    //得到相交的时间段
+                    PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                    PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
+                    CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
+                    customerDemandPlan.setOrderId(x.getId());
+                    customerDemandPlan.setEmployeesId(employeesId);
+                    customerDemandPlan.setDate(x.getDate());
+                    customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
+                    customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
+                    customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+                    customerDemandPlan.setCode(calendar.getCode());
+                    customerDemandPlans.add(customerDemandPlan);
+                });
+            }else {
+                //说明要看周数或者通用
+                List<EmployeesCalendar> employeesCalendarListWeek = new ArrayList<>();
+                employeesCalendarMap.get(true).forEach(y -> {
+                    if (y.getWeek().contains(date.getDayOfWeek().toString())){
+                        employeesCalendarListWeek.add(y);
+                    }
+                });
+                if (employeesCalendarListWeek.size() > 0){
+                    //看周数
+                    //找到与订单时间段有交集的时间段
+                    employeesCalendarListWeek.stream().filter(calendar -> {
+                        PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                        return CommonUtils.doRechecking(orderPlanSlot, calendarPeriodOfTime);//重复则保留
+                    }).collect(Collectors.toList());
+                    employeesCalendarListWeek.forEach(calendar -> {
+                        //得到相交的时间段
+                        PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                        PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
+                        CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
+                        customerDemandPlan.setOrderId(x.getId());
+                        customerDemandPlan.setEmployeesId(employeesId);
+                        customerDemandPlan.setDate(x.getDate());
+                        customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
+                        customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
+                        customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+                        customerDemandPlan.setCode(calendar.getCode());
+                        customerDemandPlans.add(customerDemandPlan);
+                    });
+                }else {
+                    //看通用
+                    List<EmployeesCalendar> employeesCalendarListGeneral = new ArrayList<>();
+                    employeesCalendarMap.get("").forEach(y -> {
+                        employeesCalendarListGeneral.add(y);
+                    });
+                    if (employeesCalendarListGeneral.size() > 0){
+                        //找到与订单时间段有交集的时间段
+                        employeesCalendarListGeneral.stream().filter(calendar -> {
+                            PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                            return CommonUtils.doRechecking(orderPlanSlot, calendarPeriodOfTime);//重复则保留
+                        }).collect(Collectors.toList());
+                        employeesCalendarListGeneral.forEach(calendar -> {
+                            //得到相交的时间段
+                            PeriodOfTime calendarPeriodOfTime = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+                            PeriodOfTime timeSlot = CommonUtils.getIntersectionTimeSlot(calendarPeriodOfTime, orderPlanSlot);
+                            CustomerDemandPlan customerDemandPlan = new CustomerDemandPlan();
+                            customerDemandPlan.setOrderId(x.getId());
+                            customerDemandPlan.setEmployeesId(employeesId);
+                            customerDemandPlan.setDate(x.getDate());
+                            customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
+                            customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
+                            customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+                            customerDemandPlan.setCode(calendar.getCode());
+                            customerDemandPlans.add(customerDemandPlan);
+                        });
+                    }
+                }
+            }
+            /** 获取时段的时薪 */
+            /** 保存客户计划 */
+            customerDemandPlanService.saveBatch(customerDemandPlans);
         });
-        return R.ok();
+        return R.ok("分派成功了，订单计划将呈现给客户");
     }
 
 }

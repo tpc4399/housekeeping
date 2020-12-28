@@ -13,6 +13,6 @@ import java.util.List;
 public class RulesMonthlyVo {
     private LocalDate start;
     private LocalDate end;
-    private List<TimeSlotVo> timeSlotVoWorkingDays; /* 工作日的時間段 */
-    private List<TimeSlotVo> timeSlotVoHolidayDays; /* 節假日的時間段 */
+    private List<TimeSlot> timeSlotVoWorkingDays; /* 工作日的時間段 */
+    private List<TimeSlot> timeSlotVoHolidayDays; /* 節假日的時間段 */
 }

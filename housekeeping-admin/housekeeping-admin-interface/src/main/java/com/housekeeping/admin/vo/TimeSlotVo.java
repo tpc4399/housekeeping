@@ -2,6 +2,7 @@ package com.housekeeping.admin.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 /**
@@ -9,9 +10,9 @@ import java.time.LocalTime;
  * @create 2020/11/12 17:14
  */
 @Data
-public class TimeSlotVo {
-    /* 时间段开始点 */
-    private LocalTime timeSlotStart;
-    /* 时间段长度（h） */
-    private Float timeSlotLength;
+public class TimeSlotVo extends TimeSlot{
+
+    private BigDecimal hourlyWage; /* 时薪 */
+
+    private String code; /* 时薪货币代码 */
 }

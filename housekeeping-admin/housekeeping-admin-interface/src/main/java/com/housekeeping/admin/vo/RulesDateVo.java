@@ -12,5 +12,5 @@ import java.util.List;
 @Data
 public class RulesDateVo {
     private LocalDate date;     //日期
-    private List<TimeSlotVo> timeSlotVos;   //日期的多个时间段
+    private List<TimeSlot> timeSlotVos;   //日期的多个时间段
 }

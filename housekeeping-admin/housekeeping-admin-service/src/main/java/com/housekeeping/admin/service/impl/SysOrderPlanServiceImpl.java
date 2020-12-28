@@ -9,7 +9,7 @@ import com.housekeeping.admin.mapper.SysOrderPlanMapper;
 import com.housekeeping.admin.service.ISysOrderPlanService;
 import com.housekeeping.admin.service.ISysOrderService;
 import com.housekeeping.admin.vo.RulesMonthlyVo;
-import com.housekeeping.admin.vo.TimeSlotVo;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.OptionalBean;
@@ -84,7 +84,7 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             LocalDate end1 = sysOrderPlanDTO.getRulesMonthlyVo().getEnd().plusDays(1);
             do {
                 LocalDate finalCurrent = current1;
-                List<TimeSlotVo> timeSlotVoDays = null;
+                List<TimeSlot> timeSlotVoDays = null;
                 if (current1.getDayOfWeek().getValue() == 6 || current1.getDayOfWeek().getValue() == 7){
                     //節假日
                     timeSlotVoDays = sysOrderPlanDTO.getRulesMonthlyVo().getTimeSlotVoHolidayDays();
