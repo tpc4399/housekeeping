@@ -17,11 +17,9 @@ import java.time.LocalDateTime;
  * @Date 2020/12/11 16:08
  */
 @Service("sysJobContendService")
-public class SysJobContendServiceImpl
-        extends ServiceImpl<SysJobContendMapper, SysJobContend>
-        implements ISysJobContendService {
+public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, SysJobContend> implements ISysJobContendService {
     @Override
-    public R add(String contend) {
+    public R add(String contend,Integer type,Integer unit) {
         if (CommonUtils.isNotEmpty(contend)){
             return R.failed("contend不能為空");
         }
@@ -33,6 +31,8 @@ public class SysJobContendServiceImpl
         }
         SysJobContend sysJobContend = new SysJobContend();
         sysJobContend.setContend(contend);
+        sysJobContend.setType(type);
+        sysJobContend.setUnit(unit);
         sysJobContend.setCreateTime(LocalDateTime.now());
         sysJobContend.setUpdateTime(LocalDateTime.now());
         sysJobContend.setLastReviserId(TokenUtils.getCurrentUserId());

@@ -1,11 +1,15 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.GroupEmployees;
+import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.service.EmployeesDetailsService;
+import com.housekeeping.admin.service.impl.GroupEmployeesServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.QrCodeUtils;
@@ -29,7 +33,7 @@ import java.net.UnknownHostException;
 public class EmployeesDetailsController {
 
     private final EmployeesDetailsService employeesDetailsService;
-
+    private final GroupEmployeesServiceImpl groupEmployeesService;
     @ApiOperation("【公司】新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
@@ -48,6 +52,9 @@ public class EmployeesDetailsController {
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(@RequestBody EmployeesDetails employeesDetails){
+        QueryWrapper<GroupEmployees> qw = new QueryWrapper<>();
+        qw.eq("employees_id",employeesDetails.getId());
+        groupEmployeesService.remove(qw);
         return R.ok(employeesDetailsService.removeById(employeesDetails));
     }
 

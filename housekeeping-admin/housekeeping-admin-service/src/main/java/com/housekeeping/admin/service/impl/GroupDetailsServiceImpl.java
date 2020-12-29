@@ -182,7 +182,8 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
                 }else {
                     for (int j = 0; j < manIds.size(); j++) {
                         ManagerDetails byId = managerDetailsService.getById(manIds.get(j));
-                        sb.append(byId.getName()).append(",");
+                        String s = (CommonUtils.isNotEmpty(byId.getName())?byId.getName() : "");
+                        sb.append(s).append(",");
                     }
                     String s = sb.toString();
                     groupVO.setResponsible(s.substring(0, s.length() - 1));

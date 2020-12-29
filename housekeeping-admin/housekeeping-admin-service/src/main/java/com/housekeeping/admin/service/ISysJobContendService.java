@@ -10,6 +10,6 @@ import com.housekeeping.common.utils.R;
  */
 public interface ISysJobContendService extends IService<SysJobContend> {
 
-    R add(String contend);
+    R add(String contend,Integer type,Integer unit);
 
 }
