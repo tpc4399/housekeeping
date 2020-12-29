@@ -1,12 +1,15 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ManagerDetailsDTO;
 
 import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
+import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.service.ManagerDetailsService;
+import com.housekeeping.admin.service.impl.GroupManagerServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
@@ -27,6 +30,7 @@ import java.net.UnknownHostException;
 public class ManagerDetailsController {
 
     private final ManagerDetailsService managerDetailsService;
+    private final GroupManagerServiceImpl groupManagerService;
 
     @ApiOperation("【公司】新增經理")
     @LogFlag(description = "新增經理")
@@ -46,6 +50,9 @@ public class ManagerDetailsController {
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(@RequestBody ManagerDetails managerDetails){
+        QueryWrapper<GroupManager> qw = new QueryWrapper<>();
+        qw.eq("manager_id",managerDetails.getId());
+        groupManagerService.remove(qw);
         return R.ok(managerDetailsService.removeById(managerDetails));
     }
 

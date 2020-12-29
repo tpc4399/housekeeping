@@ -5,10 +5,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -30,8 +27,10 @@ public class SysJobContendController {
 
     @ApiOperation("【管理员】添加")
     @GetMapping("/add")
-    public R add(String contend){
-        return sysJobContendService.add(contend);
+    public R add(@RequestParam String contend,
+                 @RequestParam Integer type,
+                 Integer unit){
+        return sysJobContendService.add(contend,type,unit);
     }
 
     @ApiOperation("【管理员】刪除")

@@ -67,7 +67,7 @@ public class GroupDetailsController {
     @LogFlag(description = "分组返回数据")
     @GetMapping("/getGroupData")
     public R getGroupData(Integer companyId, Integer id,String groupName){
-        return R.ok(groupDetailsService.getGroupData(companyId, id ,groupName));
+        return groupDetailsService.getGroupData(companyId, id ,groupName);
     }
 
 
