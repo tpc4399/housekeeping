@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
@@ -23,7 +24,11 @@ public class SysOrderPlan extends Model<SysOrderPlan> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;                     /* 主键id */
     private Integer orderId;                /* 订单id */
-    private LocalDate date;                 /* 日期 */
-    private LocalTime timeSlotStart;        /* 时间段开始 */
-    private Float timeSlotLength;           /* 时间段长度(小时) */
+    private Boolean type;                   /* 类型：true钟点工 false包工 */
+    private LocalDate date;                 /* 钟点工生效，日期 */
+    private LocalTime timeSlotStart;        /* 钟点工生效，时间段开始 */
+    private Float timeSlotLength;           /* 钟点工生效，时间段长度(小时) */
+    private Integer jobContendId;           /* 包工生效，工作内容 */
+    private LocalDateTime startTime;        /* 包工生效，开始时间 */
+
 }
