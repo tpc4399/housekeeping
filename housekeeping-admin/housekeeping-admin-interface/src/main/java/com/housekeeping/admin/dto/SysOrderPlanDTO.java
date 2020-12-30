@@ -17,7 +17,7 @@ import java.util.List;
 public class SysOrderPlanDTO {
     @ApiParam("false=需求单 true=预约单")
     private Boolean temp;                   /* false=需求单 true=预约单 */
-    private Integer companyId;              /* 公司_id */
+    private Integer employeesId;            /* 预约单：保洁员_id */
     private List<RulesDateVo> rulesDateVos; /* 钟点工：单次服务规则 */
     private List<RulesWeekVo> rulesWeekVos; /* 钟点工：定期服务规则 */
     private RulesMonthlyVo rulesMonthlyVo;  /* 钟点工：包月规则 */

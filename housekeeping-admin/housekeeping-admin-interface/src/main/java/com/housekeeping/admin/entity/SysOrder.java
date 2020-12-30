@@ -22,7 +22,7 @@ public class SysOrder extends Model<SysOrder> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;                         /* 主键id */
     private String number;                      /* 订单编号 */
-    private Integer companyId;                  /* 公司_id */
+    private Integer employeesId;                /* 保洁员_id */
     private Integer customerId;                 /* 客户_id */
     private Integer addressId;                  /* 服务地址_id */
     private Boolean type;                       /* 订单类型：false = 需求单;true = 预约单 */

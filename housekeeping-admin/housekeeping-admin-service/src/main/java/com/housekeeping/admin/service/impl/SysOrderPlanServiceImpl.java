@@ -71,7 +71,8 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         SysOrder sysOrder = new SysOrder();
         sysOrder.setType(sysOrderPlanDTO.getTemp());
         if (sysOrder.getType()){
-            sysOrder.setCompanyId(sysOrderPlanDTO.getCompanyId());
+            //预约单需要填入保洁员_id
+            sysOrder.setEmployeesId(sysOrderPlanDTO.getEmployeesId());
         }
         sysOrder.setAddressId(sysOrderPlanDTO.getAddressId());
         Integer[] jobContendIdsAMaidArr = sysOrderPlanDTO.getJobContendIdsAMaid();
