@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,9 +16,10 @@ import java.time.LocalDate;
 public class SysOrderContractor extends Model<SysOrderContractor> {
 
     @TableId(value = "id",type = IdType.AUTO)
-    public Integer id;                      /* 主键id */
+    private Integer id;                     /* 主键id */
     private Integer orderId;                /* 订单id */
-    public LocalDate startTime;             /* 开始时间 */
-    public LocalDate forwardTime;        /* 期望完成时间 */
+    private Integer jobContendId;           /* 工作内容_id */
+    private LocalDateTime startTime;        /* 预期开始时间 */
+    private LocalDateTime endTime;          /* 期望完成时间 */
 }
 

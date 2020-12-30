@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.SysOrderPlanDTO;
 import com.housekeeping.admin.entity.SysOrder;
+import com.housekeeping.admin.entity.SysOrderContractor;
 import com.housekeeping.admin.entity.SysOrderPlan;
 import com.housekeeping.admin.mapper.SysOrderPlanMapper;
+import com.housekeeping.admin.service.ISysOrderContractorService;
 import com.housekeeping.admin.service.ISysOrderPlanService;
 import com.housekeeping.admin.service.ISysOrderService;
+import com.housekeeping.admin.vo.RulesContractorVo;
 import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
@@ -21,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -31,6 +35,8 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
 
     @Resource
     private ISysOrderService sysOrderService;
+    @Resource
+    private ISysOrderContractorService sysOrderContractorService;
     /***
      * 顾客需求发布：先创建订单、再创建订单计划、查重
      * @param sysOrderPlanDTO
@@ -68,7 +74,12 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             sysOrder.setCompanyId(sysOrderPlanDTO.getCompanyId());
         }
         sysOrder.setAddressId(sysOrderPlanDTO.getAddressId());
-        sysOrder.setJobContendIds(sysOrderPlanDTO.getJobContendIds());
+        Integer[] jobContendIdsAMaidArr = sysOrderPlanDTO.getJobContendIdsAMaid();
+        String jobContendIdsAMaidStr = "";
+        for (int i = 0; i < jobContendIdsAMaidArr.length; i++) {
+            jobContendIdsAMaidStr = jobContendIdsAMaidStr + jobContendIdsAMaidArr[i] + " ";
+        }
+        sysOrder.setJobContendIdsAMaid(jobContendIdsAMaidStr.trim());
         AtomicReference<Integer> maxId = new AtomicReference<>(0);
         synchronized (this){
             sysOrderService.releaseOrder(sysOrder);
@@ -184,6 +195,14 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
             LocalDateTime evaluationDeadTime = sysOrderService.getEvaluationDeadTime(maxId.get());
             sysOrderService.setEvaluationDeadTime(evaluationDeadTime, maxId.get());
             /** 评价截止时间植入 */
+
+            /** 包工工作植入2020/12/30 su 新增 */
+            List<RulesContractorVo> rulesContractorVoList = sysOrderPlanDTO.getRulesContractorVos();
+            if (rulesContractorVoList != null){
+                insertContractor(rulesContractorVoList, maxId.get());
+            }
+            /** 包工工作植入 */
+
             return R.ok("查重完成，並已上傳訂單");
         }else {
             baseMapper.delete(queryWrapper);
@@ -192,6 +211,23 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         }
         /** 查重結果處理 */
 
+    }
+
+    /**
+     * 生成包工计划，不需要任何查重验证操作，直接生成
+     * @param rulesContractorVoList
+     * @param orderId
+     */
+    private void insertContractor(List<RulesContractorVo> rulesContractorVoList, Integer orderId){
+        List<SysOrderContractor> sysOrderContractorList = rulesContractorVoList.stream().map(x -> {
+            SysOrderContractor sysOrderContractor = new SysOrderContractor();
+            sysOrderContractor.setOrderId(orderId);
+            sysOrderContractor.setJobContendId(x.getJobContendId());
+            sysOrderContractor.setStartTime(x.getStartTime());
+            sysOrderContractor.setEndTime(x.getEndTime());
+            return sysOrderContractor;
+        }).collect(Collectors.toList());
+        sysOrderContractorService.saveBatch(sysOrderContractorList);
     }
 
     @Override

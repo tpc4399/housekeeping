@@ -28,7 +28,7 @@ public class SysOrder extends Model<SysOrder> {
     private Boolean type;                       /* 订单类型：false = 需求单;true = 预约单 */
     private LocalDateTime createTime;           /* 订单创建时间 */
     private Float totalTime;                    /* 订单服务总时长 */
-    private String jobContendIds;               /* 工作内容_ids */
+    private String jobContendIdsAMaid;          /* 钟点工：工作内容_ids */
     private String evaluationStar;              /* 评价星级 */
     private String evaluationContent;           /* 评价内容 */
     private String evaluationImage;             /* 评价多张图片 */
