@@ -20,10 +20,10 @@ import java.time.LocalDateTime;
 public class SysJobContend extends Model<SysJobContend> {
 
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;    /* 主鍵id */
-    private String contend;/* 內容 */
-    private Integer type;/* 0 钟点服务  1 包工服务 */
-    private Integer unit;/* 0 天  1 次 */
+    private Integer id;         /* 主鍵id */
+    private String contend;     /* 工作內容（标签） */
+    private Integer type;       /* 0 钟点服务  1 包工服务天 2 包工服务次 */
+    private Integer companyId;  /* 所属公司_id */
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private Integer lastReviserId;
