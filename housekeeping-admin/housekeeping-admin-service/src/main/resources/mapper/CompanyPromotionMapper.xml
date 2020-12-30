@@ -8,16 +8,35 @@
 		<id property="id" column="id"/>
 		<result property="companyId" column="company_id"/>
 		<result property="promotion" column="promotion"/>
-		<result property="startTime" column="start_time"/>
-		<result property="days" column="days"/>
 		<result property="endTime" column="end_time"/>
-		<result property="count" column="count"/>
-		<result property="lastReviserId" column="last_reviser_id"/>
+		<result property="days" column="days"/>
 		<result property="tokens" column="tokens"/>
-		<result property="lastReviserName" column="name"/>
+		<result property="companyName" column="company_name"/>
 	</resultMap>
 
 	<select id="getInfoById" resultMap="baseResultMap">
-		select
+		SELECT
+			cp.id,
+			cp.company_id,
+			cp.days,
+			cp.promotion,
+			cp.end_time,
+			cd.tokens,
+			cd.company_name
+		FROM
+			company_promotion AS cp
+		LEFT JOIN company_details AS cd ON cp.company_id = cd.id
+		WHERE company_id = #{companyId}
+	</select>
+
+	<select id="getCompanyByRan" resultType="java.lang.Integer">
+		SELECT
+			company_id
+		FROM
+			company_promotion
+		WHERE
+			promotion = 1
+		order by rand() limit #{random}
+
 	</select>
 </mapper>

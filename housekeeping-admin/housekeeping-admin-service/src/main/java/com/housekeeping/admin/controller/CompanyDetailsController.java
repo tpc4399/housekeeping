@@ -101,4 +101,22 @@ public class CompanyDetailsController {
         return companyDetailsService.pageOfCompanyByAdmin(page, companyDetailsPageDTO);
     }
 
+    @ApiOperation("【公司】新公司领取5代币")
+    @GetMapping("/getFiveTokens")
+    public R getFiveTokens(){
+        return companyDetailsService.getFiveTokens();
+    }
+
+    @ApiOperation("【公司】購買一百代幣")
+    @GetMapping("/buyHundredTokens")
+    public R buyHundredTokens(){
+        return companyDetailsService.buyHundredTokens();
+    }
+
+    @ApiOperation("【公司】購買一千代幣")
+    @GetMapping("/buyThousandTokens")
+    public R buyThousandTokens(){
+        return companyDetailsService.buyThousandTokens();
+    }
+
 }

@@ -12,8 +12,10 @@ import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -194,4 +196,45 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     public void authSuccess(Integer companyId) {
         baseMapper.authSuccess(companyId);
     }
+
+    @Transactional
+    @Override
+    public R getFiveTokens() {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",currentUserId);
+        CompanyDetails one = this.getOne(qw);
+        if(one.getIsNew()){
+            baseMapper.cusUpdateById(one.getTokens(),one.getId());
+            return R.ok("您的賬戶已新增5個代幣");
+        }else {
+            return R.failed("您的賬戶已領取過，請勿重複領取");
+        }
+    }
+
+    @Override
+    public R buyHundredTokens() {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",currentUserId);
+        CompanyDetails one = this.getOne(qw);
+        baseMapper.buyTokens(one.getTokens(),one.getId(),100);
+        return R.ok("購買一百代幣成功");
+    }
+
+    @Override
+    public R buyThousandTokens() {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",currentUserId);
+        CompanyDetails one = this.getOne(qw);
+        baseMapper.buyTokens(one.getTokens(),one.getId(),1000);
+        return R.ok("購買一千代幣成功");
+    }
+
+    public void promotion(Integer companyId,Integer tokens){
+        CompanyDetails byId = this.getById(companyId);
+        baseMapper.promotion(companyId,byId.getTokens(),tokens);
+    }
+
 }

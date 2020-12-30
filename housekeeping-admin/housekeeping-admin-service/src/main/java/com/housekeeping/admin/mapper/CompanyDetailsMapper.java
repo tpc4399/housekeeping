@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import org.apache.ibatis.annotations.Param;
+import org.omg.CORBA.INTERNAL;
 
 public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void updateLogoUrlById(@Param("logoUrl") String logoUrl,
@@ -15,4 +16,10 @@ public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void updateById(@Param("companyDetailsDTO") CompanyDetailsDTO companyDetailsDTO,
                     @Param("lastReviserId") Integer lastReviserId);
     void authSuccess(Integer companyId);
+
+    void cusUpdateById(@Param("tokens") Integer tokens,@Param("id") Integer id);
+
+    void buyTokens(@Param("tokens") Integer tokens,@Param("id") Integer id,@Param("buyTokens") int buyTokens);
+
+    void promotion(@Param("companyId") Integer companyId,@Param("ctokens")  Integer ctokens,@Param("tokens") Integer tokens);
 }
