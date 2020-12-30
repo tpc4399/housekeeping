@@ -8,5 +8,11 @@ import com.housekeeping.common.utils.R;
 public interface ICompanyPromotionService extends IService<CompanyPromotion> {
 
 
-    R getInfoById(Integer id);
+    R getInfoById(Integer companyId);
+
+    R promotionDay(Integer companyId);
+
+    R promotionTenDay(Integer companyId);
+
+    R getCompanyByRan(Integer random);
 }

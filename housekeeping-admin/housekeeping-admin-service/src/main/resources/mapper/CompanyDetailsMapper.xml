@@ -46,4 +46,16 @@
         SET is_validate = true
         WHERE id = #{companyId}
     </update>
+
+    <update id="cusUpdateById">
+        UPDATE company_details set tokens = #{tokens} + 5 ,is_new = 0 WHERE id = #{id}
+    </update>
+
+    <update id="buyTokens">
+        UPDATE company_details set tokens = #{tokens} + #{buyTokens} WHERE id = #{id}
+    </update>
+
+    <update id="promotion">
+         UPDATE company_details set tokens = #{ctokens} - #{tokens} WHERE id = #{companyId}
+    </update>
 </mapper>

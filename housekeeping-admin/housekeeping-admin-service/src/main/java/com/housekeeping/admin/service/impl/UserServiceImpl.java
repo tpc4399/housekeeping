@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.CustomerAddress;
-import com.housekeeping.admin.entity.CustomerDetails;
-import com.housekeeping.admin.entity.User;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.UserMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
@@ -42,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     private CustomerAddressServiceImpl customerAddressService;
+
+    @Resource
+    private CompanyPromotionServiceImpl companyPromotionService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -127,6 +127,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
+
+                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+                        CompanyPromotion companyPromotion = new CompanyPromotion();
+                        companyPromotion.setCompanyId(maxCompanyId);
+                        companyPromotionService.save(companyPromotion);
                     } else {
                         return R.failed("两次密码不一致");
                     }

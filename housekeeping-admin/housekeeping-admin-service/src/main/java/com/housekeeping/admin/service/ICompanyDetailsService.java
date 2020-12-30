@@ -24,4 +24,7 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     Integer getCompanyIdByUserId(Integer userId);
     R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailspageDTO);
     void authSuccess(Integer companyId);
+    R getFiveTokens();
+    R buyHundredTokens();
+    R buyThousandTokens();
 }
