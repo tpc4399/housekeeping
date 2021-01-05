@@ -22,10 +22,7 @@ public class SysJobContend extends Model<SysJobContend> {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;         /* 主鍵id */
     private String contend;     /* 工作內容（标签） */
-    private Integer type;       /* 0 钟点服务  1 包工服务天 2 包工服务次 */
-    private Integer companyId;  /* 所属公司_id */
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
-    private Integer lastReviserId;
+    private Integer level;      /* 1 1级分类  */
+    private Boolean type;       /* false 钟点服务  true 包工 */
 
 }
