@@ -25,19 +25,4 @@ public class SysJobContendController {
         return R.ok(sysJobContendService.list());
     }
 
-    @ApiOperation("【管理员】添加")
-    @GetMapping("/add")
-    public R add(@RequestParam String contend,
-                 @RequestParam Integer type,
-                 Integer unit){
-        return sysJobContendService.add(contend,type,unit);
-    }
-
-    @ApiOperation("【管理员】刪除")
-    @DeleteMapping
-    public R delete(Integer id){
-        sysJobContendService.removeById(id);
-        return R.ok("刪除成功");
-    }
-
 }

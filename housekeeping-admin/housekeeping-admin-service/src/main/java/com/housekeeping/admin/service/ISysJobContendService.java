@@ -9,7 +9,4 @@ import com.housekeeping.common.utils.R;
  * @Date 2020/12/11 16:07
  */
 public interface ISysJobContendService extends IService<SysJobContend> {
-
-    R add(String contend,Integer type,Integer unit);
-
 }
