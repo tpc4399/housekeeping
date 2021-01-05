@@ -19,10 +19,10 @@ public class SysJobContendController {
 
     private final ISysJobContendService sysJobContendService;
 
-    @ApiOperation("获取所有")
-    @GetMapping("/all")
-    public R getAll(){
-        return R.ok(sysJobContendService.list());
+    @ApiOperation("根据ids获取树")
+    @GetMapping("/getTreeByIds")
+    public R getTreeByIds(Integer[] ids){
+        return sysJobContendService.getTreeByIds(ids);
     }
 
 }

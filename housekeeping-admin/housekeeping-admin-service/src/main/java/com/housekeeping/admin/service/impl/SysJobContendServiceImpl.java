@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.entity.SysJobContend;
 import com.housekeeping.admin.mapper.SysJobContendMapper;
 import com.housekeeping.admin.service.ISysJobContendService;
-import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -19,23 +20,24 @@ import java.time.LocalDateTime;
 @Service("sysJobContendService")
 public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, SysJobContend> implements ISysJobContendService {
     @Override
-    public R add(String contend,Integer type,Integer unit) {
-        if (CommonUtils.isNotEmpty(contend)){
-            return R.failed("contend不能為空");
+    public R getTreeByIds(Integer[] ids) {
+        List<SysJobContendVo> sysJobContendVoList = new ArrayList<>();
+        for (int i = 0; i < ids.length; i++) {
+            SysJobContendVo sysJobContendVo = new SysJobContendVo();
+
+            QueryWrapper qw1 = new QueryWrapper();
+            qw1.eq("id", ids[i]);
+            SysJobContend sysJobContend1 = baseMapper.selectOne(qw1);
+            sysJobContendVo.setContend(sysJobContend1.getContend());
+
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("parent_id", ids[i]);
+            List<SysJobContend> sysJobContend2 = baseMapper.selectList(qw2);
+            List<String> sysJobContend22 = sysJobContend2.stream().map(x -> {
+                return x.getContend();
+            }).collect(Collectors.toList());
+            sysJobContendVo.setContends(sysJobContend22);
         }
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("contend", contend);
-        SysJobContend exist = baseMapper.selectOne(queryWrapper);
-        if (CommonUtils.isNotEmpty(exist)){
-            return R.failed("工作標籤"+ contend +"已存在，添加失敗");
-        }
-        SysJobContend sysJobContend = new SysJobContend();
-        sysJobContend.setContend(contend);
-        sysJobContend.setType(type);
-        sysJobContend.setCreateTime(LocalDateTime.now());
-        sysJobContend.setUpdateTime(LocalDateTime.now());
-        sysJobContend.setLastReviserId(TokenUtils.getCurrentUserId());
-        baseMapper.insert(sysJobContend);
-        return R.ok("添加工作標籤"+ contend +"成功");
+        return R.ok(sysJobContendVoList, "查找成功");
     }
 }
