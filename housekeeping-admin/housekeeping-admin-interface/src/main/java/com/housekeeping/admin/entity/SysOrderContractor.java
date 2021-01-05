@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_oder_contractor")
+@TableName("sys_order_contractor")
 public class SysOrderContractor extends Model<SysOrderContractor> {
 
     @TableId(value = "id",type = IdType.AUTO)

@@ -32,7 +32,6 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
         SysJobContend sysJobContend = new SysJobContend();
         sysJobContend.setContend(contend);
         sysJobContend.setType(type);
-        sysJobContend.setUnit(unit);
         sysJobContend.setCreateTime(LocalDateTime.now());
         sysJobContend.setUpdateTime(LocalDateTime.now());
         sysJobContend.setLastReviserId(TokenUtils.getCurrentUserId());
