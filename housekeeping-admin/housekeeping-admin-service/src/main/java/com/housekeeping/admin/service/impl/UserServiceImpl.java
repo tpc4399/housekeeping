@@ -127,7 +127,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
                         companyService.save(companyDetails);
-
+                        /*
+                        公司推廣
+                        * */
                         Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
                         CompanyPromotion companyPromotion = new CompanyPromotion();
                         companyPromotion.setCompanyId(maxCompanyId);

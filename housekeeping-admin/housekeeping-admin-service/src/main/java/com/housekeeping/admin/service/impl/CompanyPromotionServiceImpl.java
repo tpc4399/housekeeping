@@ -10,6 +10,7 @@ import com.housekeeping.admin.entity.CompanyPromotion;
 import com.housekeeping.admin.mapper.CompanyPromotionMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ICompanyPromotionService;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,13 +32,12 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
     public R getInfoById(Integer companyId) {
         CompanyPromotionDTO companyPromotionDTO = baseMapper.getInfoById(companyId);
         LocalDateTime endTime = companyPromotionDTO.getEndTime();
-        if(LocalDateTime.now().isAfter(endTime)){
-            companyPromotionDTO.setPromotion(false);
-            QueryWrapper<CompanyPromotion> qw = new QueryWrapper<>();
-            qw.eq("company_id",companyId);
-            CompanyPromotion one = this.getOne(qw);
-            one.setPromotion(false);
-            this.updateById(one);
+        if(CommonUtils.isEmpty(companyPromotionDTO.getEndTime())){
+            return R.ok(companyPromotionDTO);
+        }else {
+            if(LocalDateTime.now().isAfter(endTime)){
+                companyPromotionDTO.setPromotion(false);
+            }
         }
         return R.ok(companyPromotionDTO);
     }
@@ -59,7 +59,7 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,1);
                 this.updateById(one);
-                return R.failed("推廣成功");
+                return R.ok("推廣成功");
             }else {
                 one.setPromotion(true);
                 one.setDays(one.getDays()+1);
@@ -68,7 +68,7 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,1);
                 this.updateById(one);
-                return R.failed("推廣成功");
+                return R.ok("推廣成功");
             }
         }
     }
@@ -90,7 +90,7 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,8);
                 this.updateById(one);
-                return R.failed("推廣成功");
+                return R.ok("推廣成功");
             }else {
                 one.setPromotion(true);
                 one.setDays(one.getDays()+10);
@@ -99,7 +99,7 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,8);
                 this.updateById(one);
-                return R.failed("推廣成功");
+                return R.ok("推廣成功");
             }
         }
     }

@@ -9,10 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.EmployeesDetails;
-import com.housekeeping.admin.entity.ManagerDetails;
-import com.housekeeping.admin.entity.User;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
@@ -39,6 +36,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private ManagerDetailsService managerDetailsService;
+
+    @Resource
+    private IEmployeesPromotionService employeesPromotionService;
 
     @Resource
     private IUserService userService;
@@ -76,6 +76,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     userService.save(user);
                     maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
                 }
+
                 EmployeesDetails employeesDetails = new EmployeesDetails();
                 QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
                 wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
@@ -109,6 +110,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                         this.save(employeesDetails);
                         maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
                     }
+                    /**
+                     * 員工推廣
+                     */
+                    EmployeesPromotion employeesPromotion = new EmployeesPromotion();
+                    employeesPromotion.setEmployeesId(maxEmployeesId);
+                    employeesPromotionService.save(employeesPromotion);
                     /**
                      * 工作经验保存
                      */
