@@ -10,6 +10,7 @@ import java.util.List;
  */
 @Data
 public class SysJobContendVo {
+    private Integer id;             /* 工作内容_id */
     private String contend;         /* 工作內容（标签） */
-    private List<String> contends;  /* 工作内容 */
+    private List<SysJobContendSonVo> contends;  /* 工作内容 */
 }
