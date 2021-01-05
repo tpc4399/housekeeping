@@ -11,15 +11,14 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("company_promotion")
-public class CompanyPromotion extends Model<CompanyPromotion> {
+@TableName("employees_promotion")
+public class EmployeesPromotion extends Model<EmployeesPromotion> {
 
+    @TableId(value = "id",type = IdType.AUTO)
     private Integer id;             /* 主键id */
-    private Integer companyId;      /* 公司id */
+    private Integer employeesId;      /* 員工id */
     private Boolean promotion;      /* 是否推广 默认0未推广 1已推广 */
     private LocalDateTime startTime;/* 开始时间 */
     private LocalDateTime endTime;  /* 结束时间 */
     private Integer days;          /* 推广天數 */
-    private Integer lastReviserId;  /* 最后修改人id */
-
 }
