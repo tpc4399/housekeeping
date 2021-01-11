@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("employeesPPromotionService")
+@Service("employeesPromotionService")
 public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotionMapper, EmployeesPromotion> implements IEmployeesPromotionService {
 
     @Resource

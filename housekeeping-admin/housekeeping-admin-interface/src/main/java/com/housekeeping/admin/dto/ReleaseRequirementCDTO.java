@@ -9,7 +9,7 @@ import lombok.Data;
  * @Date 2021/1/5 17:40
  */
 @Data
-public class releaseRequirementCDTO {
+public class ReleaseRequirementCDTO {
     private Integer id;
     private Integer[] sonIds;
     private RulesMonthlyVo rulesMonthlyVo;  /* 钟点工：包月规则 */
