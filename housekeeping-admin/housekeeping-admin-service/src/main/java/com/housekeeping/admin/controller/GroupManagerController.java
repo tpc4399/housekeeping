@@ -27,13 +27,13 @@ public class GroupManagerController {
         return groupManagerService.save(groupManagerDTO);
     }
 
-    @GetMapping("getAllEmp")
+    @GetMapping("/getAllMan")
     @ApiOperation("【公司】分状态获取公司及组下经理")
     public R getAllEmp(GroupDTO groupDTO){
         return groupManagerService.getAllMan(groupDTO);
     }
 
-    @GetMapping("getAllEmpById")
+    @GetMapping("/getAllManById")
     @ApiOperation("【公司】通过组id获取组下所有经理")
     public R getAllManById(Integer groupId){
         return groupManagerService.getAllManById(groupId);

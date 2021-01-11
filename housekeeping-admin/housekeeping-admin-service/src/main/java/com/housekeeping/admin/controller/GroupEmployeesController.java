@@ -27,13 +27,13 @@ public class GroupEmployeesController {
         return groupEmployeesService.save(groupEmployeesDTO);
     }
 
-    @GetMapping("getAllEmp")
+    @GetMapping("/getAllEmp")
     @ApiOperation("【公司】分状态获取公司及组下员工")
     public R getAllEmp(GroupDTO groupDTO){
         return groupEmployeesService.getAllEmp(groupDTO);
     }
 
-    @GetMapping("getAllEmpById")
+    @GetMapping("/getAllEmpById")
     @ApiOperation("【公司】通过组id获取组下所有员工")
     public R getAllEmpById(Integer groupId){
         return groupEmployeesService.getAllEmpById(groupId);

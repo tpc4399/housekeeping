@@ -8,4 +8,5 @@ public class GroupDTO {
     private Integer groupId;
     private Integer id;
     private String name;
+
 }
