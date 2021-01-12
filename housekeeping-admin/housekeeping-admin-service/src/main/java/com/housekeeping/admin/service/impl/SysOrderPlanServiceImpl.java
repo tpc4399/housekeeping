@@ -80,7 +80,6 @@ public class SysOrderPlanServiceImpl extends ServiceImpl<SysOrderPlanMapper, Sys
         for (int i = 0; i < jobContendIdsAMaidArr.length; i++) {
             jobContendIdsAMaidStr = jobContendIdsAMaidStr + jobContendIdsAMaidArr[i] + " ";
         }
-        sysOrder.setJobContendIdsAMaid(jobContendIdsAMaidStr.trim());
         AtomicReference<Integer> maxId = new AtomicReference<>(0);
         synchronized (this){
             sysOrderService.releaseOrder(sysOrder);

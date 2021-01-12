@@ -22,13 +22,13 @@ public class SysOrder extends Model<SysOrder> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;                         /* 主键id */
     private String number;                      /* 订单编号 */
-    private Integer employeesId;                /* 保洁员_id */
     private Integer customerId;                 /* 客户_id */
     private Integer addressId;                  /* 服务地址_id */
     private Boolean type;                       /* 订单类型：false = 需求单;true = 预约单 */
+    private Integer employeesId;                /* 预约单:保洁员_id */
+    private Integer serviceType;                /* 服务类型：1单次 2定期服务 3包月 */
     private LocalDateTime createTime;           /* 订单创建时间 */
-    private Float totalTime;                    /* 订单服务总时长 */
-    private String jobContendIdsAMaid;          /* 钟点工：工作内容_ids */
+    private String jobContend;                  /* 工作内容_ids */
     private String evaluationStar;              /* 评价星级 */
     private String evaluationContent;           /* 评价内容 */
     private String evaluationImage;             /* 评价多张图片 */

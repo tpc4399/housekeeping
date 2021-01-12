@@ -32,6 +32,8 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String address2;/* 市 */
     private String address3;/* 區 */
     private String address4;/* 詳細地址 */
+    private String lat;     /* 经度 */
+    private String lng;     /* 纬度 */
     private String workYear;    /* 工作年限 */
     private String educationBackground;    /* 學歷 */
     private String accountLine;    /* line賬號 */

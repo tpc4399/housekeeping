@@ -10,10 +10,8 @@ import java.time.LocalTime;
  */
 @Data
 public class TimeSlot {
-
     /* 时间段开始点 */
     private LocalTime timeSlotStart;
     /* 时间段长度（h） */
     private Float timeSlotLength;
-
 }

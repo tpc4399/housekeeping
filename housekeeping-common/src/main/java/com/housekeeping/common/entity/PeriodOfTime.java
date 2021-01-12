@@ -18,4 +18,9 @@ public class PeriodOfTime {
 
     public PeriodOfTime() {
     }
+
+    @Override
+    public String toString() {
+        return "PeriodOfTime(" + timeSlotStart + "+" + timeSlotLength + "h)";
+    }
 }

@@ -22,4 +22,6 @@ public class CustomerAddress extends Model<CustomerAddress> {
     private Boolean isDefault;      /* 是否默认地址 */
     private String name;            /* 地址名 */
     private String address;         /* 详细地址 */
+    private String lat;             /* 经度 */
+    private String lng;             /* 纬度 */
 }

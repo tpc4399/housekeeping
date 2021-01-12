@@ -55,3 +55,9 @@ currency:
     path: /waihui-transform
     method: GET
     appcode: 74bf2f4aaa8e4bb3a67d287c53509cda
+address:
+  coding:
+    host: http://api.map.baidu.com
+    path: /geocoding/v3/
+    method: GET
+    ak: WCAGT9OncmkrNmlLpesssRnUtmGwUb3U

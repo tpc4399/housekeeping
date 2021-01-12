@@ -8,11 +8,13 @@ import com.housekeeping.admin.dto.CustomerAddressUpdateDTO;
 import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.mapper.CustomerAddressMapper;
+import com.housekeeping.admin.service.IAddressCodingService;
 import com.housekeeping.admin.service.ICustomerAddressService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,8 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
 
     @Resource
     private ICustomerDetailsService customerDetailsService;
+    @Resource
+    private IAddressCodingService addressCodingService;
 
     @Override
     public R addAddress(CustomerAddressAddDTO customerAddressAddDTO) {
@@ -41,7 +45,15 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
         customerAddress.setIsDefault(false);
         customerAddress.setName(customerAddressAddDTO.getName());
         customerAddress.setAddress(customerAddressAddDTO.getAddress());
-
+//        addressCodingService.addressCoding(customerAddressAddDTO.getAddress());
+        //把地址存為經緯度
+        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(customerAddressAddDTO.getAddress()).getData();
+        JSONObject result = (JSONObject) jsonObject.get("result");
+        JSONObject location = (JSONObject) result.get("location");
+        Double lng = (Double) location.get("lng");
+        Double lat = (Double) location.get("lat");
+        customerAddress.setLng(lng.toString());
+        customerAddress.setLat(lat.toString());
         return R.ok(this.save(customerAddress), "添加地址成功");
     }
 

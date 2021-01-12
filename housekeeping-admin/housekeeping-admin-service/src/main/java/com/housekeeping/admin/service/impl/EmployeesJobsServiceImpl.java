@@ -10,9 +10,6 @@ import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @Author su
  * @Date 2021/1/11 10:23
