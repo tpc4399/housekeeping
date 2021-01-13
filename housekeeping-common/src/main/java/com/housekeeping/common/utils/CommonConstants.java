@@ -49,6 +49,10 @@ public interface CommonConstants {
 	 * 正式環境的订单评价照片的絕對路徑
 	 */
 	String HK_ORDER_EVALUATION_IMAGE_ABSTRACT_PATH_PREFIX_PROV = "HKFile/OrderEvaluationImage/orderId=";
+	/**
+	 * 正式環境的经理员工登入二维码存放地
+	 */
+	String HK_LOGIN_IN_QR_ABSTRACT_PATH_PREFIX_PROV = "HKFile/QrCode";
 
 	/**
 	 * 神秘代码的零件
