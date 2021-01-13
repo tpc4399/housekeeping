@@ -20,7 +20,7 @@ public class CompanyAdvertising extends Model<CompanyAdvertising> {
     private String title;           /* 標題 */
     private String link;            /* 鏈接 */
     private String content;         /* 内容 */
-    private String photos;           /* 圖片 */
+    private String photo;           /* 圖片 */
     private Boolean promotion;      /* 推廣 0未推廣 1已推廣 */
     private LocalDateTime endTime;  /* 推廣結束日期 */
 
