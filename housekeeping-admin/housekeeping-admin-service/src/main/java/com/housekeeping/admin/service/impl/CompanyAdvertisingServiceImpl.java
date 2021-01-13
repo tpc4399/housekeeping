@@ -61,7 +61,7 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
             companyAdvertising1.setCompanyId(companyId);
             companyAdvertising1.setContent(companyAdvertising.getContent());
             companyAdvertising1.setLink(companyAdvertising.getLink());
-            companyAdvertising1.setPhotos(companyAdvertising.getPhoto());
+            companyAdvertising1.setPhoto(companyAdvertising.getPhoto());
             companyAdvertising1.setTitle(companyAdvertising.getTitle());
             companyAdvertising1.setPromotion(true);
             companyAdvertising1.setEndTime(now.plusDays(day));
@@ -75,7 +75,7 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
     public R cusUpdate(AdvertisingVo companyAdvertising) {
         CompanyAdvertising byId = this.getById(companyAdvertising.getId());
         byId.setTitle(companyAdvertising.getTitle());
-        byId.setPhotos(companyAdvertising.getPhoto());
+        byId.setPhoto(companyAdvertising.getPhoto());
         byId.setLink(companyAdvertising.getLink());
         byId.setContent(companyAdvertising.getContent());
         this.updateById(byId);

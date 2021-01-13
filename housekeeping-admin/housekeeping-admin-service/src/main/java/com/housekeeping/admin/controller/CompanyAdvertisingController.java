@@ -56,7 +56,7 @@ public class CompanyAdvertisingController {
 
     @ApiOperation("【公司】廣告上傳圖片")
     @PostMapping("/uploadPhoto")
-    public R uploadPhoto(@RequestParam("file") MultipartFile file) throws IOException {
+    public R uploadPhoto(@RequestParam("file") MultipartFile file)  {
         return iCompanyAdvertisingService.uploadPhoto(file);
     }
 
