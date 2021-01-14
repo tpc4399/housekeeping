@@ -49,8 +49,8 @@ public class SendMessage{
     }
 
     public static void main(String[] args) {
-        String num = "13528438232";
+        String num = "979966001";
         String[] params = {"034833", "3"};
-        SendMessage.sendMessage("86", num, params);
+        SendMessage.sendMessage("886", num, params);
     }
 }

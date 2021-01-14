@@ -1,14 +1,12 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.UpdateManagerMenuDTO;
 import com.housekeeping.admin.service.IManagerMenuService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -24,14 +22,14 @@ public class ManagerMenuController {
 
     @ApiOperation("【公司】修改经理权限")
     @PutMapping
-    public R updateManagerMenu(){
-        return R.ok();
+    public R updateManagerMenu(@RequestBody UpdateManagerMenuDTO dto){
+        return managerMenuService.updateManagerMenu(dto);
     }
 
     @ApiOperation("【公司】获取经理权限")
     @GetMapping
     public R getManagerMenu(Integer managerId){
-        return R.ok();
+        return managerMenuService.getManagerMenu(managerId);
     }
 
 }
