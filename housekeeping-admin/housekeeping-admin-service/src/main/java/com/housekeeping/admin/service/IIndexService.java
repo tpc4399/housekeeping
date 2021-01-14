@@ -5,7 +5,5 @@ import com.housekeeping.admin.entity.Index;
 import com.housekeeping.common.utils.R;
 
 public interface IIndexService extends IService<Index> {
-
-
     R getCusById(Integer id);
 }
