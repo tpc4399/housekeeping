@@ -11,6 +11,10 @@ import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.apache.tomcat.jni.Local;
+import org.gavaghan.geodesy.Ellipsoid;
+import org.gavaghan.geodesy.GeodeticCalculator;
+import org.gavaghan.geodesy.GeodeticCurve;
+import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -241,6 +245,34 @@ public class CommonUtils {
 		return new PeriodOfTime(start, (float)second/3600);
 	}
 
+	/***
+	 *
+	 * @param latitude1 坐標點1 纬度
+	 * @param longitude1 坐標點1 经度
+	 * @param latitude2 坐標點2 纬度
+	 * @param longitude2 坐標點2 经度
+	 * @return
+	 */
+	public static String getInstanceByPoint(String latitude1,
+											String longitude1,
+											String latitude2,
+											String longitude2){
+		GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(latitude1), Double.parseDouble(longitude1));
+		GlobalCoordinates target = new GlobalCoordinates(Double.parseDouble(latitude2), Double.parseDouble(longitude2));
+
+		Double meter = getDistanceMeter(source, target, Ellipsoid.Sphere);
+
+		System.out.println("Sphere坐标系计算结果："+meter + "米");
+		return meter.toString();
+	}
+	public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid){
+
+		//创建GeodeticCalculator，调用计算方法，传入坐标系、经纬度用于计算距离
+		GeodeticCurve geoCurve = new GeodeticCalculator().calculateGeodeticCurve(ellipsoid, gpsFrom, gpsTo);
+
+		return geoCurve.getEllipsoidalDistance();
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
 		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();
@@ -339,6 +371,12 @@ public class CommonUtils {
 			e.printStackTrace();
 		}
 
+		System.out.println(getInstanceByPoint(
+				"30.79642470088513",
+				"113.4268687545786",
+				"30.476253112528415",
+				"114.49648831175344"
+		));
 
 	}
 

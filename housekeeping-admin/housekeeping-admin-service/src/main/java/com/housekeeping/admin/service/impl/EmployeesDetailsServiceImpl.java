@@ -13,6 +13,7 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private IEmployeesWorkExperienceService employeesWorkExperienceService;
+
+    @Resource
+    private IAddressCodingService addressCodingService;
 
     @Resource
     private OSSClient ossClient;
@@ -91,6 +95,22 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
                 employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
                 employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
+
+                /** 2021/1/14 su 新增存放地址經緯度 **/
+                String address = employeesDetails.getAddress1()
+                        + employeesDetails.getAddress2()
+                        + employeesDetails.getAddress3()
+                        + employeesDetails.getAddress4();
+                //把地址存為經緯度
+                JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
+                JSONObject result = (JSONObject) jsonObject.get("result");
+                JSONObject location = (JSONObject) result.get("location");
+                Double lng = (Double) location.get("lng");
+                Double lat = (Double) location.get("lat");
+                employeesDetails.setLng(lng.toString());
+                employeesDetails.setLat(lat.toString());
+                /** 2021/1/14 su 新增存放地址經緯度 **/
+
                 employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
                 employeesDetails.setPhone(employeesDetailsDTO.getPhone());
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
@@ -145,6 +165,22 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
         employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
         employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
+
+        /** 2021/1/14 su 新增存放地址經緯度 **/
+        String address = employeesDetails.getAddress1()
+                + employeesDetails.getAddress2()
+                + employeesDetails.getAddress3()
+                + employeesDetails.getAddress4();
+        //把地址存為經緯度
+        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
+        JSONObject result = (JSONObject) jsonObject.get("result");
+        JSONObject location = (JSONObject) result.get("location");
+        Double lng = (Double) location.get("lng");
+        Double lat = (Double) location.get("lat");
+        employeesDetails.setLng(lng.toString());
+        employeesDetails.setLat(lat.toString());
+        /** 2021/1/14 su 新增存放地址經緯度 **/
+
         employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
