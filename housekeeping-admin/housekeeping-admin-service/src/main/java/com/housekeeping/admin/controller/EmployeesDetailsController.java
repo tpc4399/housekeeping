@@ -8,9 +8,7 @@ import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.entity.GroupManager;
-import com.housekeeping.admin.service.EmployeesDetailsService;
-import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
-import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.service.impl.GroupEmployeesServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.*;
@@ -34,6 +32,9 @@ public class EmployeesDetailsController {
     private final EmployeesDetailsService employeesDetailsService;
     private final GroupEmployeesServiceImpl groupEmployeesService;
     private final IEmployeesWorkExperienceService employeesWorkExperienceService;
+    private final IEmployeesJobsService employeesJobsService;
+    private final IEmployeesCalendarService employeesCalendarService;
+    private final IEmployeesPromotionService employeesPromotionService;
     private final IUserService userService;
 
     @ApiOperation("【公司】新增員工")
@@ -65,6 +66,9 @@ public class EmployeesDetailsController {
         userService.removeById(userId); //刪除依賴1
         groupEmployeesService.remove(qw); //刪除依賴2
         employeesWorkExperienceService.remove(qw); //刪除依賴3
+        employeesJobsService.remove(qw);
+        employeesCalendarService.remove(qw);
+        employeesPromotionService.remove(qw);
         //……
         return R.ok(employeesDetailsService.removeById(employeesId));
     }
