@@ -54,4 +54,11 @@ public class CustomerAddressController {
         return customerAddressService.getAll(page);
     }
 
+    @ApiOperation("刪除地址")
+    @DeleteMapping("/{id}")
+    public R deleteAddress(@PathVariable Integer id){
+        customerAddressService.removeById(id);
+        return R.ok("删除成功");
+    }
+
 }

@@ -9,12 +9,11 @@ import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.service.EmployeesDetailsService;
+import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
+import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.impl.GroupEmployeesServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.QrCodeUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -34,6 +33,9 @@ public class EmployeesDetailsController {
 
     private final EmployeesDetailsService employeesDetailsService;
     private final GroupEmployeesServiceImpl groupEmployeesService;
+    private final IEmployeesWorkExperienceService employeesWorkExperienceService;
+    private final IUserService userService;
+
     @ApiOperation("【公司】新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
@@ -51,11 +53,20 @@ public class EmployeesDetailsController {
     @ApiOperation("【公司】【經理】刪除員工")
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
-    public R deleteEmp(@RequestBody EmployeesDetails employeesDetails){
-        QueryWrapper<GroupEmployees> qw = new QueryWrapper<>();
-        qw.eq("employees_id",employeesDetails.getId());
-        groupEmployeesService.remove(qw);
-        return R.ok(employeesDetailsService.removeById(employeesDetails));
+    public R deleteEmp(Integer employeesId){
+        EmployeesDetails employeesDetails = employeesDetailsService.getById(employeesId);
+        Integer userId = OptionalBean.ofNullable(employeesDetails)
+                .getBean(EmployeesDetails::getUserId).get();
+        if (CommonUtils.isEmpty(userId)){
+            return R.failed("该經理不存在！");
+        }
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", employeesId);
+        userService.removeById(userId); //刪除依賴1
+        groupEmployeesService.remove(qw); //刪除依賴2
+        employeesWorkExperienceService.remove(qw); //刪除依賴3
+        //……
+        return R.ok(employeesDetailsService.removeById(employeesId));
     }
 
     @ApiOperation("【管理员】查詢所有公司員工")
