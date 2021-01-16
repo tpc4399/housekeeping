@@ -14,29 +14,29 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/companyPromotion")
 public class CompanyPromotionController {
 
-    private final ICompanyPromotionService iCompanyPromotionService;
+    private final ICompanyPromotionService companyPromotionService;
 
     @ApiOperation("【公司】查詢當前狀態")
     @GetMapping("/getInfoByCompanyId")
     public R getInfoById(Integer companyId){
-        return iCompanyPromotionService.getInfoById(companyId);
+        return companyPromotionService.getInfoById(companyId);
     }
 
     @ApiOperation("【公司】推廣一天")
     @GetMapping("/promotionDay")
     public R promotionDay(Integer companyId){
-        return iCompanyPromotionService.promotionDay(companyId);
+        return companyPromotionService.promotionDay(companyId);
     }
 
     @ApiOperation("【公司】推廣十天")
     @GetMapping("/promotionTenDay")
     public R promotionTenDay(Integer companyId){
-        return iCompanyPromotionService.promotionTenDay(companyId);
+        return companyPromotionService.promotionTenDay(companyId);
     }
 
     @ApiOperation("【公司】從推廣公司中隨機取")
     @GetMapping("/getCompanyByRan")
     public R getCompanyByRan(Integer random){
-        return iCompanyPromotionService.getCompanyByRan(random);
+        return companyPromotionService.getCompanyByRan(random);
     }
 }
