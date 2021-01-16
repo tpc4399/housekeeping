@@ -6,15 +6,15 @@ import com.housekeeping.admin.dto.ManagerDetailsDTO;
 
 import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.service.IManagerMenuService;
+import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.service.impl.GroupManagerServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -33,6 +33,7 @@ public class ManagerDetailsController {
     private final ManagerDetailsService managerDetailsService;
     private final GroupManagerServiceImpl groupManagerService;
     private final IManagerMenuService managerMenuService;
+    private final IUserService userService;
 
     @ApiOperation("【公司】新增經理")
     @LogFlag(description = "新增經理")
@@ -52,10 +53,18 @@ public class ManagerDetailsController {
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(Integer managerId){
+        ManagerDetails managerDetails = managerDetailsService.getById(managerId);
+        Integer userId = OptionalBean.ofNullable(managerDetails)
+                .getBean(ManagerDetails::getUserId).get();
+        if (CommonUtils.isEmpty(userId)){
+            return R.failed("该經理不存在！");
+        }
+        userService.removeById(userId); //删除依赖1
         QueryWrapper qw = new QueryWrapper<>();
         qw.eq("manager_id", managerId);
-        groupManagerService.remove(qw); //删除依赖1
-        managerMenuService.remove(qw);
+        groupManagerService.remove(qw); //删除依赖2
+        managerMenuService.remove(qw); //删除依赖3
+
         return R.ok(managerDetailsService.removeById(managerId));
     }
 

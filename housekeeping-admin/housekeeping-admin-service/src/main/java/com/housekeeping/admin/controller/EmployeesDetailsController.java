@@ -59,16 +59,16 @@ public class EmployeesDetailsController {
         Integer userId = OptionalBean.ofNullable(employeesDetails)
                 .getBean(EmployeesDetails::getUserId).get();
         if (CommonUtils.isEmpty(userId)){
-            return R.failed("该經理不存在！");
+            return R.failed("该员工不存在！");
         }
+        userService.removeById(userId); //刪除依賴1
         QueryWrapper qw = new QueryWrapper<>();
         qw.eq("employees_id", employeesId);
-        userService.removeById(userId); //刪除依賴1
         groupEmployeesService.remove(qw); //刪除依賴2
         employeesWorkExperienceService.remove(qw); //刪除依賴3
-        employeesJobsService.remove(qw);
-        employeesCalendarService.remove(qw);
-        employeesPromotionService.remove(qw);
+        employeesJobsService.remove(qw); //删除依赖4
+        employeesCalendarService.remove(qw); //删除依赖5
+        employeesPromotionService.remove(qw); //删除依赖6
         //……
         return R.ok(employeesDetailsService.removeById(employeesId));
     }
