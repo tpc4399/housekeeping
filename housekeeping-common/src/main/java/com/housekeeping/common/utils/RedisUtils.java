@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @Author su
  * @create 2020/10/29 16:17
  */
-@Component
+@Component("redisUtils")
 public class RedisUtils {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;

@@ -9,14 +9,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.ManagerDetailsDTO;
 import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.EmployeesDetails;
-import com.housekeeping.admin.entity.ManagerDetails;
-import com.housekeeping.admin.entity.User;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
-import com.housekeeping.admin.service.ICompanyDetailsService;
-import com.housekeeping.admin.service.IUserService;
-import com.housekeeping.admin.service.ManagerDetailsService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,18 +24,26 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("managerDetailsService")
 public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper, ManagerDetails> implements ManagerDetailsService {
 
-    @Autowired
+    @Resource
     private ICompanyDetailsService companyDetailsService;
 
-    @Autowired
+    @Resource
+    private IManagerMenuService managerMenuService;
+
+    @Resource
+    private ISysMenuService sysMenuService;
+
+    @Resource
     private IUserService userService;
 
-    @Autowired
+    @Resource
     private RedisUtils redisUtils;
 
     @Resource
@@ -65,6 +68,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 user.setCreateTime(LocalDateTime.now());
                 user.setUpdateTime(LocalDateTime.now());
                 Integer maxUserId = 0;
+                Integer maxManagerId = 0;
                 synchronized (this) {
                     userService.save(user);
                     maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
@@ -86,7 +90,21 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setCreateTime(LocalDateTime.now());
                 managerDetails.setCompanyId(one.getId());
                 managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
-                this.save(managerDetails);
+                synchronized (this){
+                    this.save(managerDetails);
+                    maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();
+                }
+
+                /** 2020-01-16 su新增 增加经理的同时，给予所有菜单权限 */
+                List<SysMenu> sysMenuList = sysMenuService.list();
+                Integer finalMaxManagerId = maxManagerId;
+                List<ManagerMenu> managerMenuList = sysMenuList.stream().map(x -> {
+                    ManagerMenu managerMenu = new ManagerMenu();
+                    managerMenu.setManagerId(finalMaxManagerId);
+                    managerMenu.setMenuId(x.getId());
+                    return managerMenu;
+                }).collect(Collectors.toList());
+                managerMenuService.saveBatch(managerMenuList);
             }
         }else {
             return R.failed("公司經理人數達到上綫，請升級公司規模");

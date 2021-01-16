@@ -19,5 +19,8 @@ public class SysMenu extends Model<SysMenu> {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;         /* 主鍵id */
     private String name;        /* 菜單名 */
+    private String icon;        /* 图标 */
+    private String url;         /* url */
+    private String type;        /* 参数1 */
 
 }
