@@ -33,12 +33,12 @@ public class EmployeesJobsServiceImpl
         wr.eq("employees_id", employeesJobsDTO.getEmployeesId());
         baseMapper.delete(wr);
 
-        for (Integer jobId : employeesJobsDTO.getJobIds()) {
+        employeesJobsDTO.getJobIds().forEach(x->{
             EmployeesJobs employeesJobs = new EmployeesJobs();
             employeesJobs.setEmployeesId(employeesJobsDTO.getEmployeesId());
-            employeesJobs.setJobId(jobId);
+            employeesJobs.setJobId(x);
             baseMapper.insert(employeesJobs);
-        }
+        });
 
         return R.ok("修改成功");
     }
