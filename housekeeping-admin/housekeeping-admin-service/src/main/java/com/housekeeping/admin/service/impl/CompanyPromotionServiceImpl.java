@@ -52,19 +52,20 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
             QueryWrapper<CompanyPromotion> qw = new QueryWrapper<>();
             qw.eq("company_id",companyId);
             CompanyPromotion one = this.getOne(qw);
-            if(one.getPromotion()){
-                one.setPromotion(true);
-                one.setDays(one.getDays()+1);
-                one.setEndTime(one.getEndTime().plusDays(1L));
-                one.setLastReviserId(TokenUtils.getCurrentUserId());
-                companyDetailsService.promotion(companyId,1);
-                this.updateById(one);
-                return R.ok("推廣成功");
-            }else {
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
                 one.setPromotion(true);
                 one.setDays(one.getDays()+1);
                 LocalDateTime now = LocalDateTime.now();
                 one.setEndTime(now.plusDays(1L));
+                one.setLastReviserId(TokenUtils.getCurrentUserId());
+                companyDetailsService.promotion(companyId,1);
+                this.updateById(one);
+                return R.ok("推廣成功");
+
+            }else {
+                one.setPromotion(true);
+                one.setDays(one.getDays()+1);
+                one.setEndTime(one.getEndTime().plusDays(1L));
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,1);
                 this.updateById(one);
@@ -83,10 +84,11 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
             QueryWrapper<CompanyPromotion> qw = new QueryWrapper<>();
             qw.eq("company_id",companyId);
             CompanyPromotion one = this.getOne(qw);
-            if(one.getPromotion()){
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
                 one.setPromotion(true);
                 one.setDays(one.getDays()+10);
-                one.setEndTime(one.getEndTime().plusDays(10L));
+                LocalDateTime now = LocalDateTime.now();
+                one.setEndTime(now.plusDays(10L));
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,8);
                 this.updateById(one);
@@ -94,8 +96,7 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
             }else {
                 one.setPromotion(true);
                 one.setDays(one.getDays()+10);
-                LocalDateTime now = LocalDateTime.now();
-                one.setEndTime(now.plusDays(10L));
+                one.setEndTime(one.getEndTime().plusDays(10L));
                 one.setLastReviserId(TokenUtils.getCurrentUserId());
                 companyDetailsService.promotion(companyId,8);
                 this.updateById(one);
@@ -119,8 +120,6 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
 
     }
 
-    /*
-    * 获取所有推广公司id*/
     public List<Integer> getAllProCompIds(){
         return baseMapper.getAllProCompIds();
     }

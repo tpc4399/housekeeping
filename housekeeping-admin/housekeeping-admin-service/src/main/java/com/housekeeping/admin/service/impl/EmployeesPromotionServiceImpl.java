@@ -46,18 +46,18 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
             QueryWrapper<EmployeesPromotion> qw = new QueryWrapper<>();
             qw.eq("employees_id",empId);
             EmployeesPromotion one = this.getOne(qw);
-            if(one.getPromotion()){
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
                 one.setPromotion(true);
-                one.setStartTime(one.getStartTime());
-                one.setEndTime(one.getEndTime().plusDays(1L));
+                one.setStartTime(LocalDateTime.now());
+                LocalDateTime now = LocalDateTime.now();
+                one.setEndTime(now.plusDays(1L));
                 companyDetailsService.promotion(byId.getCompanyId(), 1);
                 this.updateById(one);
                 return R.ok("推廣成功");
             }else {
                 one.setPromotion(true);
-                one.setStartTime(LocalDateTime.now());
-                LocalDateTime now = LocalDateTime.now();
-                one.setEndTime(now.plusDays(1L));
+                one.setStartTime(one.getStartTime());
+                one.setEndTime(one.getEndTime().plusDays(1L));
                 companyDetailsService.promotion(byId.getCompanyId(), 1);
                 this.updateById(one);
                 return R.ok("推廣成功");
@@ -76,18 +76,18 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
             QueryWrapper<EmployeesPromotion> qw = new QueryWrapper<>();
             qw.eq("employees_id",empId);
             EmployeesPromotion one = this.getOne(qw);
-            if(one.getPromotion()){
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
                 one.setPromotion(true);
-                one.setStartTime(one.getStartTime());
-                one.setEndTime(one.getEndTime().plusDays(10L));
+                one.setStartTime(LocalDateTime.now());
+                LocalDateTime now = LocalDateTime.now();
+                one.setEndTime(now.plusDays(10L));
                 companyDetailsService.promotion(byId.getCompanyId(), 8);
                 this.updateById(one);
                 return R.ok("推廣成功");
             }else {
                 one.setPromotion(true);
-                one.setStartTime(LocalDateTime.now());
-                LocalDateTime now = LocalDateTime.now();
-                one.setEndTime(now.plusDays(10L));
+                one.setStartTime(one.getStartTime());
+                one.setEndTime(one.getEndTime().plusDays(10L));
                 companyDetailsService.promotion(byId.getCompanyId(), 8);
                 this.updateById(one);
                 return R.ok("推廣成功");

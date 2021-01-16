@@ -94,15 +94,15 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
             return R.failed("續費失敗，您的代幣不足，請及時充值");
         }else {
             CompanyAdvertising byId = this.getById(companyAdvertising.getId());
-            if(byId.getPromotion()){
-                byId.setPromotion(true);
-                byId.setEndTime(byId.getEndTime().plusDays(day));
-                companyDetailsService.promotion(companyId,payTokens);
-                this.updateById(byId);
-            }else {
+            if(CommonUtils.isEmpty(byId.getEndTime())||LocalDateTime.now().isAfter(byId.getEndTime())){
                 byId.setPromotion(true);
                 LocalDateTime now = LocalDateTime.now();
                 byId.setEndTime(now.plusDays(day));
+                companyDetailsService.promotion(companyId,payTokens);
+            }else {
+                this.updateById(byId);
+                byId.setPromotion(true);
+                byId.setEndTime(byId.getEndTime().plusDays(day));
                 companyDetailsService.promotion(companyId,payTokens);
                 this.updateById(byId);
             }
