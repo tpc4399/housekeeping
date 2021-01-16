@@ -18,30 +18,30 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/index")
 public class SysIndexController {
 
-    private final IIndexService iIndexService;
+    private final IIndexService indexService;
 
     @GetMapping("getAll")
     @ApiOperation("【客户】获取所有分类")
     public R getAll(Page page){
-        return R.ok(iIndexService.page(page,new QueryWrapper<>()));
+        return R.ok(indexService.page(page,new QueryWrapper<>()));
     }
 
     @PostMapping
     @ApiOperation("【平台】新增分类")
     public R add(@RequestBody Index index){
-        return R.ok(iIndexService.save(index));
+        return R.ok(indexService.save(index));
     }
 
     @GetMapping("getById")
     @ApiOperation("【客户】通过首页分类获取一级分类")
     public R getById(Integer id){
-        return iIndexService.getCusById(id);
+        return indexService.getCusById(id);
     }
 
     @ApiOperation("【客户】搜索")
     @PostMapping("/query")
     public R query(IndexQueryDTO indexQueryDTO){
-        return R.ok();
+        return indexService.query(indexQueryDTO);
     }
 
 }
