@@ -11,4 +11,6 @@ public interface CompanyPromotionMapper extends BaseMapper<CompanyPromotion> {
     CompanyPromotionDTO getInfoById(Integer companyId);
 
     List<Integer> getCompanyByRan(Integer random);
+
+    List<Integer> getAllProCompIds();
 }

@@ -118,4 +118,10 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
         }
 
     }
+
+    /*
+    * 获取所有推广公司id*/
+    public List<Integer> getAllProCompIds(){
+        return baseMapper.getAllProCompIds();
+    }
 }

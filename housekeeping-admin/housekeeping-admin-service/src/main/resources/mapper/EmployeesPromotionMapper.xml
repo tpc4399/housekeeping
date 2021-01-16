@@ -52,4 +52,8 @@
 			promotion = 1
 		order by rand() limit #{random}
 	</select>
+
+    <select id="getAllProEmpIds" resultType="java.lang.Integer">
+		SELECT employees_id FROM employees_promotion WHERE promotion = 1
+	</select>
 </mapper>

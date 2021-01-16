@@ -129,4 +129,10 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
         }
         return R.ok(employeesPromotionDTOS);
     }
+
+    /*
+    * 获取所有推广状态员工id*/
+    public List<Integer> getAllProEmpIds(){
+        return baseMapper.getAllProEmpIds();
+    }
 }
