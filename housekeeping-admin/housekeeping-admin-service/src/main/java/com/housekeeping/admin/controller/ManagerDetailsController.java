@@ -8,6 +8,7 @@ import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
+import com.housekeeping.admin.service.IManagerMenuService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.service.impl.GroupManagerServiceImpl;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -31,6 +32,7 @@ public class ManagerDetailsController {
 
     private final ManagerDetailsService managerDetailsService;
     private final GroupManagerServiceImpl groupManagerService;
+    private final IManagerMenuService managerMenuService;
 
     @ApiOperation("【公司】新增經理")
     @LogFlag(description = "新增經理")
@@ -49,11 +51,12 @@ public class ManagerDetailsController {
     @ApiOperation("【公司】刪除經理")
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
-    public R deleteEmp(@RequestBody ManagerDetails managerDetails){
-        QueryWrapper<GroupManager> qw = new QueryWrapper<>();
-        qw.eq("manager_id",managerDetails.getId());
-        groupManagerService.remove(qw);
-        return R.ok(managerDetailsService.removeById(managerDetails));
+    public R deleteEmp(Integer managerId){
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("manager_id", managerId);
+        groupManagerService.remove(qw); //删除依赖1
+        managerMenuService.remove(qw);
+        return R.ok(managerDetailsService.removeById(managerId));
     }
 
     @ApiOperation("【公司】根据id生成登入参数")
