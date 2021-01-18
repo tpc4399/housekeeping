@@ -12,4 +12,6 @@ public interface ICurrencyService {
 
     R exchangeRate(String fromCode, String toCode, BigDecimal money);
 
+    BigDecimal exchangeRateToBigDecimal(String fromCode, String toCode, BigDecimal money);
+
 }

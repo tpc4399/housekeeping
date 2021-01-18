@@ -51,11 +51,43 @@ public class CurrencyServiceImpl implements ICurrencyService {
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-            JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
-            return R.ok(jsonObject, "轉換成功");
+            System.out.println(EntityUtils.toString(response.getEntity(), "UTF-8"));
+//            JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
+//            return R.ok(jsonObject, "轉換成功");
+            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return R.failed("出了點問題，請聯係系統人員");
+        }
+    }
+
+    @Override
+    public BigDecimal exchangeRateToBigDecimal(String fromCode, String toCode, BigDecimal money) {
+        Map<String, String> headers = new HashMap<String, String>();
+        //最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
+        headers.put("Authorization", "APPCODE " + appcode);
+        Map<String, String> querys = new HashMap<String, String>();
+        querys.put("fromCode", fromCode);
+        querys.put("money", money.toString());
+        querys.put("toCode", toCode);
+
+
+        try {
+            /**
+             * 重要提示如下:
+             * HttpUtils请从
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
+             * 下载
+             *
+             * 相应的依赖请参照
+             * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
+             */
+            HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+            JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
+            return new BigDecimal("35.22");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BigDecimal("-1");
         }
     }
 }

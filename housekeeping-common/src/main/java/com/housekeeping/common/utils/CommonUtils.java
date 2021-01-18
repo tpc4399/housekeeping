@@ -374,6 +374,15 @@ public class CommonUtils {
 				"114.49648831175344"
 		));
 
+
+		List<String> arg = Arrays.asList("dwa", "fffga", "dwaghhhhhh", "14324ffg", "sf");
+		arg.forEach(x -> {
+			if (x.length()>=5){
+				return;
+			}
+			System.out.println(x);
+		});
+
 	}
 
 }
