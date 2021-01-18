@@ -125,7 +125,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         searchPool.forEach(employeesId -> {
             /**
              *  calendarMap: 时间表map准备
-             *  map1, map2, map3: 没有做相邻时间段合并的,带时薪的，计算工资用
+             *  map1, map2, map3: 没有做相邻时间段合并的,带时薪的，计算价格用
              *  map11,map22,map33:时间段合并了的，时间段匹配用
              */
             QueryWrapper qw4 = new QueryWrapper();
@@ -153,8 +153,14 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             /**
              * 时段匹配，员工筛选，硬性条件,需要使用到时间表calendarMap
              */
-            Boolean isOk = false;
-            //……
+            Boolean isOk = true;
+            timeSlotList.forEach(x -> {
+                Boolean existTimeSlotIsOk = false;
+                PeriodOfTime xPo = new PeriodOfTime(x.getTimeSlotStart(), x.getTimeSlotLength());
+                if (map11.containsKey(date)){
+
+                }
+            });
             if (isOk){
                 matchingEmployees.add(employeesId);
             }else {
@@ -199,8 +205,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         Map<LocalDate, List<PeriodOfTimeWithHourlyWage>> map1 = new HashMap<>();
         calendarMap.get(false).forEach(dateRule -> {
             List list1 = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
-//            String hourlyWage = currencyService.exchangeRate(dateRule.getCode(), toCode, dateRule.getHourlyWage());
-            list1.add(new PeriodOfTimeWithHourlyWage(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength(), dateRule.getHourlyWage()));
+            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(dateRule.getCode(), toCode, dateRule.getHourlyWage());
+            list1.add(new PeriodOfTimeWithHourlyWage(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength(), hourlyWage));
             map1.put(dateRule.getData(), list1);
         });
         return map1;
@@ -213,8 +219,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             for (int i = 0; i < weekString.length(); i++) {
                 Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
                 List list = map2.getOrDefault(weekInteger, new ArrayList<>());
-//                currencyService.exchangeRate(weekRule.getCode(),)
-                list.add(new PeriodOfTimeWithHourlyWage(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength(), weekRule.getHourlyWage()));
+                BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(weekRule.getCode(), toCode, weekRule.getHourlyWage());
+                list.add(new PeriodOfTimeWithHourlyWage(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength(), hourlyWage));
                 map2.put(weekInteger, list);
             }
         });
@@ -225,7 +231,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         Map<String, List<PeriodOfTimeWithHourlyWage>> map3 = new HashMap<>();
         calendarMap.get(null).forEach(x -> {
             List list = map3.getOrDefault(null, new ArrayList<>());
-            list.add(new PeriodOfTimeWithHourlyWage(x.getTimeSlotStart(), x.getTimeSlotLength(), x.getHourlyWage()));
+            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(x.getCode(), toCode, x.getHourlyWage());
+            list.add(new PeriodOfTimeWithHourlyWage(x.getTimeSlotStart(), x.getTimeSlotLength(), hourlyWage));
             map3.put(null, list);
         });
         return map3;

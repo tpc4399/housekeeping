@@ -6,6 +6,7 @@ import com.housekeeping.common.utils.R;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -51,13 +52,11 @@ public class CurrencyServiceImpl implements ICurrencyService {
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-            System.out.println(EntityUtils.toString(response.getEntity(), "UTF-8"));
-//            JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
-//            return R.ok(jsonObject, "轉換成功");
-            return null;
+            JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
+            return R.ok(jsonObject, "轉換成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return R.failed("出了點問題，請聯係系統人員");
+            return R.failed("外汇接口出了點問題，請聯係系統人員");
         }
     }
 
@@ -84,10 +83,17 @@ public class CurrencyServiceImpl implements ICurrencyService {
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
             JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
-            return new BigDecimal("35.22");
+            JSONObject showApiResBody = jsonObject.getJSONObject("showapi_res_body");
+            String toMoney = showApiResBody.getString("money");
+            return new BigDecimal(toMoney);
         } catch (Exception e) {
             e.printStackTrace();
             return new BigDecimal("-1");
         }
     }
+
+    @Test
+    public void test(){
+    }
+
 }

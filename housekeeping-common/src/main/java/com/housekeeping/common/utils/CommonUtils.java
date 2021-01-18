@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.SysOrderPlanDTO;
 import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
+import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.gavaghan.geodesy.Ellipsoid;
@@ -360,9 +361,9 @@ public class CommonUtils {
 			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
 			 */
 			HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-//			System.out.println(response.toString());
+			JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
 			//获取response的body
-			System.out.println(EntityUtils.toString(response.getEntity()));
+			System.out.println("..");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
