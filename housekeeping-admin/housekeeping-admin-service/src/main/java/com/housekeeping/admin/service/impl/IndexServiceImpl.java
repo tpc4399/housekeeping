@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service("indexService")
 public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements IIndexService {
@@ -42,6 +42,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
     private ICustomerAddressService customerAddressService;
     @Resource
     private ICurrencyService currencyService;
+    @Resource
+    private IAddressCodingService addressCodingService;
 
     @Override
     public R getCusById(Integer id) {
@@ -109,7 +111,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         /** customerAddress 客戶地址准备 */
         CustomerAddress customerAddress = customerAddressService.getById(addressId);
         /** instanceMap 保洁员距离准备 */
-        Map<Integer, Double> instanceMap = new HashMap<>();
+        Map<Integer, Integer> instanceMap = new HashMap<>();
         /** priceMap 保洁员价格准备 */
         Map<Integer, BigDecimal> priceMap = new HashMap<>();
         /** matchingEmployees 服务时间段匹配的员工列表准备 */
@@ -123,6 +125,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
          */
 
         searchPool.forEach(employeesId -> {
+            /** existEmployee 当前保洁员信息 */
+            EmployeesDetails existEmployee = employeesDetailsService.getById(employeesId);
             /**
              *  calendarMap: 时间表map准备
              *  map1, map2, map3: 没有做相邻时间段合并的,带时薪的，计算价格用
@@ -151,17 +155,78 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             Map<String, List<PeriodOfTime>> map33 = this.getMap33(calendarMap);
 
             /**
-             * 时段匹配，员工筛选，硬性条件,需要使用到时间表calendarMap
+             * 1、时段匹配，员工筛选，硬性条件,需要使用到时间表calendarMap
+             * 2、xPoWage 时间段对应价格准备
              */
-            Boolean isOk = true;
+            List<PeriodOfTimeWithHourlyWage> xPoWage = new ArrayList<>();
+
+            AtomicReference<Boolean> isOk = new AtomicReference<>(true);
             timeSlotList.forEach(x -> {
-                Boolean existTimeSlotIsOk = false;
+                AtomicReference<Boolean> existTimeSlotIsOk = new AtomicReference<>(false);
                 PeriodOfTime xPo = new PeriodOfTime(x.getTimeSlotStart(), x.getTimeSlotLength());
                 if (map11.containsKey(date)){
-                    //……
+                    map11.get(date).forEach(y -> {
+                        if (CommonUtils.periodOfTimeAContainsPeriodOfTimeB(y, xPo)){
+                            existTimeSlotIsOk.set(true);
+                            //计算价格
+                            map1.get(date).forEach(z -> {
+                                PeriodOfTime zPo = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength());
+                                if (CommonUtils.doRechecking(xPo, zPo)){
+                                    PeriodOfTime common = PeriodOfTime.getIntersection(xPo, zPo);
+                                    PeriodOfTimeWithHourlyWage period = new PeriodOfTimeWithHourlyWage(
+                                            common.getTimeSlotStart(),
+                                            common.getTimeSlotLength(),
+                                            z.getHourlyWage()
+                                    );
+                                    xPoWage.add(period);
+                                }
+                            });
+                        }
+                    });
+                }else if (map22.containsKey(date.getDayOfWeek().getValue())){
+                    map22.get(date.getDayOfWeek().getValue()).forEach(y -> {
+                        if (CommonUtils.periodOfTimeAContainsPeriodOfTimeB(y, xPo)){
+                            existTimeSlotIsOk.set(true);
+                            //计算价格
+                            map2.get(date.getDayOfWeek().getValue()).forEach(z -> {
+                                PeriodOfTime zPo = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength());
+                                if (CommonUtils.doRechecking(xPo, zPo)){
+                                    PeriodOfTime common = PeriodOfTime.getIntersection(xPo, zPo);
+                                    PeriodOfTimeWithHourlyWage period = new PeriodOfTimeWithHourlyWage(
+                                            common.getTimeSlotStart(),
+                                            common.getTimeSlotLength(),
+                                            z.getHourlyWage()
+                                    );
+                                    xPoWage.add(period);
+                                }
+                            });
+                        }
+                    });
+                }else {
+                    map33.get(null).forEach(y -> {
+                        if (CommonUtils.periodOfTimeAContainsPeriodOfTimeB(y, xPo)){
+                            existTimeSlotIsOk.set(true);
+                            //计算价格
+                            map3.get(null).forEach(z -> {
+                                PeriodOfTime zPo = new PeriodOfTime(z.getTimeSlotStart(), z.getTimeSlotLength());
+                                if (CommonUtils.doRechecking(xPo, zPo)){
+                                    PeriodOfTime common = PeriodOfTime.getIntersection(xPo, zPo);
+                                    PeriodOfTimeWithHourlyWage period = new PeriodOfTimeWithHourlyWage(
+                                            common.getTimeSlotStart(),
+                                            common.getTimeSlotLength(),
+                                            z.getHourlyWage()
+                                    );
+                                    xPoWage.add(period);
+                                }
+                            });
+                        }
+                    });
+                }
+                if (!existTimeSlotIsOk.get()){
+                    isOk.set(false);
                 }
             });
-            if (isOk){
+            if (isOk.get()){
                 matchingEmployees.add(employeesId);
             }else {
                 return;
@@ -173,22 +238,25 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             List<Integer> jobContendIds = employeesJobsService.listObjs(qw5);
 
             /** instance: 距离准备 */
-            EmployeesDetails employeesDetails = employeesDetailsService.getById(employeesId);
-            String instance = CommonUtils.getInstanceByPoint(employeesDetails.getLng(),
-                    employeesDetails.getLat(),
+            Integer instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLng(),
+                    existEmployee.getLat(),
                     customerAddress.getLng(),
                     customerAddress.getLat()
             );
-            instanceMap.put(employeesId, Double.valueOf(instance));
+            instanceMap.put(employeesId, instance);
 
             /** price: 价格准备 */
+            AtomicReference<BigDecimal> bo = new AtomicReference<>(new BigDecimal(0));
+            xPoWage.forEach(x -> {
+                bo.set(bo.get().add(x.getHourlyWage()));
+            });
+            BigDecimal price = bo.get();
 
+            /** score: 评分(星级)准备 */
+            Float score = existEmployee.getStarRating();
 
-            /** score: 评分准备 */
-
-
-            /** company: 所属公司准备 */
-
+            /** companyId: 所属公司准备 */
+            Integer companyId = existEmployee.getCompanyId();
 
 
 

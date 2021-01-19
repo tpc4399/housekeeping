@@ -1,5 +1,6 @@
 package com.housekeeping.common.entity;
 
+import com.housekeeping.common.utils.CommonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -22,5 +23,9 @@ public class PeriodOfTime {
     @Override
     public String toString() {
         return "PeriodOfTime(" + timeSlotStart + "+" + timeSlotLength + "h)";
+    }
+
+    public static PeriodOfTime getIntersection(PeriodOfTime a, PeriodOfTime b){
+        return CommonUtils.getIntersectionTimeSlot(a, b);
     }
 }

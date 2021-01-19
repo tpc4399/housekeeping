@@ -40,7 +40,7 @@ public class SysIndexController {
 
     @ApiOperation("【客户】搜索")
     @PostMapping("/query")
-    public R query(IndexQueryDTO indexQueryDTO){
+    public R query(@RequestBody IndexQueryDTO indexQueryDTO){
         return indexService.query(indexQueryDTO);
     }
 

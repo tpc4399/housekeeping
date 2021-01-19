@@ -9,5 +9,9 @@ import com.housekeeping.common.utils.R;
 public interface IAddressCodingService {
 
     R addressCoding(String address);
+    Integer getInstanceByPointByWalking(String latitude1,
+                                  String longitude1,
+                                  String latitude2,
+                                  String longitude2);
 
 }

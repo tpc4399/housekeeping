@@ -16,6 +16,7 @@ import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDate;
@@ -383,7 +384,10 @@ public class CommonUtils {
 			}
 			System.out.println(x);
 		});
-
+		BigDecimal bigDecimal = new BigDecimal(0);
+		bigDecimal.add(new BigDecimal(100));
+		System.out.println(bigDecimal);
+		System.out.println(bigDecimal.add(new BigDecimal(100)));
 	}
 
 }
