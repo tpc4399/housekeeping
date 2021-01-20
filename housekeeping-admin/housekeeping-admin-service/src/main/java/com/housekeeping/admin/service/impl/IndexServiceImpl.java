@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service("indexService")
 public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements IIndexService {
@@ -44,6 +45,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
     private ICurrencyService currencyService;
     @Resource
     private IAddressCodingService addressCodingService;
+    @Resource
+    private ISysIndexContentService sysIndexContentService;
 
     @Override
     public R getCusById(Integer id) {
@@ -89,6 +92,24 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             return R.failed(resFailed, "存在空值");
         }
 
+        /** contendIds元素内容加工 */
+        QueryWrapper qw0 = new QueryWrapper();
+        qw0.eq("index_id", indexId);
+        List<SysIndexContent> sysIndexContentList = sysIndexContentService.list(qw0);
+        List<Integer> contendId =  sysIndexContentList.stream().map(x -> {
+            return x.getContentId();
+        }).collect(Collectors.toList());
+        List<Integer> contendIds = new ArrayList<>(contendId);
+        contendId.forEach(x -> {
+            QueryWrapper qwJob = new QueryWrapper();
+            qwJob.eq("parent_id", x);
+            List<SysJobContend> s = jobContendService.list(qwJob);
+            List<Integer> ss = s.stream().map(y -> {
+                return y.getId();
+            }).collect(Collectors.toList());
+            contendIds.addAll(ss);
+        });
+
         /** 返回结果 */
         Map<String, Object> map = new HashMap<>();
         /** searchPool 员工搜索池：只有符合条件的保洁员才会放进池子（设定了工作内容，设定了工作时间表） */
@@ -114,7 +135,11 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         Map<Integer, Integer> instanceMap = new HashMap<>();
         /** priceMap 保洁员价格准备 */
         Map<Integer, BigDecimal> priceMap = new HashMap<>();
-        /** matchingEmployees 服务时间段匹配的员工列表准备 */
+        /** scopeMap 保洁员评分准备 */
+        Map<Integer, Float> scopeMap = new HashMap<>();
+        /** companyIdList 所属公司准备 */
+        List<Integer> companyIdList = new ArrayList<>();
+        /** matchingEmployees 服务时间段工作內容匹配的员工列表准备 */
         List<Integer> matchingEmployees = new ArrayList<>();
 
         /**
@@ -237,11 +262,19 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             qw5.select("job_id").eq("employees_id", employeesId);
             List<Integer> jobContendIds = employeesJobsService.listObjs(qw5);
 
+            /**
+             * 工作内容匹配，员工筛选，硬性条件，需要用到jobContendIds
+             */
+            List<Integer> toolList = this.getIntersection(jobContendIds, contendIds);
+            if (CommonUtils.isEmpty(toolList)){
+                return;
+            }
+
             /** instance: 距离准备 */
-            Integer instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLng(),
-                    existEmployee.getLat(),
-                    customerAddress.getLng(),
-                    customerAddress.getLat()
+            Integer instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(),
+                    existEmployee.getLng(),
+                    customerAddress.getLat(),
+                    customerAddress.getLng()
             );
             instanceMap.put(employeesId, instance);
 
@@ -251,17 +284,44 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
                 bo.set(bo.get().add(x.getHourlyWage()));
             });
             BigDecimal price = bo.get();
+            priceMap.put(employeesId, price);
 
             /** score: 评分(星级)准备 */
             Float score = existEmployee.getStarRating();
+            scopeMap.put(employeesId, score);
 
             /** companyId: 所属公司准备 */
             Integer companyId = existEmployee.getCompanyId();
-
-
+            if (!companyIdList.contains(companyId)){
+                companyIdList.add(companyId);
+            }
 
         });
-        return null;
+        /** 【推荐公司】准备 **/
+        List<Integer> recommendedCompanyIds;
+        recommendedCompanyIds = this.getIntersection(promoteCompanyIds, companyIdList);
+        Collections.shuffle(recommendedCompanyIds);//打乱随机推荐
+
+        /** 【推荐保洁员】准备 **/
+        List<Integer> recommendedEmployeeIds;
+        recommendedEmployeeIds = this.getIntersection(promoteEmployeeIds, matchingEmployees);
+        BigDecimal lowPrice = new BigDecimal(lowestPrice);
+        BigDecimal highPrice = new BigDecimal(highestPrice);
+        BigDecimal anchorPrice = lowPrice.add(highPrice).divide(new BigDecimal(2));
+
+
+        /** 【附近保洁员】准备 **/
+        List<Integer> nearEmployeeIds = new ArrayList<>();
+        /** 【最佳保洁员】准备 **/
+        List<Integer> theBestEmployeeIds = new ArrayList<>();
+
+        Map<String, List<Integer>> dataBody = new HashMap<>();
+        dataBody.put("recommendedCompanyIds", recommendedCompanyIds);
+        dataBody.put("recommendedEmployeeIds", recommendedEmployeeIds);
+        dataBody.put("nearEmployeeIds", nearEmployeeIds);
+        dataBody.put("theBestEmployeeIds", theBestEmployeeIds);
+
+        return R.ok(dataBody, "搜索成功，結果已經推送");
     }
 
     private List<Integer> getIntersection(List<Integer> a, List<Integer> b){

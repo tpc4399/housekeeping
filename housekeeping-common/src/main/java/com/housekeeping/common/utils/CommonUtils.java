@@ -388,6 +388,15 @@ public class CommonUtils {
 		bigDecimal.add(new BigDecimal(100));
 		System.out.println(bigDecimal);
 		System.out.println(bigDecimal.add(new BigDecimal(100)));
+
+		List<Integer> integerList = Arrays.asList(1,2,3,4,5,6,7,8,9);
+		Collections.shuffle(integerList);
+		System.out.println(Arrays.toString(integerList.toArray()));
+
+		BigDecimal lowPrice = new BigDecimal(100);
+		BigDecimal highPrice = new BigDecimal(200);
+		BigDecimal anchorPrice = lowPrice.add(highPrice).divide(new BigDecimal(2));
+		System.out.println(anchorPrice);
 	}
 
 }
