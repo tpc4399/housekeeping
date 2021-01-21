@@ -185,6 +185,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
              */
             List<PeriodOfTimeWithHourlyWage> xPoWage = new ArrayList<>();
 
+            /* isOk 这个员工是否ok */
             AtomicReference<Boolean> isOk = new AtomicReference<>(true);
             timeSlotList.forEach(x -> {
                 AtomicReference<Boolean> existTimeSlotIsOk = new AtomicReference<>(false);
@@ -251,11 +252,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
                     isOk.set(false);
                 }
             });
-            if (isOk.get()){
-                matchingEmployees.add(employeesId);
-            }else {
-                return;
-            }
+
 
             /** jobContendIds: 工作内容准备 */
             QueryWrapper qw5 = new QueryWrapper();
@@ -276,7 +273,11 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
                     customerAddress.getLat(),
                     customerAddress.getLng()
             );
-            instanceMap.put(employeesId, instance);
+            if (true){
+                instanceMap.put(employeesId, instance);
+            }else {
+                
+            }
 
             /** price: 价格准备 */
             AtomicReference<BigDecimal> bo = new AtomicReference<>(new BigDecimal(0));
@@ -284,7 +285,11 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
                 bo.set(bo.get().add(x.getHourlyWage()));
             });
             BigDecimal price = bo.get();
-            priceMap.put(employeesId, price);
+            BigDecimal lowPrice = new BigDecimal(lowestPrice);
+            BigDecimal highPrice = new BigDecimal(highestPrice);
+            if (!(price.compareTo(lowPrice) == -1 || price.compareTo(highPrice) == 1)){
+                priceMap.put(employeesId, price);
+            }
 
             /** score: 评分(星级)准备 */
             Float score = existEmployee.getStarRating();
@@ -294,6 +299,12 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             Integer companyId = existEmployee.getCompanyId();
             if (!companyIdList.contains(companyId)){
                 companyIdList.add(companyId);
+            }
+
+            if (isOk.get()){
+                matchingEmployees.add(employeesId);
+            }else {
+                return;
             }
 
         });

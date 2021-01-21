@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.EmployeesJobsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.*;
@@ -52,6 +53,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private IAddressCodingService addressCodingService;
+
+    @Resource
+    private IEmployeesJobsService employeesJobsService;
 
     @Resource
     private OSSClient ossClient;
@@ -140,6 +144,13 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                      * 工作经验保存
                      */
                     employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
+                    /**
+                     * 可工作内容设置
+                     */
+                    EmployeesJobsDTO employeesJobsDTO = new EmployeesJobsDTO();
+                    employeesJobsDTO.setEmployeesId(maxEmployeesId);
+                    employeesJobsDTO.setJobIds(employeesDetailsDTO.getJobIds());
+                    employeesJobsService.updateEmployeesJobs(employeesJobsDTO);
                 } catch (Exception e){
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");
