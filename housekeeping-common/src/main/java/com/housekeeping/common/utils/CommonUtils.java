@@ -4,6 +4,7 @@ package com.housekeeping.common.utils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.SysOrderPlanDTO;
+import com.housekeeping.admin.vo.RecommendedEmployeesVo;
 import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import net.sf.json.JSONObject;
@@ -397,6 +398,43 @@ public class CommonUtils {
 		BigDecimal highPrice = new BigDecimal(200);
 		BigDecimal anchorPrice = lowPrice.add(highPrice).divide(new BigDecimal(2));
 		System.out.println(anchorPrice);
+
+
+		SortListUtil<RecommendedEmployeesVo> sortList = new SortListUtil<RecommendedEmployeesVo>();
+		List<RecommendedEmployeesVo> reList = new ArrayList<>();
+		RecommendedEmployeesVo re1 = new RecommendedEmployeesVo(1, 6000, new BigDecimal(111), 3.1f);
+		RecommendedEmployeesVo re2 = new RecommendedEmployeesVo(2, 5000, new BigDecimal(333), 3.5f);
+		RecommendedEmployeesVo re3 = new RecommendedEmployeesVo(3, 4000, new BigDecimal(222), 3.1f);
+		RecommendedEmployeesVo re4 = new RecommendedEmployeesVo(4, 3000, new BigDecimal(666), 3.7f);
+		RecommendedEmployeesVo re5 = new RecommendedEmployeesVo(5, 2000, new BigDecimal(555), 3.2f);
+		RecommendedEmployeesVo re6 = new RecommendedEmployeesVo(6, 1000, new BigDecimal(444), 3.3f);
+		reList.add(re1);reList.add(re2);reList.add(re3);reList.add(re4);reList.add(re5);reList.add(re6);
+		System.out.println("==========原来的顺序==========");
+		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+			RecommendedEmployeesVo re = iterator.next();
+			System.out.println(re);
+		}
+
+		System.out.println("======按照instance排序=======");
+		sortList.Sort(reList, "getInstance", null);
+		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+			RecommendedEmployeesVo re = iterator.next();
+			System.out.println(re);
+		}
+
+		System.out.println("========按照price排序========");
+		sortList.Sort(reList, "getPrice", null);
+		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+			RecommendedEmployeesVo re = iterator.next();
+			System.out.println(re);
+		}
+
+		System.out.println("========按照score排序========");
+		sortList.Sort(reList, "getScore", null);
+		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+			RecommendedEmployeesVo re = iterator.next();
+			System.out.println(re);
+		}
 	}
 
 }

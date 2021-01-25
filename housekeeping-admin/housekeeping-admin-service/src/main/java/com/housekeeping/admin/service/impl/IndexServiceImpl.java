@@ -14,6 +14,7 @@ import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.OptionalBean;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.SortListUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -309,6 +310,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
          * 【附近保洁员】1、匹配到的员工，按距离排序
          * 【最佳保洁员】1、匹配到的员工，按评分排序
          */
+        /** sortList 排序器准备 */
+        SortListUtil<RecommendedEmployeesVo> sortList = new SortListUtil<RecommendedEmployeesVo>();
 
         /** 【推荐公司】准备 **/
         List<Integer> recommendedCompanyIds;
@@ -316,14 +319,31 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         Collections.shuffle(recommendedCompanyIds);//打乱随机推荐
 
         /** 【推荐保洁员】准备 **/
-        List<Integer> recommendedEmployeeIds = new ArrayList<>();
-        BigDecimal lowPrice = new BigDecimal(lowestPrice);
-        BigDecimal highPrice = new BigDecimal(highestPrice);
+        List<Integer> finalPromoteEmployeeIds = promoteEmployeeIds;
+        List<RecommendedEmployeesVo> recommendedEmployeesVoList1 = new ArrayList<>(); //推广员工里面的
+        recommendedEmployeesVoList.forEach(x->{
+            if (finalPromoteEmployeeIds.contains(x.getEmployeesId())){
+                recommendedEmployeesVoList1.add(x);
+            }
+        });
+        sortList.Sort(recommendedEmployeesVoList1, "getPrice", null); //价格升序排序
+        List<Integer> recommendedEmployeeIds = recommendedEmployeesVoList1.stream().map(x->{
+            return x.getEmployeesId();
+        }).collect(Collectors.toList());
 
         /** 【附近保洁员】准备 **/
-        List<Integer> nearEmployeeIds = new ArrayList<>();
+        List<RecommendedEmployeesVo> recommendedEmployeesVoList2 = new ArrayList<>(recommendedEmployeesVoList);
+        sortList.Sort(recommendedEmployeesVoList2, "getInstance", null); //距离升序排序
+        List<Integer> nearEmployeeIds = recommendedEmployeesVoList2.stream().map(x->{
+            return x.getEmployeesId();
+        }).collect(Collectors.toList());
+
         /** 【最佳保洁员】准备 **/
-        List<Integer> theBestEmployeeIds = new ArrayList<>();
+        List<RecommendedEmployeesVo> recommendedEmployeesVoList3 = new ArrayList<>(recommendedEmployeesVoList);
+        sortList.Sort(recommendedEmployeesVoList3, "getScore", "desc"); //距离降序排序
+        List<Integer> theBestEmployeeIds = recommendedEmployeesVoList2.stream().map(x->{
+            return x.getEmployeesId();
+        }).collect(Collectors.toList());
 
         Map<String, List<Integer>> dataBody = new HashMap<>();
         dataBody.put("recommendedCompanyIds", recommendedCompanyIds);

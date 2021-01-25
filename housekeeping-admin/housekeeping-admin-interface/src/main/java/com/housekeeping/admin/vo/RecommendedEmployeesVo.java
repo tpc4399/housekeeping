@@ -2,6 +2,7 @@ package com.housekeeping.admin.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  */
 @Data
 @AllArgsConstructor
+@ToString
 public class RecommendedEmployeesVo {
     private Integer employeesId;
     private Integer instance;
