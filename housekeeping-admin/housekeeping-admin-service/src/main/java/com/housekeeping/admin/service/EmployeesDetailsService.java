@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
-    R saveEmp(EmployeesDetailsDTO employeesDetailsDTO);
+    R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type);
 
     R updateEmp(EmployeesDetailsDTO employeesDetailsDTO);
 

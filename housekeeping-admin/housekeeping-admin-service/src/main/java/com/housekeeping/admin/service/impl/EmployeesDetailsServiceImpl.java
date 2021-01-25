@@ -68,8 +68,15 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Transactional
     @Override
-    public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO) {
-        if(this.addEmployee()){
+    public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) {
+        boolean re = false;
+        if(type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            re = addEmployee();
+        }
+        if(type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            re = addEmployeeByMan();
+        }
+        if(re){
             if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
                 //先保存User
                 User user = new User();
@@ -397,6 +404,35 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             return false;
         }
     }
+
+    /**
+     * 判斷经理是否可以新增員工
+     * @return
+     */
+    public Boolean addEmployeeByMan(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper<ManagerDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",userId);
+        ManagerDetails one1 = managerDetailsService.getOne(qw);
+        CompanyDetails one = companyDetailsService.getById(one1.getCompanyId());
+        String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
+        String[] split = scaleById.split("~");
+        Integer companyMaxsize;
+        if("n".equals(split[1])){
+            companyMaxsize = Integer.MAX_VALUE;
+        }else {
+            companyMaxsize = Integer.parseInt(split[1]);
+        }
+        QueryWrapper<EmployeesDetails> qw2 = new QueryWrapper<>();
+        qw2.eq("company_id",one.getId());
+        Integer currentSize = baseMapper.selectCount(qw2);
+        if(companyMaxsize>currentSize){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
     public List<Integer> getAllIdsByCompanyId(Integer companyId){
         return baseMapper.getAllIdsByCompanyId(companyId);
