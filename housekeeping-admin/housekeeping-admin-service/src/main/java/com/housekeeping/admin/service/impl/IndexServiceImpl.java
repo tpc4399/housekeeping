@@ -260,7 +260,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
                     customerAddress.getLat(),
                     customerAddress.getLng()
             );
-            Integer scopeOfOrder = existEmployee.getScopeOfOrder();
+            Integer scopeOfOrder = existEmployee.getScopeOfOrder();//默认3000米接单范围
             if (instance > scopeOfOrder){
                 isOk = false;
                 return;
@@ -274,7 +274,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             BigDecimal price = bo.get();
             BigDecimal lowPrice = new BigDecimal(lowestPrice);
             BigDecimal highPrice = new BigDecimal(highestPrice);
-            if (!(price.compareTo(lowPrice) == -1 || price.compareTo(highPrice) == 1)){
+            if (price.compareTo(lowPrice) == -1 || price.compareTo(highPrice) == 1){
                 isOk = false;
                 return;
             }
