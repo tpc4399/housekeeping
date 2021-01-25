@@ -138,13 +138,6 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         /** recommendedEmployeesVoList 匹配到的员工 */
         List<RecommendedEmployeesVo> recommendedEmployeesVoList = new ArrayList<>();
 
-        /**
-         * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容）
-         * 【推荐保洁员】1、员工推广列表里面的员工 2、员工可以被匹配（时间段，工作内容），按价格接近度排序
-         * 【附近保洁员】1、匹配到的员工，按距离排序
-         * 【最佳保洁员】1、匹配到的员工，按评分排序
-         */
-
         searchPool.forEach(employeesId -> {
             /** existEmployee 当前保洁员信息 */
             EmployeesDetails existEmployee = employeesDetailsService.getById(employeesId);
@@ -306,7 +299,7 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
 
         /**
          * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容）
-         * 【推荐保洁员】1、员工推广列表里面的员工 2、员工可以被匹配（时间段，工作内容），按价格接近度排序
+         * 【推荐保洁员】1、员工推广列表里面的员工 2、员工可以被匹配（时间段，工作内容），按价格升序排序
          * 【附近保洁员】1、匹配到的员工，按距离排序
          * 【最佳保洁员】1、匹配到的员工，按评分排序
          */
