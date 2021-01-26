@@ -17,7 +17,8 @@ import lombok.EqualsAndHashCode;
 public class SysIndex extends Model<SysIndex> {
 
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;    /* 主鍵id */
-    private String name;   /* 元素名字 */
+    private Integer id;         /* 主鍵id */
+    private String name;        /* 元素名字 */
+    private String priceSlot;   /* 推荐价格区间 */
 
 }
