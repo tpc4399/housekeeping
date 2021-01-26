@@ -41,7 +41,14 @@ public class EmployeesDetailsController {
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
     public R saveEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
-        return employeesDetailsService.saveEmp(employeesDetailsDTO);
+        return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_COMPANY);
+    }
+
+    @ApiOperation("【经理】新增員工")
+    @LogFlag(description = "经理新增員工")
+    @PostMapping("/saveEmpByMan")
+    public R saveEmpByMan(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+        return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
     @ApiOperation("【公司】修改員工信息")
