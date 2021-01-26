@@ -49,6 +49,8 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
     private IAddressCodingService addressCodingService;
     @Resource
     private ISysIndexContentService sysIndexContentService;
+    @Resource
+    private ICompanyDetailsService companyDetailsService;
 
     @Override
     public R getCusById(Integer id) {
@@ -310,6 +312,9 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
         List<Integer> recommendedCompanyIds;
         recommendedCompanyIds = this.getIntersection(promoteCompanyIds, companyIdList);
         Collections.shuffle(recommendedCompanyIds);//打乱随机推荐
+        List<CompanyDetails> recommendedCompanies = recommendedCompanyIds.stream().map(x->{
+            return companyDetailsService.getById(x);
+        }).collect(Collectors.toList());
 
         /** 【推荐保洁员】准备 **/
         List<Integer> finalPromoteEmployeeIds = promoteEmployeeIds;
@@ -320,29 +325,29 @@ public class IndexServiceImpl extends ServiceImpl<IndexMapper, Index> implements
             }
         });
         sortList.Sort(recommendedEmployeesVoList1, "getPrice", null); //价格升序排序
-        List<Integer> recommendedEmployeeIds = recommendedEmployeesVoList1.stream().map(x->{
-            return x.getEmployeesId();
+        List<EmployeesDetails> recommendedEmployees = recommendedEmployeesVoList1.stream().map(x->{
+            return employeesDetailsService.getById(x.getEmployeesId());
         }).collect(Collectors.toList());
 
         /** 【附近保洁员】准备 **/
         List<RecommendedEmployeesVo> recommendedEmployeesVoList2 = new ArrayList<>(recommendedEmployeesVoList);
         sortList.Sort(recommendedEmployeesVoList2, "getInstance", null); //距离升序排序
-        List<Integer> nearEmployeeIds = recommendedEmployeesVoList2.stream().map(x->{
-            return x.getEmployeesId();
+        List<EmployeesDetails> nearEmployees = recommendedEmployeesVoList2.stream().map(x->{
+            return employeesDetailsService.getById(x.getEmployeesId());
         }).collect(Collectors.toList());
 
         /** 【最佳保洁员】准备 **/
         List<RecommendedEmployeesVo> recommendedEmployeesVoList3 = new ArrayList<>(recommendedEmployeesVoList);
         sortList.Sort(recommendedEmployeesVoList3, "getScore", "desc"); //距离降序排序
-        List<Integer> theBestEmployeeIds = recommendedEmployeesVoList2.stream().map(x->{
-            return x.getEmployeesId();
+        List<EmployeesDetails> theBestEmployees = recommendedEmployeesVoList2.stream().map(x->{
+            return employeesDetailsService.getById(x.getEmployeesId());
         }).collect(Collectors.toList());
 
-        Map<String, List<Integer>> dataBody = new HashMap<>();
-        dataBody.put("recommendedCompanyIds", recommendedCompanyIds);
-        dataBody.put("recommendedEmployeeIds", recommendedEmployeeIds);
-        dataBody.put("nearEmployeeIds", nearEmployeeIds);
-        dataBody.put("theBestEmployeeIds", theBestEmployeeIds);
+        Map<String, List<Object>> dataBody = new HashMap<>();
+        dataBody.put("recommendedCompanies", Collections.singletonList(recommendedCompanies));
+        dataBody.put("recommendedEmployees", Collections.singletonList(recommendedEmployees));
+        dataBody.put("nearEmployees", Collections.singletonList(nearEmployees));
+        dataBody.put("theBestEmployees", Collections.singletonList(theBestEmployees));
 
         return R.ok(dataBody, "搜索成功，結果已經推送");
     }
