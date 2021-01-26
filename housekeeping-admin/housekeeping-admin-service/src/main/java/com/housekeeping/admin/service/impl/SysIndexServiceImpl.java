@@ -3,10 +3,13 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.IndexQueryDTO;
+import com.housekeeping.admin.dto.SysIndexAddDto;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.PriceSlotVo;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
+import com.housekeeping.admin.vo.SysIndexVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
@@ -56,6 +59,63 @@ public class SysIndexServiceImpl
     private ISysIndexContentService sysIndexContentService;
     @Resource
     private ICompanyDetailsService companyDetailsService;
+
+    @Override
+    public R add(SysIndexAddDto sysIndexAddDto) {
+        SysIndex sysIndex = new SysIndex();
+        sysIndex.setName(sysIndexAddDto.getName());
+        sysIndex.setOrder(sysIndexAddDto.getOrder());
+        StringBuilder priceSlot = new StringBuilder("");
+        sysIndexAddDto.getPriceSlotList().forEach(x->{
+            priceSlot.append(x.getLowPrice());
+        });
+        sysIndex.setPriceSlot(new String(priceSlot));
+        Integer maxIndexId = 0;
+        synchronized (this){
+            this.save(sysIndex);
+            maxIndexId = ((SysIndex) CommonUtils.getMaxId("sys_index", this)).getId();
+        }
+
+        Integer finalMaxIndexId = maxIndexId;
+        sysIndexAddDto.getJobParentIds().forEach(x->{
+            SysIndexContent sysIndexContent = new SysIndexContent();
+            sysIndexContent.setIndexId(finalMaxIndexId);
+            sysIndexContent.setContentId(x);
+            sysIndexContentService.save(sysIndexContent);
+        });
+
+        return null;
+    }
+
+    @Override
+    public R getAll() {
+        List<SysIndex> sysIndexList = this.list();
+        List<SysIndexVo> sysIndexVoList = sysIndexList.stream().map(x->{
+            SysIndexVo sysIndexVo = new SysIndexVo();
+            sysIndexVo.setId(x.getId());
+            sysIndexVo.setName(x.getName());
+            sysIndexVo.setOrder(x.getOrder());
+            List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
+            String[] arr = x.getPriceSlot().split(",");
+            for (int i = 0; i < arr.length - 1; i++) {
+                // i和i+1
+                String lowPrice = arr[i];
+                String highPrice = arr[i+1];
+                PriceSlotVo priceSlot = new PriceSlotVo(
+                        new BigDecimal(lowPrice),
+                        new BigDecimal(highPrice)
+                );
+                priceSlotVoList.add(priceSlot);
+            }
+            PriceSlotVo priceSlot = new PriceSlotVo(
+                    new BigDecimal(arr[arr.length-1]),
+                    null
+            );
+            priceSlotVoList.add(priceSlot);
+            return sysIndexVo;
+        }).collect(Collectors.toList());
+        return R.ok(sysIndexVoList, "获取成功");
+    }
 
     @Override
     public R getCusById(Integer id) {

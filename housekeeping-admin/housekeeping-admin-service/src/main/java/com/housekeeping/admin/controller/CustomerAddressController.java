@@ -35,7 +35,6 @@ public class CustomerAddressController {
         return customerAddressService.updateAddress(customerAddressUpdateDTO);
     }
 
-
     @ApiOperation("【客户】查询我的地址列表")
     @GetMapping("/mine")
     public R getAddressByUserId(){

@@ -20,5 +20,6 @@ public class SysIndex extends Model<SysIndex> {
     private Integer id;         /* 主鍵id */
     private String name;        /* 元素名字 */
     private String priceSlot;   /* 推荐价格区间 */
+    private Integer order;      /* 顺序 */
 
 }
