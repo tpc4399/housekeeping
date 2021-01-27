@@ -11,5 +11,7 @@ import com.housekeeping.common.utils.R;
 public interface ISysJobContendService extends IService<SysJobContend> {
 
     R getTreeByIds(Integer[] ids);
+    R getTree();
+    R getParents();
 
 }

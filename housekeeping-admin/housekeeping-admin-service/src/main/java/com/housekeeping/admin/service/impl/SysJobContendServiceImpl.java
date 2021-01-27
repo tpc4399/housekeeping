@@ -11,6 +11,7 @@ import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
             SysJobContend sysJobContend1 = baseMapper.selectOne(qw1);
             sysJobContendVo.setId(sysJobContend1.getId());
             sysJobContendVo.setContend(sysJobContend1.getContend());
+            sysJobContendVo.setType(sysJobContend1.getType());
 
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("parent_id", ids[i]);
@@ -46,5 +48,29 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
             sysJobContendVoList.add(sysJobContendVo);
         }
         return R.ok(sysJobContendVoList, "查找成功");
+    }
+
+    @Override
+    public R getTree() {
+        List<SysJobContendVo> sysJobContendVoList = new ArrayList<>();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("level", 1);
+        List<SysJobContend> sysJobContendList = this.list(queryWrapper);
+
+        List<Integer> idsList = sysJobContendList.stream().map(x->{
+            return x.getId();
+        }).collect(Collectors.toList());
+        Integer[] ids = new Integer[idsList.size()];
+        idsList.toArray(ids);
+
+        return this.getTreeByIds(ids);
+    }
+
+    @Override
+    public R getParents() {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("level", 1);
+        List<SysJobContend> sysJobContendList = this.list(queryWrapper);
+        return R.ok(sysJobContendList, "獲取一級標籤成功");
     }
 }

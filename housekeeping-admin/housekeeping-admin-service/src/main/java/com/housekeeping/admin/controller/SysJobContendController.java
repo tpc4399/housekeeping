@@ -25,4 +25,16 @@ public class SysJobContendController {
         return sysJobContendService.getTreeByIds(ids);
     }
 
+    @ApiOperation("获取整树")
+    @GetMapping("/getTree")
+    public R getTree(){
+        return sysJobContendService.getTree();
+    }
+
+    @ApiOperation("获取一级分类")
+    @GetMapping("/getParents")
+    public R getParents(){
+        return sysJobContendService.getParents();
+    }
+
 }

@@ -23,7 +23,7 @@ public class SysJobContend extends Model<SysJobContend> {
     private Integer id;         /* 主鍵id */
     private String contend;     /* 工作內容（标签） */
     private Integer level;      /* 1 1级分类  */
-    private Boolean type;       /* false 钟点服务  true 包工 */
+    private Integer type;       /* 0: 單次鐘點    1： 定期服務    2: 包工服務 */
     private Integer parentId;   /* 父_id */
 
 }

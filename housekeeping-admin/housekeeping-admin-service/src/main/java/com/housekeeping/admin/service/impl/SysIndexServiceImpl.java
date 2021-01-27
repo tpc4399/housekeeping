@@ -64,7 +64,7 @@ public class SysIndexServiceImpl
     public R add(SysIndexAddDto sysIndexAddDto) {
         SysIndex sysIndex = new SysIndex();
         sysIndex.setName(sysIndexAddDto.getName());
-        sysIndex.setOrder(sysIndexAddDto.getOrder());
+        sysIndex.setOrderValue(sysIndexAddDto.getOrderValue());
         StringBuilder priceSlot = new StringBuilder("");
         sysIndexAddDto.getPriceSlotList().forEach(x->{
             priceSlot.append(x.getLowPrice());
@@ -94,7 +94,7 @@ public class SysIndexServiceImpl
             SysIndexVo sysIndexVo = new SysIndexVo();
             sysIndexVo.setId(x.getId());
             sysIndexVo.setName(x.getName());
-            sysIndexVo.setOrder(x.getOrder());
+            sysIndexVo.setOrderValue(x.getOrderValue());
             List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
             String[] arr = x.getPriceSlot().split(",");
             for (int i = 0; i < arr.length - 1; i++) {
@@ -112,6 +112,7 @@ public class SysIndexServiceImpl
                     null
             );
             priceSlotVoList.add(priceSlot);
+            sysIndexVo.setPriceSlotList(priceSlotVoList);
             return sysIndexVo;
         }).collect(Collectors.toList());
         return R.ok(sysIndexVoList, "获取成功");

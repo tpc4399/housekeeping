@@ -29,7 +29,7 @@ public class SysIndexController {
         return sysIndexService.add(sysIndexAddDto);
     }
 
-    @GetMapping("getById")
+    @GetMapping("/getById")
     @ApiOperation("【客户】通过首页分类获取一级分类")
     public R getById(Integer id){
         return sysIndexService.getCusById(id);
