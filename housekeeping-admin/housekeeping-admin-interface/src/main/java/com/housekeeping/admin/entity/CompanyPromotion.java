@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @TableName("company_promotion")
 public class CompanyPromotion extends Model<CompanyPromotion> {
 
+    @TableId(value = "id",type = IdType.AUTO)
     private Integer id;             /* 主键id */
     private Integer companyId;      /* 公司id */
     private Boolean promotion;      /* 是否推广 默认0未推广 1已推广 */

@@ -11,7 +11,6 @@ import com.housekeeping.common.entity.HkUser;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
