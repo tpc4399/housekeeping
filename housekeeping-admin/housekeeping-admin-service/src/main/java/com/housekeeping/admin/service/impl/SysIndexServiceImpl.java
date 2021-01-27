@@ -68,8 +68,9 @@ public class SysIndexServiceImpl
         StringBuilder priceSlot = new StringBuilder("");
         sysIndexAddDto.getPriceSlotList().forEach(x->{
             priceSlot.append(x.getLowPrice());
+            priceSlot.append(" ");
         });
-        sysIndex.setPriceSlot(new String(priceSlot));
+        sysIndex.setPriceSlot(new String(priceSlot).trim().replace(" ", ","));
         Integer maxIndexId = 0;
         synchronized (this){
             this.save(sysIndex);
