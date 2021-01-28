@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.CustomerUpdateDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.CustomerDetails;
@@ -156,6 +157,15 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
                 return R.ok(userIds3);
             }
         }
+    }
+
+    @Override
+    public R updateCus(CustomerUpdateDTO customerUpdateDTO) {
+        CustomerDetails customerDetails = new CustomerDetails();
+        customerDetails.setId(customerUpdateDTO.getId());
+        customerDetails.setName(customerUpdateDTO.getName());
+        customerDetails.setSex(customerUpdateDTO.getSex());
+        return R.ok(this.updateById(customerDetails));
     }
 
     public List<CustomerDetails> search(String name, List<CustomerDetails> list){

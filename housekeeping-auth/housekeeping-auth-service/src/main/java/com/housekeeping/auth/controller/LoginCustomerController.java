@@ -1,7 +1,6 @@
 package com.housekeeping.auth.controller;
 
 import com.housekeeping.auth.service.ILoginService;
-import com.housekeeping.auth.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;

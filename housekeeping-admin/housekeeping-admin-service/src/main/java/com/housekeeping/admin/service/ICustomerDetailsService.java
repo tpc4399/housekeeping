@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.CustomerUpdateDTO;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +21,6 @@ public interface ICustomerDetailsService extends IService<CustomerDetails> {
     R updateHeadUrlByUserId(String headUrl, Integer id);
 
     R getCustomerList(Integer cid, String name);
+
+    R updateCus(CustomerUpdateDTO customerUpdateDTO);
 }
