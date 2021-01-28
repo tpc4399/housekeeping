@@ -55,9 +55,6 @@ public class AddressCodingServiceImpl implements IAddressCodingService {
             JSONObject location = (JSONObject) result.get("location");
             Double lng = (Double) location.get("lng");
             Double lat = (Double) location.get("lat");
-            System.out.println(lng);
-            System.out.println(lat);
-
             return R.ok(jsonObject, "編碼成功");
         } catch (Exception e) {
             e.printStackTrace();

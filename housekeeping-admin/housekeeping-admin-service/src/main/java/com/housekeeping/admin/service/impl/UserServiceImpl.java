@@ -185,24 +185,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerAddress.setAddress(registerDTO.getAddress());
                         //把地址存為經緯度
                         JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(customerAddress.getAddress()).getData();
-                        JSONObject result = (JSONObject) jsonObject.get("result");
-                        JSONObject location = (JSONObject) result.get("location");
-                        Double lng = (Double) location.get("lng");
-                        Double lat = (Double) location.get("lat");
+                        Double lng = new Double(0);
+                        Double lat = new Double(0);
+                        try {
+                            JSONObject result = (JSONObject) jsonObject.get("result");
+                            JSONObject location = (JSONObject) result.get("location");
+                            lng = (Double) location.get("lng");
+                            lat = (Double) location.get("lat");
+                        }catch (RuntimeException e){
+                            return R.failed("地址無法識別");
+                        }
                         customerAddress.setLng(lng.toString());
                         customerAddress.setLat(lat.toString());
                         customerAddressService.save(customerAddress);
                     } else {
-                        return R.ok("两次密码不一致");
+                        return R.failed("兩次密碼不一致");
                     }
                 } else {
-                    return R.failed("验证码错误");
+                    return R.failed("驗證碼錯誤");
                 }
             } else {
-                return R.failed("验证码为空");
+                return R.failed("驗證碼為空");
             }
         }
-        return R.ok("创建客户成功");
+        return R.ok("創建客戶成功");
     }
 
     @Override

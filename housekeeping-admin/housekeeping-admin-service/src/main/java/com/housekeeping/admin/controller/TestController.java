@@ -36,12 +36,16 @@ public class TestController {
     @ApiOperation("测试2")
     public R test2(){
         //把地址存為經緯度 湖北省武汉市洪山区茉莉公馆 高雄市苓雅区四维三路2号
-        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding("高雄市苓雅区四维三路2号").getData();
-        JSONObject result = (JSONObject) jsonObject.get("result");
-        JSONObject location = (JSONObject) result.get("location");
-        Double lng = (Double) location.get("lng");
-        Double lat = (Double) location.get("lat");
-        return R.ok();
+        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding("高雄市议会台北联络处").getData();
+        try {
+            JSONObject result = (JSONObject) jsonObject.get("result");
+            JSONObject location = (JSONObject) result.get("location");
+            Double lng = (Double) location.get("lng");
+            Double lat = (Double) location.get("lat");
+        }catch (RuntimeException e){
+            return R.failed("地址解析失敗");
+        }
+        return R.ok("解析成功");
     }
 
 }

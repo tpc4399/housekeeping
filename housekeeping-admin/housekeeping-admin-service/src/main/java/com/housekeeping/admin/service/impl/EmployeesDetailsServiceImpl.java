@@ -114,10 +114,16 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                         + employeesDetails.getAddress4();
                 //把地址存為經緯度
                 JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
-                JSONObject result = (JSONObject) jsonObject.get("result");
-                JSONObject location = (JSONObject) result.get("location");
-                Double lng = (Double) location.get("lng");
-                Double lat = (Double) location.get("lat");
+                Double lng = new Double(0);
+                Double lat = new Double(0);
+                try {
+                    JSONObject result = (JSONObject) jsonObject.get("result");
+                    JSONObject location = (JSONObject) result.get("location");
+                    lng = (Double) location.get("lng");
+                    lat = (Double) location.get("lat");
+                }catch (RuntimeException e){
+                    return R.failed("地址無法識別");
+                }
                 employeesDetails.setLng(lng.toString());
                 employeesDetails.setLat(lat.toString());
                 /** 2021/1/14 su 新增存放地址經緯度 **/
@@ -188,10 +194,16 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 + employeesDetails.getAddress4();
         //把地址存為經緯度
         JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
-        JSONObject result = (JSONObject) jsonObject.get("result");
-        JSONObject location = (JSONObject) result.get("location");
-        Double lng = (Double) location.get("lng");
-        Double lat = (Double) location.get("lat");
+        Double lng = new Double(0);
+        Double lat = new Double(0);
+        try {
+            JSONObject result = (JSONObject) jsonObject.get("result");
+            JSONObject location = (JSONObject) result.get("location");
+            lng = (Double) location.get("lng");
+            lat = (Double) location.get("lat");
+        }catch (RuntimeException e){
+            return R.failed("地址無法識別");
+        }
         employeesDetails.setLng(lng.toString());
         employeesDetails.setLat(lat.toString());
         /** 2021/1/14 su 新增存放地址經緯度 **/
