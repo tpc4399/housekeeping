@@ -154,10 +154,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     /**
                      * 可工作内容设置
                      */
-                    EmployeesJobsDTO employeesJobsDTO = new EmployeesJobsDTO();
-                    employeesJobsDTO.setEmployeesId(maxEmployeesId);
-                    employeesJobsDTO.setJobIds(employeesDetailsDTO.getJobIds());
-                    employeesJobsService.updateEmployeesJobs(employeesJobsDTO);
+                    employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs());
                 } catch (Exception e){
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");

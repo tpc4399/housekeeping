@@ -3,12 +3,15 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesJobsDTO;
+import com.housekeeping.admin.dto.JobsDTO;
 import com.housekeeping.admin.entity.EmployeesJobs;
 import com.housekeeping.admin.mapper.EmployeesJobsMapper;
 import com.housekeeping.admin.service.IEmployeesJobsService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author su
@@ -41,6 +44,12 @@ public class EmployeesJobsServiceImpl
         });
 
         return R.ok("修改成功");
+    }
+
+    @Override
+    public R updateEmployeesJobsAndPrices(List<JobsDTO> jobs) {
+
+        return null;
     }
 
 }

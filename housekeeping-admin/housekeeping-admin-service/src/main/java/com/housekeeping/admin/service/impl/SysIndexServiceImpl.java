@@ -170,16 +170,16 @@ public class SysIndexServiceImpl
         List<Integer> contendId =  sysIndexContentList.stream().map(x -> {
             return x.getContentId();
         }).collect(Collectors.toList());
-        List<Integer> contendIds = new ArrayList<>(contendId);
-        contendId.forEach(x -> {
-            QueryWrapper qwJob = new QueryWrapper();
-            qwJob.eq("parent_id", x);
-            List<SysJobContend> s = jobContendService.list(qwJob);
-            List<Integer> ss = s.stream().map(y -> {
-                return y.getId();
-            }).collect(Collectors.toList());
-            contendIds.addAll(ss);
-        });
+//        List<Integer> contendIds = new ArrayList<>(contendId); //contendIds只存在一級標籤
+//        contendId.forEach(x -> {
+//            QueryWrapper qwJob = new QueryWrapper();
+//            qwJob.eq("parent_id", x);
+//            List<SysJobContend> s = jobContendService.list(qwJob);
+//            List<Integer> ss = s.stream().map(y -> {
+//                return y.getId();
+//            }).collect(Collectors.toList());
+//            contendIds.addAll(ss);
+//        });
 
         /** 返回结果 */
         Map<String, Object> map = new HashMap<>();
@@ -317,7 +317,7 @@ public class SysIndexServiceImpl
             QueryWrapper qw5 = new QueryWrapper();
             qw5.select("job_id").eq("employees_id", employeesId);
             List<Integer> jobContendIds = employeesJobsService.listObjs(qw5);
-            List<Integer> toolList = this.getIntersection(jobContendIds, contendIds);
+            List<Integer> toolList = this.getIntersection(jobContendIds, contendId);
             if (CommonUtils.isEmpty(toolList)){
                 isOk = false;
                 return;

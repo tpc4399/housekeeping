@@ -10,11 +10,13 @@ import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.UserMapper;
+import com.housekeeping.admin.service.IAddressCodingService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +29,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private UserMapper userMapper;
-
-    @Autowired
+    @Resource
     private RedisUtils redisUtils;
-
-    @Autowired
+    @Resource
     private ICompanyDetailsService companyService;
-
     @Resource
     private ICustomerDetailsService customerDetailsService;
-
-    @Autowired
+    @Resource
     private CustomerAddressServiceImpl customerAddressService;
-
     @Resource
     private CompanyPromotionServiceImpl companyPromotionService;
+    @Resource
+    private IAddressCodingService addressCodingService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -184,6 +183,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerAddress.setIsDefault(true);
                         customerAddress.setName("註冊地址");
                         customerAddress.setAddress(registerDTO.getAddress());
+                        //把地址存為經緯度
+                        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(customerAddress.getAddress()).getData();
+                        JSONObject result = (JSONObject) jsonObject.get("result");
+                        JSONObject location = (JSONObject) result.get("location");
+                        Double lng = (Double) location.get("lng");
+                        Double lat = (Double) location.get("lat");
+                        customerAddress.setLng(lng.toString());
+                        customerAddress.setLat(lat.toString());
                         customerAddressService.save(customerAddress);
                     } else {
                         return R.ok("两次密码不一致");
