@@ -7,6 +7,7 @@ import com.housekeeping.admin.mapper.SysJobContendMapper;
 import com.housekeeping.admin.service.ISysJobContendService;
 import com.housekeeping.admin.vo.SysJobContendSonVo;
 import com.housekeeping.admin.vo.SysJobContendVo;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +73,21 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
         queryWrapper.eq("level", 1);
         List<SysJobContend> sysJobContendList = this.list(queryWrapper);
         return R.ok(sysJobContendList, "獲取一級標籤成功");
+    }
+
+    @Override
+    public Boolean getType(Integer jobId) {
+        SysJobContend sysJobContend = this.getById(jobId);
+        if (CommonUtils.isEmpty(sysJobContend)){
+            return null;
+        }else {
+            if (sysJobContend.getType() == 2){
+                return true;
+            }else if (sysJobContend.getType() == 1 || sysJobContend.getType() == 0){
+                return false;
+            }else {
+                return null;
+            }
+        }
     }
 }

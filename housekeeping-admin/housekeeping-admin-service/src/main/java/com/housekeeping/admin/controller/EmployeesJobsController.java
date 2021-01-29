@@ -23,10 +23,10 @@ public class EmployeesJobsController {
 
     private final IEmployeesJobsService employeesJobsService;
 
-    @ApiOperation("【保洁员】修改员工工作内容")
-    @PutMapping("/updateEmployeesJobs")
-    public R updateEmployeesJobs(@RequestBody EmployeesJobsDTO employeesJobsDTO){
-        return employeesJobsService.updateEmployeesJobs(employeesJobsDTO);
-    }
+//    @ApiOperation("【保洁员】修改员工工作内容")
+//    @PutMapping("/updateEmployeesJobs")
+//    public R updateEmployeesJobs(@RequestBody EmployeesJobsDTO employeesJobsDTO){
+//        return employeesJobsService.updateEmployeesJobs(employeesJobsDTO);
+//    }
 
 }

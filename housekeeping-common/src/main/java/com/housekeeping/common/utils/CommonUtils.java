@@ -435,6 +435,8 @@ public class CommonUtils {
 			RecommendedEmployeesVo re = iterator.next();
 			System.out.println(re);
 		}
+
+		System.out.println(getInstanceByPoint("22.9977861", "120.1679756", "22.994269442136678", "120.19559186224534"));
 	}
 
 }

@@ -7,10 +7,12 @@ import com.housekeeping.admin.dto.JobsDTO;
 import com.housekeeping.admin.entity.EmployeesJobs;
 import com.housekeeping.admin.mapper.EmployeesJobsMapper;
 import com.housekeeping.admin.service.IEmployeesJobsService;
+import com.housekeeping.admin.service.ISysJobContendService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -21,6 +23,11 @@ import java.util.List;
 public class EmployeesJobsServiceImpl
         extends ServiceImpl<EmployeesJobsMapper, EmployeesJobs>
         implements IEmployeesJobsService {
+
+    @Resource
+    private ISysJobContendService sysJobContendService;
+    @Resource
+    private IEmployeesJobsService employeesJobsService;
 
     @Override
     public R updateEmployeesJobs(EmployeesJobsDTO employeesJobsDTO) {
@@ -47,9 +54,19 @@ public class EmployeesJobsServiceImpl
     }
 
     @Override
-    public R updateEmployeesJobsAndPrices(List<JobsDTO> jobs) {
-
-        return null;
+    public R updateEmployeesJobsAndPrices(List<JobsDTO> jobs, Integer employeesId) {
+        jobs.forEach(x->{
+            Boolean type = sysJobContendService.getType(x.getJobId());
+            EmployeesJobs employeesJobs;
+            if (type){
+                //包工，需要存那些价格段
+                employeesJobs = new EmployeesJobs(employeesId, x);
+            }else {
+                employeesJobs = new EmployeesJobs(employeesId, x.getJobId());
+            }
+            employeesJobsService.save(employeesJobs);
+        });
+        return R.ok("更新價格段成功");
     }
 
 }

@@ -45,7 +45,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private IUserService userService;
 
-    @Autowired
+    @Resource
     private RedisUtils redisUtils;
 
     @Resource
@@ -148,7 +148,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                         maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
                     }
                     /**
-                     * 員工推廣
+                     * 順便建個員工推廣的表記錄
                      */
                     EmployeesPromotion employeesPromotion = new EmployeesPromotion();
                     employeesPromotion.setEmployeesId(maxEmployeesId);
@@ -160,7 +160,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     /**
                      * 可工作内容设置
                      */
-                    employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs());
+                    employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs(), maxEmployeesId);
                 } catch (Exception e){
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");
@@ -222,7 +222,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
          * 工作经验修改
          */
         employeesWorkExperienceService.updateEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
-
+        /**
+         * 可工作内容设置
+         */
+        employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs(), employeesDetailsDTO.getId());
         return R.ok("修改成功");
 
 

@@ -14,4 +14,13 @@ public interface ISysJobContendService extends IService<SysJobContend> {
     R getTree();
     R getParents();
 
+    /***
+     * 包工: true
+     * 钟点: false
+     * 出意外: null
+     * @param jobId
+     * @return
+     */
+    Boolean getType(Integer jobId);
+
 }
