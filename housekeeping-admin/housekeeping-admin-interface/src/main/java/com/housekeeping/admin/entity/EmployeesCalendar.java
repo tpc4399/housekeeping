@@ -23,21 +23,27 @@ public class EmployeesCalendar extends Model<EmployeesCalendar> {
 
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;    /* 主鍵id */
-
-    private Boolean stander;    /* 计量标准 */
-
-    private LocalDate data;    /* 日期 */
-
-    private String week;    /* 周数 */
-
     private Integer employeesId;    /* 员工_id */
-
+    private Boolean stander;    /* 计量标准 */
+    private LocalDate date;    /* 日期 */
+    private String week;    /* 周数 */
     private LocalTime timeSlotStart;    /* 时间段开始 */
-
     private Float timeSlotLength;    /* 时间段长度(小时) */
 
-    private BigDecimal hourlyWage; /* 时薪 */
+    public EmployeesCalendar() {
+    }
 
-    private String code; /* 时薪货币代码 */
-
+    public EmployeesCalendar(Integer employeesId,
+                             Boolean stander,
+                             LocalDate data,
+                             String week,
+                             LocalTime timeSlotStart,
+                             Float timeSlotLength) {
+        this.employeesId = employeesId;
+        this.stander = stander;
+        this.date = data;
+        this.week = week;
+        this.timeSlotStart = timeSlotStart;
+        this.timeSlotLength = timeSlotLength;
+    }
 }

@@ -26,10 +26,10 @@ public class SysOrderPlanController {
 
     private final ISysOrderPlanService sysOrderPlanService;
 
-    @ApiOperation("【客户】订单计划创建（发布需求）")
-    @PostMapping
-    public R releaseOrderPlan(@RequestBody SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
-        return sysOrderPlanService.releaseOrderPlan(sysOrderPlanDTO);
-    }
+//    @ApiOperation("【客户】订单计划创建（发布需求）")
+//    @PostMapping
+//    public R releaseOrderPlan(@RequestBody SysOrderPlanDTO sysOrderPlanDTO) throws BrokenBarrierException, InterruptedException {
+//        return sysOrderPlanService.releaseOrderPlan(sysOrderPlanDTO);
+//    }
 
 }

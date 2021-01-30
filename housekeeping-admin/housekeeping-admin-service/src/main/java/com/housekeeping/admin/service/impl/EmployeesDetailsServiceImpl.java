@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Transactional
 @Service("employeesDetailsService")
 public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMapper, EmployeesDetails> implements EmployeesDetailsService {
 
@@ -56,6 +57,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private IEmployeesJobsService employeesJobsService;
+
+    @Resource
+    private IEmployeesCalendarService employeesCalendarService;
 
     @Resource
     private OSSClient ossClient;
@@ -160,7 +164,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     /**
                      * 可工作内容设置
                      */
-                    employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs(), maxEmployeesId);
+                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
                 } catch (Exception e){
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");
@@ -225,7 +229,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         /**
          * 可工作内容设置
          */
-        employeesJobsService.updateEmployeesJobsAndPrices(employeesDetailsDTO.getJobs(), employeesDetailsDTO.getId());
+        employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId());
         return R.ok("修改成功");
 
 

@@ -17,28 +17,28 @@ public class SysIndexController {
 
     private final ISysIndexService sysIndexService;
 
-    @GetMapping
-    @ApiOperation("【客户】获取所有分类")
-    public R getAll(){
-        return sysIndexService.getAll();
-    }
-
-    @PostMapping
-    @ApiOperation("【平台】新增分类")
-    public R add(@RequestBody SysIndexAddDto sysIndexAddDto){
-        return sysIndexService.add(sysIndexAddDto);
-    }
-
-    @GetMapping("/getById")
-    @ApiOperation("【客户】通过首页分类获取一级分类")
-    public R getById(Integer id){
-        return sysIndexService.getCusById(id);
-    }
-
-    @ApiOperation("【客户】搜索")
-    @PostMapping("/query")
-    public R query(@RequestBody IndexQueryDTO indexQueryDTO){
-        return sysIndexService.query(indexQueryDTO);
-    }
+//    @GetMapping
+//    @ApiOperation("【客户】获取所有分类")
+//    public R getAll(){
+//        return sysIndexService.getAll();
+//    }
+//
+//    @PostMapping
+//    @ApiOperation("【平台】新增分类")
+//    public R add(@RequestBody SysIndexAddDto sysIndexAddDto){
+//        return sysIndexService.add(sysIndexAddDto);
+//    }
+//
+//    @GetMapping("/getById")
+//    @ApiOperation("【客户】通过首页分类获取一级分类")
+//    public R getById(Integer id){
+//        return sysIndexService.getCusById(id);
+//    }
+//
+//    @ApiOperation("【客户】搜索")
+//    @PostMapping("/query")
+//    public R query(@RequestBody IndexQueryDTO indexQueryDTO){
+//        return sysIndexService.query(indexQueryDTO);
+//    }
 
 }

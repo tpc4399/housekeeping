@@ -28,6 +28,6 @@ public class EmployeesDetailsDTO {
     private String describes;    /* 描述 */
     private String workYear;     /* 工作年限 */
     private List<EmployeesWorkExperienceDTO> workExperiencesDTO; /* 工作经验 */
-    private List<JobsDTO> jobs; /* 可工作内容And价格 */
+    private List<Integer> jobIds; /* 可工作内容And价格 */
 
 }

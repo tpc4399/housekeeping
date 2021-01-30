@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -45,7 +46,7 @@ public class EmployeesJobsServiceImpl
 
         employeesJobsDTO.getJobIds().forEach(x->{
             EmployeesJobs employeesJobs = new EmployeesJobs();
-            employeesJobs.setEmployeesId(employeesJobsDTO.getEmployeesId());
+//            employeesJobs.setEmployeesId(employeesJobsDTO.getEmployeesId());
             employeesJobs.setJobId(x);
             baseMapper.insert(employeesJobs);
         });
@@ -60,13 +61,29 @@ public class EmployeesJobsServiceImpl
             EmployeesJobs employeesJobs;
             if (type){
                 //包工，需要存那些价格段
-                employeesJobs = new EmployeesJobs(employeesId, x);
+//                employeesJobs = new EmployeesJobs(employeesId, x);
             }else {
-                employeesJobs = new EmployeesJobs(employeesId, x.getJobId());
+//                employeesJobs = new EmployeesJobs(employeesId, x.getJobId());
             }
-            employeesJobsService.save(employeesJobs);
+//            employeesJobsService.save(employeesJobs);
         });
         return R.ok("更新價格段成功");
+    }
+
+    @Override
+    public R getJobs(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public R setJobIdsByEmployeesId(List<Integer> ids, Integer employeesId) {
+        List<EmployeesJobs> employeesJobsList = ids.stream().map(x->{
+            EmployeesJobs employeesJobs = new EmployeesJobs();
+            employeesJobs.setJobId(x);
+            employeesJobs.setEmployeesId(employeesId);
+            return employeesJobs;
+        }).collect(Collectors.toList());
+        return R.ok(this.saveBatch(employeesJobsList), "可工作內容保存成功");
     }
 
 }

@@ -1,8 +1,6 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.EmployeesCalendarDTO;
-import com.housekeeping.admin.dto.EmployeesCalendarDateDTO;
-import com.housekeeping.admin.dto.EmployeesCalendarWeekDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -14,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @Author su
  * @create 2020/11/12 16:24
  */
-@Api(value="员工日程表controller",tags={"【员工日程表】接口"})
+@Api(tags={"【员工日程表】相关接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/employeesCalendar")
@@ -22,32 +20,22 @@ public class EmployeesCalendarController {
 
     private final IEmployeesCalendarService employeesCalendarService;
 
-    @ApiOperation("【员工】设置员工最通用的每日工作时间")
+    @ApiOperation("【员工】【經理】【公司】【平台】設置通用模板：每日")
     @PutMapping("/setCalendar")
-    public R setCalendar(@RequestBody EmployeesCalendarDTO employeesCalendarDTO){
-        return employeesCalendarService.setCalendar(employeesCalendarDTO);
+    public R setCalendar(@RequestBody SetEmployeesCalendarDTO dto){
+        return employeesCalendarService.setCalendar(dto);
     }
 
-    /***
-     * 按周設置會默認刪除通用的工作時間
-     * @param employeesCalendarWeekDTO
-     * @return
-     */
-    @ApiOperation("【员工】按周几设置员工最每日工作时间")
-    @PutMapping("/setCalendarWeek")
-    public R setCalendarWeek(@RequestBody EmployeesCalendarWeekDTO employeesCalendarWeekDTO){
-        return employeesCalendarService.setCalendarWeek(employeesCalendarWeekDTO);
+    @ApiOperation("【员工】【經理】【公司】【平台】周模板添加內容")
+    @PutMapping("/addCalendarWeek")
+    public R addCalendarWeek(@RequestBody SetEmployeesCalendarWeekDTO dto){
+        return employeesCalendarService.addCalendarWeek(dto);
     }
 
-    @ApiOperation("【员工】按日期设置员工最每日工作时间")
+    @ApiOperation("【员工】【經理】【公司】【平台】按日期添加內容")
     @PutMapping("/setCalendarDate")
-    public R setCalendarDate(@RequestBody EmployeesCalendarDateDTO employeesCalendarDateDTO){
-        return employeesCalendarService.setCalendarDate(employeesCalendarDateDTO);
+    public R setCalendarDate(@RequestBody SetEmployeesCalendarDateDTO dto){
+        return employeesCalendarService.addCalendarDate(dto);
     }
 
-    @ApiOperation("【员工】获取员工日程表")
-    @GetMapping("/getCalendar/{employeesId}")
-    private R getCalendarByEmployees(@PathVariable("employeesId") Integer employeesId){
-        return employeesCalendarService.getCalendarByEmployees(employeesId);
-    }
 }

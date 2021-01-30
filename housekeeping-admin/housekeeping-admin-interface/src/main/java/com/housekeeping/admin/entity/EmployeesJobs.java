@@ -19,29 +19,8 @@ public class EmployeesJobs extends Model<EmployeesJobs> {
 
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
-    private Integer employeesId;
-    private Integer jobId;
-    private String timeSlot;
-    private String priceSlot;
+    private Integer employeesId;/* 保洁员_id */
+    private Integer jobId;      /* 工作內容_id */
 
-    public EmployeesJobs(){}
 
-    public EmployeesJobs(Integer employeesId, JobsDTO jobsDTO){
-        this.employeesId = employeesId;
-        this.jobId = jobsDTO.getJobId();
-        StringBuilder timeSlot = new StringBuilder();
-        StringBuilder priceSlot = new StringBuilder();
-        jobsDTO.getPriceSlot().forEach(x->{
-            timeSlot.append(x.getLowH() + " ");
-            priceSlot.append(x.getPrice() + " ");
-        });
-        timeSlot.append(jobsDTO.getPriceSlot().get(jobsDTO.getPriceSlot().size()-1).getHighH());
-        this.timeSlot = timeSlot.toString().replace(" ", ",");
-        this.priceSlot = priceSlot.toString().replace(" ", ",");
-    }
-
-    public EmployeesJobs(Integer employeesId, Integer jobId) {
-        this.employeesId = employeesId;
-        this.jobId = jobId;
-    }
 }

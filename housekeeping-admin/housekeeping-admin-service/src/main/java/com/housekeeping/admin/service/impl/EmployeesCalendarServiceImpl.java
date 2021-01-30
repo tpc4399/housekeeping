@@ -2,24 +2,31 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.EmployeesCalendarDTO;
-import com.housekeeping.admin.dto.EmployeesCalendarDateDTO;
-import com.housekeeping.admin.dto.EmployeesCalendarWeekDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesCalendar;
+import com.housekeeping.admin.entity.EmployeesCalendarDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
+import com.housekeeping.admin.service.IEmployeesCalendarDetailsService;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.admin.vo.RecommendedEmployeesVo;
 import com.housekeeping.admin.vo.TimeSlotVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.OptionalBean;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.SortListUtil;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -28,170 +35,254 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service("employeesCalendarService")
 public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarMapper, EmployeesCalendar> implements IEmployeesCalendarService {
 
-    @Override
-    public R setCalendar(EmployeesCalendarDTO employeesCalendarDTO) {
-        employeesCalendarDTO.getTimeSlots().forEach(timeSlotVo -> {
-            /* 初始化 **/
-            EmployeesCalendar employeesCalendar = new EmployeesCalendar();
-            employeesCalendar.setEmployeesId(employeesCalendarDTO.getEmployeesId());
-            employeesCalendar.setTimeSlotStart(timeSlotVo.getTimeSlotStart());
-            employeesCalendar.setTimeSlotLength(timeSlotVo.getTimeSlotLength());
-            employeesCalendar.setHourlyWage(timeSlotVo.getHourlyWage());
-            employeesCalendar.setCode(timeSlotVo.getCode());
-            /* 初始化 **/
-
-            /* 删除原先 **/
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("employees_id", employeesCalendar.getEmployeesId());
-            queryWrapper.eq("stander", "");
-            baseMapper.delete(queryWrapper);
-            /* 删除原先 **/
-
-            /* 插入新设置的值 **/
-            baseMapper.insert(employeesCalendar);
-            /* 插入新设置的值 **/
-
-        });
-        return R.ok("更新成功");
-    }
+    @Resource
+    private IEmployeesCalendarDetailsService employeesCalendarDetailsService;
 
     @Override
-    public R setCalendarWeek(EmployeesCalendarWeekDTO employeesCalendarWeekDTO) {
-
-        /* 检查星期几重复性 **/
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("stander", 1);
-        queryWrapper.eq("employees_id", employeesCalendarWeekDTO.getEmployeesId());
-        List<EmployeesCalendar> exists = baseMapper.selectList(queryWrapper);
-        List<Map> res = new ArrayList<>();
-        exists.forEach(x -> {
-            String existWeeks = x.getWeek();
-            List<Integer> targetWeeks = employeesCalendarWeekDTO.getWeeks();
-            List<TimeSlotVo> timeSlotVos = employeesCalendarWeekDTO.getTimeSlots();
-            /** 先检查有没有重复的一天，再检查一天内有没有重复的时间段 */
-            targetWeeks.forEach(y -> {
-                if (existWeeks.contains(y.toString())){
-                    PeriodOfTime periodOfTime1 = new PeriodOfTime();
-                    periodOfTime1.setTimeSlotStart(x.getTimeSlotStart());
-                    periodOfTime1.setTimeSlotLength(x.getTimeSlotLength());
-                    timeSlotVos.forEach(z -> {
-                        PeriodOfTime periodOfTime2 = new PeriodOfTime();
-                        periodOfTime2.setTimeSlotStart(z.getTimeSlotStart());
-                        periodOfTime2.setTimeSlotLength(z.getTimeSlotLength());
-                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
-                            Map<String, Object> entity = new HashMap<>();
-                            entity.put("week", y);
-                            entity.put("exists", periodOfTime1);
-                            entity.put("target", periodOfTime2);
-                            res.add(entity);
-                        }
-                    });
-                }
-            });
-        });
-        /* 检查星期几重复性 **/
-
-        /** 检查重复度 */
+    public R setCalendar(SetEmployeesCalendarDTO dto) {
+        /* dto合理性判斷 */
+        List<String> res = this.rationalityJudgmentA(dto);
         if (res.size() == 0){
-            //什么都不做
+            //这是合理的
         }else {
-            return R.failed(res, "設置失敗，時間段衝突");
+            return R.failed(res, "數據不合理");
         }
-        /** 检查重复度 */
-
-        /** 刪除通用的 */
-        QueryWrapper queryWrapper2 = new QueryWrapper();
-        queryWrapper.eq("stander", null);
-        queryWrapper.eq("employees_id", employeesCalendarWeekDTO.getEmployeesId());
-        baseMapper.delete(queryWrapper2);
-        /** 刪除通用的 */
-
-        /** 初始化和插入新的值 **/
-        employeesCalendarWeekDTO.getTimeSlots().forEach(timeSlotVo -> {
-            EmployeesCalendar employeesCalendar = new EmployeesCalendar();
-            employeesCalendar.setEmployeesId(employeesCalendarWeekDTO.getEmployeesId());
-            employeesCalendar.setStander(true);
-            AtomicReference<String> week = new AtomicReference<>("");
-            employeesCalendarWeekDTO.getWeeks().forEach(x -> {
-                week.set(week.get() + x.toString());
-            });
-            employeesCalendar.setWeek(week.get());
-            employeesCalendar.setTimeSlotStart(timeSlotVo.getTimeSlotStart());
-            employeesCalendar.setTimeSlotLength(timeSlotVo.getTimeSlotLength());
-            employeesCalendar.setHourlyWage(timeSlotVo.getHourlyWage());
-            employeesCalendar.setCode(timeSlotVo.getCode());
-            baseMapper.insert(employeesCalendar);
+        /* 删掉原有的 */
+        QueryWrapper deleteQw = new QueryWrapper();
+        deleteQw.eq("employees_id", dto.getEmployeesId());
+        deleteQw.eq("stander", "");
+        List<EmployeesCalendar> willDeleteList = this.list(deleteQw);
+        willDeleteList.forEach(x->{
+            QueryWrapper deleteDependency1 = new QueryWrapper();
+            deleteDependency1.eq("calendar_id", x.getId());
+            employeesCalendarDetailsService.remove(deleteDependency1);//删除依赖
         });
-        /** 初始化和插入新的值 **/
-
+        this.remove(deleteQw);
+        /* 添加新的 */
+        dto.getTimeSlotList().forEach(timeSlot -> {
+            EmployeesCalendar employeesCalendar =
+                    new EmployeesCalendar(
+                            dto.getEmployeesId(),
+                            null,
+                            null,
+                            null,
+                            timeSlot.getTimeSlotStart(),
+                            timeSlot.getTimeSlotLength()
+                    );
+            Integer maxCalendarId = 0;
+            synchronized (this){
+                baseMapper.insert(employeesCalendar);
+                maxCalendarId = ((EmployeesCalendar) CommonUtils.getMaxId("employees_calendar", this)).getId();
+            }
+            List<EmployeesCalendarDetails> employeesCalendarDetailsList = new ArrayList<>();
+            Integer finalMaxCalendarId = maxCalendarId;
+            timeSlot.getJobAndPriceList().forEach(jobAndPrice -> {
+                EmployeesCalendarDetails employeesCalendarDetails =
+                        new EmployeesCalendarDetails(
+                                finalMaxCalendarId,
+                                jobAndPrice.getJobId(),
+                                jobAndPrice.getPrice(),
+                                jobAndPrice.getCode()
+                        );
+                employeesCalendarDetailsList.add(employeesCalendarDetails);
+            });
+            employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
+        });
         return R.ok("設置成功");
     }
 
     @Override
-    public R setCalendarDate(EmployeesCalendarDateDTO employeesCalendarDateDTO) {
-
-        /* 检查日期的重复性 **/
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("stander", 0);
-        queryWrapper.eq("employees_id", employeesCalendarDateDTO.getEmployeesId());
-        List<EmployeesCalendar> exists = baseMapper.selectList(queryWrapper);
-        List<Map> res = new ArrayList<>();
-        exists.forEach(x -> {
-            LocalDate existsDate = x.getData();
-            employeesCalendarDateDTO.getDate().forEach(y -> {
-                if (existsDate.equals(y)){
-                    PeriodOfTime periodOfTime1 = new PeriodOfTime();
-                    periodOfTime1.setTimeSlotStart(x.getTimeSlotStart());
-                    periodOfTime1.setTimeSlotLength(x.getTimeSlotLength());
-                    employeesCalendarDateDTO.getTimeSlots().forEach(z -> {
-                        PeriodOfTime periodOfTime2 = new PeriodOfTime();
-                        periodOfTime2.setTimeSlotStart(z.getTimeSlotStart());
-                        periodOfTime2.setTimeSlotLength(z.getTimeSlotLength());
-                        if (CommonUtils.doRechecking(periodOfTime1, periodOfTime2)){
-                            Map<String, Object> entity = new HashMap<>();
-                            entity.put("date", y);
-                            entity.put("exists", periodOfTime1);
-                            entity.put("target", periodOfTime2);
-                            res.add(entity);
-                        }
-                    });
-                }
-            });
-        });
-
-        /* 检查日期的重复性 **/
-
-        /** 检查重复度 */
+    public R addCalendarWeek(SetEmployeesCalendarWeekDTO dto) {
+        /* dto合理性判斷 */
+        List<String> res = this.rationalityJudgmentB(dto);
         if (res.size() == 0){
-            //什么都不做
+            //这是合理的
         }else {
-            return R.failed(res, "設置失敗，時間段衝突");
+            return R.failed(res, "數據不合理");
         }
-        /** 检查重复度 */
-
-        /* 初始化和插入新的值 **/
-        employeesCalendarDateDTO.getDate().forEach(x -> {
-            employeesCalendarDateDTO.getTimeSlots().forEach(y -> {
-                EmployeesCalendar employeesCalendar = new EmployeesCalendar();
-                employeesCalendar.setEmployeesId(employeesCalendarDateDTO.getEmployeesId());
-                employeesCalendar.setStander(false);
-                employeesCalendar.setData(x);
-                employeesCalendar.setTimeSlotStart(y.getTimeSlotStart());
-                employeesCalendar.setTimeSlotLength(y.getTimeSlotLength());
-                employeesCalendar.setHourlyWage(y.getHourlyWage());
-                employeesCalendar.setCode(y.getCode());
-                baseMapper.insert(employeesCalendar);
-            });
+        /* 添加新的 */
+        StringBuilder week = new StringBuilder();
+        dto.getWeek().forEach(wk->{
+            week.append(wk);
         });
-        /* 初始化和插入新的值 **/
-
-        return R.ok("更新成功");
+        dto.getTimeSlotList().forEach(timeSlot -> {
+            EmployeesCalendar employeesCalendar =
+                    new EmployeesCalendar(
+                            dto.getEmployeesId(),
+                            true,
+                            null,
+                            week.toString(),
+                            timeSlot.getTimeSlotStart(),
+                            timeSlot.getTimeSlotLength()
+                    );
+            Integer maxCalendarId = 0;
+            synchronized (this){
+                baseMapper.insert(employeesCalendar);
+                maxCalendarId = ((EmployeesCalendar) CommonUtils.getMaxId("employees_calendar", this)).getId();
+            }
+            List<EmployeesCalendarDetails> employeesCalendarDetailsList = new ArrayList<>();
+            Integer finalMaxCalendarId = maxCalendarId;
+            timeSlot.getJobAndPriceList().forEach(jobAndPrice -> {
+                EmployeesCalendarDetails employeesCalendarDetails =
+                        new EmployeesCalendarDetails(
+                                finalMaxCalendarId,
+                                jobAndPrice.getJobId(),
+                                jobAndPrice.getPrice(),
+                                jobAndPrice.getCode()
+                        );
+                employeesCalendarDetailsList.add(employeesCalendarDetails);
+            });
+            employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
+        });
+        return R.ok("設置成功");
     }
 
     @Override
-    public R getCalendarByEmployees(Integer employeesId) {
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("employees_id", employeesId);
-        return R.ok(baseMapper.selectList(queryWrapper));
+    public R addCalendarDate(SetEmployeesCalendarDateDTO dto) {
+        /* dto合理性判斷 */
+        List<String> res = this.rationalityJudgmentC(dto);
+        if (res.size() == 0){
+            //这是合理的
+        }else {
+            return R.failed(res, "數據不合理");
+        }
+        /* 添加新的 */
+        dto.getTimeSlotList().forEach(timeSlot -> {
+            EmployeesCalendar employeesCalendar =
+                    new EmployeesCalendar(
+                            dto.getEmployeesId(),
+                            false,
+                            dto.getDate(),
+                            null,
+                            timeSlot.getTimeSlotStart(),
+                            timeSlot.getTimeSlotLength()
+                    );
+            Integer maxCalendarId = 0;
+            synchronized (this){
+                baseMapper.insert(employeesCalendar);
+                maxCalendarId = ((EmployeesCalendar) CommonUtils.getMaxId("employees_calendar", this)).getId();
+            }
+            List<EmployeesCalendarDetails> employeesCalendarDetailsList = new ArrayList<>();
+            Integer finalMaxCalendarId = maxCalendarId;
+            timeSlot.getJobAndPriceList().forEach(jobAndPrice -> {
+                EmployeesCalendarDetails employeesCalendarDetails =
+                        new EmployeesCalendarDetails(
+                                finalMaxCalendarId,
+                                jobAndPrice.getJobId(),
+                                jobAndPrice.getPrice(),
+                                jobAndPrice.getCode()
+                        );
+                employeesCalendarDetailsList.add(employeesCalendarDetails);
+            });
+            employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
+        });
+        return R.ok("設置成功");
+    }
+
+    /*時間段合理性判斷   假設都不為空*/
+    public List<String> rationalityJudgmentA(SetEmployeesCalendarDTO dto){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        SortListUtil<TimeSlotDTO> sortList = new SortListUtil<TimeSlotDTO>();
+        List<TimeSlotDTO> timeSlotDTOS = dto.getTimeSlotList();
+        sortList.Sort(timeSlotDTOS, "getTimeSlotStart", null);
+        for (int i = 0; i < timeSlotDTOS.size()-1; i++) {
+            PeriodOfTime period1 = new PeriodOfTime(timeSlotDTOS.get(i).getTimeSlotStart(), timeSlotDTOS.get(i).getTimeSlotLength());
+            PeriodOfTime period2 = new PeriodOfTime(timeSlotDTOS.get(i+1).getTimeSlotStart(), timeSlotDTOS.get(i+1).getTimeSlotLength());
+            if (CommonUtils.doRechecking(period1, period2)){
+                //重複的處理方式
+                StringBuilder res = new StringBuilder();
+                res.append("通用模板存在時間段重複：");
+                res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                res.append("與");
+                res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                resCollections.add(res.toString());
+            }
+        }
+        return resCollections;
+    }
+    /*時間段合理性判斷：周   假設都不為空*/
+    public List<String> rationalityJudgmentB(SetEmployeesCalendarWeekDTO dto){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        Map<Integer, List<PeriodOfTime>> map = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", dto.getEmployeesId());
+        qw.eq("stander", true);
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        employeesCalendarList.forEach(calendar -> {
+            List<Integer> weekList = new ArrayList<>();
+            String weekStr = calendar.getWeek();
+            for (int i = 0; i < weekStr.length(); i++) {
+                weekList.add(Integer.valueOf(weekStr.charAt(i)-48));
+            }
+            PeriodOfTime period = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+            weekList.forEach(week -> {
+                List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+                exist.add(period);
+                map.put(week, exist);
+            });
+        });
+        /*已准备好现有数据*/
+
+        List<Integer> weekList = dto.getWeek();
+        List<TimeSlotDTO> timeSlotDTOS = dto.getTimeSlotList();
+        weekList.forEach(week -> {
+            timeSlotDTOS.forEach(timeSlot -> {
+                List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+                exist.add(new PeriodOfTime(timeSlot.getTimeSlotStart(), timeSlot.getTimeSlotLength()));
+                map.put(week, exist);
+            });
+            /*下面对一周的每一天进行筛查*/
+            List<PeriodOfTime> existDay = map.getOrDefault(week, new ArrayList<>());
+            SortListUtil<PeriodOfTime> sortList = new SortListUtil<PeriodOfTime>();
+            sortList.Sort(existDay, "getTimeSlotStart", null);
+            for (int i = 0; i < existDay.size()-1; i++) {
+                PeriodOfTime period1 = existDay.get(i);
+                PeriodOfTime period2 = existDay.get(i+1);
+                if (CommonUtils.doRechecking(period1, period2)){
+                    //重複的處理方式
+                    StringBuilder res = new StringBuilder();
+                    res.append("周模板存在時間段重複： week ").append(week).append("  ");
+                    res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                    res.append("與");
+                    res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                    resCollections.add(res.toString());
+                }
+            }
+        });
+        return resCollections;
+    }
+    /*時間段合理性判斷：日期   假設都不為空*/
+    public List<String> rationalityJudgmentC(SetEmployeesCalendarDateDTO dto){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", dto.getEmployeesId());
+        qw.eq("stander", false);
+        qw.eq("date", dto.getDate());
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        List<PeriodOfTime> periodOfTimeList1 = employeesCalendarList.stream().map(calendar -> {
+            return new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+        }).collect(Collectors.toList());
+        List<TimeSlotDTO> timeSlotDTOList = dto.getTimeSlotList();
+        List<PeriodOfTime> periodOfTimeList2 = timeSlotDTOList.stream().map(calendar -> {
+            return new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+        }).collect(Collectors.toList());
+        periodOfTimeList1.addAll(periodOfTimeList2);
+        /* periodOfTimeList1是当天的全部时间段 */
+        SortListUtil<PeriodOfTime> sortList = new SortListUtil<PeriodOfTime>();
+        sortList.Sort(periodOfTimeList1, "getTimeSlotStart", null);
+        for (int i = 0; i < periodOfTimeList1.size()-1; i++) {
+            PeriodOfTime period1 = periodOfTimeList1.get(i);
+            PeriodOfTime period2 = periodOfTimeList1.get(i+1);
+            if (CommonUtils.doRechecking(period1, period2)){
+                //重複的處理方式
+                StringBuilder res = new StringBuilder();
+                res.append("日期模板存在時間段重複： date ").append(dto.getDate()).append("  ");
+                res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                res.append("與");
+                res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                resCollections.add(res.toString());
+            }
+        }
+        return resCollections;
     }
 }

@@ -20,9 +20,9 @@ public class CustomerDemandPlanController {
 
     private final ICustomerDemandPlanService customerDemandPlanService;
 
-    @GetMapping("/setJobContends")
-    public R setJobContends(Integer id, Integer jobsId){
-        return customerDemandPlanService.setJobContends(id, jobsId);
-    }
+//    @GetMapping("/setJobContends")
+//    public R setJobContends(Integer id, Integer jobsId){
+//        return customerDemandPlanService.setJobContends(id, jobsId);
+//    }
 
 }

@@ -136,10 +136,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 Map<LocalDate, List<PeriodOfTime>> map1 = new HashMap<>();
                 Map<LocalDate, List<PeriodOfTime>> map11 = new HashMap<>();
                 map.get(false).forEach(dateRule -> {
-                    List list = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
+                    List list = map1.getOrDefault(dateRule.getDate(), new ArrayList<>());
                     list.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
 //                    list = this.insertPeriodOfTimeListOneDay(list, new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
-                    map1.put(dateRule.getData(), list);
+                    map1.put(dateRule.getDate(), list);
                 });
                 //对map1进行处理，相邻时间段合并
                 map1.forEach((date, list) -> {
@@ -372,7 +372,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             PeriodOfTime orderPlanSlot = new PeriodOfTime(x.getTimeSlotStart(), x.getTimeSlotLength());
             List<EmployeesCalendar> employeesCalendarListDate = new ArrayList<>();
             employeesCalendarMap.get(false).forEach(y -> {
-                if (y.getData().equals(date)){
+                if (y.getDate().equals(date)){
                     //如果满足特殊日期
                     employeesCalendarListDate.add(y);
                 }
@@ -393,8 +393,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     customerDemandPlan.setDate(x.getDate());
                     customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
                     customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
-                    customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
-                    customerDemandPlan.setCode(calendar.getCode());
+//                    customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+//                    customerDemandPlan.setCode(calendar.getCode());
                     customerDemandPlans.add(customerDemandPlan);
                 });
             }else {
@@ -422,8 +422,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                         customerDemandPlan.setDate(x.getDate());
                         customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
                         customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
-                        customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
-                        customerDemandPlan.setCode(calendar.getCode());
+//                        customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+//                        customerDemandPlan.setCode(calendar.getCode());
                         customerDemandPlans.add(customerDemandPlan);
                     });
                 }else {
@@ -448,8 +448,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                             customerDemandPlan.setDate(x.getDate());
                             customerDemandPlan.setTimeSlotStart(timeSlot.getTimeSlotStart());
                             customerDemandPlan.setTimeSlotLength(timeSlot.getTimeSlotLength());
-                            customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
-                            customerDemandPlan.setCode(calendar.getCode());
+//                            customerDemandPlan.setHourlyWage(calendar.getHourlyWage());
+//                            customerDemandPlan.setCode(calendar.getCode());
                             customerDemandPlans.add(customerDemandPlan);
                         });
                     }

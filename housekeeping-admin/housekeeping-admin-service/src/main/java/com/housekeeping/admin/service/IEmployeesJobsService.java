@@ -5,6 +5,7 @@ import com.housekeeping.admin.dto.EmployeesJobsDTO;
 import com.housekeeping.admin.dto.JobsDTO;
 import com.housekeeping.admin.entity.EmployeesJobs;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -16,4 +17,6 @@ import java.util.List;
 public interface IEmployeesJobsService extends IService<EmployeesJobs> {
     R updateEmployeesJobs(EmployeesJobsDTO employeesJobsDTO);
     R updateEmployeesJobsAndPrices(List<JobsDTO> jobs, Integer employeesId);
+    R getJobs(Integer employeesId);
+    R setJobIdsByEmployeesId(List<Integer> ids, Integer employeesId);
 }

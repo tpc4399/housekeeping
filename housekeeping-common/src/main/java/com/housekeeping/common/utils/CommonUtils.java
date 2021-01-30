@@ -437,6 +437,15 @@ public class CommonUtils {
 		}
 
 		System.out.println(getInstanceByPoint("22.9977861", "120.1679756", "22.994269442136678", "120.19559186224534"));
+		List<Integer> week = new ArrayList<>();
+		String weekStr = "12367";
+		for (int i = 0; i < weekStr.length(); i++) {
+			week.add(Integer.valueOf(weekStr.charAt(i)-48));
+		}
+
+		System.out.println("Arrays.toString(chars)");
+
+
 	}
 
 }

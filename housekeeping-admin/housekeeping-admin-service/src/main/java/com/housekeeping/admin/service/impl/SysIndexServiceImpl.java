@@ -427,10 +427,10 @@ public class SysIndexServiceImpl
     private Map<LocalDate, List<PeriodOfTimeWithHourlyWage>> getMap1(Map<Object, List<EmployeesCalendar>> calendarMap, String toCode){
         Map<LocalDate, List<PeriodOfTimeWithHourlyWage>> map1 = new HashMap<>();
         calendarMap.get(false).forEach(dateRule -> {
-            List list1 = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
-            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(dateRule.getCode(), toCode, dateRule.getHourlyWage());
-            list1.add(new PeriodOfTimeWithHourlyWage(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength(), hourlyWage));
-            map1.put(dateRule.getData(), list1);
+            List list1 = map1.getOrDefault(dateRule.getDate(), new ArrayList<>());
+//            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(dateRule.getCode(), toCode, dateRule.getHourlyWage());
+//            list1.add(new PeriodOfTimeWithHourlyWage(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength(), hourlyWage));
+            map1.put(dateRule.getDate(), list1);
         });
         return map1;
     }
@@ -442,8 +442,8 @@ public class SysIndexServiceImpl
             for (int i = 0; i < weekString.length(); i++) {
                 Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
                 List list = map2.getOrDefault(weekInteger, new ArrayList<>());
-                BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(weekRule.getCode(), toCode, weekRule.getHourlyWage());
-                list.add(new PeriodOfTimeWithHourlyWage(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength(), hourlyWage));
+//                BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(weekRule.getCode(), toCode, weekRule.getHourlyWage());
+//                list.add(new PeriodOfTimeWithHourlyWage(weekRule.getTimeSlotStart(), weekRule.getTimeSlotLength(), hourlyWage));
                 map2.put(weekInteger, list);
             }
         });
@@ -454,8 +454,8 @@ public class SysIndexServiceImpl
         Map<String, List<PeriodOfTimeWithHourlyWage>> map3 = new HashMap<>();
         calendarMap.get(null).forEach(x -> {
             List list = map3.getOrDefault(null, new ArrayList<>());
-            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(x.getCode(), toCode, x.getHourlyWage());
-            list.add(new PeriodOfTimeWithHourlyWage(x.getTimeSlotStart(), x.getTimeSlotLength(), hourlyWage));
+//            BigDecimal hourlyWage = currencyService.exchangeRateToBigDecimal(x.getCode(), toCode, x.getHourlyWage());
+//            list.add(new PeriodOfTimeWithHourlyWage(x.getTimeSlotStart(), x.getTimeSlotLength(), hourlyWage));
             map3.put(null, list);
         });
         return map3;
@@ -465,9 +465,9 @@ public class SysIndexServiceImpl
         Map<LocalDate, List<PeriodOfTime>> map1 = new HashMap<>();
         Map<LocalDate, List<PeriodOfTime>> map11 = new HashMap<>();
         calendarMap.get(false).forEach(dateRule -> {
-            List list1 = map1.getOrDefault(dateRule.getData(), new ArrayList<>());
+            List list1 = map1.getOrDefault(dateRule.getDate(), new ArrayList<>());
             list1.add(new PeriodOfTime(dateRule.getTimeSlotStart(), dateRule.getTimeSlotLength()));
-            map1.put(dateRule.getData(), list1);
+            map1.put(dateRule.getDate(), list1);
         });
         map1.forEach((date, list) -> {
             List<PeriodOfTime> periodOfTimes = list;

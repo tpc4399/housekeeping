@@ -23,21 +23,21 @@ public class SysOrderController {
 
     private final ISysOrderService sysOrderService;
 
-    @ApiOperation("【公司】【经理】分頁查詢訂單")
-    @GetMapping("pageOfSysOrder")
-    public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO){
-        return sysOrderService.page(page, sysOrderDTO);
-    }
-
-
-    @ApiOperation("【客户】评价发布接口")
-    @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
-    public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,
-                          @RequestParam("evaluationStar") Float evaluationStar,
-                          @RequestParam("evaluationContent") String evaluationContent,
-                          @RequestParam("orderId") Integer orderId){
-
-        return sysOrderService.doEvaluation(file, evaluationStar, evaluationContent, orderId);
-    }
+//    @ApiOperation("【公司】【经理】分頁查詢訂單")
+//    @GetMapping("pageOfSysOrder")
+//    public R page(IPage<SysOrder> page, SysOrderDTO sysOrderDTO){
+//        return sysOrderService.page(page, sysOrderDTO);
+//    }
+//
+//
+//    @ApiOperation("【客户】评价发布接口")
+//    @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
+//    public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,
+//                          @RequestParam("evaluationStar") Float evaluationStar,
+//                          @RequestParam("evaluationContent") String evaluationContent,
+//                          @RequestParam("orderId") Integer orderId){
+//
+//        return sysOrderService.doEvaluation(file, evaluationStar, evaluationContent, orderId);
+//    }
 
 }
