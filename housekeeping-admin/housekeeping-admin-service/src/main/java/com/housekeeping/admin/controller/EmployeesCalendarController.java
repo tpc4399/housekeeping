@@ -20,19 +20,19 @@ public class EmployeesCalendarController {
 
     private final IEmployeesCalendarService employeesCalendarService;
 
-    @ApiOperation("【员工】【經理】【公司】【平台】設置通用模板：每日")
+    @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 通用模板：每日")
     @PutMapping("/setCalendar")
     public R setCalendar(@RequestBody SetEmployeesCalendarDTO dto){
         return employeesCalendarService.setCalendar(dto);
     }
 
-    @ApiOperation("【员工】【經理】【公司】【平台】周模板添加內容")
+    @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 周模板添加內容")
     @PutMapping("/addCalendarWeek")
     public R addCalendarWeek(@RequestBody SetEmployeesCalendarWeekDTO dto){
         return employeesCalendarService.addCalendarWeek(dto);
     }
 
-    @ApiOperation("【员工】【經理】【公司】【平台】按日期添加內容")
+    @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 按日期添加內容")
     @PutMapping("/setCalendarDate")
     public R setCalendarDate(@RequestBody SetEmployeesCalendarDateDTO dto){
         return employeesCalendarService.addCalendarDate(dto);

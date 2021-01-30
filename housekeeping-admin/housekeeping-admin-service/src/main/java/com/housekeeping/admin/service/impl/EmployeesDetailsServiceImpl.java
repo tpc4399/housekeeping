@@ -14,6 +14,7 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +29,9 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Transactional
 @Service("employeesDetailsService")
@@ -36,37 +39,28 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Resource
     private ICompanyDetailsService companyDetailsService;
-
     @Resource
     private ManagerDetailsService managerDetailsService;
-
     @Resource
     private IEmployeesPromotionService employeesPromotionService;
-
     @Resource
     private IUserService userService;
-
     @Resource
     private RedisUtils redisUtils;
-
     @Resource
     private IEmployeesWorkExperienceService employeesWorkExperienceService;
-
     @Resource
     private IAddressCodingService addressCodingService;
-
     @Resource
     private IEmployeesJobsService employeesJobsService;
-
     @Resource
     private IEmployeesCalendarService employeesCalendarService;
-
+    @Resource
+    private IEmployeesContractService employeesContractService;
     @Resource
     private OSSClient ossClient;
-
     @Value("${oss.bucketName}")
     private String bucketName;
-
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
 
@@ -392,6 +386,22 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     public R updateHeadUrlByUserId(String headUrl, Integer id) {
         baseMapper.updateHeadUrlById(headUrl, id);
         return R.ok();
+    }
+
+    @Override
+    public R canSheMakeAnWork(Integer employeesId) {
+        Map<String, Boolean> map = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        EmployeesDetails employeesDetails = this.getById(employeesId);
+        if (CommonUtils.isEmpty(employeesDetails)){
+            return R.failed("該員工不存在");
+        }
+        List<EmployeesCalendar> employeesCalendarList = employeesCalendarService.list(qw);
+        List<EmployeesContract> employeesContractList = employeesContractService.list(qw);
+        map.put("canSheMakeAnHour", employeesCalendarList.size() != 0);
+        map.put("canSheWorkAsAContractor", employeesContractList.size() != 0);
+        return R.ok(map, "获取成功");
     }
 
     /**

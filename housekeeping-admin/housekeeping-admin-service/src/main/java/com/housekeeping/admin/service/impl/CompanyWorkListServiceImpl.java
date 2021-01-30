@@ -115,8 +115,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             Boolean ok = true;
             /** 2.1判斷該員工合不合適 */
             //員工日程表
-            List<EmployeesCalendar> employeesCalendarList = (List<EmployeesCalendar>) employeesCalendarService.getCalendarByEmployees(x).getData();
-            //員工工作表計劃
+//            List<EmployeesCalendar> employeesCalendarList = (List<EmployeesCalendar>) employeesCalendarService.getCalendarByEmployees(x).getData();
+            List<EmployeesCalendar> employeesCalendarList = new ArrayList<>();
+                    //員工工作表計劃
             List<EmployeesWorksheetPlan> employeesWorksheetPlans = (List<EmployeesWorksheetPlan>) employeesWorksheetPlanService.getWorkSheetPlanByEmployeesId(x).getData();
 
             /** 2.1.1 不滿足日程表的員工检索 */
@@ -356,7 +357,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     public R dispatchOrder(Integer orderId, Integer employeesId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("order_id", orderId);
-        List<EmployeesCalendar> employeesCalendarList = (List<EmployeesCalendar>) employeesCalendarService.getCalendarByEmployees(employeesId).getData();
+//        List<EmployeesCalendar> employeesCalendarList = (List<EmployeesCalendar>) employeesCalendarService.getCalendarByEmployees(employeesId).getData();
+        List<EmployeesCalendar> employeesCalendarList = new ArrayList<>();
         Map<Boolean, List<EmployeesCalendar>> employeesCalendarMap= new HashMap<>();
         employeesCalendarList.forEach(y -> {
             List<EmployeesCalendar> te = employeesCalendarMap.getOrDefault(y.getStander(), new ArrayList<>());

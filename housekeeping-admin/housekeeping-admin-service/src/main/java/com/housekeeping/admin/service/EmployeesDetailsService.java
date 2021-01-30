@@ -14,16 +14,11 @@ import java.net.UnknownHostException;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type);
-
     R updateEmp(EmployeesDetailsDTO employeesDetailsDTO);
-
     R cusPage(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO, String type);
-
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
-
     R cusPage1(Page page, PageOfEmployeesDTO pageOfEmployeesDTO, String type);
-
     String uploadHead(MultipartFile file, Integer id) throws IOException;
-
     R updateHeadUrlByUserId(String headUrl, Integer id);
+    R canSheMakeAnWork(Integer employeesId);
 }

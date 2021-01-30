@@ -117,4 +117,11 @@ public class EmployeesDetailsController {
         employeesDetailsService.updateHeadUrlByUserId(fileName, reviserId);
         return R.ok("頭像保存成功");
     }
+
+    @ApiOperation("有无排班记录决定能否做钟点， 有无发布包工服务决定能否做包工")
+    @GetMapping("/canSheMakeAnWork")
+    public R canSheMakeAnWork(Integer employeesId){
+        return employeesDetailsService.canSheMakeAnWork(employeesId);
+    }
+
 }
