@@ -30,14 +30,14 @@ public class SysOrderController {
 //    }
 //
 //
-//    @ApiOperation("【客户】评价发布接口")
-//    @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
-//    public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,
-//                          @RequestParam("evaluationStar") Float evaluationStar,
-//                          @RequestParam("evaluationContent") String evaluationContent,
-//                          @RequestParam("orderId") Integer orderId){
-//
-//        return sysOrderService.doEvaluation(file, evaluationStar, evaluationContent, orderId);
-//    }
+    @ApiOperation("【客户】评价发布接口")
+    @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
+    public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,
+                          @RequestParam("evaluationStar") Float evaluationStar,
+                          @RequestParam("evaluationContent") String evaluationContent,
+                          @RequestParam("orderId") Integer orderId){
+
+        return sysOrderService.doEvaluation(file, evaluationStar, evaluationContent, orderId);
+    }
 
 }

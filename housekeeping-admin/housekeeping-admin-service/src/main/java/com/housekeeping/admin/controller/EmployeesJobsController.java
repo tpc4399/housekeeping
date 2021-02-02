@@ -1,10 +1,7 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.EmployeesJobsDTO;
 import com.housekeeping.admin.service.IEmployeesJobsService;
-import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,17 +16,5 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeesJobsController {
 
     private final IEmployeesJobsService employeesJobsService;
-
-//    @ApiOperation("【保洁员】修改员工工作内容")
-//    @PutMapping("/updateEmployeesJobs")
-//    public R updateEmployeesJobs(@RequestBody EmployeesJobsDTO employeesJobsDTO){
-//        return employeesJobsService.updateEmployeesJobs(employeesJobsDTO);
-//    }
-
-//    @GetMapping("/{employeesId}")
-//    public R getJobs(@PathVariable Integer employeesId){
-//
-//        return R.ok();
-//    }
 
 }

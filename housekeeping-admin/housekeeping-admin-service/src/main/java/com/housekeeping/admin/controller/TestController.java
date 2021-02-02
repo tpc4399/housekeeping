@@ -1,5 +1,7 @@
 package com.housekeeping.admin.controller;
 
+import com.google.maps.errors.ApiException;
+import com.housekeeping.admin.dto.AddressDetailsDTO;
 import com.housekeeping.admin.service.IAddressCodingService;
 import com.housekeeping.admin.service.ICurrencyService;
 import com.housekeeping.common.utils.R;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -45,6 +48,13 @@ public class TestController {
         }catch (RuntimeException e){
             return R.failed("地址解析失敗");
         }
+        return R.ok("解析成功");
+    }
+
+    @GetMapping("/test3")
+    @ApiOperation("测试3")
+    public R test3() throws InterruptedException, ApiException, IOException {
+        AddressDetailsDTO addressDetailsDTO = addressCodingService.addressCodingGoogleMap("高雄市苓雅区四维三路2号");
         return R.ok("解析成功");
     }
 

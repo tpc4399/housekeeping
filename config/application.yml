@@ -62,3 +62,6 @@ address:
     path2: /routematrix/v2/walking
     method_get: GET
     ak: WCAGT9OncmkrNmlLpesssRnUtmGwUb3U
+    host_google: https://maps.googleapis.com
+    path_google: /maps/api/geocode/json
+    google_key: AIzaSyDNC2MO9tl5mMc9H_DcWVisMHC2hI0IR1M

@@ -28,12 +28,4 @@ public class EmployeesWorkExperienceController {
         return employeesWorkExperienceService.getAll(employeesId);
     }
 
-//    @ApiOperation("【員工】更新工作經驗")
-//    @GetMapping("/update")
-//    public R updateEmployeesWorkExperience(List<EmployeesWorkExperienceDTO> employeesWorkExperienceDTOS,
-//                                       Integer employeesId){
-//        employeesWorkExperienceService.updateEmployeesWorkExperience(employeesWorkExperienceDTOS, employeesId);
-//        return R.ok("更新成功");
-//    }
-
 }

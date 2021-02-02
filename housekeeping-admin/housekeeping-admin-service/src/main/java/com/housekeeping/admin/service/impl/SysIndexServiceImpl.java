@@ -2,7 +2,9 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.AddressDetailsDTO;
 import com.housekeeping.admin.dto.IndexQueryDTO;
+import com.housekeeping.admin.dto.QueryIndexDTO;
 import com.housekeeping.admin.dto.SysIndexAddDto;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
@@ -170,16 +172,6 @@ public class SysIndexServiceImpl
         List<Integer> contendId =  sysIndexContentList.stream().map(x -> {
             return x.getContentId();
         }).collect(Collectors.toList());
-//        List<Integer> contendIds = new ArrayList<>(contendId); //contendIds只存在一級標籤
-//        contendId.forEach(x -> {
-//            QueryWrapper qwJob = new QueryWrapper();
-//            qwJob.eq("parent_id", x);
-//            List<SysJobContend> s = jobContendService.list(qwJob);
-//            List<Integer> ss = s.stream().map(y -> {
-//                return y.getId();
-//            }).collect(Collectors.toList());
-//            contendIds.addAll(ss);
-//        });
 
         /** 返回结果 */
         Map<String, Object> map = new HashMap<>();
@@ -417,6 +409,64 @@ public class SysIndexServiceImpl
         dataBody.put("theBestEmployees", Collections.singletonList(theBestEmployees));
 
         return R.ok(dataBody, "搜索成功，結果已經推送");
+    }
+
+    @Override
+    public R query(QueryIndexDTO dto) {
+        /***
+         * 判空
+         */
+        Integer indexId = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getIndexId).get();
+        Integer type = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getType).get();
+        LocalDate start = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getStart).get();
+        LocalDate end = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getEnd).get();
+        List<TimeSlot> timeSlots = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getTimeSlots).get();
+        BigDecimal lowPrice = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getLowPrice).get();
+        BigDecimal highPrice = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getHighPrice).get();
+        AddressDetailsDTO addressDetailsDTO = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getAddressDetails).get();
+
+        List<String> resFailed = new ArrayList<>();
+        if (CommonUtils.isEmpty(indexId)) resFailed.add("元素_id為空");
+        if (CommonUtils.isEmpty(type)) resFailed.add("元素_type為空");
+        if (CommonUtils.isEmpty(start)) resFailed.add("元素_start為空");
+        if (CommonUtils.isEmpty(end)) resFailed.add("元素_end為空");
+        if (CommonUtils.isEmpty(timeSlots)) resFailed.add("元素_timeSlots為空");
+        if (CommonUtils.isEmpty(lowPrice)) resFailed.add("元素_lowPrice為空");
+        if (CommonUtils.isEmpty(highPrice)) resFailed.add("元素_highPrice為空");
+        if (CommonUtils.isEmpty(addressDetailsDTO)) resFailed.add("元素_addressDetailsDTO為空");
+
+        if (!resFailed.isEmpty()){
+            return R.failed(resFailed, "存在空值");
+        }
+
+        /** contendIds元素内容加工 */
+        QueryWrapper qw0 = new QueryWrapper();
+        qw0.eq("index_id", indexId);
+        List<SysIndexContent> sysIndexContentList = sysIndexContentService.list(qw0);
+        List<Integer> contendId =  sysIndexContentList.stream().map(x -> {
+            return x.getContentId();
+        }).collect(Collectors.toList());
+        /** promoteCompanyIds 推广公司搜索池 */
+        List<Integer> promoteCompanyIds = new ArrayList<>();
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.select("company_id").gt("end_time", LocalDateTime.now());
+        promoteCompanyIds = companyPromotionService.listObjs(qw2);
+        /** promoteEmployeeIds 推广员工搜索池 */
+        List<Integer> promoteEmployeeIds = new ArrayList<>();
+        QueryWrapper qw3 = new QueryWrapper();
+        qw3.select("employees_id").gt("end_time", LocalDateTime.now());
+        promoteEmployeeIds = employeesPromotionService.listObjs(qw3);
+        /**  */
+
+        return null;
     }
 
     private List<Integer> getIntersection(List<Integer> a, List<Integer> b){

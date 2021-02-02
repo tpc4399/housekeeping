@@ -1,6 +1,10 @@
 package com.housekeeping.admin.service;
 
+import com.google.maps.errors.ApiException;
+import com.housekeeping.admin.dto.AddressDetailsDTO;
 import com.housekeeping.common.utils.R;
+
+import java.io.IOException;
 
 /**
  * @Author su
@@ -13,5 +17,5 @@ public interface IAddressCodingService {
                                   String longitude1,
                                   String latitude2,
                                   String longitude2);
-
+    AddressDetailsDTO addressCodingGoogleMap(String address) throws InterruptedException, ApiException, IOException;
 }

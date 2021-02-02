@@ -371,10 +371,10 @@ public class CommonUtils {
 		}
 
 		System.out.println(getInstanceByPoint(
-				"30.79642470088513",
-				"113.4268687545786",
-				"30.476253112528415",
-				"114.49648831175344"
+				"22.988608",
+				"120.1680851",
+				"22.9886068",
+				"120.1686336"
 		));
 
 
@@ -436,7 +436,6 @@ public class CommonUtils {
 			System.out.println(re);
 		}
 
-		System.out.println(getInstanceByPoint("22.9977861", "120.1679756", "22.994269442136678", "120.19559186224534"));
 		List<Integer> week = new ArrayList<>();
 		String weekStr = "12367";
 		for (int i = 0; i < weekStr.length(); i++) {
