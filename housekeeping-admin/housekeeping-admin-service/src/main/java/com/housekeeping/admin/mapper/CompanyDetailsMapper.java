@@ -15,7 +15,8 @@ public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     String getPhotosByUserId(Integer userId);
     void updateById(@Param("companyDetailsDTO") CompanyDetailsDTO companyDetailsDTO,
                     @Param("lastReviserId") Integer lastReviserId);
-    void authSuccess(Integer companyId);
+    void authSuccess(@Param("companyId") Integer companyId,
+                     @Param("companyName") String companyName);
 
     void cusUpdateById(@Param("tokens") Integer tokens,@Param("id") Integer id);
 

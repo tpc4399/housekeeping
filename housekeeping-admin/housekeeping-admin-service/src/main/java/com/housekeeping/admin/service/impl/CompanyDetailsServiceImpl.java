@@ -193,8 +193,8 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     }
 
     @Override
-    public void authSuccess(Integer companyId) {
-        baseMapper.authSuccess(companyId);
+    public void authSuccess(Integer companyId, String companyName) {
+        baseMapper.authSuccess(companyId, companyName);
     }
 
     @Transactional

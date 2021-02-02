@@ -43,7 +43,7 @@
 
     <update id="authSuccess">
         UPDATE company_details
-        SET is_validate = true
+        SET is_validate = true, company_name = #{companyName}
         WHERE id = #{companyId}
     </update>
 

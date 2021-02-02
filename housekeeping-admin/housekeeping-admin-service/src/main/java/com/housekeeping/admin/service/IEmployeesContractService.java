@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @Author su
@@ -12,5 +13,6 @@ import com.housekeeping.common.utils.R;
 public interface IEmployeesContractService extends IService<EmployeesContract> {
 
     R add(AddEmployeesContractDTO dto);
+    R getByEmployeesId(Integer employeesId);
 
 }

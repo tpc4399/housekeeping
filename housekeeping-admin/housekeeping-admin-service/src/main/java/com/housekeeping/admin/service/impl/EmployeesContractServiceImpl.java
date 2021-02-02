@@ -2,7 +2,6 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
-import com.housekeeping.admin.dto.SetEmployeesCalendarDTO;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.entity.EmployeesContractDetails;
 import com.housekeeping.admin.mapper.EmployeesContractMapper;
@@ -72,6 +71,11 @@ public class EmployeesContractServiceImpl
         });
         employeesContractDetailsService.saveBatch(employeesContractDetailsList);
         return R.ok(maxContractId, "添加成功");
+    }
+
+    @Override
+    public R getByEmployeesId(Integer employeesId) {
+        return null;
     }
 
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){

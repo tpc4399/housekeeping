@@ -168,7 +168,7 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
             authMessage.setAuditStatus(isThrough?3:4);
             baseMapper.updateById(authMessage);
             //更新公司信息
-            companyDetailsService.authSuccess(authMessage.getCompanyId());
+            companyDetailsService.authSuccess(authMessage.getCompanyId(), authMessage.getCompanyName());
             return R.ok("審核成功，已提交");
         }else {
             return R.failed(authMessage.getAuditStatus() + "認證信息狀態異常");

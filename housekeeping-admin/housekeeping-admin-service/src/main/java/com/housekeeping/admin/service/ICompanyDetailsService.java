@@ -23,7 +23,7 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
     Integer getCompanyIdByUserId(Integer userId);
     R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailspageDTO);
-    void authSuccess(Integer companyId);
+    void authSuccess(Integer companyId, String companyName);
     R getFiveTokens();
     R buyHundredTokens();
     R buyThousandTokens();
