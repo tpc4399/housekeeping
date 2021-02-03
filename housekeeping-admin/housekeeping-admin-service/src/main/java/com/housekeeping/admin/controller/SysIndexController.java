@@ -36,12 +36,6 @@ public class SysIndexController {
         return sysIndexService.getCusById(id);
     }
 
-//    @ApiOperation("【客户】搜索")
-//    @PostMapping("/query")
-//    public R query(@RequestBody IndexQueryDTO indexQueryDTO){
-//        return sysIndexService.query(indexQueryDTO);
-//    }
-
     @ApiOperation("【客户】主页搜索")
     @PostMapping("/query")
     public R query(@RequestBody QueryIndexDTO dto){

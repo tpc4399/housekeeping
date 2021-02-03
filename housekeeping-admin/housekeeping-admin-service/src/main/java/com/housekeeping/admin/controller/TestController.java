@@ -2,8 +2,11 @@ package com.housekeeping.admin.controller;
 
 import com.google.maps.errors.ApiException;
 import com.housekeeping.admin.dto.AddressDetailsDTO;
+import com.housekeeping.admin.dto.DateSlot;
+import com.housekeeping.admin.dto.TimeSlotDTO;
 import com.housekeeping.admin.service.IAddressCodingService;
 import com.housekeeping.admin.service.ICurrencyService;
+import com.housekeeping.admin.service.IEmployeesCalendarService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author su
@@ -27,6 +33,7 @@ public class TestController {
 
     private final ICurrencyService currencyService;
     private final IAddressCodingService addressCodingService;
+    private final IEmployeesCalendarService employeesCalendarService;
 
     @GetMapping("/test1")
     @ApiOperation("测试1")
@@ -53,8 +60,11 @@ public class TestController {
 
     @GetMapping("/test3")
     @ApiOperation("测试3")
-    public R test3() throws InterruptedException, ApiException, IOException {
-        AddressDetailsDTO addressDetailsDTO = addressCodingService.addressCodingGoogleMap("高雄市苓雅区四维三路2号");
+    public R test3() {
+        DateSlot dateSlot = new DateSlot();
+        dateSlot.setStart(LocalDate.of(2020,1,1));
+        dateSlot.setEnd(LocalDate.of(2020,1,30));
+        Map<LocalDate, List<TimeSlotDTO>> res =  employeesCalendarService.getCalendarByDateSlot(dateSlot, 1);
         return R.ok("解析成功");
     }
 

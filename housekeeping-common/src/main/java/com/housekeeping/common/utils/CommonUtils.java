@@ -444,6 +444,9 @@ public class CommonUtils {
 
 		System.out.println("Arrays.toString(chars)");
 
+		Float x = 0.8f;
+		Integer y = 129;
+		System.out.printf(String.valueOf(x*y));
 
 	}
 

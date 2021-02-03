@@ -5,6 +5,10 @@ import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesCalendar;
 import com.housekeeping.common.utils.R;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Author su
  * @create 2020/11/12 16:21
@@ -16,4 +20,6 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R addCalendarWeek(SetEmployeesCalendarWeekDTO dto);
     /* 添加一條日規則 */
     R addCalendarDate(SetEmployeesCalendarDateDTO dto);
+    /* 获取这段日期的时间表 */
+    Map<LocalDate, List<TimeSlotDTO>> getCalendarByDateSlot(DateSlot dateSlot, Integer employeesId);
 }

@@ -466,7 +466,21 @@ public class SysIndexServiceImpl
         promoteEmployeeIds = employeesPromotionService.listObjs(qw3);
         /**  */
 
-        return null;
+
+
+
+        /**
+         * 如果只选钟点工：
+         * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容）
+         * 【推荐保洁员】1、员工推广列表里面的员工 2、员工可以被匹配（时间段，工作内容），按价格升序排序
+         * 【附近保洁员】1、匹配到的员工，按距离排序
+         * 【最佳保洁员】1、匹配到的员工，按评分排序
+         *
+         *
+         * 匹配: 员工有两个条件满足任一个即算匹配: 保洁员的空闲时间匹配（如果选择了钟点工），或者保洁员下面有包工产品的时间段与之匹配（匹配度>=80%）（如果选择了包工）
+         * 匹配度 =（包工的总时长-已排任务时长）/搜索条件的总时长
+         */
+        return R.ok();
     }
 
     private List<Integer> getIntersection(List<Integer> a, List<Integer> b){
