@@ -190,6 +190,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
         List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        if (CommonUtils.isEmpty(employeesCalendarList)){
+            return null;
+        }
         employeesCalendarList.forEach(employeesCalendar -> {
             QueryWrapper qw1 = new QueryWrapper();
             qw.eq("calendar_id", employeesCalendar.getId());
@@ -205,7 +208,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             timeSlotDTO.setTimeSlotStart(employeesCalendar.getTimeSlotStart());
             timeSlotDTO.setTimeSlotLength(employeesCalendar.getTimeSlotLength());
             timeSlotDTO.setJobAndPriceList(jobAndPriceDTOList);
-            if (employeesCalendar.getStander() == false){ //日期
+            if (CommonUtils.isEmpty(employeesCalendar.getStander())){
+                List<TimeSlotDTO> timeSlotDTOS = map3.getOrDefault("", new ArrayList<>());
+                timeSlotDTOS.add(timeSlotDTO);
+                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
+                map3.put("", timeSlotDTOS);
+            }else if (employeesCalendar.getStander() == false){ //日期
                 List<TimeSlotDTO> timeSlotDTOS = map1.getOrDefault(employeesCalendar.getDate(), new ArrayList<>());
                 timeSlotDTOS.add(timeSlotDTO);
                 sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
@@ -219,11 +227,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                     sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
                     map2.put(weekInteger, timeSlotDTOS);
                 }
-            }else if (employeesCalendar.getStander() == null){ //通用
-                List<TimeSlotDTO> timeSlotDTOS = map3.getOrDefault("", new ArrayList<>());
-                timeSlotDTOS.add(timeSlotDTO);
-                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
-                map3.put("", timeSlotDTOS);
             }
         });
 

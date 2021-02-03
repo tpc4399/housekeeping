@@ -2,11 +2,16 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author su
@@ -36,6 +41,17 @@ public class EmployeesCalendarController {
     @PutMapping("/setCalendarDate")
     public R setCalendarDate(@RequestBody SetEmployeesCalendarDateDTO dto){
         return employeesCalendarService.addCalendarDate(dto);
+    }
+
+    @ApiOperation("獲取員工日期段內的時間表")
+    @PostMapping("/getCalendarByDateSlot")
+    public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
+        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getEmployeesId());
+        if (CommonUtils.isEmpty(res)){
+            return R.failed("該員工沒有設置時間表");
+        }else {
+            return R.ok(res, "獲取成功");
+        }
     }
 
 }

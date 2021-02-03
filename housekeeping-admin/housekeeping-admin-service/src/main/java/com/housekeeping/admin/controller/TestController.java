@@ -62,9 +62,9 @@ public class TestController {
     @ApiOperation("测试3")
     public R test3() {
         DateSlot dateSlot = new DateSlot();
-        dateSlot.setStart(LocalDate.of(2020,1,1));
-        dateSlot.setEnd(LocalDate.of(2020,1,30));
-        Map<LocalDate, List<TimeSlotDTO>> res =  employeesCalendarService.getCalendarByDateSlot(dateSlot, 1);
+        dateSlot.setStart(LocalDate.of(2021,3,1));
+        dateSlot.setEnd(LocalDate.of(2021,3,30));
+        Map<LocalDate, List<TimeSlotDTO>> res =  employeesCalendarService.getCalendarByDateSlot(dateSlot, 2);
         return R.ok("解析成功");
     }
 
