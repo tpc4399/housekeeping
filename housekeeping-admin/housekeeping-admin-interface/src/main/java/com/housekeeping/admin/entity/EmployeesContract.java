@@ -24,8 +24,8 @@ public class EmployeesContract extends Model<EmployeesContract> {
     private String name;            /* 名称 */
     private String description;     /* 包工描述 */
     private String photoUrls;       /* 包工照片urls */
-    private Float weekWage;         /* 周价格 */
-    private String code;            /* 周价格货币编码 */
+    private Float dayWage;          /* 天价格 */
+    private String code;            /* 天价格货币编码 */
     private String activityIds;     /* 参与活动_ids */
 
     public EmployeesContract() {
@@ -36,7 +36,7 @@ public class EmployeesContract extends Model<EmployeesContract> {
         this.type = dto.getType();
         this.name = dto.getName();
         this.description = dto.getDescription();
-        this.weekWage = dto.getWeekWage();
+        this.dayWage = dto.getDayWage();
         this.code = dto.getCode();
     }
 }

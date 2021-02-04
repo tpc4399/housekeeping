@@ -1,7 +1,9 @@
 package com.housekeeping.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
+import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.entity.EmployeesContractDetails;
 import com.housekeeping.admin.mapper.EmployeesContractMapper;
@@ -15,6 +17,7 @@ import com.housekeeping.common.utils.SortListUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +79,43 @@ public class EmployeesContractServiceImpl
     @Override
     public R getByEmployeesId(Integer employeesId) {
         return null;
+    }
+
+    @Override
+    public Map<LocalDate, List<TimeSlot>> getCalendarByContractId(DateSlot dateSlot, Integer contractId) {
+        Map<LocalDate, List<TimeSlot>> res = new HashMap<>();
+        SortListUtil<TimeSlot> sort = new SortListUtil<TimeSlot>();
+        Map<Integer, List<TimeSlot>> week = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("contract_id", contractId);
+        List<EmployeesContractDetails> employeesContractDetails = employeesContractDetailsService.list(qw);
+        employeesContractDetails.forEach(employeesContractDetail -> {
+            String weekString = employeesContractDetail.getWeek();
+            TimeSlot timeSlot = new TimeSlot();
+            timeSlot.setTimeSlotStart(employeesContractDetail.getTimeSlotStart());
+            timeSlot.setTimeSlotLength(employeesContractDetail.getTimeSlotLength());
+            for (int i = 0; i < weekString.length(); i++) {
+                Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
+                List<TimeSlot> timeSlots = week.getOrDefault(weekInteger, new ArrayList<>());
+                timeSlots.add(timeSlot);
+                sort.Sort(timeSlots, "getTimeSlotStart", null);
+                week.put(weekInteger, timeSlots);
+            }
+        });
+
+        LocalDate start = dateSlot.getStart();
+        LocalDate end = dateSlot.getEnd();
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+            res.put(date, week.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>()));
+        }
+        return res;
+    }
+
+    @Override
+    public Map<LocalDate, List<TimeSlot>> getFreeTimeByContractId(DateSlot dateSlot, Integer contractId) {
+        /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
+        return this.getCalendarByContractId(dateSlot, contractId);
     }
 
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){

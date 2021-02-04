@@ -46,9 +46,20 @@ public class EmployeesCalendarController {
     @ApiOperation("獲取員工日期段內的時間表")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
-        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getEmployeesId());
+        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getId());
         if (CommonUtils.isEmpty(res)){
             return R.failed("該員工沒有設置時間表");
+        }else {
+            return R.ok(res, "獲取成功");
+        }
+    }
+
+    @ApiOperation("獲取員工日期段內的闲置時間表")
+    @PostMapping("/getFreeTimeByDateSlot")
+    public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
+        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getFreeTimeByDateSlot(dto.getDateSlot(), dto.getId());
+        if (CommonUtils.isEmpty(res)){
+            return R.failed("該員工沒有設置時間表或没有闲置时间");
         }else {
             return R.ok(res, "獲取成功");
         }

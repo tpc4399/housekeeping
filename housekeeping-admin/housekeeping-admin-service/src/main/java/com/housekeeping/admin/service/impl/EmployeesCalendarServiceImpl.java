@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesCalendar;
 import com.housekeeping.admin.entity.EmployeesCalendarDetails;
+import com.housekeeping.admin.entity.EmployeesContractDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
 import com.housekeeping.admin.service.IEmployeesCalendarDetailsService;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.admin.service.IEmployeesContractDetailsService;
+import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.admin.vo.TimeSlotVo;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.CommonUtils;
@@ -37,6 +41,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Resource
     private IEmployeesCalendarDetailsService employeesCalendarDetailsService;
+    @Resource
+    private IEmployeesContractService employeesContractService;
+    @Resource
+    private IEmployeesContractDetailsService employeesContractDetailsService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -247,6 +255,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
 
         return calendarMap;
+    }
+
+    @Override
+    public Map<LocalDate, List<TimeSlotDTO>> getFreeTimeByDateSlot(DateSlot dateSlot, Integer employeesId) {
+        /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
+        return this.getCalendarByDateSlot(dateSlot, employeesId);
     }
 
     /*時間段合理性判斷   假設都不為空*/

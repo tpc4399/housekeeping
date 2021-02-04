@@ -7,6 +7,8 @@ import com.housekeeping.admin.dto.TimeSlotDTO;
 import com.housekeeping.admin.service.IAddressCodingService;
 import com.housekeeping.admin.service.ICurrencyService;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.admin.service.IEmployeesContractService;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +36,7 @@ public class TestController {
     private final ICurrencyService currencyService;
     private final IAddressCodingService addressCodingService;
     private final IEmployeesCalendarService employeesCalendarService;
+    private final IEmployeesContractService employeesContractService;
 
     @GetMapping("/test1")
     @ApiOperation("测试1")
@@ -64,7 +67,7 @@ public class TestController {
         DateSlot dateSlot = new DateSlot();
         dateSlot.setStart(LocalDate.of(2021,3,1));
         dateSlot.setEnd(LocalDate.of(2021,3,30));
-        Map<LocalDate, List<TimeSlotDTO>> res =  employeesCalendarService.getCalendarByDateSlot(dateSlot, 2);
+        Map<LocalDate, List<TimeSlot>> res =  employeesContractService.getCalendarByContractId(dateSlot, 1);
         return R.ok("解析成功");
     }
 

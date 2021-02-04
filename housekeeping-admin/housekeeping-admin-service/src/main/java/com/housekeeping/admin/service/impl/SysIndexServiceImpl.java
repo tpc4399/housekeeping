@@ -2,10 +2,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.AddressDetailsDTO;
-import com.housekeeping.admin.dto.IndexQueryDTO;
-import com.housekeeping.admin.dto.QueryIndexDTO;
-import com.housekeeping.admin.dto.SysIndexAddDto;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
 import com.housekeeping.admin.service.*;
@@ -15,10 +12,8 @@ import com.housekeeping.admin.vo.SysIndexVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.OptionalBean;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.SortListUtil;
+import com.housekeeping.common.utils.*;
+import org.junit.Test;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -61,6 +57,8 @@ public class SysIndexServiceImpl
     private ISysIndexContentService sysIndexContentService;
     @Resource
     private ICompanyDetailsService companyDetailsService;
+    @Resource
+    private IEmployeesContractService employeesContractService;
 
     @Override
     public R add(SysIndexAddDto sysIndexAddDto) {
@@ -447,6 +445,9 @@ public class SysIndexServiceImpl
             return R.failed(resFailed, "存在空值");
         }
 
+        /** 匹配到的员工集合 */
+        List<IndexQueryResultEmployees> resultEmployeesList = new ArrayList<>();
+
         /** contendIds元素内容加工 */
         QueryWrapper qw0 = new QueryWrapper();
         qw0.eq("index_id", indexId);
@@ -454,19 +455,125 @@ public class SysIndexServiceImpl
         List<Integer> contendId =  sysIndexContentList.stream().map(x -> {
             return x.getContentId();
         }).collect(Collectors.toList());
+
         /** promoteCompanyIds 推广公司搜索池 */
         List<Integer> promoteCompanyIds = new ArrayList<>();
         QueryWrapper qw2 = new QueryWrapper();
         qw2.select("company_id").gt("end_time", LocalDateTime.now());
         promoteCompanyIds = companyPromotionService.listObjs(qw2);
+
         /** promoteEmployeeIds 推广员工搜索池 */
         List<Integer> promoteEmployeeIds = new ArrayList<>();
         QueryWrapper qw3 = new QueryWrapper();
         qw3.select("employees_id").gt("end_time", LocalDateTime.now());
         promoteEmployeeIds = employeesPromotionService.listObjs(qw3);
-        /**  */
+
+        /** 员工搜索池 */
+        Map<Integer, List<Integer>> employeesSearchPool = new HashMap<>();
+        QueryWrapper qw1 = new QueryWrapper();
+        qw1.select("employees_id").groupBy("employees_id");
+        List<Integer> employeeIdsFromCalendar = employeesCalendarService.listObjs(qw1);
+        List<Integer> employeeIdsFromContract = employeesContractService.listObjs(qw1);
+        List<Integer> list1 = new ArrayList<>(employeeIdsFromCalendar);    //能做钟点工的保洁员
+        List<Integer> list2 = new ArrayList<>(employeeIdsFromContract);    //能做包工的保洁员
+        List<Integer> list3 = this.getIntersection(list1, list2);          //能做任一工种的保洁员
+        employeesSearchPool.put(1, list1);
+        employeesSearchPool.put(2, list2);
+        employeesSearchPool.put(3, list3);
+
+        employeesSearchPool.get(type).forEach(existEmployeesId -> {
+            /** indexQueryResultEmployees 保洁员返回信息 */
+            IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
+
+            /** existEmployee 当前保洁员信息 */
+            EmployeesDetails existEmployee = employeesDetailsService.getById(existEmployeesId);
+            /** isOk 这个员工是否ok */
+            Boolean isOk = true;
+
+            /** instance: 距离准备、筛选 */
+            Integer instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(),
+                    existEmployee.getLng(),
+                    addressDetailsDTO.getLat().toString(),
+                    addressDetailsDTO.getLng().toString()
+            );
+            Integer scopeOfOrder = existEmployee.getScopeOfOrder();//默认3000米接单范围
+            if (instance > scopeOfOrder){
+                isOk = false;
+                return;
+            }
+
+            /** calendar： 钟点工闲置时间准备 */
+            DateSlot dateSlot = new DateSlot(start, end);
+            Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, existEmployeesId);
+
+            /** employeesContractList: 包工准备 */
+            QueryWrapper contractQw = new QueryWrapper();
+            contractQw.eq("type", indexId);
+            contractQw.eq("employees_id", existEmployee.getId());
+            List<EmployeesContract> employeesContractList = employeesContractService.list(contractQw);
+
+            /** totalTimeRequired 客户需求总时长准备 */
+            AtomicReference<Float> dayTimeRequired = new AtomicReference<>(0f);
+            timeSlots.forEach(timeSlot -> {
+                dayTimeRequired.set(dayTimeRequired.get() + timeSlot.getTimeSlotLength());
+            });
+            Float totalTimeRequired = (Period.between(start, end).getDays()+1) * dayTimeRequired.get();
+
+            /** requireTime 客户需求时段加工准备 */
+            List<LocalTime> requireTime = this.periodSplittingB(timeSlots);
+
+            /**
+             * 员工筛选
+             */
+            if (type == 1){
+                List<JobAndPriceDetails> service1 = this.getService1(contendId, start, end, calendar, requireTime, totalTimeRequired);
+                if (service1.size() != 0){
+                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
+                    indexQueryResultEmployees.setEmployeesType(type);
+                    indexQueryResultEmployees.setService2(null);
+                    indexQueryResultEmployees.setService1(service1);
+                }else {
+                    isOk = false;
+                }
+            }else if (type == 2){
+                List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, start, end, requireTime, totalTimeRequired, dateSlot);
+                if (service2.size() != 0){
+                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
+                    indexQueryResultEmployees.setEmployeesType(type);
+                    indexQueryResultEmployees.setService2(service2);
+                    indexQueryResultEmployees.setService1(null);
+                }else {
+                    isOk = false;
+                }
+            }else if (type == 3){
+                List<JobAndPriceDetails> service1 = this.getService1(contendId, start, end, calendar, requireTime, totalTimeRequired);
+                List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, start, end, requireTime, totalTimeRequired, dateSlot);
+                if (service1.size() == 0 && service2.size() == 0){
+                    isOk = false;
+                }else {
+                    if (service1.size() != 0 && service2.size() == 0){
+                        indexQueryResultEmployees.setEmployeesType(1);
+                    }else if (service1.size() == 0 && service2.size() != 0){
+                        indexQueryResultEmployees.setEmployeesType(2);
+                    }else if (service1.size() != 0 && service2.size() != 0){
+                        indexQueryResultEmployees.setEmployeesType(3);
+                    }
+                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
+                    indexQueryResultEmployees.setService2(service2);
+                    indexQueryResultEmployees.setService1(service1);
+                }
+            }
 
 
+
+            /** score: 评分(星级)准备 */
+            Float score = existEmployee.getStarRating();
+
+            /** companyId: 所属公司准备 */
+            Integer companyId = existEmployee.getCompanyId();
+
+
+        });
 
 
         /**
@@ -669,5 +776,215 @@ public class SysIndexServiceImpl
             map33.put(string, periodOfTimes);
         });
         return map33;
+    }
+
+    /**
+     * 18:00:00 代表18:00:00 - 18:30:00 的时间段
+     *
+     */
+    List<TimeAndPrice> periodSplittingA(List<TimeSlotDTO> slots){
+        List<TimeAndPrice> res = new ArrayList<>();
+        slots.forEach(slot -> {
+            LocalTime time = slot.getTimeSlotStart();
+            Float length = slot.getTimeSlotLength();
+            Float total = length / 0.5f;
+            for (Float i = 0f; i < total; i++) {
+                TimeAndPrice timeAndPrice = new TimeAndPrice(time, slot.getJobAndPriceList());
+                res.add(timeAndPrice);
+                time = time.plusMinutes(30);
+            }
+        });
+        return res;
+    }
+
+    List<LocalTime> periodSplittingB(List<TimeSlot> slots){
+        List<LocalTime> res = new ArrayList<>();
+        slots.forEach(slot -> {
+            LocalTime time = slot.getTimeSlotStart();
+            Float length = slot.getTimeSlotLength();
+            Float total = length / 0.5f;
+            for (Float i = 0f; i < total; i++) {
+                res.add(time);
+                time = time.plusMinutes(30);
+            }
+        });
+        return res;
+    }
+
+    Map<LocalDate, List<TimeSlot>> periodMerging(Map<LocalDate, List<LocalTime>> periods){
+        Map<LocalDate, List<TimeSlot>> res = new HashMap<>();
+
+        for (Map.Entry<LocalDate, List<LocalTime>> period: periods.entrySet()) {
+            List<TimeSlot> timeSlots = new ArrayList<>();
+            AtomicReference<LocalTime> start = new AtomicReference<>(LocalTime.of(0, 0));
+            AtomicReference<LocalTime> last = new AtomicReference<>(LocalTime.of(0, 0));
+
+            AtomicReference<Float> length = new AtomicReference<>(0f);
+            List<LocalTime> times = period.getValue();
+            if (times.size() == 0){
+                res.put(period.getKey(), timeSlots);
+            }else if (times.size() == 1){
+                TimeSlot timeSlot = new TimeSlot();
+                timeSlot.setTimeSlotStart(times.get(0));
+                timeSlot.setTimeSlotLength(0.5f);
+                timeSlots.add(timeSlot);
+            }else {
+                LocalTime startTemp = times.get(0);
+                Float lengthTemp = 0.5f;
+                for (int i = 0; i < times.size() - 1; i++) {
+                    if (times.get(i+1).equals(times.get(i).plusMinutes(30))){
+                        lengthTemp += 0.5f;
+                    }else {
+                        TimeSlot timeSlot = new TimeSlot();
+                        timeSlot.setTimeSlotStart(startTemp);
+                        timeSlot.setTimeSlotLength(lengthTemp);
+                        timeSlots.add(timeSlot);
+                        startTemp = times.get(i+1);
+                        lengthTemp = 0.5f;
+                    }
+                }
+
+                TimeSlot timeSlot = new TimeSlot();
+                timeSlot.setTimeSlotStart(startTemp);
+                timeSlot.setTimeSlotLength(lengthTemp);
+                timeSlots.add(timeSlot);
+
+            }
+            res.put(period.getKey(), timeSlots);
+        }
+        return res;
+    }
+
+    List<JobAndPriceDetails> getService1(List<Integer> contendId,
+                                         LocalDate start,
+                                         LocalDate end,
+                                         Map<LocalDate, List<TimeSlotDTO>> calendar,
+                                         List<LocalTime> requireTime,
+                                         Float totalTimeRequired){
+        List<JobAndPriceDetails> service1 = new ArrayList<>();
+        contendId.forEach(jobId -> {
+            Attendance attendance = new Attendance(jobId, new Float(0), new BigDecimal(0));
+            Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
+            for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+                List<TimeSlotDTO> todayTimeSlotDTO = calendar.get(date);
+                List<LocalTime> noAttendanceTime = new ArrayList<>();
+                List<TimeAndPrice> todayTime = this.periodSplittingA(todayTimeSlotDTO);
+                requireTime.forEach(time -> {
+                    AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
+                    //判断这半个小时能否出勤
+                    todayTime.forEach(today -> {
+                        if (today.getTime().equals(time)){
+                            today.getJobAndPriceList().forEach(jobAndPriceDTO -> {
+                                if (jobAndPriceDTO.getJobId() == jobId){
+                                    //这个班可以出席
+                                    canBeOnDuty.set(true);
+                                    attendance.halfAnHourMore();
+                                    /* halfAnHourWage 半小时价格 TWD货币代码 */
+                                    BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
+                                            jobAndPriceDTO.getCode(),
+                                            "TWD",
+                                            new BigDecimal(jobAndPriceDTO.getPrice())
+                                    );
+                                    attendance.increaseTheTotalPrice(halfAnHourWage);
+                                }
+                            });
+                        }
+                    });
+
+                    if (canBeOnDuty.get()) {
+                        //能出勤
+                        //什么也不做
+                    }else {
+                        //不能出勤
+                        noAttendanceTime.add(time);
+                    }
+                });
+                noAttendanceDetails.put(date, noAttendanceTime);
+            }
+            Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
+            if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
+                //达到出勤率标准
+                //添加到结果域
+                JobAndPriceDetails jobAndPriceDetails = new JobAndPriceDetails(jobId, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
+                service1.add(jobAndPriceDetails);
+            }else {
+                //未达到标准
+            }
+        });
+        return service1;
+    }
+
+    List<ContractAndPriceDetails> getService2(List<EmployeesContract> employeesContractList,
+                                              LocalDate start,
+                                              LocalDate end,
+                                              List<LocalTime> requireTime,
+                                              Float totalTimeRequired,
+                                              DateSlot dateSlot){
+        List<ContractAndPriceDetails> service2 = new ArrayList<>();
+        employeesContractList.forEach(employeesContract -> {
+            Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
+            float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
+            BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), "TWD", new BigDecimal(wage));
+            Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), totalWage);
+            Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
+            for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+                List<TimeSlot> todayTimeSlot = calendarContractFreeTime.get(date);
+                List<LocalTime> noAttendanceTime = new ArrayList<>();
+                List<LocalTime> todayTime = this.periodSplittingB(todayTimeSlot);
+                requireTime.forEach(time -> {
+                    AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
+                    //判断这半个小时能否出勤
+                    todayTime.forEach(today -> {
+                        if (today.equals(time)){
+                            //这个班可以出席
+                            canBeOnDuty.set(true);
+                            attendance.halfAnHourMore();
+                        }
+                    });
+
+                    if (canBeOnDuty.get()) {
+                        //能出勤
+                        //什么也不做
+                    }else {
+                        //不能出勤
+                        noAttendanceTime.add(time);
+                    }
+                });
+                noAttendanceDetails.put(date, noAttendanceTime);
+            }
+            Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
+            if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
+                //达到出勤率标准
+                //添加到结果域
+                ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
+                service2.add(contractAndPriceDetails);
+            }else {
+                //未达到标准
+            }
+        });
+        return service2;
+    }
+
+    @Test
+    public void test() {
+        List<TimeSlot> slots = new ArrayList<>();
+        TimeSlot timeSlot1 = new TimeSlot();
+        timeSlot1.setTimeSlotStart(LocalTime.of(9, 0));
+        timeSlot1.setTimeSlotLength(new Float(0f));
+//        TimeSlot timeSlot2 = new TimeSlot();
+//        timeSlot2.setTimeSlotStart(LocalTime.of(16, 0));
+//        timeSlot2.setTimeSlotLength(new Float(3.5f));
+        slots.add(timeSlot1);
+//        slots.add(timeSlot2);
+        List<LocalTime> res = this.periodSplittingB(slots);
+
+        Map<LocalDate, List<LocalTime>> periods = new HashMap<>();
+        periods.put(LocalDate.of(2020,1,1), res);
+        periods.put(LocalDate.of(2020,1,2), res);
+        periods.put(LocalDate.of(2020,1,3), res);
+        periods.put(LocalDate.of(2020,1,4), res);
+
+        Map<LocalDate, List<TimeSlot>> resA = this.periodMerging(periods);
+        System.out.println("ssss");
     }
 }

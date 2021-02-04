@@ -14,4 +14,11 @@ public class DateSlot {
     private LocalDate start;    /* 开始日期 */
     private LocalDate end;      /* 结束日期 */
 
+    public DateSlot() {
+    }
+
+    public DateSlot(LocalDate start, LocalDate end) {
+        this.start = start;
+        this.end = end;
+    }
 }

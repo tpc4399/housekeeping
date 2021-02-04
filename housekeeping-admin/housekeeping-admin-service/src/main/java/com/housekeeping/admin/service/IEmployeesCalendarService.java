@@ -3,6 +3,7 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesCalendar;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 
 import java.time.LocalDate;
@@ -22,4 +23,8 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R addCalendarDate(SetEmployeesCalendarDateDTO dto);
     /* 获取这段日期的时间表 */
     Map<LocalDate, List<TimeSlotDTO>> getCalendarByDateSlot(DateSlot dateSlot, Integer employeesId);
+    /* 获取这段日期的时间表 時間表減去已排任務時間 */
+    Map<LocalDate, List<TimeSlotDTO>> getFreeTimeByDateSlot(DateSlot dateSlot, Integer employeesId);
+
+
 }
