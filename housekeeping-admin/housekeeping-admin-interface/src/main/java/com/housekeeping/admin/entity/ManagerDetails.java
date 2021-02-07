@@ -27,6 +27,7 @@ public class ManagerDetails extends Model<EmployeesDetails> {
     /* 經理生日 */
     private LocalDate dateOfBirth;
 
+    private String phonePrefix; /* 手機號前綴 */
     /* 手機號 */
     private String phone;
 

@@ -95,7 +95,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                     maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();
                 }
 
-                /** 2020-01-16 su新增 增加经理的同时，给予所有菜单权限 */
+                /** 2021-01-16 su新增 增加经理的同时，给予所有菜单权限 */
                 List<SysMenu> sysMenuList = sysMenuService.list();
                 Integer finalMaxManagerId = maxManagerId;
                 List<ManagerMenu> managerMenuList = sysMenuList.stream().map(x -> {

@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(value =NullPointerException.class)
+    @ExceptionHandler(value = NullPointerException.class)
     @ResponseBody
     public R exceptionHandler(HttpServletRequest req, NullPointerException e){
         logger.error("发生空指针异常！原因是:",e);

@@ -23,6 +23,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String number;    /* 員工编号 */
     private String name;    /* 員工姓名 */
     private LocalDate dateOfBirth;    /* 員工生日 */
+    private String phonePrefix;/* 手機號前綴 */
     private String phone;    /* 手機號 */
     private String email;    /* 郵箱 */
     private String headUrl;   /* 头像url */

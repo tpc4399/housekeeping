@@ -5,15 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.AdminPageDTO;
-import com.housekeeping.admin.dto.ForgetDTO;
-import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.UserMapper;
-import com.housekeeping.admin.service.IAddressCodingService;
-import com.housekeeping.admin.service.ICompanyDetailsService;
-import com.housekeeping.admin.service.ICustomerDetailsService;
-import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
 import net.sf.json.JSONObject;
@@ -22,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
@@ -41,6 +39,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private CompanyPromotionServiceImpl companyPromotionService;
     @Resource
     private IAddressCodingService addressCodingService;
+    @Resource
+    private ManagerDetailsService managerDetailsService;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private IManagerMenuService managerMenuService;
+    @Resource
+    private ISysMenuService sysMenuService;
+    @Resource
+    private IEmployeesPromotionService employeesPromotionService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -326,6 +334,192 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public User getUserByIdAndDept(Integer id, int i) {
         return baseMapper.getUserByIdAndDept(id,i);
+    }
+
+    @Override
+    public R page(Page page, PageOfUserDTO dto) {
+        QueryWrapper qw = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(dto.getNumber())){
+            qw.eq("number", dto.getNumber());
+        }
+        if (CommonUtils.isNotEmpty(dto.getNickname())){
+            qw.like("nikename", dto.getNickname());
+        }
+        if (CommonUtils.isNotEmpty(dto.getName())){
+            qw.like("name", dto.getName());
+        }
+        if (CommonUtils.isNotEmpty(dto.getDateOfBirthStart())){
+            qw.ge("date_of_birth", dto.getDateOfBirthStart());
+        }
+        if (CommonUtils.isNotEmpty(dto.getDateOfBirthEnd())){
+            qw.le("date_of_birth", dto.getDateOfBirthEnd());
+        }
+        if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
+            qw.eq("phone_prefix", dto.getPhonePrefix());
+            qw.eq("phone", dto.getPhone());
+        }
+        if (CommonUtils.isNotEmpty(dto.getEmail())){
+            qw.eq("email", dto.getEmail());
+        }
+        if (CommonUtils.isNotEmpty(dto.getDeptId())){
+            qw.eq("dept_id", dto.getDeptId());
+        }
+        if (CommonUtils.isNotEmpty(dto.getCreateTimeStart())){
+            qw.ge("create_time", dto.getCreateTimeStart());
+        }
+        if (CommonUtils.isNotEmpty(dto.getCreateTimeEnd())){
+            qw.le("create_time", dto.getCreateTimeEnd());
+        }
+        if (CommonUtils.isNotEmpty(dto.getUpdateTimeStart())){
+            qw.ge("update_time", dto.getUpdateTimeStart());
+        }
+        if (CommonUtils.isNotEmpty(dto.getUpdateTimeEnd())){
+            qw.le("update_time", dto.getUpdateTimeEnd());
+        }
+        if (CommonUtils.isNotEmpty(dto.getLastReviserId())){
+            qw.eq("last_reviser_id", dto.getLastReviserId());
+        }
+        return R.ok(this.page(page, qw), "獲取成功！");
+    }
+
+    @Override
+    public R add1(AdminAdd1DTO dto) {
+        LocalDateTime now = LocalDateTime.now();
+        Integer mineUserId = TokenUtils.getCurrentUserId();
+        User user = new User();
+        user.setDeptId(dto.getDeptId());
+        user.setName(dto.getName());
+        user.setNickname(dto.getNickName());
+        user.setPhonePrefix(dto.getPhonePrefix());
+        user.setPhone(dto.getPhone());
+        if (CommonUtils.isNotEmpty(dto.getEmail())){
+            user.setEmail(dto.getEmail());
+        }
+        user.setPassword(DESEncryption.getEncryptString(dto.getPassword()));
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setLastReviserId(mineUserId);
+        Integer maxUserId = 0;
+        synchronized (this) {
+            this.save(user);
+            maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
+        }
+        if (dto.getDeptId() == 1){
+            //管理员，不存储任何详细信息
+        }else if (dto.getDeptId() == 2){
+            //公司账户
+            CompanyDetails company = new CompanyDetails();
+            company.setUserId(maxUserId);
+            company.setIsValidate(false);
+            company.setCreateTime(now);
+            company.setUpdateTime(now);
+            company.setLastReviserId(mineUserId);
+            Integer maxCompanyId = 0;
+            synchronized (this){
+                companyService.save(company);
+                maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+            }
+            //公司推广
+            CompanyPromotion companyPromotion = new CompanyPromotion();
+            companyPromotion.setCompanyId(maxCompanyId);
+            companyPromotionService.save(companyPromotion);
+        }else if (dto.getDeptId() == 3){
+            //家庭账户
+            CustomerDetails customer = new CustomerDetails();
+            customer.setUserId(maxUserId);
+            customer.setPhonePrefix(dto.getPhonePrefix());
+            customer.setPhone(dto.getPhone());
+            if (CommonUtils.isNotEmpty(dto.getEmail())){
+                customer.setEmail(dto.getEmail());
+            }
+            customer.setCreateTime(now);
+            customer.setUpdateTime(now);
+            customer.setLastReviserId(mineUserId);
+            customerDetailsService.save(customer);
+        }
+        return R.ok("賬戶添加成功");
+    }
+
+    @Override
+    public R add2(AdminAdd2DTO dto) {
+        LocalDateTime now = LocalDateTime.now();
+        Integer mineUserId = TokenUtils.getCurrentUserId();
+        User user = new User();
+        user.setDeptId(dto.getDeptId());
+        user.setName(dto.getName());
+        user.setNickname(dto.getNickName());
+        if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
+            user.setPhonePrefix(dto.getPhonePrefix());
+            user.setPhone(dto.getPhone());
+        }
+        if (CommonUtils.isNotEmpty(dto.getEmail())){
+            user.setEmail(dto.getEmail());
+        }
+        user.setCreateTime(now);
+        user.setUpdateTime(now);
+        user.setLastReviserId(mineUserId);
+        Integer maxUserId = 0;
+        synchronized (this) {
+            this.save(user);
+            maxUserId = ((User) CommonUtils.getMaxId("sys_user", this)).getId();
+        }
+        if (dto.getDeptId() == 4){
+            //經理賬戶
+            ManagerDetails manager = new ManagerDetails();
+            manager.setUserId(maxUserId);
+            manager.setCompanyId(dto.getCompanyId());
+            if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
+                manager.setPhonePrefix(dto.getPhonePrefix());
+                manager.setPhone(dto.getPhone());
+            }
+            if (CommonUtils.isNotEmpty(dto.getEmail())){
+                manager.setEmail(dto.getEmail());
+            }
+            manager.setCreateTime(now);
+            manager.setUpdateTime(now);
+            manager.setLastReviserId(mineUserId);
+            Integer maxManagerId = 0;
+            synchronized (this){
+                managerDetailsService.save(manager);
+                maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();
+            }
+            /** 2021-02-07 su新增 增加经理的同时，给予所有菜单权限 */
+            List<SysMenu> sysMenuList = sysMenuService.list();
+            Integer finalMaxManagerId = maxManagerId;
+            List<ManagerMenu> managerMenuList = sysMenuList.stream().map(x -> {
+                ManagerMenu managerMenu = new ManagerMenu();
+                managerMenu.setManagerId(finalMaxManagerId);
+                managerMenu.setMenuId(x.getId());
+                return managerMenu;
+            }).collect(Collectors.toList());
+            managerMenuService.saveBatch(managerMenuList);
+
+        }else if (dto.getDeptId() == 5){
+            //保潔員賬戶
+            EmployeesDetails employees = new EmployeesDetails();
+            employees.setUserId(maxUserId);
+            employees.setCompanyId(dto.getCompanyId());
+            if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
+                employees.setPhonePrefix(dto.getPhonePrefix());
+                employees.setPhone(dto.getPhone());
+            }
+            if (CommonUtils.isNotEmpty(dto.getEmail())){
+                employees.setEmail(dto.getEmail());
+            }
+            employees.setCreateTime(now);
+            employees.setUpdateTime(now);
+            employees.setLastReviserId(mineUserId);
+            Integer maxEmployeesId = 0;
+            synchronized (this){
+                employeesDetailsService.save(employees);
+                maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
+            }
+            /** 順便建個員工推廣的表記錄 */
+            EmployeesPromotion employeesPromotion = new EmployeesPromotion();
+            employeesPromotion.setEmployeesId(maxEmployeesId);
+            employeesPromotionService.save(employeesPromotion);
+        }
+        return R.ok("賬戶添加成功");
     }
 
 }
