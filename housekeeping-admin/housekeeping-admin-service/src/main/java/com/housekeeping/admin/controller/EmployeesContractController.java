@@ -46,10 +46,10 @@ public class EmployeesContractController {
         return R.ok(employeesContractService.list());
     }
 
-    @ApiOperation("【管理员】【公司】獲取員工日期段內的包工時間表")
+    @ApiOperation("【管理员】【公司】根据时间段和包工_id 獲取包工時間表，就是这个包工的服务时间的一个详细列举")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
-        Map<LocalDate, List<TimeSlot>> res = employeesContractService.getCalendarByContractId(dto.getDateSlot(), dto.getContractId());
+        Map<LocalDate, List<TimeSlot>> res = employeesContractService.getCalendarByContractId(dto.getDateSlot(), dto.getId());
         if (CommonUtils.isEmpty(res)){
             return R.failed("該包工沒有設置時間表");
         }else {
@@ -57,10 +57,10 @@ public class EmployeesContractController {
         }
     }
 
-    @ApiOperation("【管理员】【公司】獲取員工日期段內的包工時間表的闲置时间表")
+    @ApiOperation("【管理员】【公司】根据时间段和包工_id 獲取員工包工時間表的闲置时间表，就是这段时间内这个员工可以做这个包工的时间。以详细列举形式返回")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
-        Map<LocalDate, List<TimeSlot>> res = employeesContractService.getFreeTimeByContractId(dto.getDateSlot(), dto.getContractId());
+        Map<LocalDate, List<TimeSlot>> res = employeesContractService.getFreeTimeByContractId(dto.getDateSlot(), dto.getId());
         if (CommonUtils.isEmpty(res)){
             return R.failed("該包工沒有闲置时间或包工没设置时间表");
         }else {
