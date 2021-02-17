@@ -48,9 +48,10 @@ public class CustomerAddressController {
         return customerAddressService.setDefault(addressId);
     }
 
-    @ApiOperation("【管理員】查詢所有用戶地址")
-    public R getAll(Page page){
-        return customerAddressService.getAll(page);
+    @GetMapping("/page")
+    @ApiOperation("【管理員】分页查询用戶地址")
+    public R getAll(Page page, Integer customerId){
+        return customerAddressService.getAll(page, customerId);
     }
 
     @ApiOperation("刪除地址")

@@ -43,7 +43,7 @@ public class EmployeesCalendarController {
         return employeesCalendarService.addCalendarDate(dto);
     }
 
-    @ApiOperation("獲取員工日期段內的時間表")
+    @ApiOperation("【管理员】【公司】獲取員工日期段內的時間表")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
         Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getId());
@@ -54,7 +54,7 @@ public class EmployeesCalendarController {
         }
     }
 
-    @ApiOperation("獲取員工日期段內的闲置時間表")
+    @ApiOperation("【管理员】【公司】獲取員工日期段內的闲置時間表")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
         Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getFreeTimeByDateSlot(dto.getDateSlot(), dto.getId());

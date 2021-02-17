@@ -123,8 +123,12 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
     }
 
     @Override
-    public R getAll(Page page) {
-        Page customerAddressList = baseMapper.selectPage(page, null);
+    public R getAll(Page page, Integer customerId) {
+        QueryWrapper qw = new QueryWrapper();
+        if (CommonUtils.isNotEmpty(customerId)){
+            qw.eq("customer_id", customerId);
+        }
+        Page customerAddressList = baseMapper.selectPage(page, qw);
         return R.ok(customerAddressList, "分頁查詢成功");
     }
 

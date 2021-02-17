@@ -21,5 +21,5 @@ public interface ICustomerAddressService extends IService<CustomerAddress> {
 
     R setDefault(Integer addressId);
 
-    R getAll(Page page);
+    R getAll(Page page, Integer customerId);
 }
