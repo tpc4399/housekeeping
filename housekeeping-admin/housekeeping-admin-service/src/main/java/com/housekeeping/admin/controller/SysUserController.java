@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminAdd1DTO;
 import com.housekeeping.admin.dto.AdminAdd2DTO;
 import com.housekeeping.admin.dto.PageOfUserDTO;
+import com.housekeeping.admin.service.EmployeesDetailsService;
+import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 public class SysUserController {
 
     private final IUserService userService;
+    private final ICustomerDetailsService customerDetailsService;
+    private final EmployeesDetailsService employeesDetailsService;
 
     @GetMapping("/page")
     @ApiOperation("【管理员】分页查询用户")
@@ -39,6 +44,18 @@ public class SysUserController {
     @ApiOperation("【管理员】添加经理、保洁员接口")
     public R add2(@RequestBody AdminAdd2DTO dto){
         return userService.add2(dto);
+    }
+
+    @ApiOperation("【管理员】黑名单操作 roleType:12345分别为 管理员 公司 家庭 经理 保洁员  id:为他们自己的id而非userId， 目前仅支持拉黑家庭和保洁员  action：true代表拉黑操作，false代表从移出黑名单")
+    @PutMapping("/blacklist")
+    public R blacklist(Integer roleType, Integer id, Boolean action){
+        if (roleType.equals(3)){
+            return customerDetailsService.blacklist(id, action);
+        }else if (roleType.equals(5)){
+            return employeesDetailsService.blacklist(id, action);
+        }else {
+            return R.failed("參數不對勁");
+        }
     }
 
 }

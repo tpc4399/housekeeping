@@ -58,4 +58,10 @@
 		SET head_url = #{headUrl}
 		WHERE user_id = #{userId}
     </update>
+
+	<update id="blacklist">
+		UPDATE employees_details
+		SET blacklist_flag = #{action}
+		WHERE id = #{employeesId}
+	</update>
 </mapper>

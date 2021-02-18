@@ -23,4 +23,6 @@ public interface ICustomerDetailsService extends IService<CustomerDetails> {
     R getCustomerList(Integer cid, String name);
 
     R updateCus(CustomerUpdateDTO customerUpdateDTO);
+
+    R blacklist(Integer customerId, Boolean action);
 }

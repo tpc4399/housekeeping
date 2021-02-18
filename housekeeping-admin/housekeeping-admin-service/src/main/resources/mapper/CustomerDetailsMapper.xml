@@ -17,4 +17,10 @@
     <select id="getUserIdByGId" resultType="java.lang.Integer">
 		SELECT user_id FROM im_chat_group_user WHERE chat_group_id = #{gid}
 	</select>
+
+	<update id="blacklist">
+		UPDATE customer_details
+		SET blacklist_flag = #{action}
+		WHERE id = #{customerId}
+	</update>
 </mapper>

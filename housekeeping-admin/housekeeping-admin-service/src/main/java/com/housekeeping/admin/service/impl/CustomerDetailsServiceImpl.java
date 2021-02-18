@@ -168,6 +168,12 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
         return R.ok(this.updateById(customerDetails));
     }
 
+    @Override
+    public R blacklist(Integer customerId, Boolean action) {
+        baseMapper.blacklist(customerId, action);
+        return R.ok(null, "操作成功");
+    }
+
     public List<CustomerDetails> search(String name, List<CustomerDetails> list){
         List<CustomerDetails> results = new ArrayList();
         Pattern pattern = Pattern.compile(name);

@@ -111,6 +111,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 /** 2021/1/14 su 新增存放地址經緯度 **/
 
                 employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+                employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
                 employeesDetails.setPhone(employeesDetailsDTO.getPhone());
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
                 employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
@@ -142,7 +143,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     /**
                      * 可工作内容设置
                      */
-                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
+//                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
                 } catch (Exception e){
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");
@@ -170,27 +171,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
 
         /** 2021/1/14 su 新增存放地址經緯度 **/
-        String address = employeesDetails.getAddress1()
-                + employeesDetails.getAddress2()
-                + employeesDetails.getAddress3()
-                + employeesDetails.getAddress4();
-        //把地址存為經緯度
-        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
-        Double lng = new Double(0);
-        Double lat = new Double(0);
-        try {
-            JSONObject result = (JSONObject) jsonObject.get("result");
-            JSONObject location = (JSONObject) result.get("location");
-            lng = (Double) location.get("lng");
-            lat = (Double) location.get("lat");
-        }catch (RuntimeException e){
-            return R.failed("地址無法識別");
-        }
-        employeesDetails.setLng(lng.toString());
-        employeesDetails.setLat(lat.toString());
+        employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
+        employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
         /** 2021/1/14 su 新增存放地址經緯度 **/
 
         employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+        employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
         employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
@@ -198,7 +184,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
-
         this.updateById(employeesDetails);
         /**
          * 工作经验修改
@@ -207,7 +192,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         /**
          * 可工作内容设置
          */
-        employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId());
+//        employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId());
         return R.ok("修改成功");
 
 
@@ -386,6 +371,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         map.put("canSheMakeAnHour", employeesCalendarList.size() != 0);
         map.put("canSheWorkAsAContractor", employeesContractList.size() != 0);
         return R.ok(map, "获取成功");
+    }
+
+    @Override
+    public R blacklist(Integer employeesId, Boolean action) {
+        baseMapper.blacklist(employeesId, action);
+        return R.ok(null, "操作成功");
     }
 
     /**

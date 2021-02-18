@@ -26,7 +26,6 @@ public class CustomerController {
     private final ICustomerDetailsService customerDetailsService;
 
     /**
-     *
      * @param data
      * @param type 1 手机号 2 邮箱
      * @return
@@ -103,4 +102,7 @@ public class CustomerController {
     public R getAllAdmin(Page page, AdminPageDTO adminPageDTO){
         return userService.getAllUser(page,adminPageDTO,3);
     }
+
+
+
 }

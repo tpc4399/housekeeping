@@ -25,11 +25,11 @@ public class EmployeesDetailsDTO {
     private Float lng;          /* 经度 */
     private Float lat;          /* 纬度 */
     private String recordOfFormalSchooling; /* 学历，直接传本科 */
+    private String phonePrefix; /* 手机号前缀 */
     private String phone;    /* 手機號 */
     private String accountLine;    /* line賬號 */
     private String describes;    /* 描述 */
     private String workYear;     /* 工作年限 */
     private List<EmployeesWorkExperienceDTO> workExperiencesDTO; /* 工作经验 */
-    private List<Integer> jobIds; /* 可工作内容And价格 */
 
 }

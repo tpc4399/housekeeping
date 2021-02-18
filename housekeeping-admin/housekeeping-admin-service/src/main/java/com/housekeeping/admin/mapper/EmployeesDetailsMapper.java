@@ -18,4 +18,7 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
 
     List<Integer> getAllIdsByCompanyId(Integer companyId);
 
+    void blacklist(@Param("employeesId") Integer employeesId,
+                   @Param("action") Boolean action);
+
 }

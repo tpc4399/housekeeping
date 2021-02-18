@@ -18,4 +18,7 @@ public interface CustomerDetailsMapper extends BaseMapper<CustomerDetails> {
     List<Integer> getIdbyByCompanyId(Integer companyId);
 
     List<Integer> getUserIdByGId(Integer gid);
+
+    void blacklist(@Param("customerId") Integer customerId,
+                   @Param("action") Boolean action);
 }

@@ -21,4 +21,5 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     String uploadHead(MultipartFile file, Integer id) throws IOException;
     R updateHeadUrlByUserId(String headUrl, Integer id);
     R canSheMakeAnWork(Integer employeesId);
+    R blacklist(Integer employeesId, Boolean action);
 }
