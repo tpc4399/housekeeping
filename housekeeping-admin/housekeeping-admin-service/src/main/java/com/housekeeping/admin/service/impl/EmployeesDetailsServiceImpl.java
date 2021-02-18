@@ -106,24 +106,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
 
                 /** 2021/1/14 su 新增存放地址經緯度 **/
-                String address = employeesDetails.getAddress1()
-                        + employeesDetails.getAddress2()
-                        + employeesDetails.getAddress3()
-                        + employeesDetails.getAddress4();
-                //把地址存為經緯度
-                JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(address).getData();
-                Double lng = new Double(0);
-                Double lat = new Double(0);
-                try {
-                    JSONObject result = (JSONObject) jsonObject.get("result");
-                    JSONObject location = (JSONObject) result.get("location");
-                    lng = (Double) location.get("lng");
-                    lat = (Double) location.get("lat");
-                }catch (RuntimeException e){
-                    return R.failed("地址無法識別");
-                }
-                employeesDetails.setLng(lng.toString());
-                employeesDetails.setLat(lat.toString());
+                employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
+                employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
                 /** 2021/1/14 su 新增存放地址經緯度 **/
 
                 employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());

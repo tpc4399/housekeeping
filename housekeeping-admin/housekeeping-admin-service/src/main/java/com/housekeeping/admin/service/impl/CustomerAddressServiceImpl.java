@@ -45,21 +45,9 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
         customerAddress.setIsDefault(false);
         customerAddress.setName(customerAddressAddDTO.getName());
         customerAddress.setAddress(customerAddressAddDTO.getAddress());
-//        addressCodingService.addressCoding(customerAddressAddDTO.getAddress());
         //把地址存為經緯度
-        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(customerAddressAddDTO.getAddress()).getData();
-        Double lng = new Double(0);
-        Double lat = new Double(0);
-        try {
-            JSONObject result = (JSONObject) jsonObject.get("result");
-            JSONObject location = (JSONObject) result.get("location");
-            lng = (Double) location.get("lng");
-            lat = (Double) location.get("lat");
-        }catch (RuntimeException e){
-            return R.failed("地址無法識別");
-        }
-        customerAddress.setLng(lng.toString());
-        customerAddress.setLat(lat.toString());
+        customerAddress.setLng(customerAddressAddDTO.getLng().toString());
+        customerAddress.setLat(customerAddressAddDTO.getLat().toString());
         return R.ok(this.save(customerAddress), "添加地址成功");
     }
 
