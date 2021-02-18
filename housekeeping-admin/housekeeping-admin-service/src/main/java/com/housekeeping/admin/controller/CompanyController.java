@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
+import com.housekeeping.admin.dto.RegisterCompanyDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
@@ -51,8 +52,8 @@ public class CompanyController {
     @ApiOperation("【公司】注册2发送注册信息")
     @LogFlag(description = "注册公司账号")
     @PostMapping("/saveEmp")
-    public R saveEmp(@RequestBody RegisterDTO registerDTO){
-        return userService.saveEmp(registerDTO);
+    public R saveEmp(@RequestBody RegisterCompanyDTO dto){
+        return userService.saveEmp(dto);
     }
 
     @ApiOperation("【公司】忘记密码1发送验证码")

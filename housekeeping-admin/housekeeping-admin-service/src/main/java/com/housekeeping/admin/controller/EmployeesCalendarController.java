@@ -43,7 +43,7 @@ public class EmployeesCalendarController {
         return employeesCalendarService.addCalendarDate(dto);
     }
 
-    @ApiOperation("【管理员】【公司】根据时间段和员工_id 獲取員工日期段內的時間表，就是员工设定的可工作时间，而非员工的空闲时间。以详细列举形式返回")
+    @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的時間表，就是员工设定的可工作时间，而非员工的空闲时间。以详细列举形式返回")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
         Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getId());
@@ -54,7 +54,7 @@ public class EmployeesCalendarController {
         }
     }
 
-    @ApiOperation("【管理员】【公司】根据时间段和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回")
+    @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
         Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getFreeTimeByDateSlot(dto.getDateSlot(), dto.getId());

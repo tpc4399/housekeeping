@@ -1,6 +1,5 @@
 package com.housekeeping.admin.dto;
 
-import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import lombok.Data;
 
@@ -16,6 +15,7 @@ public class IndexQueryResultEmployees {
     private Integer employeesType;                      /* 保洁员类型 1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok */
     private List<JobAndPriceDetails> service1;          /* 匹配到的钟点工信息 */
     private List<ContractAndPriceDetails> service2;     /* 匹配到的包工信息 */
-    private Integer instance;                           /* 保洁员的距离 m */
+    private Double instance;                            /* 保洁员的距离 m */
     private Float score;                                /* 保洁员的评分 */
+    private Integer recommendedValue;                   /* 推荐值 */
 }

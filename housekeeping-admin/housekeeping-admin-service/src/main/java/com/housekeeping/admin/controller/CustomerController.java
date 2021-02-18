@@ -2,10 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.housekeeping.admin.dto.AdminPageDTO;
-import com.housekeeping.admin.dto.CustomerUpdateDTO;
-import com.housekeeping.admin.dto.ForgetDTO;
-import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.pojo.Customer;
@@ -52,8 +49,8 @@ public class CustomerController {
     @ApiOperation("【客户】注册2发送注册信息")
     @LogFlag(description = "注册客户账号")
     @PostMapping("/saveCus")
-    public R saveCus(@RequestBody RegisterDTO registerDTO){
-        return userService.saveCus(registerDTO);
+    public R saveCus(@RequestBody RegisterCustomerDTO dto){
+        return userService.saveCus(dto);
     }
 
 

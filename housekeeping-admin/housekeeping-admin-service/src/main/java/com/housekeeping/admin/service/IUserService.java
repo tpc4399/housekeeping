@@ -12,9 +12,9 @@ public interface IUserService extends IService<User> {
     User getUserByPhone(String phonePrefix,String phone,Integer deptId);
     R checkData(Integer deptId,String data, Integer type);
     R sendRegisterMSMessage(String phonePrefix,String phone,Integer deptId);
-    R saveEmp(RegisterDTO registerDTO);
-    R saveCus(RegisterDTO registerDTO);
-    R saveAdmin(RegisterDTO registerDTO);
+    R saveEmp(RegisterCompanyDTO dto);
+    R saveCus(RegisterCustomerDTO dto);
+    R saveAdmin(RegisterAdminDTO dto);
     R sendForgetMSMessage(String phonePrefix, String phone, Integer deptId);
     R updatePwd(ForgetDTO forgetDTO);
     R verfifyCode(String phonePrefix, String phone,String code,Integer deptId);

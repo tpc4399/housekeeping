@@ -78,7 +78,7 @@ public class AddressCodingServiceImpl implements IAddressCodingService {
     }
 
     @Override
-    public Integer getInstanceByPointByWalking(String latitude1, String longitude1, String latitude2, String longitude2) {
+    public Double getInstanceByPointByWalking(String latitude1, String longitude1, String latitude2, String longitude2) {
         Map<String, String> headers = new HashMap<String, String>();
         Map<String, String> params = new HashMap<String, String>();
         String origins = latitude1 + "," + longitude1;
@@ -102,11 +102,11 @@ public class AddressCodingServiceImpl implements IAddressCodingService {
             JSONArray result =  jsonObject.getJSONArray("result");
             JSONObject distance = result.getJSONObject(0);
             JSONObject distance2 = distance.getJSONObject("distance");
-            Integer meter = (Integer) distance2.get("value");
+            Double meter = (Double) distance2.get("value");
             return meter;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0;
+            return 0d;
         }
     }
 

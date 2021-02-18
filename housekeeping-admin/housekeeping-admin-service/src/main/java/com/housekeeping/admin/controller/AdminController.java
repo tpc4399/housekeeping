@@ -3,6 +3,7 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
+import com.housekeeping.admin.dto.RegisterAdminDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
@@ -44,8 +45,8 @@ public class AdminController {
     @ApiOperation("【管理员】註冊2發送资料")
     @LogFlag(description = "注册管理员账号")
     @PostMapping("/saveAdmin")
-    public R saveAdmin(@RequestBody RegisterDTO registerDTO){
-        return userService.saveAdmin(registerDTO);
+    public R saveAdmin(@RequestBody RegisterAdminDTO dto){
+        return userService.saveAdmin(dto);
     }
 
     @ApiOperation("【管理员】忘记密码1发送验证码")

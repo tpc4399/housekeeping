@@ -30,6 +30,12 @@ public class SysIndexController {
         return sysIndexService.add(sysIndexAddDto);
     }
 
+    @ApiOperation("【平台】删除分类")
+    @DeleteMapping("/{indexId}")
+    public R delete(@PathVariable Integer indexId){
+        return sysIndexService.delete(indexId);
+    }
+
     @GetMapping("/getById")
     @ApiOperation("【客户】通过首页分类获取一级分类")
     public R getById(Integer id){
@@ -38,7 +44,7 @@ public class SysIndexController {
 
     @ApiOperation("【客户】主页搜索")
     @PostMapping("/query")
-    public R query(@RequestBody QueryIndexDTO dto){
+    public R query(@RequestBody QueryIndexDTO dto) throws InterruptedException {
         return sysIndexService.query(dto);
     }
 

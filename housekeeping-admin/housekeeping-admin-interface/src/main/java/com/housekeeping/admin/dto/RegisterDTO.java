@@ -12,6 +12,8 @@ public class RegisterDTO {
     private String code;            /* 验证码 */
     private String password;        /* 密码 */
     private String repassword;      /* 确认密码 */
-    private String address;         /* 客戶地址 */
+    private String address;         /* 客戶地址  註冊客戶時有效 */
+    private String lat;             /* 经度 註冊客戶時有效 */
+    private String lng;             /* 纬度 註冊客戶時有效 */
 
 }

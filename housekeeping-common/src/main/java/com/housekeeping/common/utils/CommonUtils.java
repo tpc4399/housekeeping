@@ -400,6 +400,7 @@ public class CommonUtils {
 		System.out.println(anchorPrice);
 
 
+		//默认升序 desc降序
 		SortListUtil<RecommendedEmployeesVo> sortList = new SortListUtil<RecommendedEmployeesVo>();
 		List<RecommendedEmployeesVo> reList = new ArrayList<>();
 		RecommendedEmployeesVo re1 = new RecommendedEmployeesVo(1, 6000, new BigDecimal(111), 3.1f);

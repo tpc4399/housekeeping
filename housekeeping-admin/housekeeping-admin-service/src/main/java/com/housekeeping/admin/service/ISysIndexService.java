@@ -6,6 +6,7 @@ import com.housekeeping.admin.dto.QueryIndexDTO;
 import com.housekeeping.admin.dto.SysIndexAddDto;
 import com.housekeeping.admin.entity.SysIndex;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 public interface ISysIndexService extends IService<SysIndex> {
     R add(SysIndexAddDto sysIndexAddDto);
+    R delete(Integer indexId);
     R getAll();
     R getCusById(Integer id);
-    R query(IndexQueryDTO indexQueryDTO);
-    R query(QueryIndexDTO dto);
+    R query(QueryIndexDTO dto) throws InterruptedException;
 }

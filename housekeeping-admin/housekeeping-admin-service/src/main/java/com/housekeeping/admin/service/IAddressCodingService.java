@@ -13,7 +13,7 @@ import java.io.IOException;
 public interface IAddressCodingService {
 
     R addressCoding(String address);
-    Integer getInstanceByPointByWalking(String latitude1,
+    Double getInstanceByPointByWalking(String latitude1,
                                   String longitude1,
                                   String latitude2,
                                   String longitude2);

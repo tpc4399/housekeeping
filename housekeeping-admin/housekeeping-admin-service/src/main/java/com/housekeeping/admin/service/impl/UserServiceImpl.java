@@ -102,21 +102,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     @Transactional
-    public R saveEmp(RegisterDTO registerDTO) {
-        if (CommonUtils.isNotEmpty(registerDTO)) {
-            if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
+    public R saveEmp(RegisterCompanyDTO dto) {
+        if (CommonUtils.isNotEmpty(dto)) {
+            if (CommonUtils.isNotEmpty(dto.getCode())) {
                 //判斷redis中的驗證碼是否正確
-                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 2 + "_+" + registerDTO.getPhonePrefix() + "_" + registerDTO.getPhone()))) {
-                    if (registerDTO.getPassword().equals(registerDTO.getRepassword())) {
+                if (dto.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 2 + "_+" + dto.getPhonePrefix() + "_" + dto.getPhone()))) {
+                    if (dto.getPassword().equals(dto.getRePassword())) {
                         //先保存User
                         User user = new User();
                         String s = String.valueOf(System.currentTimeMillis());
                         user.setNumber("c"+s);
                         user.setDeptId(2);
-                        user.setName(registerDTO.getName());
-                        user.setPhonePrefix(registerDTO.getPhonePrefix());
-                        user.setPhone(registerDTO.getPhone());
-                        user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
+                        user.setName(dto.getName());
+                        user.setPhonePrefix(dto.getPhonePrefix());
+                        user.setPhone(dto.getPhone());
+                        user.setPassword(DESEncryption.getEncryptString(dto.getPassword()));
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
@@ -155,19 +155,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R saveCus(RegisterDTO registerDTO) {
-        if (CommonUtils.isNotEmpty(registerDTO)) {
-            if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
+    public R saveCus(RegisterCustomerDTO dto) {
+        if (CommonUtils.isNotEmpty(dto)) {
+            if (CommonUtils.isNotEmpty(dto.getCode())) {
                 //判斷redis中的驗證碼是否正確
-                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 3 + "_+" + registerDTO.getPhonePrefix() + "_" + registerDTO.getPhone()))) {
-                    if (registerDTO.getPassword().equals(registerDTO.getRepassword())) {
+                if (dto.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 3 + "_+" + dto.getPhonePrefix() + "_" + dto.getPhone()))) {
+                    if (dto.getPassword().equals(dto.getRePassword())) {
                         User user = new User();
                         user.setNumber(String.valueOf(System.currentTimeMillis()));
                         user.setDeptId(3);
-                        user.setName(registerDTO.getName());
-                        user.setPhonePrefix(registerDTO.getPhonePrefix());
-                        user.setPhone(registerDTO.getPhone());
-                        user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
+                        user.setName(dto.getName());
+                        user.setPhonePrefix(dto.getPhonePrefix());
+                        user.setPhone(dto.getPhone());
+                        user.setPassword(DESEncryption.getEncryptString(dto.getPassword()));
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
@@ -178,33 +178,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         }
                         //在保存後台管理員詳情信息
                         CustomerDetails customerDetails = new CustomerDetails();
-                        customerDetails.setPhonePrefix(registerDTO.getPhonePrefix());
-                        customerDetails.setPhone(registerDTO.getPhone());
+                        customerDetails.setPhonePrefix(dto.getPhonePrefix());
+                        customerDetails.setPhone(dto.getPhone());
                         customerDetails.setUserId(maxUserId);
                         customerDetails.setBlacklistFlag(false);//默认值false
                         customerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         customerDetails.setCreateTime(LocalDateTime.now());
                         customerDetails.setUpdateTime(LocalDateTime.now());
                         customerDetailsService.save(customerDetails);
+
+                        //把地址存為經緯度
                         CustomerAddress customerAddress = new CustomerAddress();
                         customerAddress.setCustomerId(maxUserId);
                         customerAddress.setIsDefault(true);
                         customerAddress.setName("註冊地址");
-                        customerAddress.setAddress(registerDTO.getAddress());
-                        //把地址存為經緯度
-                        JSONObject jsonObject = (JSONObject) addressCodingService.addressCoding(customerAddress.getAddress()).getData();
-                        Double lng = new Double(0);
-                        Double lat = new Double(0);
-                        try {
-                            JSONObject result = (JSONObject) jsonObject.get("result");
-                            JSONObject location = (JSONObject) result.get("location");
-                            lng = (Double) location.get("lng");
-                            lat = (Double) location.get("lat");
-                        }catch (RuntimeException e){
-                            return R.failed("地址無法識別");
-                        }
-                        customerAddress.setLng(lng.toString());
-                        customerAddress.setLat(lat.toString());
+                        customerAddress.setAddress(dto.getAddress());
+                        customerAddress.setLng(dto.getLng());
+                        customerAddress.setLat(dto.getLat());
                         customerAddressService.save(customerAddress);
                     } else {
                         return R.failed("兩次密碼不一致");
@@ -220,19 +210,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public R saveAdmin(RegisterDTO registerDTO) {
-        if (CommonUtils.isNotEmpty(registerDTO)) {
-            if (CommonUtils.isNotEmpty(registerDTO.getCode())) {
+    public R saveAdmin(RegisterAdminDTO dto) {
+        if (CommonUtils.isNotEmpty(dto)) {
+            if (CommonUtils.isNotEmpty(dto.getCode())) {
                 //判斷redis中的驗證碼是否正確
-                if (registerDTO.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 1 + "_+" + registerDTO.getPhonePrefix() + "_" + registerDTO.getPhone()))) {
-                    if (registerDTO.getPassword().equals(registerDTO.getRepassword())) {
+                if (dto.getCode().equals(redisUtils.get(CommonConstants.REGISTER_KEY_BY_PHONE + "_" + 1 + "_+" + dto.getPhonePrefix() + "_" + dto.getPhone()))) {
+                    if (dto.getPassword().equals(dto.getRePassword())) {
                         User user = new User();
                         user.setNumber(String.valueOf(System.currentTimeMillis()));
                         user.setDeptId(1);
-                        user.setName(registerDTO.getName());
-                        user.setPhonePrefix(registerDTO.getPhonePrefix());
-                        user.setPhone(registerDTO.getPhone());
-                        user.setPassword(DESEncryption.getEncryptString(registerDTO.getPassword()));
+                        user.setName(dto.getName());
+                        user.setPhonePrefix(dto.getPhonePrefix());
+                        user.setPhone(dto.getPhone());
+                        user.setPassword(DESEncryption.getEncryptString(dto.getPassword()));
                         user.setLastReviserId(TokenUtils.getCurrentUserId());
                         user.setCreateTime(LocalDateTime.now());
                         user.setUpdateTime(LocalDateTime.now());
