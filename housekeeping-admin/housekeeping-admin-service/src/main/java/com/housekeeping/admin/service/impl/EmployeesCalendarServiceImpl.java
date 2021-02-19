@@ -8,18 +8,12 @@ import com.housekeeping.admin.entity.EmployeesCalendarDetails;
 import com.housekeeping.admin.entity.EmployeesContractDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
-import com.housekeeping.admin.service.IEmployeesCalendarDetailsService;
-import com.housekeeping.admin.service.IEmployeesCalendarService;
-import com.housekeeping.admin.service.IEmployeesContractDetailsService;
-import com.housekeeping.admin.service.IEmployeesContractService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.admin.vo.TimeSlotVo;
 import com.housekeeping.common.entity.PeriodOfTime;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.OptionalBean;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.SortListUtil;
+import com.housekeeping.common.utils.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,6 +39,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private IEmployeesContractService employeesContractService;
     @Resource
     private IEmployeesContractDetailsService employeesContractDetailsService;
+    @Resource
+    private ICompanyDetailsService companyDetailsService;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private ManagerDetailsService managerDetailsService;
+    @Resource
+    private ICustomerDetailsService customerDetailsService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -55,6 +57,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }else {
             return R.failed(res, "數據不合理");
         }
+
+        /* 鉴权处理 */
+        String authenticationResult = this.authenticationProcessing(dto.getEmployeesId());
+        if (!authenticationResult.equals(CommonConstants.AUTHENTICATION_SUCCESSFUL)){
+            return R.failed(null, authenticationResult);
+        }
+
         /* 删掉原有的 */
         QueryWrapper deleteQw = new QueryWrapper();
         deleteQw.eq("employees_id", dto.getEmployeesId());
@@ -108,6 +117,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }else {
             return R.failed(res, "數據不合理");
         }
+
+        /* 鉴权处理 */
+        String authenticationResult = this.authenticationProcessing(dto.getEmployeesId());
+        if (!authenticationResult.equals(CommonConstants.AUTHENTICATION_SUCCESSFUL)){
+            return R.failed(null, authenticationResult);
+        }
+
         /* 添加新的 */
         StringBuilder week = new StringBuilder();
         dto.getWeek().forEach(wk->{
@@ -154,6 +170,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }else {
             return R.failed(res, "數據不合理");
         }
+
+        /* 鉴权处理 */
+        String authenticationResult = this.authenticationProcessing(dto.getEmployeesId());
+        if (!authenticationResult.equals(CommonConstants.AUTHENTICATION_SUCCESSFUL)){
+            return R.failed(null, authenticationResult);
+        }
+
         /* 添加新的 */
         dto.getTimeSlotList().forEach(timeSlot -> {
             EmployeesCalendar employeesCalendar =
@@ -369,4 +392,27 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
         return resCollections;
     }
+
+
+    private String authenticationProcessing(Integer employeesId){
+        String roleType = TokenUtils.getRoleType();
+        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN)){
+            return CommonConstants.AUTHENTICATION_SUCCESSFUL;//直接鉴权放行
+        }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            //需要检查公司账户下有没有这个保洁员id
+            return companyDetailsService.thereIsACleaner(employeesId) ? CommonConstants.AUTHENTICATION_SUCCESSFUL : "保潔員不存在";
+        }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_CUSTOMER)){
+            return "客戶怎麼能調這個藉口";
+        }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            /* 判断该保洁员受不受到我管辖 */
+            return managerDetailsService.thereIsACleaner(employeesId) ? CommonConstants.AUTHENTICATION_SUCCESSFUL : "該保潔員不被您管轄或者保潔員不存在";
+        }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            /* 判斷保潔員是不是我 */
+            return employeesDetailsService.isMe(employeesId) ? CommonConstants.AUTHENTICATION_SUCCESSFUL : "保潔員只能設置自己的時間表";
+        }else {
+            return CommonConstants.AUTHENTICATION_FAILED;
+        }
+    }
+
+
 }

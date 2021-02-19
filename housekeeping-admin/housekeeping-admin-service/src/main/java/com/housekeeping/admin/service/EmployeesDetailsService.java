@@ -22,4 +22,5 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R updateHeadUrlByUserId(String headUrl, Integer id);
     R canSheMakeAnWork(Integer employeesId);
     R blacklist(Integer employeesId, Boolean action);
+    Boolean isMe(Integer employeesId);
 }

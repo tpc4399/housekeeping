@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
+import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
@@ -31,12 +33,12 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
 
     @Resource
     private OSSClient ossClient;
-
     @Value("${oss.bucketName}")
     private String bucketName;
-
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
 
     @Override
     public String uploadLogo(MultipartFile file, Integer reviserId) throws IOException {
@@ -230,6 +232,18 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         CompanyDetails one = this.getOne(qw);
         baseMapper.buyTokens(one.getTokens(),one.getId(),1000);
         return R.ok("購買一千代幣成功");
+    }
+
+    @Override
+    public Boolean thereIsACleaner(Integer employeesId) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        CompanyDetails companyDetails = this.getOne(qw);
+        Integer companyId = companyDetails.getId();
+        EmployeesDetails employeesDetails = employeesDetailsService.getById(employeesId);
+
+        return employeesDetails.getCompanyId().equals(companyId);
     }
 
     public void promotion(Integer companyId,Integer tokens){

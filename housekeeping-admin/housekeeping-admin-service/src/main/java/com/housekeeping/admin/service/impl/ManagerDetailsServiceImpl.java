@@ -13,7 +13,6 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +23,8 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service("managerDetailsService")
@@ -33,27 +32,24 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     @Resource
     private ICompanyDetailsService companyDetailsService;
-
     @Resource
     private IManagerMenuService managerMenuService;
-
     @Resource
     private ISysMenuService sysMenuService;
-
     @Resource
     private IUserService userService;
-
     @Resource
     private RedisUtils redisUtils;
-
     @Resource
     private OSSClient ossClient;
-
     @Value("${oss.bucketName}")
     private String bucketName;
-
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
+    @Resource
+    private IGroupManagerService groupManagerService;
+    @Resource
+    private IGroupEmployeesService groupEmployeesService;
 
     @Override
     public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
@@ -226,6 +222,30 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     @Override
     public List<Integer> getManIdsByCompId(Integer id) {
         return baseMapper.getManIdsByCompId(id);
+    }
+
+    @Override
+    public Boolean thereIsACleaner(Integer employeesId) {
+        AtomicReference<Boolean> res = new AtomicReference<>(false);
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        ManagerDetails managerDetails = this.getOne(qw);
+        Integer managerId = managerDetails.getId();
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.eq("manager_id", managerId);
+        List<GroupManager> groupManagerList = groupManagerService.list(qw2);
+        groupManagerList.forEach(groupManager -> {
+            QueryWrapper qw3 = new QueryWrapper();
+            qw3.eq("group_id", groupManager.getGroupId());
+            List<GroupEmployees> groupEmployeesList = groupEmployeesService.list(qw3);
+            groupEmployeesList.forEach(groupEmployees -> {
+                if (groupEmployees.getEmployeesId().equals(employeesId)){
+                    res.set(true);
+                }
+            });
+        });
+        return res.get();
     }
 
     /**

@@ -379,6 +379,15 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(null, "操作成功");
     }
 
+    @Override
+    public Boolean isMe(Integer employeesId) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        EmployeesDetails employeesDetails = this.getOne(qw);
+        return employeesDetails.getId().equals(employeesId);
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return

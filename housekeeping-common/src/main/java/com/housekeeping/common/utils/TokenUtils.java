@@ -109,6 +109,41 @@ public class TokenUtils {
         }
     }
 
+    public static String getRoleType(){
+        HttpServletRequest request = ((ServletRequestAttributes) Objects
+                .requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+        String token = request.getHeader("Authorization");
+        if (CommonUtils.isNotEmpty(token)){
+            if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX) || token.startsWith(CommonConstants.LOGIN_MANAGER_PREFIX)){
+                /** 判斷token的有效性 */
+                Object re = redisUtils.get(token);
+                if (CommonUtils.isNotEmpty(re)){
+                    if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX)){
+                        return CommonConstants.REQUEST_ORIGIN_EMPLOYEES;
+                    } else {
+                        return CommonConstants.REQUEST_ORIGIN_MANAGER;
+                    }
+                }else {
+                    //失效導致
+                    return CommonConstants.TOKEN_INVALID;
+                }
+            }else {
+                HkUser hkUser = TokenUtils.parsingToken(token);
+                if (hkUser.getDeptId().equals(1)){
+                    return CommonConstants.REQUEST_ORIGIN_ADMIN;
+                }else if (hkUser.getDeptId().equals(2)){
+                    return CommonConstants.REQUEST_ORIGIN_COMPANY;
+                }else if (hkUser.getDeptId().equals(3)){
+                    return CommonConstants.REQUEST_ORIGIN_CUSTOMER;
+                }else {
+                    return CommonConstants.TOKEN_UNRECOGNIZED;
+                }
+            }
+        }else {
+            return "";
+        }
+    }
+
     public static Integer getUserId(String token){
         if (CommonUtils.isNotEmpty(token)){
             if (token.startsWith(CommonConstants.LOGIN_EMPLOYEES_PREFIX) || token.startsWith(CommonConstants.LOGIN_MANAGER_PREFIX)){

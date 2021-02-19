@@ -54,7 +54,14 @@ public interface CommonConstants {
 	String BINDING_EMAIL_PREFIX = "BINDING_EMAIL_";
 	/** 包工的匹配度 */
 	Float CONTRACT_COMPATIBILITY = 0.8f;
-
+	/** token失效標誌 */
+	String TOKEN_INVALID = "TOKEN_INVALID";
+	/** token無法識別 */
+	String TOKEN_UNRECOGNIZED = "TOKEN_UNRECOGNIZED";
+	/** 鉴权放行标志 */
+	String AUTHENTICATION_SUCCESSFUL = "AUTHENTICATION_SUCCESSFUL";
+	/** 鉴权失敗标志 */
+	String AUTHENTICATION_FAILED = "AUTHENTICATION_FAILED";
 	/**
 	 * 删除
 	 */
