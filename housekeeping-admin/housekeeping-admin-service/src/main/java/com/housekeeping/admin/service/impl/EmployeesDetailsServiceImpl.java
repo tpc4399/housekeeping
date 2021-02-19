@@ -265,6 +265,20 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Override
     public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
+        /* 鉴权 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!companyDetailsService.thereIsACleaner(id)){
+                return R.failed(null, "該員工不存在");
+            }
+        }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            if (!managerDetailsService.thereIsACleaner(id)){
+                return R.failed(null, "該員工不被您管轄或者該員工不存在");
+            }
+        }else {
+            return R.failed(null, "鑒權失敗");
+        }
+
         EmployeesDetails employeesDetails = baseMapper.selectById(id);
         if (CommonUtils.isNotEmpty(employeesDetails)){
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码

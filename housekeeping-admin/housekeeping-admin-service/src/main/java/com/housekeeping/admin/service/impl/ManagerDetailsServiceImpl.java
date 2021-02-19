@@ -50,6 +50,8 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     private IGroupManagerService groupManagerService;
     @Resource
     private IGroupEmployeesService groupEmployeesService;
+    @Resource
+    private ManagerDetailsService managerDetailsService;
 
     @Override
     public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
@@ -129,10 +131,26 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     }
 
-
-
     @Override
     public R getLinkToLogin(Integer id, Long h) throws UnknownHostException {
+        /* 鉴权 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            Integer userId = TokenUtils.getCurrentUserId();
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("user_id", userId);
+            CompanyDetails companyDetails = companyDetailsService.getOne(qw);
+            ManagerDetails managerDetails = managerDetailsService.getById(id);
+
+            if (companyDetails.getId().equals(managerDetails.getCompanyId())){
+                //鑒權成功
+            }else {
+                return R.failed(null, "該經理不存在");
+            }
+        }else {
+            return R.failed(null, "鑒權失敗");
+        }
+
         ManagerDetails managerDetails = baseMapper.selectById(id);
         if (CommonUtils.isNotEmpty(managerDetails)){
             String mysteriousCode = CommonUtils.getMysteriousCode(); //神秘代码
