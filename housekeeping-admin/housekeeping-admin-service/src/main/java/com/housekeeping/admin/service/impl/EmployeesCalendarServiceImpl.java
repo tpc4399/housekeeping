@@ -226,7 +226,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
         employeesCalendarList.forEach(employeesCalendar -> {
             QueryWrapper qw1 = new QueryWrapper();
-            qw.eq("calendar_id", employeesCalendar.getId());
+            qw1.eq("calendar_id", employeesCalendar.getId());
             List<EmployeesCalendarDetails> employeesCalendarDetailsList = employeesCalendarDetailsService.list(qw1);
             List<JobAndPriceDTO> jobAndPriceDTOList = employeesCalendarDetailsList.stream().map(employeesCalendarDetails -> {
                 JobAndPriceDTO jobAndPriceDTO = new JobAndPriceDTO();

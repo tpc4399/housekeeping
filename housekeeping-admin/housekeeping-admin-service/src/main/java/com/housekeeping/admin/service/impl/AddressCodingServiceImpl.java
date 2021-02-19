@@ -106,7 +106,7 @@ public class AddressCodingServiceImpl implements IAddressCodingService {
             return meter;
         } catch (Exception e) {
             e.printStackTrace();
-            return 0d;
+            return Double.MAX_VALUE;
         }
     }
 

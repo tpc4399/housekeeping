@@ -81,6 +81,8 @@ public class TokenUtils {
         hkUser.setPhone(audience.get(1));
         hkUser.setAuthType(Integer.valueOf(audience.get(2)));
         hkUser.setId(Integer.valueOf(audience.get(3)));
+        hkUser.setDeptId(Integer.valueOf(audience.get(4)));
+        hkUser.setPhonePrefix(audience.get(5));
         hkUser.setPassword(hkUser.getPassword());
 
         return hkUser;

@@ -207,7 +207,9 @@ public class SysIndexServiceImpl
             Boolean isOk = true;
 
             /** instance: 距离准备、筛选 */
-            Double instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
+//            Double instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
+            String str = CommonUtils.getInstanceByPoint(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
+            Double instance = new Double(str);
             Double scopeOfOrder = new Double(existEmployee.getScopeOfOrder());//默认3000米接单范围
             if (instance > scopeOfOrder){
                 isOk = false;
@@ -231,7 +233,8 @@ public class SysIndexServiceImpl
             timeSlots.forEach(timeSlot -> {
                 dayTimeRequired.set(dayTimeRequired.get() + timeSlot.getTimeSlotLength());
             });
-            Float totalTimeRequired = (Period.between(start, end).getDays()+1) * dayTimeRequired.get();
+            Long daysCount = end.toEpochDay() - start.toEpochDay() + 1;
+            Float totalTimeRequired = daysCount * dayTimeRequired.get();
 
             /** requireTime 客户需求时段加工准备 */
             List<LocalTime> requireTime = this.periodSplittingB(timeSlots);
@@ -362,9 +365,26 @@ public class SysIndexServiceImpl
         return R.ok(map, "搜索成功");
     }
 
+    /* 求交集,不改变原list */
     private List<Integer> getIntersection(List<Integer> a, List<Integer> b){
-        a.retainAll(b);
-        return a;
+        List<Integer> a1 = new ArrayList<>(a);
+        List<Integer> b1 = new ArrayList<>(b);
+        a1.retainAll(b1);
+        return a1;
+    }
+
+    /* 求並集,不改变原list */
+    public List<Integer> getUnion(List<Integer> a, List<Integer> b){
+        List<Integer> a1 = new ArrayList<>(a);
+        List<Integer> b1 = new ArrayList<>(b);
+        a1.forEach(x -> {
+            if (b1.contains(x)){
+
+            }else {
+                b1.add(x);
+            }
+        });
+        return b1;
     }
 
     private Map<LocalDate, List<PeriodOfTimeWithHourlyWage>> getMap1(Map<Object, List<EmployeesCalendar>> calendarMap, String toCode){
@@ -779,7 +799,7 @@ public class SysIndexServiceImpl
         List<Integer> employeeIdsFromContract = employeesContractService.listObjs(qw1);
         List<Integer> list1 = new ArrayList<>(employeeIdsFromCalendar);    //能做钟点工的保洁员
         List<Integer> list2 = new ArrayList<>(employeeIdsFromContract);    //能做包工的保洁员
-        List<Integer> list3 = this.getIntersection(list1, list2);          //能做任一工种的保洁员
+        List<Integer> list3 = this.getUnion(list1, list2);                 //能做任一工种的保洁员
         employeesSearchPool.put(1, list1);
         employeesSearchPool.put(2, list2);
         employeesSearchPool.put(3, list3);
