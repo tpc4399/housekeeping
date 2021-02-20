@@ -108,13 +108,16 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public R changePw(String newPassword, HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        HkUser hkUser = TokenUtils.parsingToken(token);
-        String phone = hkUser.getPhone();
-        String newPasswordEn = DESEncryption.getEncryptString(newPassword);
-        userMapper.changePasswordByPhone(phone, newPasswordEn);
-        return R.ok("修改密碼成功");
+    public R changePw(String newPassword, String rePassword) {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        if(!newPassword.equals(rePassword)){
+            return R.failed("两次密码不一致");
+        }else {
+            String encryptString = DESEncryption.getEncryptString(newPassword);
+            userMapper.updatePassword(currentUserId, encryptString);
+            return R.ok("密码修改成功");
+        }
     }
+
 
 }

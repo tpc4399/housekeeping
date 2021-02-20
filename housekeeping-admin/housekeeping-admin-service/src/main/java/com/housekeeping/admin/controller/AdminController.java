@@ -1,13 +1,18 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminPageDTO;
 import com.housekeeping.admin.dto.ForgetDTO;
 import com.housekeeping.admin.dto.RegisterAdminDTO;
 import com.housekeeping.admin.dto.RegisterDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -78,5 +83,20 @@ public class AdminController {
     public R getAllAdmin(Page page, AdminPageDTO adminPageDTO){
         return userService.getAllUser(page,adminPageDTO,1);
     }
+
+    @ApiOperation("【管理员】获取当前管理员信息")
+    @GetMapping("/info")
+    public R getCompanyDetailsByUserId(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("id", userId);
+        User admin = userService.getOne(queryWrapper);
+        if (admin.getDeptId().equals(1)){
+            return R.ok(admin);
+        } else {
+            return R.failed("当前账户不是管理员账户");
+        }
+    }
+
 
 }

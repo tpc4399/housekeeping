@@ -39,4 +39,6 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     Integer getUserId(Integer id);
 
     Integer getEmpId(int parseInt);
+
+    Integer getUserIdByCom(Integer companyId);
 }
