@@ -6,6 +6,7 @@ import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.multipart.MultipartFile;
 

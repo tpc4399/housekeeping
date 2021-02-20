@@ -13,6 +13,7 @@ import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONObject;
@@ -272,8 +273,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 return R.failed(null, "該員工不存在");
             }
         }else if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
-            if (!managerDetailsService.thereIsACleaner(id)){
-                return R.failed(null, "該員工不被您管轄或者該員工不存在");
+            if (managerDetailsService.thereIsACleaner(id)){
+                return R.failed(null, "該員工不受您管轄或者員工不存在");
             }
         }else {
             return R.failed(null, "鑒權失敗");

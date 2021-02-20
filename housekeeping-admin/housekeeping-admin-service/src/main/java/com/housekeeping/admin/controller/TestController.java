@@ -1,13 +1,7 @@
 package com.housekeeping.admin.controller;
 
-import com.google.maps.errors.ApiException;
-import com.housekeeping.admin.dto.AddressDetailsDTO;
 import com.housekeeping.admin.dto.DateSlot;
-import com.housekeeping.admin.dto.TimeSlotDTO;
-import com.housekeeping.admin.service.IAddressCodingService;
-import com.housekeeping.admin.service.ICurrencyService;
-import com.housekeeping.admin.service.IEmployeesCalendarService;
-import com.housekeeping.admin.service.IEmployeesContractService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -15,10 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import net.sf.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -37,6 +29,7 @@ public class TestController {
     private final IAddressCodingService addressCodingService;
     private final IEmployeesCalendarService employeesCalendarService;
     private final IEmployeesContractService employeesContractService;
+    private final ITestService testService;
 
     @GetMapping("/test1")
     @ApiOperation("测试1")
@@ -69,6 +62,21 @@ public class TestController {
         dateSlot.setEnd(LocalDate.of(2021,3,30));
         Map<LocalDate, List<TimeSlot>> res =  employeesContractService.getCalendarByContractId(dateSlot, 1);
         return R.ok("解析成功");
+    }
+
+    @GetMapping("/test4")
+    @ApiOperation("多线程测试")
+    public R test4(){
+        for (int i = 0; i < 20; i++) {
+            testService.syncMethod(i);
+        }
+        return R.ok();
+    }
+    @GetMapping("/test5")
+    @ApiOperation("多线程测试2")
+    public R test5(){
+        testService.threadMethod();
+        return R.ok();
     }
 
 }

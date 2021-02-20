@@ -6,6 +6,7 @@ import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.PriceSlotVo;
 import com.housekeeping.admin.vo.SysIndexVo;
 import com.housekeeping.admin.vo.TimeSlot;
@@ -23,6 +24,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -185,10 +188,10 @@ public class SysIndexServiceImpl
         List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
-        Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new HashMap<>();
+        Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new Hashtable<>();
 
         /** indexQueryResultEmployeesList 匹配的员工信息整合 */
-        List<IndexQueryResultEmployees> matchingEmployeesDetails = new ArrayList<>();
+        List<IndexQueryResultEmployees> matchingEmployeesDetails = Collections.synchronizedList(new ArrayList<>());
 
 
         /** promoteEmployeeIds 推广员工搜索池 */
@@ -197,108 +200,27 @@ public class SysIndexServiceImpl
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
 
+        ExecutorService ex = Executors.newCachedThreadPool();
         employeesSearchPool.get(type).forEach(existEmployeesId -> {
-            /** indexQueryResultEmployees 保洁员返回信息 */
-            IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
+            EmployeesHandleVo vo = new EmployeesHandleVo(
+                    existEmployeesId,
+                    addressDetailsDTO,
+                    start,
+                    end,
+                    indexId,
+                    timeSlots,
+                    type,
+                    contendId
+            );
 
-            /** existEmployee 当前保洁员信息 */
-            EmployeesDetails existEmployee = employeesDetailsService.getById(existEmployeesId);
-            /** isOk 这个员工是否ok */
-            Boolean isOk = true;
-
-            /** instance: 距离准备、筛选 */
-//            Double instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
-            String str = CommonUtils.getInstanceByPoint(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
-            Double instance = new Double(str);
-            Double scopeOfOrder = new Double(existEmployee.getScopeOfOrder());//默认3000米接单范围
-            if (instance > scopeOfOrder){
-                isOk = false;
-                return;
-            }else {
-                indexQueryResultEmployees.setInstance(instance);
-            }
-
-            /** calendar： 钟点工闲置时间准备 */
-            DateSlot dateSlot = new DateSlot(start, end);
-            Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, existEmployeesId);
-
-            /** employeesContractList: 保洁员的相关工作内容的包工准备 */
-            QueryWrapper contractQw = new QueryWrapper();
-            contractQw.eq("type", indexId);
-            contractQw.eq("employees_id", existEmployee.getId());
-            List<EmployeesContract> employeesContractList = employeesContractService.list(contractQw);
-
-            /** totalTimeRequired 客户需求总时长准备 */
-            AtomicReference<Float> dayTimeRequired = new AtomicReference<>(0f);
-            timeSlots.forEach(timeSlot -> {
-                dayTimeRequired.set(dayTimeRequired.get() + timeSlot.getTimeSlotLength());
+            ex.submit(new Runnable() {
+                @Override
+                public void run() {
+                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+                }
             });
-            Long daysCount = end.toEpochDay() - start.toEpochDay() + 1;
-            Float totalTimeRequired = daysCount * dayTimeRequired.get();
-
-            /** requireTime 客户需求时段加工准备 */
-            List<LocalTime> requireTime = this.periodSplittingB(timeSlots);
-
-            /**
-             * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok
-             */
-            if (type == 1){
-                List<JobAndPriceDetails> service1 = this.getService1(contendId, start, end, calendar, requireTime, totalTimeRequired);
-                if (service1.size() != 0){
-                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
-                    indexQueryResultEmployees.setEmployeesType(type);
-                    indexQueryResultEmployees.setService2(new ArrayList<>());
-                    indexQueryResultEmployees.setService1(service1);
-                }else {
-                    isOk = false;
-                    return;
-                }
-            }else if (type == 2){
-                List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, start, end, requireTime, totalTimeRequired, dateSlot);
-                if (service2.size() != 0){
-                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
-                    indexQueryResultEmployees.setEmployeesType(type);
-                    indexQueryResultEmployees.setService2(service2);
-                    indexQueryResultEmployees.setService1(new ArrayList<>());
-                }else {
-                    isOk = false;
-                    return;
-                }
-            }else if (type == 3){
-                List<JobAndPriceDetails> service1 = this.getService1(contendId, start, end, calendar, requireTime, totalTimeRequired);
-                List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, start, end, requireTime, totalTimeRequired, dateSlot);
-                if (service1.size() == 0 && service2.size() == 0){
-                    isOk = false;
-                    return;
-                }else {
-                    if (service1.size() != 0 && service2.size() == 0){
-                        indexQueryResultEmployees.setEmployeesType(1);
-                    }else if (service1.size() == 0 && service2.size() != 0){
-                        indexQueryResultEmployees.setEmployeesType(2);
-                    }else if (service1.size() != 0 && service2.size() != 0){
-                        indexQueryResultEmployees.setEmployeesType(3);
-                    }
-                    indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(existEmployeesId));
-                    indexQueryResultEmployees.setService2(service2);
-                    indexQueryResultEmployees.setService1(service1);
-                }
-            }
-
-            /** score: 评分(星级)准备 */
-            Float score = existEmployee.getStarRating();
-            indexQueryResultEmployees.setScore(score);
-
-            /** companyId: 所属公司准备 */
-            Integer companyId = existEmployee.getCompanyId();
-
-            /** 都走到这一步了，这个员工就相当于能被搜索到了,那直接添加到结果集,等下做数据返回 */
-            List<IndexQueryResultEmployees> indexQueryResultEmployeesList = matchingCompanyIdsAndEmployeesDetails.getOrDefault(companyId, new ArrayList<>());
-            indexQueryResultEmployeesList.add(indexQueryResultEmployees);
-            matchingCompanyIdsAndEmployeesDetails.put(companyId, indexQueryResultEmployeesList);
-            matchingEmployeesDetails.add(indexQueryResultEmployees);
-
         });
-
+        ex.shutdown();
         /**
          * 如果只选钟点工：
          * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容） 3、排序: 推荐值降序
@@ -667,7 +589,7 @@ public class SysIndexServiceImpl
                     todayTime.forEach(today -> {
                         if (today.getTime().equals(time)){
                             today.getJobAndPriceList().forEach(jobAndPriceDTO -> {
-                                if (jobAndPriceDTO.getJobId() == jobId){
+                                if (jobAndPriceDTO.getJobId().equals(jobId)){
                                     //这个班可以出席
                                     canBeOnDuty.set(true);
                                     attendance.halfAnHourMore();
@@ -675,7 +597,7 @@ public class SysIndexServiceImpl
                                     BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
                                             jobAndPriceDTO.getCode(),
                                             "TWD",
-                                            new BigDecimal(jobAndPriceDTO.getPrice())
+                                            new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2))
                                     );
                                     attendance.increaseTheTotalPrice(halfAnHourWage);
                                 }
@@ -691,7 +613,9 @@ public class SysIndexServiceImpl
                         noAttendanceTime.add(time);
                     }
                 });
-                noAttendanceDetails.put(date, noAttendanceTime);
+                if (noAttendanceTime.size() != 0){
+                    noAttendanceDetails.put(date, noAttendanceTime);
+                }
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -742,7 +666,9 @@ public class SysIndexServiceImpl
                         noAttendanceTime.add(time);
                     }
                 });
-                noAttendanceDetails.put(date, noAttendanceTime);
+                if (noAttendanceTime.size() != 0){
+                    noAttendanceDetails.put(date, noAttendanceTime);
+                }
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -757,9 +683,8 @@ public class SysIndexServiceImpl
         return service2;
     }
 
-    @Async
     List<Integer> indexIdHandleContendId(Integer indexId){
-        System.out.println("线程"+Thread.currentThread().getName()+"1启动");
+        System.out.println("线程"+Thread.currentThread().getName()+" 1启动");
         QueryWrapper qw0 = new QueryWrapper();
         qw0.eq("index_id", indexId);
         List<SysIndexContent> sysIndexContentList = sysIndexContentService.list(qw0);
@@ -769,9 +694,8 @@ public class SysIndexServiceImpl
         return contendId;
     }
 
-    @Async
     List<Integer> getPromoteCompanyIds(){
-        System.out.println("线程"+Thread.currentThread().getName()+"2启动");
+        System.out.println("线程"+Thread.currentThread().getName()+" 2启动");
         List<Integer> promoteCompanyIds = new ArrayList<>();
         QueryWrapper qw2 = new QueryWrapper();
         qw2.select("company_id").gt("end_time", LocalDateTime.now());
@@ -779,9 +703,8 @@ public class SysIndexServiceImpl
         return promoteCompanyIds;
     }
 
-    @Async
     List<Integer> getPromoteEmployeeIds(){
-        System.out.println("线程"+Thread.currentThread().getName()+"3启动");
+        System.out.println("线程"+Thread.currentThread().getName()+" 3启动");
         List<Integer> promoteEmployeeIds = new ArrayList<>();
         QueryWrapper qw3 = new QueryWrapper();
         qw3.select("employees_id").gt("end_time", LocalDateTime.now());
@@ -789,9 +712,8 @@ public class SysIndexServiceImpl
         return promoteEmployeeIds;
     }
 
-    @Async
     Map<Integer, List<Integer>> getEmployeesSearchPool(){
-        System.out.println("线程"+Thread.currentThread().getName()+"4启动");
+        System.out.println("线程"+Thread.currentThread().getName()+" 4启动");
         Map<Integer, List<Integer>> employeesSearchPool = new HashMap<>();
         QueryWrapper qw1 = new QueryWrapper();
         qw1.select("employees_id").groupBy("employees_id");
@@ -807,62 +729,109 @@ public class SysIndexServiceImpl
     }
 
     @Async
-    void thread5() throws InterruptedException {
-        System.out.println("线程5 start");
-        Thread.sleep(10000);
-        System.out.println("线程5 end");
+    public void existEmployeesHandle(EmployeesHandleVo vo,
+                                     Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
+                                     List<IndexQueryResultEmployees> matchingEmployeesDetails){
+        System.out.println(Thread.currentThread().getName()+ " employeesId:" + vo.getExistEmployeesId());
+        /** indexQueryResultEmployees 保洁员返回信息 */
+        IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
-    }
+        /** existEmployee 当前保洁员信息 */
+        EmployeesDetails existEmployee = employeesDetailsService.getById(vo.getExistEmployeesId());
+        /** isOk 这个员工是否ok */
+        Boolean isOk = true;
 
-    @Async
-    void thread6() throws InterruptedException {
-        System.out.println("线程6 启动");
-        Thread.sleep(1000);
-        System.out.println("线程6 end");
-    }
+        /** instance: 距离准备、筛选 */
+//            Double instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
+        String str = CommonUtils.getInstanceByPoint(existEmployee.getLat(), existEmployee.getLng(), vo.getAddressDetailsDTO().getLat().toString(), vo.getAddressDetailsDTO().getLng().toString());
+        Double instance = new Double(str);
+        Double scopeOfOrder = new Double(existEmployee.getScopeOfOrder());//默认3000米接单范围
+        if (instance > scopeOfOrder){
+            isOk = false;
+            return;
+        }else {
+            indexQueryResultEmployees.setInstance(instance);
+        }
 
-    @Async
-    void thread7(){
-        System.out.println("线程"+Thread.currentThread().getName()+"7启动");
-    }
-    @Async
-    void thread8(){
-        System.out.println("线程"+Thread.currentThread().getName()+"8启动");
-    }
-    @Async
-    void thread9(){
-        System.out.println("线程"+Thread.currentThread().getName()+"9启动");
-    }
-    @Async
-    void thread11(){
-        System.out.println("线程"+Thread.currentThread().getName()+"11启动");
-    }
-    @Async
-    void thread22(){
-        System.out.println("线程"+Thread.currentThread().getName()+"22启动");
-    }
-    @Async
-    void thread33(){
-        System.out.println("线程"+Thread.currentThread().getName()+"33启动");
-    }
-    @Async
-    void thread44(){
-        System.out.println("线程"+Thread.currentThread().getName()+"44启动");
-    }
-    @Async
-    void thread55(){
-        System.out.println("线程"+Thread.currentThread().getName()+"55启动");
-    }
-    @Async
-    void thread66(){
-        System.out.println("线程"+Thread.currentThread().getName()+"66启动");
-    }
-    @Async
-    void thread77(){
-        System.out.println("线程"+Thread.currentThread().getName()+"77启动");
-    }
+        /** calendar： 钟点工闲置时间准备 */
+        DateSlot dateSlot = new DateSlot(vo.getStart(), vo.getEnd());
+        Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, vo.getExistEmployeesId());
 
+        /** employeesContractList: 保洁员的相关工作内容的包工准备 */
+        QueryWrapper contractQw = new QueryWrapper();
+        contractQw.eq("type", vo.getIndexId());
+        contractQw.eq("employees_id", existEmployee.getId());
+        List<EmployeesContract> employeesContractList = employeesContractService.list(contractQw);
 
+        /** totalTimeRequired 客户需求总时长准备 */
+        AtomicReference<Float> dayTimeRequired = new AtomicReference<>(0f);
+        vo.getTimeSlots().forEach(timeSlot -> {
+            dayTimeRequired.set(dayTimeRequired.get() + timeSlot.getTimeSlotLength());
+        });
+        Long daysCount = vo.getEnd().toEpochDay() - vo.getStart().toEpochDay() + 1;
+        Float totalTimeRequired = daysCount * dayTimeRequired.get();
+
+        /** requireTime 客户需求时段加工准备 */
+        List<LocalTime> requireTime = this.periodSplittingB(vo.getTimeSlots());
+
+        /**
+         * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok
+         */
+        if (vo.getType() == 1){
+            List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
+            if (service1.size() != 0){
+                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+                indexQueryResultEmployees.setEmployeesType(vo.getType());
+                indexQueryResultEmployees.setService2(new ArrayList<>());
+                indexQueryResultEmployees.setService1(service1);
+            }else {
+                isOk = false;
+                return;
+            }
+        }else if (vo.getType() == 2){
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot);
+            if (service2.size() != 0){
+                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+                indexQueryResultEmployees.setEmployeesType(vo.getType());
+                indexQueryResultEmployees.setService2(service2);
+                indexQueryResultEmployees.setService1(new ArrayList<>());
+            }else {
+                isOk = false;
+                return;
+            }
+        }else if (vo.getType() == 3){
+            List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot);
+            if (service1.size() == 0 && service2.size() == 0){
+                isOk = false;
+                return;
+            }else {
+                if (service1.size() != 0 && service2.size() == 0){
+                    indexQueryResultEmployees.setEmployeesType(1);
+                }else if (service1.size() == 0 && service2.size() != 0){
+                    indexQueryResultEmployees.setEmployeesType(2);
+                }else if (service1.size() != 0 && service2.size() != 0){
+                    indexQueryResultEmployees.setEmployeesType(3);
+                }
+                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+                indexQueryResultEmployees.setService2(service2);
+                indexQueryResultEmployees.setService1(service1);
+            }
+        }
+
+        /** score: 评分(星级)准备 */
+        Float score = existEmployee.getStarRating();
+        indexQueryResultEmployees.setScore(score);
+
+        /** companyId: 所属公司准备 */
+        Integer companyId = existEmployee.getCompanyId();
+
+        /** 都走到这一步了，这个员工就相当于能被搜索到了,那直接添加到结果集,等下做数据返回 */
+        List<IndexQueryResultEmployees> indexQueryResultEmployeesList = matchingCompanyIdsAndEmployeesDetails.getOrDefault(companyId, new ArrayList<>());
+        indexQueryResultEmployeesList.add(indexQueryResultEmployees);
+        matchingCompanyIdsAndEmployeesDetails.put(companyId, indexQueryResultEmployeesList);
+        matchingEmployeesDetails.add(indexQueryResultEmployees);
+    }
 
     @Test
     public void test() {
