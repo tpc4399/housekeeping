@@ -34,7 +34,7 @@ public class LoginAdminController {
     @ApiOperation("【系统管理员登入】phone+password")
     @LogFlag(description = "系统管理员登入【by：phone+pwd】")
     @GetMapping("/byPhonePassword")
-    public R loginB(@RequestParam("phonePrefix") String phonePrefix,
+    public R loginB(@RequestParam(value = "phonePrefix",required = false) String phonePrefix,
                     @RequestParam("phone") String phone,
                      @RequestParam("password") String password){
         return loginService.loginByPhoneAndPasswordHandle(phonePrefix, phone, password, 1);
