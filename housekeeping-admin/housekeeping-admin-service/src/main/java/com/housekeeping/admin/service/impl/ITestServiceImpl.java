@@ -25,19 +25,23 @@ public class ITestServiceImpl implements ITestService {
 
     @Override
     public void threadMethod() {
-        List<Integer> list = new ArrayList<>();
+//        Arrays.asList(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28);
+        List<Integer> list = Arrays.asList(1,2,3,4,5);
         ExecutorService ex = Executors.newCachedThreadPool();
         for (int i = 0; i < 20; i++) {
             int finalI = i;
             ex.submit(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(Thread.currentThread().getName()+ " employeesId:" + finalI);
-                    list.add(finalI);
+                    System.out.println(Thread.currentThread().getName()+ " Id:" + finalI + "開始");
+                    list.forEach(x -> {
+                        System.out.println(Thread.currentThread().getName()+ " Id:" + finalI + "-->" + x);
+                    });
+                    System.out.println(Thread.currentThread().getName()+ " Id:" + finalI + "開始");
+
                 }
             });
         }
         ex.shutdown();
-        System.out.println(Arrays.toString(list.toArray()));
     }
 }
