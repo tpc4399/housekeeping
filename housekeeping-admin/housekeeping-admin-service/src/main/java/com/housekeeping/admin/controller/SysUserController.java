@@ -1,9 +1,13 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdminAdd1DTO;
 import com.housekeeping.admin.dto.AdminAdd2DTO;
 import com.housekeeping.admin.dto.PageOfUserDTO;
+import com.housekeeping.admin.entity.CustomerDetails;
+import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
@@ -13,6 +17,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author su
@@ -58,4 +65,31 @@ public class SysUserController {
         }
     }
 
+    @GetMapping("/getAllBlackEmp")
+    @ApiOperation("【管理员】查询黑名单保洁员")
+    public R blackEmplist(){
+        QueryWrapper qw = new QueryWrapper<EmployeesDetails>();
+        qw.eq("blacklist_flag",1);
+        List<EmployeesDetails> list = employeesDetailsService.list(qw);
+        ArrayList<User> users = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            User byId = userService.getById(list.get(i).getUserId());
+            users.add(byId);
+        }
+        return R.ok(users);
+    }
+
+    @GetMapping("/getAllBlackCus")
+    @ApiOperation("【管理员】查询黑名单客户")
+    public R blackCuslist(){
+        QueryWrapper qw = new QueryWrapper<CustomerDetails>();
+        qw.eq("blacklist_flag",1);
+        List<CustomerDetails> list = customerDetailsService.list(qw);
+        ArrayList<User> users = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            User byId = userService.getById(list.get(i).getUserId());
+            users.add(byId);
+        }
+        return R.ok(users);
+    }
 }
