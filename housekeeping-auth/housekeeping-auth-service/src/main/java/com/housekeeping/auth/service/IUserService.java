@@ -26,4 +26,6 @@ public interface IUserService {
     R newPhone(String phone,String phonePrefix);
 
     R checkCodeByNewPhone(String code,String phone,String phonePrefix);
+
+    R checkToken(HttpServletRequest request);
 }

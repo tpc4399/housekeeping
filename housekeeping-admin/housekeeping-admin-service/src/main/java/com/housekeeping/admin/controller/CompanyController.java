@@ -94,6 +94,19 @@ public class CompanyController {
         }
     }
 
+    @ApiOperation("【管理员】获取公司详情信息")
+    @GetMapping("/getInfoById")
+    public R getInfoById(@RequestParam("userId") Integer userId){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(queryWrapper);
+        if (CommonUtils.isNotEmpty(companyDetails)){
+            return R.ok(companyDetails);
+        } else {
+            return R.failed("该公司不存在");
+        }
+    }
+
     @GetMapping("/getAllCompany")
     @ApiOperation("【管理员】查询所有公司賬戶")
     public R getAllCompany(Page page, AdminPageDTO adminPageDTO){

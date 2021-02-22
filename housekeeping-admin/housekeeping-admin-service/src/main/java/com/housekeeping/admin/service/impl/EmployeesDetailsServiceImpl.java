@@ -413,13 +413,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         wrComp.inSql("id","select id from company_details where user_id="+ userId);
         CompanyDetails one = companyDetailsService.getOne(wrComp);
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
-        String[] split = scaleById.split("~");
-        Integer companyMaxsize;
-        if("n".equals(split[1])){
-            companyMaxsize = Integer.MAX_VALUE;
-        }else {
-            companyMaxsize = Integer.parseInt(split[1]);
-        }
+        String[] split = scaleById.split(" ");
+        Integer companyMaxsize = Integer.parseInt(split[1]);
         QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
         qw.eq("company_id",one.getId());
         Integer currentSize = baseMapper.selectCount(qw);
@@ -441,13 +436,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         ManagerDetails one1 = managerDetailsService.getOne(qw);
         CompanyDetails one = companyDetailsService.getById(one1.getCompanyId());
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
-        String[] split = scaleById.split("~");
-        Integer companyMaxsize;
-        if("n".equals(split[1])){
-            companyMaxsize = Integer.MAX_VALUE;
-        }else {
-            companyMaxsize = Integer.parseInt(split[1]);
-        }
+        String[] split = scaleById.split(" ");
+        Integer companyMaxsize = Integer.parseInt(split[1]);
         QueryWrapper<EmployeesDetails> qw2 = new QueryWrapper<>();
         qw2.eq("company_id",one.getId());
         Integer currentSize = baseMapper.selectCount(qw2);
