@@ -213,12 +213,16 @@ public class SysIndexServiceImpl
                     contendId
             );
 
-            ex.submit(new Runnable() {
-                @Override
-                public void run() {
-                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
-                }
-            });
+            if (vo.getExistEmployeesId().equals(2)){
+                existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+            }
+
+//            ex.submit(new Runnable() {
+//                @Override
+//                public void run() {
+//                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+//                }
+//            });
         });
         ex.shutdown();
         /**
@@ -640,8 +644,7 @@ public class SysIndexServiceImpl
         employeesContractList.forEach(employeesContract -> {
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
             float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
-            BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), "TWD", new BigDecimal(wage));
-            Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), totalWage);
+            Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
             for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
                 List<TimeSlot> todayTimeSlot = calendarContractFreeTime.get(date);
@@ -673,6 +676,8 @@ public class SysIndexServiceImpl
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
                 //达到出勤率标准
+                BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), "TWD", new BigDecimal(wage));
+                attendance.setTotalPrice(totalWage);
                 //添加到结果域
                 ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
                 service2.add(contractAndPriceDetails);

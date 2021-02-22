@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.housekeeping.admin.service.ICurrencyService;
 import com.housekeeping.common.utils.HttpUtils;
 import com.housekeeping.common.utils.R;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @Author su
  * @Date 2021/1/12 15:59
  */
+@Slf4j
 @Service("currencyService")
 public class CurrencyServiceImpl implements ICurrencyService {
 
@@ -82,6 +84,7 @@ public class CurrencyServiceImpl implements ICurrencyService {
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
+            log.info("阿里云外汇换算接口调用");
             JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
             JSONObject showApiResBody = jsonObject.getJSONObject("showapi_res_body");
             String toMoney = showApiResBody.getString("money");
