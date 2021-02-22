@@ -31,4 +31,8 @@ public interface IImUserService extends IService<ImUser> {
     R sendMsg(String userId, String msg, HttpServletRequest request) throws JsonProcessingException;
 
     R init();
+
+    R createGroupByCompany(String toId);
+
+    R createGroupByCus(String toId, String empId);
 }

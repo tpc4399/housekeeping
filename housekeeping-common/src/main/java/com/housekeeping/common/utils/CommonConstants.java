@@ -6,6 +6,10 @@ package com.housekeeping.common.utils;
  */
 public interface CommonConstants {
 	/** redis的key前綴 */
+	String NEWPHONE_KEY_BY_PHONE = "HK_NEWPHONE_KEY_BY_PHONE";
+	/** redis的key前綴 */
+	String CHANGE_KEY_BY_PHONE = "HK_CHANGE_KEY_BY_PHONE";
+	/** redis的key前綴 */
 	String LOGIN_KEY_BY_PHONE = "HK_LOGIN_KEY_BY_PHONE";
 	/** redis的key前綴 */
 	String FORGET_KEY_BY_PHONE = "HK_FORGET_KEY_BY_PHONE";

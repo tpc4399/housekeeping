@@ -31,7 +31,15 @@
 		WHERE id = #{userId}
     </update>
 
-	<select id="getDeptIdByUserId" resultType="java.lang.Integer">
+    <update id="updatePassword">
+		UPDATE sys_user SET `password` = #{encryptString} WHERE id = #{currentUserId}
+	</update>
+
+    <update id="changePhone">
+		UPDATE sys_user SET phone = #{phone},phone_prefix = #{phonePrefix} WHERE id = #{currentUserId}
+	</update>
+
+    <select id="getDeptIdByUserId" resultType="java.lang.Integer">
 		SELECT dept_id
 		FROM sys_user
 		WHERE id = #{userId}
@@ -41,5 +49,16 @@
 		SELECT *
 		FROM sys_user
 		WHERE dept_id = #{deptId}, email = #{email}
+	</select>
+
+    <select id="getPassword" resultType="java.lang.String">
+		SELECT password FROM sys_user WHERE id = #{currentUserId}
+	</select>
+
+    <select id="getPhone" resultType="java.lang.String">
+		SELECT phone FROM sys_user WHERE id = #{currentUserId}
+	</select>
+	<select id="getPre" resultType="java.lang.String">
+		SELECT phone_prefix FROM sys_user WHERE id = #{currentUserId}
 	</select>
 </mapper>

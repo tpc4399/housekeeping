@@ -75,12 +75,14 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
         imChatGroup.setCreateDate(LocalDateTime.now());
         Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
+        Integer userId = baseMapper.getUserIdByCom(companyId);
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         Integer empId = baseMapper.getEmpId(Integer.parseInt(toId));
         Set<String> ids = new HashSet<>();
         ids.add(currentUserId);
+        ids.add(userId.toString());
         List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(toId));
         if(CollectionUtils.isEmpty(groups)){
             ids.add(empId.toString());
@@ -147,6 +149,57 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         objectMap.put("groups", imUserService.getChatGroups(userId.toString()));
         return R.ok(objectMap);
     }
+
+    @Override
+    public R createGroupByCompany(String toId) {
+
+        String currentUserId = TokenUtils.getCurrentUserId().toString();
+        ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
+        imChatGroup.setCreateDate(LocalDateTime.now());
+        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
+        imChatGroup.setCompanyId(companyId);
+        imChatGroupService.save(imChatGroup);
+
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add(currentUserId);
+        strings.add(toId);
+        Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
+        for (int i = 0; i < strings.size(); i++) {
+            ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
+            imChatGroupUser.setChatGroupId(maxId);
+            imChatGroupUser.setCreateDate(LocalDateTime.now());
+            imChatGroupUser.setUserId(strings.get(i));
+            imChatGroupUserService.save(imChatGroupUser);
+        }
+        return R.ok("聊天组创建成功");
+    }
+
+    @Override
+    public R createGroupByCus(String toId, String empId) {
+        String currentUserId = TokenUtils.getCurrentUserId().toString();
+        ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
+        imChatGroup.setCreateDate(LocalDateTime.now());
+        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
+        imChatGroup.setCompanyId(companyId);
+        imChatGroupService.save(imChatGroup);
+
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add(currentUserId);
+        strings.add(toId);
+        strings.add(empId);
+        Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
+        for (int i = 0; i < strings.size(); i++) {
+            ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
+            imChatGroupUser.setChatGroupId(maxId);
+            imChatGroupUser.setCreateDate(LocalDateTime.now());
+            imChatGroupUser.setUserId(strings.get(i));
+            imChatGroupUserService.save(imChatGroupUser);
+        }
+        return R.ok("聊天组创建成功");
+    }
+
 
     private void saveMessage(Message message, String readStatus, String userId) {
         ImMessage imMessage = new ImMessage();

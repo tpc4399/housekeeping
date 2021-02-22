@@ -54,4 +54,8 @@
     <select id="getEmpId" resultType="java.lang.Integer">
         SELECT user_id FROM employees_details WHERE id = #{id}
     </select>
+
+    <select id="getUserIdByCom" resultType="java.lang.Integer">
+        SELECT user_id FROM company_details WHERE id = #{companyId}
+    </select>
 </mapper>

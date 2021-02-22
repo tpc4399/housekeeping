@@ -13,5 +13,5 @@ public interface ILoginService {
     R loginByPhoneAndPasswordHandle(String phonePrefix, String phone, String password, Integer deptId);
     R sendLoginSMSMessage(String phonePrefix, String phone, Integer deptId);
     R loginByPhoneAndCodeHandle(String phonePrefix, String phone, String code, Integer deptId);
-    R changePw(String newPassword, HttpServletRequest request);
+    R changePw(String newPassword, String rePassword);
 }

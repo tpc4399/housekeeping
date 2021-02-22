@@ -64,17 +64,29 @@ public class ImUserController {
      * @param userId 接收方id
      * @param msg    消息内容
      */
-    @ApiOperation("发送信息给用户")
+    @ApiOperation("系统发送信息给用户")
     @PostMapping("/sendMsg")
     public R sendMsg(String userId, String msg, HttpServletRequest request) throws Exception {
         return imUserService.sendMsg(userId,msg,request);
     }
 
-    @GetMapping("/addGroup")
-    @ApiOperation("发起群聊")
-    public R createGroup(@RequestParam String toId){
+    @GetMapping("/addGroupByEmp")
+    @ApiOperation("客户对保洁员发起群聊")
+    public R createGroupByEmp(@RequestParam String toId){
         return imUserService.createGroup(toId);
     }
 
+    @GetMapping("/addGroupByCompany")
+    @ApiOperation("客户对公司发起群聊")
+    public R createGroupByCompany(@RequestParam String toId){
+        return imUserService.createGroupByCompany(toId);
+    }
+
+    @GetMapping("/addGroupByCus")
+    @ApiOperation("公司或经理对客户发起群聊(需要匹配到的员工id)")
+    public R createGroupByCus(@RequestParam String toId,
+                              @RequestParam String empId){
+        return imUserService.createGroupByCus(toId,empId);
+    }
 
 }

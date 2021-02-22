@@ -3,6 +3,7 @@ package com.housekeeping.auth.controller;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.auth.service.ILoginService;
 import com.housekeeping.auth.service.IUserService;
+import com.housekeeping.auth.service.impl.UserService;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
@@ -30,11 +31,20 @@ public class CommonController {
     private final RedisUtils redisUtils;
     private final IUserService userService;
 
-    @ApiOperation("修改密码")
+    @ApiOperation("【修改密码】1校验所输密码是否为原密码")
+    @GetMapping("/checkPw")
+    public R checkPw(@RequestParam String password){
+        return userService.checkPw(password);
+    }
+
+
+
+    @ApiOperation("【修改密码】2输入新密码")
     @LogFlag(description = "修改密碼")
     @GetMapping("/changePw")
-    public R changePassword(@RequestParam("newPassword") String newPassword, HttpServletRequest request){
-        return loginService.changePw(newPassword, request);
+    public R changePassword(@RequestParam("newPassword") String newPassword,
+                            @RequestParam("rePassword")String rePassword){
+        return loginService.changePw(newPassword,rePassword);
     }
 
     @ApiOperation("【注销】注销登入")
@@ -87,4 +97,30 @@ public class CommonController {
         }
     }
 
+    @GetMapping("/sendSms")
+    @ApiOperation("【更换绑定手机号】1发送手机验证码")
+    public R sendSms(){
+        return userService.sendSms();
+    }
+
+    @GetMapping("/checkCode")
+    @ApiOperation("【更换绑定手机号】2验证手机验证码")
+    public R checkCode(@RequestParam("code")String code){
+        return userService.checkCode(code);
+    }
+
+    @GetMapping("/newPhone")
+    @ApiOperation("【更换绑定手机号】3发送新手機號驗證碼")
+    public R newPhone(@RequestParam("phone")String phone,
+                      @RequestParam("phonePrefix")String phonePrefix){
+        return userService.newPhone(phone,phonePrefix);
+    }
+
+    @GetMapping("/checkCodeByNewPhone")
+    @ApiOperation("【更换绑定手机号】4验证新手机号，并修改手机号")
+    public R checkCodeByNewPhone(@RequestParam("code")String code,
+                                 @RequestParam("phone")String phone,
+                                 @RequestParam("phonePrefix")String phonePrefix){
+        return userService.checkCodeByNewPhone(code,phone,phonePrefix);
+    }
 }

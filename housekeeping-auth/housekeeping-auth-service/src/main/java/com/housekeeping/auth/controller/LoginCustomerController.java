@@ -34,7 +34,7 @@ public class LoginCustomerController {
     @ApiOperation("【顾客登入】phone+password")
     @LogFlag(description = "顾客登入【by：phone+pwd】")
     @GetMapping("/byPhonePassword")
-    public R loginB(@RequestParam("phonePrefix") String phonePrefix,
+    public R loginB(@RequestParam(value = "phonePrefix",required = false) String phonePrefix,
                     @RequestParam("phone") String phone,
                     @RequestParam("password") String password){
         return loginService.loginByPhoneAndPasswordHandle(phonePrefix, phone, password, 3);
@@ -53,7 +53,7 @@ public class LoginCustomerController {
     @GetMapping("/byPhoneCode")
     public R loginC(@RequestParam("phonePrefix") String phonePrefix,
                     @RequestParam("phone") String phone,
-                     @RequestParam("code") String code){
+                    @RequestParam("code") String code){
         return loginService.loginByPhoneAndCodeHandle(phonePrefix, phone, code, 3);
     }
 }
