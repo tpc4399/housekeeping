@@ -77,6 +77,19 @@ public class CustomerController {
         return userService.verfifyCode(phonePrefix, phone,code,3);
     }
 
+    @ApiOperation("【管理员】获取客戶详情信息")
+    @GetMapping("/GetInfoById")
+    public R GetInfoById(@RequestParam("userId")Integer userId){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        CustomerDetails customerDetails = customerDetailsService.getOne(queryWrapper);
+        if (CommonUtils.isNotEmpty(customerDetails)){
+            return R.ok(customerDetails);
+        } else {
+            return R.failed("该客戶不存在");
+        }
+    }
+
     @ApiOperation("【客戶】获取客戶详情信息")
     @GetMapping("/info")
     public R getCustomerDetailsByUserId(){

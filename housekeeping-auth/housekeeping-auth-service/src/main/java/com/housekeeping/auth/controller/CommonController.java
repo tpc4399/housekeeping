@@ -123,4 +123,10 @@ public class CommonController {
                                  @RequestParam("phonePrefix")String phonePrefix){
         return userService.checkCodeByNewPhone(code,phone,phonePrefix);
     }
+
+    @GetMapping("/checkToken")
+    @ApiOperation("检查token状态")
+    public R checkToken(HttpServletRequest request){
+        return userService.checkToken(request);
+    }
 }

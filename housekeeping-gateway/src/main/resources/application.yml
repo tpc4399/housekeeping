@@ -33,6 +33,7 @@ housekeeping:
       - /api/auth/login/customer/
       - /api/auth/Employees/
       - /api/auth/Manager/
+      - /api/auth/others/checkToken
       - /v2/api-docs
       - /swagger-resources/configuration/ui
       - /swagger-resources

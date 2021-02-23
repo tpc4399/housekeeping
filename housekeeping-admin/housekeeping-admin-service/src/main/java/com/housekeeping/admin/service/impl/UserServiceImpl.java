@@ -318,7 +318,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             queryWrapper.like("phone", adminPageDTO.getPhone());
         }
         IPage<User> companyDetailsIPage = baseMapper.selectPage(page, queryWrapper);
-        return R.ok(companyDetailsIPage, "查詢管理员成功");
+        return R.ok(companyDetailsIPage, "查詢成功");
     }
 
     @Override
