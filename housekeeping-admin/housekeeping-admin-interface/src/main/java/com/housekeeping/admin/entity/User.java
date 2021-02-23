@@ -30,6 +30,6 @@ public class User extends Model<User> {
     private Integer deptId;         /* 部门_id:1系统管理员、2公司人员、3顾客 */
     private LocalDateTime createTime;/* 创建时间 */
     private LocalDateTime updateTime;/* 更新时间 */
-    private Integer lastReviserId;   /* 最后修改人 */
+    private Integer lastReviserId;   /* 最后修改人_userId */
 
 }

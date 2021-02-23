@@ -35,6 +35,7 @@ public class EmployeesDetailsController {
     private final IEmployeesJobsService employeesJobsService;
     private final IEmployeesCalendarService employeesCalendarService;
     private final IEmployeesPromotionService employeesPromotionService;
+    private final IEmployeesContractService employeesContractService;
     private final IUserService userService;
 
     @ApiOperation("【公司】新增員工")
@@ -76,6 +77,7 @@ public class EmployeesDetailsController {
         employeesJobsService.remove(qw); //删除依赖4
         employeesCalendarService.remove(qw); //删除依赖5
         employeesPromotionService.remove(qw); //删除依赖6
+        employeesContractService.remove(qw);//刪除依賴7
         //……
         return R.ok(employeesDetailsService.removeById(employeesId));
     }

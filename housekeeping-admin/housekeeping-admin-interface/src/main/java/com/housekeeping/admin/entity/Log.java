@@ -16,35 +16,16 @@ import java.time.LocalDateTime;
 public class Log extends Model<Log> implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /* 主键 */
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
-    /* 标题 */
-    private String title;
-
-    /* 最后修改人 */
-    private Integer lastReviserId;
-
-    /* 请求地址 */
-    private String remoteAddr;
-
-    /* 用户代理 */
-    private String userAgent;
-
-    /* 请求URI */
-    private String requestUri;
-
-    /* 请求方法 */
-    private String method;
-
-    /* 请求参数 */
-    private String params;
-
-    /* 响应用时 */
-    private Long time;
-
-    /* 创建时间 */
-    private LocalDateTime createTime;
+    private Long id;    /* 主键 */
+    private String title;    /* 标题 */
+    private Integer lastReviserId;    /* 最后修改人 */
+    private String remoteAddr;    /* 请求地址 */
+    private String userAgent;    /* 用户代理 */
+    private String requestUri;    /* 请求URI */
+    private String method;    /* 请求方法 */
+    private String params;    /* 请求参数 */
+    private Long time;    /* 响应用时 */
+    private LocalDateTime createTime;    /* 创建时间 */
 
 }

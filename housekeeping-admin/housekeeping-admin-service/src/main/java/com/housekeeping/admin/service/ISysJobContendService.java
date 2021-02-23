@@ -2,7 +2,9 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.entity.SysJobContend;
+import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @Author su
@@ -13,14 +15,6 @@ public interface ISysJobContendService extends IService<SysJobContend> {
     R getTreeByIds(Integer[] ids);
     R getTree();
     R getParents();
-
-    /***
-     * 包工: true
-     * 钟点: false
-     * 出意外: null
-     * @param jobId
-     * @return
-     */
-    Boolean getType(Integer jobId);
+    R add(SysJobContendVo vo);
 
 }

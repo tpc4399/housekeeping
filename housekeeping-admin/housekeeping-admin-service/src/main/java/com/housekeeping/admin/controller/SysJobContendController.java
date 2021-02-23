@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.service.ISysJobContendService;
+import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,22 +20,28 @@ public class SysJobContendController {
 
     private final ISysJobContendService sysJobContendService;
 
-//    @ApiOperation("根据ids获取树")
-//    @GetMapping("/getTreeByIds")
-//    public R getTreeByIds(Integer[] ids){
-//        return sysJobContendService.getTreeByIds(ids);
-//    }
-//
-//    @ApiOperation("获取整树")
-//    @GetMapping("/getTree")
-//    public R getTree(){
-//        return sysJobContendService.getTree();
-//    }
-//
-//    @ApiOperation("获取一级分类")
-//    @GetMapping("/getParents")
-//    public R getParents(){
-//        return sysJobContendService.getParents();
-//    }
+    @ApiOperation("根据ids获取树")
+    @GetMapping("/getTreeByIds")
+    public R getTreeByIds(Integer[] ids){
+        return sysJobContendService.getTreeByIds(ids);
+    }
+
+    @ApiOperation("获取整树")
+    @GetMapping("/getTree")
+    public R getTree(){
+        return sysJobContendService.getTree();
+    }
+
+    @ApiOperation("获取一级分类")
+    @GetMapping("/getParents")
+    public R getParents(){
+        return sysJobContendService.getParents();
+    }
+
+    @PostMapping
+    @ApiOperation("【管理员】增加工作内容")
+    public R add(@RequestBody SysJobContendVo vo){
+        return sysJobContendService.add(vo);
+    }
 
 }

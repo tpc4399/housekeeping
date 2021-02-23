@@ -76,18 +76,16 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
     }
 
     @Override
-    public Boolean getType(Integer jobId) {
-        SysJobContend sysJobContend = this.getById(jobId);
-        if (CommonUtils.isEmpty(sysJobContend)){
-            return null;
-        }else {
-            if (sysJobContend.getType() == 2){
-                return true;
-            }else if (sysJobContend.getType() == 1 || sysJobContend.getType() == 0){
-                return false;
-            }else {
-                return null;
-            }
-        }
+    public R add(SysJobContendVo vo) {
+        List<SysJobContend> sysJobContendList = new ArrayList<>();
+        SysJobContend sysJobContend = new SysJobContend(vo.getId(), vo.getContend(), 1, vo.getType(), null);
+        sysJobContendList.add(sysJobContend);
+        vo.getContends().forEach(x -> {
+            SysJobContend sysJobContend1 = new SysJobContend(x.getId(), x.getContend(), null, null, vo.getId());
+            sysJobContendList.add(sysJobContend1);
+        });
+        this.saveBatch(sysJobContendList);
+        return R.ok("添加成功");
     }
+
 }

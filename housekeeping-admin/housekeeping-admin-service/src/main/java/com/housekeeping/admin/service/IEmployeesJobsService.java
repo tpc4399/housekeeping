@@ -15,8 +15,5 @@ import java.util.List;
  * @Date 2021/1/11 10:22
  */
 public interface IEmployeesJobsService extends IService<EmployeesJobs> {
-    R updateEmployeesJobs(EmployeesJobsDTO employeesJobsDTO);
-    R updateEmployeesJobsAndPrices(List<JobsDTO> jobs, Integer employeesId);
-    R getJobs(Integer employeesId);
-    R setJobIdsByEmployeesId(List<Integer> ids, Integer employeesId);
+
 }
