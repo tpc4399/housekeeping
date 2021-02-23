@@ -46,7 +46,7 @@ public class GroupDetailsController {
         return groupDetailsService.cusRemove(id);
     }
 
-    @ApiOperation("【公司】查看分組")
+    @ApiOperation("【管理员】【公司】查看分組")
     @GetMapping("/getGroup")
     public R getGroup(Page page, Integer companyId, Integer id){
         return R.ok(groupDetailsService.getGroup(page,companyId, id));

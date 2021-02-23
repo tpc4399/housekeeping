@@ -42,14 +42,14 @@ public class ManagerDetailsController {
         return managerDetailsService.saveEmp(managerDetailsDTO);
     }
 
-    @ApiOperation("【公司】修改經理信息")
+    @ApiOperation("【管理员】【公司】修改經理信息")
     @LogFlag(description = "修改經理信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody ManagerDetailsDTO managerDetailsDTO){
         return managerDetailsService.updateEmp(managerDetailsDTO);
     }
 
-    @ApiOperation("【公司】刪除經理")
+    @ApiOperation("【管理员】【公司】刪除經理")
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(Integer managerId){
@@ -86,4 +86,12 @@ public class ManagerDetailsController {
         managerDetailsService.updateHeadUrlByUserId(fileName, reviserId);
         return R.ok("頭像保存成功");
     }
+
+
+    @ApiOperation("【管理员】根据公司的userId列出公司下面所有的经理")
+    @GetMapping("/listHisManager/{companyUserId}")
+    public R getAllByCompanyUserId(@PathVariable Integer companyUserId){
+        return managerDetailsService.getAllByCompanyUserId(companyUserId);
+    }
+
 }

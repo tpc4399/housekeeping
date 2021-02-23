@@ -27,4 +27,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     Boolean thereIsACleaner(Integer employeesId);
 
     R cusRemove(Integer managerId);
+    R getAllByCompanyUserId(Integer companyUserId);
+
 }

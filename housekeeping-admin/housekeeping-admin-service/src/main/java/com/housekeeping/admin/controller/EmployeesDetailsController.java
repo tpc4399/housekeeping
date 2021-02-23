@@ -52,14 +52,14 @@ public class EmployeesDetailsController {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
-    @ApiOperation("【公司】修改員工信息")
+    @ApiOperation("【管理员】【公司】修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
         return employeesDetailsService.updateEmp(employeesDetailsDTO);
     }
 
-    @ApiOperation("【公司】【經理】刪除員工")
+    @ApiOperation("【管理员】【公司】【經理】刪除員工")
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(Integer employeesId){

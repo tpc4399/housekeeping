@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.UpdateManagerMenuDTO;
 import com.housekeeping.admin.entity.ManagerMenu;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**

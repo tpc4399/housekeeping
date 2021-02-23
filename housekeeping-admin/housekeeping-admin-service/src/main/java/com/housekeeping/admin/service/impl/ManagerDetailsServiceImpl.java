@@ -283,6 +283,18 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return R.ok("删除成功");
     }
 
+    @Override
+    public R getAllByCompanyUserId(Integer companyUserId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", companyUserId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(qw);
+        Integer companyId = companyDetails.getId();
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.eq("company_id", companyId);
+        List<ManagerDetails> managerDetailsList = managerDetailsService.list(qw2);
+        return R.ok(managerDetailsList, "查询成功");
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return
