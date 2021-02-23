@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.SetScaleDTO;
+import com.housekeeping.admin.entity.CompanyScale;
 import com.housekeeping.admin.service.ICompanyScaleService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -31,6 +32,14 @@ public class CompanyScaleController {
     @GetMapping
     public R listScale(){
         return companyScaleService.listScale();
+    }
+
+    @ApiOperation("【管理员】【公司】【客户】【经理】【员工】查询公司详细规模")
+    @GetMapping("/{id}")
+    public R getDetails(@PathVariable Integer id){
+        CompanyScale companyScale = companyScaleService.getById(id);
+        String scale = companyScale.getScale();
+        return R.ok(scale, "查询成功");
     }
 
 }
