@@ -53,6 +53,7 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private LocalDateTime updateTime;    /* 修改时间 */
     private Boolean isNew;              /* 是否是新用户 默认1新用户 0不是新用户*/
     private Integer tokens;         /* 公司代币数 */
+    private LocalDateTime expireDate;         /* 公司缴费过期时间 */
     private Integer lastReviserId;    /* 最后修改人 */
 
 }

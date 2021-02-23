@@ -2,6 +2,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
@@ -119,6 +120,41 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
             return R.ok(null);
         }else {
             return R.ok(es);
+        }
+    }
+
+    @Override
+    public R getAllEmpByAdmin(GroupAdminDTO groupDTO) {
+        CompanyDetails one = companyDetailsService.getById(groupDTO.getCompanyId());
+        List<Integer> ids = employeesDetailsService.getAllIdsByCompanyId(one.getId());
+        List<Integer> idsByGroupId = this.getIdsByGroupId(groupDTO.getGroupId());
+        ArrayList<EmpVo> empVos = new ArrayList<>();
+        ids.removeAll(idsByGroupId);
+        for (int i = 0; i < idsByGroupId.size(); i++) {
+            EmployeesDetails byId = employeesDetailsService.getById(idsByGroupId.get(i));
+            EmpVo empVo = new EmpVo();
+            empVo.setId(byId.getId());
+            empVo.setHeadUrl(byId.getHeadUrl());
+            empVo.setName(byId.getName());
+            empVo.setStatus(1);
+            empVos.add(empVo);
+        }
+        for (int i = 0; i < ids.size(); i++) {
+            EmployeesDetails byId = employeesDetailsService.getById(ids.get(i));
+            EmpVo empVo = new EmpVo();
+            empVo.setId(byId.getId());
+            empVo.setHeadUrl(byId.getHeadUrl());
+            empVo.setName(byId.getName());
+            empVo.setStatus(0);
+            empVos.add(empVo);
+        }if(CommonUtils.isNotEmpty(groupDTO.getId())){
+            List<EmpVo> empVos1 = search2(groupDTO.getId(), empVos);
+            return R.ok(empVos1);
+        }if(StringUtils.isNotBlank(groupDTO.getName())){
+            List<EmpVo> search = this.search(groupDTO.getName(), empVos);
+            return R.ok(search);
+        }else {
+            return R.ok(empVos);
         }
     }
 
