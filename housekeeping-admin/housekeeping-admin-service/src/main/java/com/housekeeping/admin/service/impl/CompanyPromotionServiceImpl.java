@@ -134,6 +134,29 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
         }
     }
 
+    @Override
+    public R promotionByAdmin(Integer companyId, Integer days) {
+            QueryWrapper<CompanyPromotion> qw = new QueryWrapper<>();
+            qw.eq("company_id",companyId);
+            CompanyPromotion one = this.getOne(qw);
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
+                one.setPromotion(true);
+                one.setDays(one.getDays()+days);
+                LocalDateTime now = LocalDateTime.now();
+                one.setEndTime(now.plusDays(days));
+                one.setLastReviserId(TokenUtils.getCurrentUserId());
+                this.updateById(one);
+                return R.ok("推廣成功");
+            }else {
+                one.setPromotion(true);
+                one.setDays(one.getDays()+days);
+                one.setEndTime(one.getEndTime().plusDays(days));
+                one.setLastReviserId(TokenUtils.getCurrentUserId());
+                this.updateById(one);
+                return R.ok("推廣成功");
+        }
+    }
+
     public List<Integer> getAllProCompIds(){
         return baseMapper.getAllProCompIds();
     }

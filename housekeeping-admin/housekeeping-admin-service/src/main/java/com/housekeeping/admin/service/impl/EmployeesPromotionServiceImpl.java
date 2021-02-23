@@ -125,6 +125,27 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
     }
 
     @Override
+    public R promotionDayByAdmin(Integer empId, Integer days) {
+            QueryWrapper<EmployeesPromotion> qw = new QueryWrapper<>();
+            qw.eq("employees_id",empId);
+            EmployeesPromotion one = this.getOne(qw);
+            if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
+                one.setPromotion(true);
+                one.setStartTime(LocalDateTime.now());
+                LocalDateTime now = LocalDateTime.now();
+                one.setEndTime(now.plusDays(days));
+                this.updateById(one);
+                return R.ok("推廣成功");
+            }else {
+                one.setPromotion(true);
+                one.setStartTime(one.getStartTime());
+                one.setEndTime(one.getEndTime().plusDays(days));
+                this.updateById(one);
+                return R.ok("推廣成功");
+        }
+    }
+
+    @Override
     @Transactional
     public R getEmpInfoByCompanyId(Integer empId,String empName) {
         Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());

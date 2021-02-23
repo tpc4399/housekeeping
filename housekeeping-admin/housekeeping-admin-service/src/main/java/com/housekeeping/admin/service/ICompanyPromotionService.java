@@ -17,4 +17,6 @@ public interface ICompanyPromotionService extends IService<CompanyPromotion> {
     R getCompanyByRan(Integer random);
 
     R getAllProCompany();
+
+    R promotionByAdmin(Integer companyId, Integer days);
 }

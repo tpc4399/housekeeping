@@ -4,12 +4,12 @@ package com.housekeeping.admin.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.AdvertisingRenewalAdminVo;
+import com.housekeeping.admin.dto.CompanyAdvertisingAdminVo;
 import com.housekeeping.admin.entity.CompanyAdvertising;
 import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.CompanyPromotion;
 import com.housekeeping.admin.mapper.CompanyAdvertisingMapper;
 import com.housekeeping.admin.service.ICompanyAdvertisingService;
-import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.vo.AdvertisingRenewalVo;
 import com.housekeeping.admin.vo.AdvertisingVo;
 import com.housekeeping.admin.vo.CompanyAdvertisingVo;
@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -99,8 +98,8 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
                 LocalDateTime now = LocalDateTime.now();
                 byId.setEndTime(now.plusDays(day));
                 companyDetailsService.promotion(companyId,payTokens);
-            }else {
                 this.updateById(byId);
+            }else {
                 byId.setPromotion(true);
                 byId.setEndTime(byId.getEndTime().plusDays(day));
                 companyDetailsService.promotion(companyId,payTokens);
@@ -184,5 +183,38 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
             }
         }
         return R.ok(list);
+    }
+
+    @Override
+    public R addByAdmin(CompanyAdvertisingAdminVo companyAdvertising) {
+        Integer companyId = companyAdvertising.getCompanyId();
+        int day = companyAdvertising.getDay().intValue();
+            LocalDateTime now = LocalDateTime.now();
+            CompanyAdvertising companyAdvertising1 = new CompanyAdvertising();
+            companyAdvertising1.setCompanyId(companyId);
+            companyAdvertising1.setContent(companyAdvertising.getContent());
+            companyAdvertising1.setLink(companyAdvertising.getLink());
+            companyAdvertising1.setPhoto(companyAdvertising.getPhoto());
+            companyAdvertising1.setTitle(companyAdvertising.getTitle());
+            companyAdvertising1.setPromotion(true);
+            companyAdvertising1.setEndTime(now.plusDays(day));
+            this.save(companyAdvertising1);
+            return R.ok("推廣成功");
+    }
+
+    @Override
+    public R renewalByAdmin(AdvertisingRenewalAdminVo companyAdvertising) {
+        int day = companyAdvertising.getDay().intValue();
+            CompanyAdvertising byId = this.getById(companyAdvertising.getId());
+            if(CommonUtils.isEmpty(byId.getEndTime())||LocalDateTime.now().isAfter(byId.getEndTime())){
+                byId.setPromotion(true);
+                LocalDateTime now = LocalDateTime.now();
+                byId.setEndTime(now.plusDays(day));
+                this.updateById(byId);
+            }
+                byId.setPromotion(true);
+                byId.setEndTime(byId.getEndTime().plusDays(day));
+                this.updateById(byId);
+            return R.ok("續費成功");
     }
 }

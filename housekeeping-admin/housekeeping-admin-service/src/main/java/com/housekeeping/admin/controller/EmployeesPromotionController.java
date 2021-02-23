@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -47,5 +48,11 @@ public class EmployeesPromotionController {
     @GetMapping("/getAllProEmp")
     public R getAllProEmp(){
         return employeesPromotionService.getAllProEmp();
+    }
+
+    @ApiOperation("【管理员】推廣員工")
+    @GetMapping("/promotionByAdmin")
+    public R promotionDayByAdmin(@RequestParam("empId") Integer empId,@RequestParam("days") Integer days){
+        return employeesPromotionService.promotionDayByAdmin(empId,days);
     }
 }
