@@ -28,7 +28,7 @@ public class CompanyAdvertisingController {
         return iCompanyAdvertisingService.add(companyAdvertising);
     }
 
-    @PostMapping
+    @PostMapping("/addByAdmin")
     @ApiOperation("【管理员】廣告推廣")
     public R addByAdmin(@RequestBody CompanyAdvertisingAdminVo companyAdvertising){
         return iCompanyAdvertisingService.addByAdmin(companyAdvertising);
