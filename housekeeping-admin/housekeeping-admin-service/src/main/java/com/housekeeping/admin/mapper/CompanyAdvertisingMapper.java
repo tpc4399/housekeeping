@@ -9,4 +9,6 @@ import com.housekeeping.common.utils.R;
 public interface CompanyAdvertisingMapper extends BaseMapper<CompanyAdvertising> {
 
     R getByRan(Integer ran);
+
+    R getAllProAd();
 }

@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 
-@Api(tags={"【廣告推廣】管理接口"})
+@Api(tags={"【广告推广】管理接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyAdvertising")
@@ -46,6 +46,12 @@ public class CompanyAdvertisingController {
     @ApiOperation("【公司】查詢公司的廣告")
     public R getByCompanyId(Integer companyId,Integer id,String name){
         return iCompanyAdvertisingService.getByCompanyId(companyId, id, name);
+    }
+
+    @GetMapping("/getByUserId")
+    @ApiOperation("【管理员】查詢公司推广中的廣告")
+    public R getByUserId(Integer userId,Integer id,String name){
+        return iCompanyAdvertisingService.getByUserId(userId, id, name);
     }
 
     @GetMapping("getByRan")

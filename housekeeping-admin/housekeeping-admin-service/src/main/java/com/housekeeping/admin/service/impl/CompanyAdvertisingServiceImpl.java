@@ -158,4 +158,31 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
 
         return R.ok(res);
     }
+
+    @Override
+    public R getByUserId(Integer userId, Integer id, String name) {
+        QueryWrapper<CompanyAdvertising> qw = new QueryWrapper<>();
+        if(CommonUtils.isNotEmpty(userId)){
+            QueryWrapper<CompanyDetails> qw2 = new QueryWrapper<>();
+            qw2.eq("user_id",userId);
+            CompanyDetails one = companyDetailsService.getOne(qw2);
+            qw.eq("company_id",one.getId());
+        }
+        if(CommonUtils.isNotEmpty(id)){
+            qw.eq("id",id);
+        }
+        if(CommonUtils.isNotEmpty(name)){
+            qw.like("title",name);
+        }
+        qw.gt("end_time",LocalDateTime.now());
+        List<CompanyAdvertising> list = this.list(qw);
+        for (int i = 0; i < list.size(); i++) {
+            if(CommonUtils.isEmpty(list.get(i).getEndTime())||LocalDateTime.now().isAfter(list.get(i).getEndTime())){
+                list.get(i).setPromotion(false);
+            }else {
+                list.get(i).setPromotion(true);
+            }
+        }
+        return R.ok(list);
+    }
 }

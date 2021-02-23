@@ -31,16 +31,18 @@
 
 	<select id="getCompanyByRan" resultType="java.lang.Integer">
 		SELECT
-			company_id
+		id
 		FROM
-			company_promotion
-		WHERE
-			promotion = 1
+		company_promotion
+		WHERE end_time > NOW()
 		order by rand() limit #{random}
-
 	</select>
 
 	<select id="getAllProCompIds" resultType="java.lang.Integer">
-		SELECT company_id FROM company_promotion WHERE promotion = 1
+		SELECT
+		id
+		FROM
+		company_promotion
+		WHERE end_time > NOW()
 	</select>
 </mapper>

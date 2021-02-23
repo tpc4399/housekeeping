@@ -42,4 +42,10 @@ public class EmployeesPromotionController {
     public R getEmpByRan(Integer random){
         return employeesPromotionService.getEmpByRan(random);
     }
+
+    @ApiOperation("【管理员】查询所有推广中员工")
+    @GetMapping("/getAllProEmp")
+    public R getAllProEmp(){
+        return employeesPromotionService.getAllProEmp();
+    }
 }

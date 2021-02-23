@@ -49,11 +49,16 @@
 		FROM
 			employees_promotion
 		WHERE
-			promotion = 1
+			end_time > NOW()
 		order by rand() limit #{random}
 	</select>
 
     <select id="getAllProEmpIds" resultType="java.lang.Integer">
-		SELECT employees_id FROM employees_promotion WHERE promotion = 1
+		SELECT
+			employees_id
+		FROM
+			employees_promotion
+		WHERE
+			end_time > NOW()
 	</select>
 </mapper>
