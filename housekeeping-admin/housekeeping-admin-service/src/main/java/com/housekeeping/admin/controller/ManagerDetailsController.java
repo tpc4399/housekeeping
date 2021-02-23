@@ -53,19 +53,7 @@ public class ManagerDetailsController {
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(Integer managerId){
-        ManagerDetails managerDetails = managerDetailsService.getById(managerId);
-        Integer userId = OptionalBean.ofNullable(managerDetails)
-                .getBean(ManagerDetails::getUserId).get();
-        if (CommonUtils.isEmpty(userId)){
-            return R.failed("该經理不存在！");
-        }
-        userService.removeById(userId); //删除依赖1
-        QueryWrapper qw = new QueryWrapper<>();
-        qw.eq("manager_id", managerId);
-        groupManagerService.remove(qw); //删除依赖2
-        managerMenuService.remove(qw); //删除依赖3
-
-        return R.ok(managerDetailsService.removeById(managerId));
+        return managerDetailsService.cusRemove(managerId);
     }
 
     @ApiOperation("【公司】根据id生成登入参数")

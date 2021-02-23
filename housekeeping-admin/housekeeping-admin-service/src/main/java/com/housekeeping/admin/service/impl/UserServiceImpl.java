@@ -49,6 +49,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private ISysMenuService sysMenuService;
     @Resource
     private IEmployeesPromotionService employeesPromotionService;
+    @Resource
+    private IGroupDetailsService groupDetailsService;
+    @Resource
+    private ICompanyAdvertisingService companyAdvertisingService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -510,6 +514,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             employeesPromotionService.save(employeesPromotion);
         }
         return R.ok("賬戶添加成功");
+    }
+
+    @Override
+    public R removeAdmin(Integer userId) {
+        return R.ok(this.removeById(userId));
+    }
+
+    @Override
+    public R removeCus(Integer userId) {
+        QueryWrapper<CustomerDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",userId);
+        CustomerDetails one = customerDetailsService.getOne(qw);
+        if(CommonUtils.isEmpty(one)){
+            return R.failed("查无此人");
+        }
+        QueryWrapper<CustomerAddress> qw2 = new QueryWrapper<>();
+        qw2.eq("customer_id",one.getId());
+        //删除通信地址
+        customerAddressService.remove(qw2);
+        this.removeById(userId);
+        return R.ok("删除成功");
+    }
+
+    @Override
+    public R removeComp(Integer userId) {
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id", userId);
+        CompanyDetails one = companyService.getOne(qw);
+        List<Integer> empIds = baseMapper.getAllEmps(one.getId());
+        List<Integer> manIds = baseMapper.getAllMans(one.getId());
+        for (int i = 0; i < empIds.size(); i++) {
+            employeesDetailsService.cusRemove(empIds.get(i));
+        }
+        for (int i = 0; i < manIds.size(); i++) {
+            managerDetailsService.cusRemove(manIds.get(i));
+        }
+        QueryWrapper qw2 = new QueryWrapper<GroupDetails>();
+        qw2.eq("company_id",one.getId());
+        groupDetailsService.remove(qw2);
+        QueryWrapper qw3 = new QueryWrapper<CompanyPromotion>();
+        qw3.eq("company_id",one.getId());
+        companyPromotionService.remove(qw3);
+        QueryWrapper qw4 = new QueryWrapper<CompanyAdvertising>();
+        qw4.eq("company_id",one.getId());
+        companyAdvertisingService.remove(qw4);
+        this.removeById(userId);
+        return R.ok("删除成功");
     }
 
 }

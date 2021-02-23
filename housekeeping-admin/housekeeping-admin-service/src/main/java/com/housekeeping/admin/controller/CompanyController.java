@@ -112,4 +112,10 @@ public class CompanyController {
     public R getAllCompany(Page page, AdminPageDTO adminPageDTO){
         return userService.getAllUser(page,adminPageDTO,2);
     }
+
+    @GetMapping("/removeComp")
+    @ApiOperation("【管理员】删除公司账户")
+    public R removeComp(@RequestParam("userId")Integer userId){
+        return userService.removeComp(userId);
+    }
 }

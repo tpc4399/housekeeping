@@ -24,4 +24,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R canSheMakeAnWork(Integer employeesId);
     R blacklist(Integer employeesId, Boolean action);
     Boolean isMe(Integer employeesId);
+
+    R cusRemove(Integer employeesId);
 }

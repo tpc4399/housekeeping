@@ -22,4 +22,12 @@
 		SELECT * FROM sys_user WHERE id = #{id} AND dept_id = #{i}
 	</select>
 
+    <select id="getAllEmps" resultType="java.lang.Integer">
+		SELECT id FROM employees_details WHERE company_id = #{id}
+	</select>
+
+	<select id="getAllMans" resultType="java.lang.Integer">
+		SELECT id FROM manager_details WHERE company_id = #{id}
+	</select>
+
 </mapper>

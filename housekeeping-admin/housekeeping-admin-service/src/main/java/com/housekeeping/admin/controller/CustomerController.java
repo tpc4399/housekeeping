@@ -116,6 +116,11 @@ public class CustomerController {
         return userService.getAllUser(page,adminPageDTO,3);
     }
 
+    @ApiOperation("【管理员】删除客户")
+    @DeleteMapping("/removeCus")
+    public R removeCus(@RequestParam("userId")Integer userId){
+        return userService.removeCus(userId);
+    }
 
 
 }

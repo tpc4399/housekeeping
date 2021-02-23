@@ -45,4 +45,5 @@ public class CustomerDetailsController {
     public R getCustomerList(Integer cid,String name){
         return customerDetailsService.getCustomerList(cid,name);
     }
+
 }

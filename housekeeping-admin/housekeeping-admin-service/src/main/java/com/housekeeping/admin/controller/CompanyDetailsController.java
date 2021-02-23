@@ -82,7 +82,7 @@ public class CompanyDetailsController {
         return R.ok("圖片上傳成功");
     }
 
-    @ApiOperation("【公司】获取公司详情信息")
+    @ApiOperation("【公司、管理员】获取公司详情信息")
     @GetMapping("/details")
     public R getCompanyDetailsByUserId(@RequestParam("userId") Integer userId){
         QueryWrapper queryWrapper = new QueryWrapper();

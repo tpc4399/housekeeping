@@ -59,6 +59,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private IEmployeesContractService employeesContractService;
     @Resource
+    private IGroupEmployeesService groupEmployeesService;
+    @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -401,6 +403,28 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         qw.eq("user_id", userId);
         EmployeesDetails employeesDetails = this.getOne(qw);
         return employeesDetails.getId().equals(employeesId);
+    }
+
+    @Override
+    public R cusRemove(Integer employeesId) {
+        EmployeesDetails employeesDetails = this.getById(employeesId);
+        Integer userId = OptionalBean.ofNullable(employeesDetails)
+                .getBean(EmployeesDetails::getUserId).get();
+        if (CommonUtils.isEmpty(userId)){
+            return R.failed("该员工不存在！");
+        }
+        userService.removeById(userId); //刪除依賴1
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", employeesId);
+        groupEmployeesService.remove(qw); //刪除依賴2
+        employeesWorkExperienceService.remove(qw); //刪除依賴3
+        employeesJobsService.remove(qw); //删除依赖4
+        employeesCalendarService.remove(qw); //删除依赖5
+        employeesPromotionService.remove(qw); //删除依赖6
+        employeesContractService.remove(qw);//刪除依賴7
+        //……
+        this.removeById(employeesId);
+        return R.ok("删除成功");
     }
 
     /**

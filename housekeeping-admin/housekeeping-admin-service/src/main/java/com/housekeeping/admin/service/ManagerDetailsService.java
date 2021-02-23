@@ -25,4 +25,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     List<Integer> getManIdsByCompId(Integer id);
     /* 判断该保洁员受不受到我管辖 */
     Boolean thereIsACleaner(Integer employeesId);
+
+    R cusRemove(Integer managerId);
 }

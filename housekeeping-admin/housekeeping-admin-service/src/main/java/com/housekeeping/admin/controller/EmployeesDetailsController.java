@@ -63,23 +63,7 @@ public class EmployeesDetailsController {
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
     public R deleteEmp(Integer employeesId){
-        EmployeesDetails employeesDetails = employeesDetailsService.getById(employeesId);
-        Integer userId = OptionalBean.ofNullable(employeesDetails)
-                .getBean(EmployeesDetails::getUserId).get();
-        if (CommonUtils.isEmpty(userId)){
-            return R.failed("该员工不存在！");
-        }
-        userService.removeById(userId); //刪除依賴1
-        QueryWrapper qw = new QueryWrapper<>();
-        qw.eq("employees_id", employeesId);
-        groupEmployeesService.remove(qw); //刪除依賴2
-        employeesWorkExperienceService.remove(qw); //刪除依賴3
-        employeesJobsService.remove(qw); //删除依赖4
-        employeesCalendarService.remove(qw); //删除依赖5
-        employeesPromotionService.remove(qw); //删除依赖6
-        employeesContractService.remove(qw);//刪除依賴7
-        //……
-        return R.ok(employeesDetailsService.removeById(employeesId));
+        return employeesDetailsService.cusRemove(employeesId);
     }
 
     @ApiOperation("【管理员】查詢所有公司員工")

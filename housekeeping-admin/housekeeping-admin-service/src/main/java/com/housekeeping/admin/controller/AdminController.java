@@ -98,5 +98,11 @@ public class AdminController {
         }
     }
 
+    @ApiOperation("【管理员】删除管理员账号")
+    @DeleteMapping("/remove")
+    public R removeAdmin(@RequestParam("userId")Integer userId){
+        return userService.removeAdmin(userId);
+    }
+
 
 }

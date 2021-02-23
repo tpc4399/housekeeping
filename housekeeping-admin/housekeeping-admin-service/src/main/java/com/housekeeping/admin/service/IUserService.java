@@ -25,4 +25,10 @@ public interface IUserService extends IService<User> {
     R add1(AdminAdd1DTO dto);
     /* 添加管理员、公司、家庭账户 */
     R add2(AdminAdd2DTO dto);
+
+    R removeAdmin(Integer userId);
+
+    R removeCus(Integer userId);
+
+    R removeComp(Integer userId);
 }
