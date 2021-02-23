@@ -17,4 +17,6 @@ public interface IEmployeesPromotionService extends IService<EmployeesPromotion>
     R getEmpInfoByCompanyId(Integer empId,String empName);
 
     R getEmpByRan(Integer random);
+
+    R getAllProEmp();
 }

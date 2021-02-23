@@ -120,7 +120,22 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
 
     }
 
+    @Override
+    public R getAllProCompany() {
+        List<Integer> companyIds = baseMapper.getAllProCompIds();
+        List<CompanyDetails> companyDetails = new ArrayList<>();
+        for (int i = 0; i < companyIds.size(); i++) {
+            CompanyDetails byId = companyDetailsService.getById(companyIds.get(i));
+            companyDetails.add(byId);
+        }if(CollectionUtils.isEmpty(companyDetails)){
+            return R.ok(null);
+        }else {
+            return R.ok(companyDetails);
+        }
+    }
+
     public List<Integer> getAllProCompIds(){
         return baseMapper.getAllProCompIds();
     }
+
 }

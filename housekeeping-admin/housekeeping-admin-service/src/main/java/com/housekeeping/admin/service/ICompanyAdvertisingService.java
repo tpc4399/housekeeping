@@ -22,4 +22,6 @@ public interface ICompanyAdvertisingService extends IService<CompanyAdvertising>
     R getByRan(Integer ran);
 
     R uploadPhoto(MultipartFile file);
+
+    R getByUserId(Integer userId, Integer id, String name);
 }

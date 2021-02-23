@@ -113,7 +113,7 @@ public class CompanyController {
         return userService.getAllUser(page,adminPageDTO,2);
     }
 
-    @GetMapping("/removeComp")
+    @DeleteMapping("/removeComp")
     @ApiOperation("【管理员】删除公司账户")
     public R removeComp(@RequestParam("userId")Integer userId){
         return userService.removeComp(userId);

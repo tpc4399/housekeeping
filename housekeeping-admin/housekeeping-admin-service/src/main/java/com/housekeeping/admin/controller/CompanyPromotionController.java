@@ -39,4 +39,10 @@ public class CompanyPromotionController {
     public R getCompanyByRan(Integer random){
         return companyPromotionService.getCompanyByRan(random);
     }
+
+    @ApiOperation("【管理员】查询所有推广公司")
+    @GetMapping("/getAllProCompany")
+    public R getAllProCompany(){
+        return companyPromotionService.getAllProCompany();
+    }
 }

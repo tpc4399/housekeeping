@@ -111,6 +111,20 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
     }
 
     @Override
+    public R getAllProEmp() {
+        List<Integer> empIds = baseMapper.getAllProEmpIds();
+        List<EmployeesDetails> employeesDetails = new ArrayList<>();
+        for (int i = 0; i < empIds.size(); i++) {
+            EmployeesDetails byId = employeesDetailsService.getById(empIds.get(i));
+            employeesDetails.add(byId);
+        }if(CollectionUtils.isEmpty(employeesDetails)){
+            return R.ok(null);
+        }else {
+            return R.ok(employeesDetails);
+        }
+    }
+
+    @Override
     @Transactional
     public R getEmpInfoByCompanyId(Integer empId,String empName) {
         Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());
