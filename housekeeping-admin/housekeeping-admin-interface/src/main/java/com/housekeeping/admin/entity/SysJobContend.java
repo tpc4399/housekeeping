@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 @TableName("sys_job_contend")
 public class SysJobContend extends Model<SysJobContend> {
 
-    @TableId(value = "id",type = IdType.AUTO)
     private Integer id;         /* 主鍵id */
     private String contend;     /* 工作內容（标签） */
     private Integer level;      /* 1 1级分类  */

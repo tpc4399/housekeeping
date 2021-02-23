@@ -8,6 +8,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @Author su
  * @Date 2020/12/11 16:09
@@ -42,6 +44,12 @@ public class SysJobContendController {
     @ApiOperation("【管理员】增加工作内容")
     public R add(@RequestBody SysJobContendVo vo){
         return sysJobContendService.add(vo);
+    }
+
+    @PutMapping
+    @ApiOperation("【管理员】设置整树")
+    public R set(@RequestBody List<SysJobContendVo> vos){
+        return sysJobContendService.set(vos);
     }
 
 }

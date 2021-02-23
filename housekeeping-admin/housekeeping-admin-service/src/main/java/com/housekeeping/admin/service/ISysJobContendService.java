@@ -6,6 +6,8 @@ import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 /**
  * @Author su
  * @Date 2020/12/11 16:07
@@ -16,5 +18,6 @@ public interface ISysJobContendService extends IService<SysJobContend> {
     R getTree();
     R getParents();
     R add(SysJobContendVo vo);
+    R set(List<SysJobContendVo> vos);
 
 }

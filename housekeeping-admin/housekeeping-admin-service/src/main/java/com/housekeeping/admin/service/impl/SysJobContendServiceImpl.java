@@ -88,4 +88,20 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
         return R.ok("添加成功");
     }
 
+    @Override
+    public R set(List<SysJobContendVo> vos) {
+        List<SysJobContend> sysJobContendList = new ArrayList<>();
+        vos.forEach(vo -> {
+            SysJobContend sysJobContend = new SysJobContend(vo.getId(), vo.getContend(), 1, vo.getType(), null);
+            sysJobContendList.add(sysJobContend);
+            vo.getContends().forEach(x -> {
+                SysJobContend sysJobContend1 = new SysJobContend(x.getId(), x.getContend(), null, null, vo.getId());
+                sysJobContendList.add(sysJobContend1);
+            });
+        });
+        this.remove(new QueryWrapper<>());
+        this.saveBatch(sysJobContendList);
+        return R.ok("修改成功");
+    }
+
 }
