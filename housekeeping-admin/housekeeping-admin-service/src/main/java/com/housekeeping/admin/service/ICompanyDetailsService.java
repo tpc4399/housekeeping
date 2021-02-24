@@ -29,4 +29,8 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     R buyThousandTokens();
     /* 判断我的公司下面有没有该保洁员 */
     Boolean thereIsACleaner(Integer employeesId);
+
+    R getPay(Integer type);
+
+    R pay(Integer type);
 }

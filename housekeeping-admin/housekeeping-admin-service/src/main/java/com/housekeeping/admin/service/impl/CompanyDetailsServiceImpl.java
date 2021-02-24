@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.CompanyScale;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.admin.service.ICompanyScaleService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -39,6 +41,8 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     private String urlPrefix;
     @Resource
     private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private ICompanyScaleService companyScaleService;
 
     @Override
     public String uploadLogo(MultipartFile file, Integer reviserId) throws IOException {
@@ -244,6 +248,28 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         EmployeesDetails employeesDetails = employeesDetailsService.getById(employeesId);
 
         return employeesDetails.getCompanyId().equals(companyId);
+    }
+
+    @Override
+    public R getPay(Integer type) {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",currentUserId);
+        CompanyDetails one = this.getOne(qw);
+        if(CommonUtils.isEmpty(one)){
+            return R.failed("当前账户不是公司账户");
+        }
+        CompanyScale companyScale = companyScaleService.getById(one.getCompanySizeId());
+        if(type.equals(0)){
+            return R.ok(companyScale.getMonthPrice());
+        }else {
+            return R.ok(companyScale.getYearPrice());
+        }
+    }
+
+    @Override
+    public R pay(Integer type) {
+        return null;
     }
 
     public void promotion(Integer companyId,Integer tokens){

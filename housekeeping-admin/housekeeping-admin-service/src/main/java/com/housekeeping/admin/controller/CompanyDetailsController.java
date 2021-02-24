@@ -119,4 +119,17 @@ public class CompanyDetailsController {
         return companyDetailsService.buyThousandTokens();
     }
 
+    @ApiOperation("【公司】1查询月或者年应缴纳费用 0月费用/1年费用")
+    @GetMapping("/getPay")
+    public R getPay(@RequestParam("type") Integer type){
+        return companyDetailsService.getPay(type);
+    }
+
+    @ApiOperation("【公司】2查询月或者年应缴纳费用 0月费用 1年费用")
+    @GetMapping("/pay")
+    public R pay(@RequestParam("type") Integer type){
+        return companyDetailsService.pay(type);
+    }
+
+
 }

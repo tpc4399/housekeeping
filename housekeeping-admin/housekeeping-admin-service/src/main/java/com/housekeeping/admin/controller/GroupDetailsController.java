@@ -40,7 +40,7 @@ public class GroupDetailsController {
         return groupDetailsService.updateGroup(groupDetailsUpdateDTO);
     }
 
-    @ApiOperation("【公司】刪除分組")
+    @ApiOperation("【公司】【管理员】刪除分組")
     @DeleteMapping("/groupDetails/{id}")
     public R deleteGroupDetails(@PathVariable("id") Integer id){
         return groupDetailsService.cusRemove(id);
@@ -52,7 +52,7 @@ public class GroupDetailsController {
         return R.ok(groupDetailsService.getGroup(page,companyId, id));
     }
 
-    @ApiOperation("【公司】分组上传logo")
+    @ApiOperation("【公司】【管理员】分组上传logo")
     @LogFlag(description = "分组上传logo")
     @PostMapping("/uploadLogo")
     public R uploadLogo(@RequestParam("file") MultipartFile file,@RequestParam("groupId") Integer groupId) throws IOException {
@@ -70,5 +70,19 @@ public class GroupDetailsController {
         return groupDetailsService.getGroupData(companyId, id ,groupName);
     }
 
+    @ApiOperation("【管理员】修改分組")
+    @PostMapping("/updateGroupByAdmin")
+    public R updateGroupByAdmin(@RequestParam("companyId")Integer companyId,
+                                @RequestParam("groupName")String groupName,
+                                @RequestParam("id")Integer id){
+        return groupDetailsService.updateGroupByAdmin(id,groupName,companyId);
+    }
+
+    @ApiOperation("【管理员】新增分組")
+    @PostMapping("/saveGroupByAdmin")
+    public R saveGroupByAdmin(@RequestParam("companyId")Integer companyId,
+                              @RequestParam("groupName")String groupName){
+        return groupDetailsService.saveGroupByAdmin(companyId,groupName);
+    }
 
 }

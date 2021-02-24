@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.service.IGroupManagerService;
@@ -21,7 +22,7 @@ public class GroupManagerController {
 
     private final IGroupManagerService groupManagerService;
 
-    @ApiOperation("【公司】分组增加删除经理")
+    @ApiOperation("【公司】【管理员】分组增加删除经理")
     @PostMapping
     public R save(@RequestBody GroupManagerDTO groupManagerDTO){
         return groupManagerService.save(groupManagerDTO);
@@ -33,8 +34,14 @@ public class GroupManagerController {
         return groupManagerService.getAllMan(groupDTO);
     }
 
+    @GetMapping("/getAllManByAdmin")
+    @ApiOperation("【管理员】分状态获取公司及组下经理")
+    public R getAllManByAdmin(GroupAdminDTO groupDTO){
+        return groupManagerService.getAllManByAdmin(groupDTO);
+    }
+
     @GetMapping("/getAllManById")
-    @ApiOperation("【公司】通过组id获取组下所有经理")
+    @ApiOperation("【公司】【管理员】通过组id获取组下所有经理")
     public R getAllManById(Integer groupId){
         return groupManagerService.getAllManById(groupId);
     }

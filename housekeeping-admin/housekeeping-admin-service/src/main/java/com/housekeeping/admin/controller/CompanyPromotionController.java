@@ -45,4 +45,10 @@ public class CompanyPromotionController {
     public R getAllProCompany(){
         return companyPromotionService.getAllProCompany();
     }
+
+    @ApiOperation("【管理员】推廣公司")
+    @GetMapping("/promotionByAdmin")
+    public R promotionByAdmin(Integer companyId,Integer days){
+        return companyPromotionService.promotionByAdmin(companyId,days);
+    }
 }

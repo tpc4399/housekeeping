@@ -20,6 +20,7 @@ import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -199,6 +200,53 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
             return R.ok(search);
         }
         return R.ok(groupVOS);
+    }
+
+    @Override
+    public R saveGroupByAdmin(Integer companyId, String groupName) {
+        /** 检查组名重复性 */
+        List<GroupDetails> groupDetailsList = new ArrayList<>();
+        QueryWrapper queryWrapper1 = new QueryWrapper();
+        queryWrapper1.eq("company_id", companyId);
+        groupDetailsList = baseMapper.selectList(queryWrapper1);
+
+        for (int i = 0; i < groupDetailsList.size(); i++) {
+            if (groupDetailsList.get(i).getGroupName().equals(groupName)){
+                return R.failed("贵公司组名"+ groupName +"已经被占有");
+            }
+        }
+
+        GroupDetails groupDetails = new GroupDetails();
+        groupDetails.setCompanyId(companyId);
+        groupDetails.setGroupName(groupName);
+        groupDetails.setCreateTime(LocalDateTime.now());
+        groupDetails.setUpdateTime(LocalDateTime.now());
+        groupDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        return R.ok(baseMapper.insert(groupDetails), "成功添加分組");
+    }
+
+    @Override
+    public R updateGroupByAdmin(Integer id, String groupName, Integer companyId) {
+        /** 检查组名重复性 */
+        List<GroupDetails> groupDetailsList = new ArrayList<>();
+        QueryWrapper queryWrapper1 = new QueryWrapper();
+        queryWrapper1.eq("company_id", companyId);
+        groupDetailsList = baseMapper.selectList(queryWrapper1);
+
+        for (int i = 0; i < groupDetailsList.size(); i++) {
+            if (groupDetailsList.get(i).getGroupName().equals(groupName)){
+                return R.failed("贵公司组名"+ groupName +"已经被占有");
+            }
+        }
+
+        GroupDetails groupDetails = new GroupDetails();
+        groupDetails.setId(id);
+        groupDetails.setGroupName(groupName);
+        groupDetails.setUpdateTime(LocalDateTime.now());
+        groupDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        /*baseMapper.updateGroup(groupDetails);*/
+        this.updateById(groupDetails);
+        return R.ok("成功修改分組");
     }
 
     public List<GroupVO> search(String name, List<GroupVO> list){
