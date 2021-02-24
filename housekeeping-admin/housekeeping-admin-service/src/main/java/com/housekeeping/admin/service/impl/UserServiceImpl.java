@@ -30,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Resource
     private RedisUtils redisUtils;
     @Resource
-    private ICompanyDetailsService companyService;
+    private ICompanyDetailsService companyDetailsService;
     @Resource
     private ICustomerDetailsService customerDetailsService;
     @Resource
@@ -137,11 +137,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
-                        companyService.save(companyDetails);
+                        companyDetailsService.save(companyDetails);
                         /*
                         公司推廣
                         * */
-                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+                        Integer maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyDetailsService)).getId();
                         CompanyPromotion companyPromotion = new CompanyPromotion();
                         companyPromotion.setCompanyId(maxCompanyId);
                         companyPromotionService.save(companyPromotion);
@@ -410,8 +410,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             company.setLastReviserId(mineUserId);
             Integer maxCompanyId = 0;
             synchronized (this){
-                companyService.save(company);
-                maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyService)).getId();
+                companyDetailsService.save(company);
+                maxCompanyId = ((CompanyDetails) CommonUtils.getMaxId("company_details", companyDetailsService)).getId();
             }
             //公司推广
             CompanyPromotion companyPromotion = new CompanyPromotion();
@@ -475,7 +475,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             Integer maxManagerId = 0;
             synchronized (this){
                 managerDetailsService.save(manager);
-                maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();
+                maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", managerDetailsService)).getId();
             }
             /** 2021-02-07 su新增 增加经理的同时，给予所有菜单权限 */
             List<SysMenu> sysMenuList = sysMenuService.list();
@@ -506,7 +506,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             Integer maxEmployeesId = 0;
             synchronized (this){
                 employeesDetailsService.save(employees);
-                maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
+                maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", employeesDetailsService)).getId();
             }
             /** 順便建個員工推廣的表記錄 */
             EmployeesPromotion employeesPromotion = new EmployeesPromotion();
@@ -541,7 +541,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public R removeComp(Integer userId) {
         QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
         qw.eq("user_id", userId);
-        CompanyDetails one = companyService.getOne(qw);
+        CompanyDetails one = companyDetailsService.getOne(qw);
         List<Integer> empIds = baseMapper.getAllEmps(one.getId());
         List<Integer> manIds = baseMapper.getAllMans(one.getId());
         for (int i = 0; i < empIds.size(); i++) {

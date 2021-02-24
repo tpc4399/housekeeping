@@ -13,6 +13,8 @@ import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.*;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
  * @Author su
  * @Date 2021/1/12 14:48
  */
+@Slf4j
 @Service("sysIndexService")
 public class SysIndexServiceImpl
         extends ServiceImpl<SysIndexMapper, SysIndex>
@@ -200,7 +203,6 @@ public class SysIndexServiceImpl
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
 
-        ExecutorService ex = Executors.newCachedThreadPool();
         employeesSearchPool.get(type).forEach(existEmployeesId -> {
             EmployeesHandleVo vo = new EmployeesHandleVo(
                     existEmployeesId,
@@ -212,19 +214,12 @@ public class SysIndexServiceImpl
                     type,
                     contendId
             );
-
-            if (vo.getExistEmployeesId().equals(2)){
-                existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
-            }
-
-//            ex.submit(new Runnable() {
-//                @Override
-//                public void run() {
-//                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
-//                }
-//            });
+            Long startMill = System.currentTimeMillis();
+            existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+            Long endMill = System.currentTimeMillis();
+            Long length = endMill - startMill;
+            log.info("employeesId:" + existEmployeesId +"  use "+ length);
         });
-        ex.shutdown();
         /**
          * 如果只选钟点工：
          * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容） 3、排序: 推荐值降序
@@ -579,47 +574,19 @@ public class SysIndexServiceImpl
                                          Map<LocalDate, List<TimeSlotDTO>> calendar,
                                          List<LocalTime> requireTime,
                                          Float totalTimeRequired){
+        ExecutorService ex = Executors.newCachedThreadPool();
         List<JobAndPriceDetails> service1 = new ArrayList<>();
         contendId.forEach(jobId -> {
             Attendance attendance = new Attendance(jobId, new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
             for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
-                List<TimeSlotDTO> todayTimeSlotDTO = calendar.get(date);
-                List<LocalTime> noAttendanceTime = new ArrayList<>();
-                List<TimeAndPrice> todayTime = this.periodSplittingA(todayTimeSlotDTO);
-                requireTime.forEach(time -> {
-                    AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
-                    //判断这半个小时能否出勤
-                    todayTime.forEach(today -> {
-                        if (today.getTime().equals(time)){
-                            today.getJobAndPriceList().forEach(jobAndPriceDTO -> {
-                                if (jobAndPriceDTO.getJobId().equals(jobId)){
-                                    //这个班可以出席
-                                    canBeOnDuty.set(true);
-                                    attendance.halfAnHourMore();
-                                    /* halfAnHourWage 半小时价格 TWD货币代码 */
-                                    BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
-                                            jobAndPriceDTO.getCode(),
-                                            "TWD",
-                                            new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2))
-                                    );
-                                    attendance.increaseTheTotalPrice(halfAnHourWage);
-                                }
-                            });
-                        }
-                    });
-
-                    if (canBeOnDuty.get()) {
-                        //能出勤
-                        //什么也不做
-                    }else {
-                        //不能出勤
-                        noAttendanceTime.add(time);
+                LocalDate finalDate = date;
+                ex.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        judgeTheDay1(calendar, finalDate, requireTime, jobId, attendance, noAttendanceDetails);//判断date日期的出勤情况
                     }
                 });
-                if (noAttendanceTime.size() != 0){
-                    noAttendanceDetails.put(date, noAttendanceTime);
-                }
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -631,7 +598,53 @@ public class SysIndexServiceImpl
                 //未达到标准
             }
         });
+        ex.shutdown();
         return service1;
+    }
+
+    private void judgeTheDay1(Map<LocalDate, List<TimeSlotDTO>> calendar,
+                             LocalDate date,
+                             List<LocalTime> requireTime,
+                             Integer jobId,
+                             Attendance attendance,
+                             Map<LocalDate, List<LocalTime>> noAttendanceDetails){
+        List<TimeSlotDTO> todayTimeSlotDTO = calendar.get(date);
+        List<LocalTime> noAttendanceTime = new ArrayList<>();
+        List<TimeAndPrice> todayTime = this.periodSplittingA(todayTimeSlotDTO);
+        requireTime.forEach(time -> {
+            AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
+            //判断这半个小时能否出勤
+            todayTime.forEach(today -> {
+                if (today.getTime().equals(time)){
+                    today.getJobAndPriceList().forEach(jobAndPriceDTO -> {
+                        if (jobAndPriceDTO.getJobId().equals(jobId)){
+                            //这个班可以出席
+                            canBeOnDuty.set(true);
+                            attendance.halfAnHourMore();
+                            /* halfAnHourWage 半小时价格 TWD货币代码 */
+//                                    BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
+//                                            jobAndPriceDTO.getCode(),
+//                                            "TWD",
+//                                            new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2))
+//                                    );
+                            BigDecimal halfAnHourWage = new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2));
+                            attendance.increaseTheTotalPrice(halfAnHourWage);
+                        }
+                    });
+                }
+            });
+
+            if (canBeOnDuty.get()) {
+                //能出勤
+                //什么也不做
+            }else {
+                //不能出勤
+                noAttendanceTime.add(time);
+            }
+        });
+        if (noAttendanceTime.size() != 0){
+            noAttendanceDetails.put(date, noAttendanceTime);
+        }
     }
 
     private List<ContractAndPriceDetails> getService2(List<EmployeesContract> employeesContractList,
@@ -640,6 +653,7 @@ public class SysIndexServiceImpl
                                               List<LocalTime> requireTime,
                                               Float totalTimeRequired,
                                               DateSlot dateSlot){
+        ExecutorService ex = Executors.newCachedThreadPool();
         List<ContractAndPriceDetails> service2 = new ArrayList<>();
         employeesContractList.forEach(employeesContract -> {
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
@@ -647,31 +661,13 @@ public class SysIndexServiceImpl
             Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
             for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
-                List<TimeSlot> todayTimeSlot = calendarContractFreeTime.get(date);
-                List<LocalTime> noAttendanceTime = new ArrayList<>();
-                List<LocalTime> todayTime = this.periodSplittingB(todayTimeSlot);
-                requireTime.forEach(time -> {
-                    AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
-                    //判断这半个小时能否出勤
-                    todayTime.forEach(today -> {
-                        if (today.equals(time)){
-                            //这个班可以出席
-                            canBeOnDuty.set(true);
-                            attendance.halfAnHourMore();
-                        }
-                    });
-
-                    if (canBeOnDuty.get()) {
-                        //能出勤
-                        //什么也不做
-                    }else {
-                        //不能出勤
-                        noAttendanceTime.add(time);
+                LocalDate finalDate = date;
+                ex.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        judgeTheDay2(calendarContractFreeTime, finalDate, requireTime, attendance, noAttendanceDetails);//判断date日期的出勤情况
                     }
                 });
-                if (noAttendanceTime.size() != 0){
-                    noAttendanceDetails.put(date, noAttendanceTime);
-                }
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -685,7 +681,40 @@ public class SysIndexServiceImpl
                 //未达到标准
             }
         });
+        ex.shutdown();
         return service2;
+    }
+
+    private void judgeTheDay2(Map<LocalDate, List<TimeSlot>> calendarContractFreeTime,
+                              LocalDate date,
+                              List<LocalTime> requireTime,
+                              Attendance attendance,
+                              Map<LocalDate, List<LocalTime>> noAttendanceDetails){
+        List<TimeSlot> todayTimeSlot = calendarContractFreeTime.get(date);
+        List<LocalTime> noAttendanceTime = new ArrayList<>();
+        List<LocalTime> todayTime = this.periodSplittingB(todayTimeSlot);
+        requireTime.forEach(time -> {
+            AtomicReference<Boolean> canBeOnDuty = new AtomicReference<>(false);
+            //判断这半个小时能否出勤
+            todayTime.forEach(today -> {
+                if (today.equals(time)){
+                    //这个班可以出席
+                    canBeOnDuty.set(true);
+                    attendance.halfAnHourMore();
+                }
+            });
+
+            if (canBeOnDuty.get()) {
+                //能出勤
+                //什么也不做
+            }else {
+                //不能出勤
+                noAttendanceTime.add(time);
+            }
+        });
+        if (noAttendanceTime.size() != 0){
+            noAttendanceDetails.put(date, noAttendanceTime);
+        }
     }
 
     List<Integer> indexIdHandleContendId(Integer indexId){
@@ -733,7 +762,6 @@ public class SysIndexServiceImpl
         return employeesSearchPool;
     }
 
-    @Async
     public void existEmployeesHandle(EmployeesHandleVo vo,
                                      Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
                                      List<IndexQueryResultEmployees> matchingEmployeesDetails){
