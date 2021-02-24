@@ -51,12 +51,24 @@ public class CompanyDetailsController {
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
 
-    @ApiOperation("【公司】修改公司信息")
+    @ApiOperation("【公司】【管理员】修改公司信息")
     @LogFlag(description = "修改公司信息")
     @PostMapping("/update")
     public R updateCompany(@RequestBody CompanyDetailsDTO companyDetailsDTO){
         companyDetailsService.updateById(companyDetailsDTO, TokenUtils.getCurrentUserId());
         return R.ok("修改成功");
+    }
+
+    @ApiOperation("【管理员】给公司上传logo")
+    @LogFlag(description = "公司上传logo")
+    @PostMapping("/uploadLogoByAdmin")
+    public R uploadLogo(@RequestParam("file") MultipartFile file,
+                        @RequestParam("userId")Integer userId) throws IOException {
+        //服务器存储logo
+        String fileName = companyDetailsService.uploadLogo(file, userId);
+        //数据库存储logoUrl
+        companyDetailsService.updateLogUrlByUserId(fileName, userId);
+        return R.ok("logo保存成功");
     }
 
     @ApiOperation("【公司】公司上传logo")
@@ -79,6 +91,17 @@ public class CompanyDetailsController {
         String fileNames = companyDetailsService.uploadFiveImg(file, reviserId);
         //数据库存储圖片Url
         companyDetailsService.updateFiveImgUrlByUserId(fileNames, reviserId);
+        return R.ok("圖片上傳成功");
+    }
+
+    @ApiOperation("【管理员】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @PostMapping(value = "/uploadFiveImgByAdmin", headers = "content-type=multipart/form-data")
+    public R uploadFiveImg(@RequestParam("file") MultipartFile[] file,
+                           @RequestParam("userId")Integer userId){
+        //服务器存储圖片
+        String fileNames = companyDetailsService.uploadFiveImg(file, userId);
+        //数据库存储圖片Url
+        companyDetailsService.updateFiveImgUrlByUserId(fileNames, userId);
         return R.ok("圖片上傳成功");
     }
 
@@ -119,17 +142,22 @@ public class CompanyDetailsController {
         return companyDetailsService.buyThousandTokens();
     }
 
-    @ApiOperation("【公司】1查询月或者年应缴纳费用 0月费用/1年费用")
+    @ApiOperation("【公司】1查询月或者年应缴纳费用(0月费用 1年费用)")
     @GetMapping("/getPay")
     public R getPay(@RequestParam("type") Integer type){
         return companyDetailsService.getPay(type);
     }
 
-    @ApiOperation("【公司】2查询月或者年应缴纳费用 0月费用 1年费用")
+    @ApiOperation("【公司】2缴费完成(0月费用 1年费用)")
     @GetMapping("/pay")
     public R pay(@RequestParam("type") Integer type){
         return companyDetailsService.pay(type);
     }
 
+    @ApiOperation("【公司】校验公司是否需要按照规模缴费（true需要续费 false不需要续费）")
+    @GetMapping("checkCompPay")
+    public R checkCompPay(@RequestParam("companyId")Integer companyId){
+        return R.ok(companyDetailsService.checkCompPay(companyId));
+    }
 
 }

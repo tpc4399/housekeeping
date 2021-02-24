@@ -560,6 +560,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         qw4.eq("company_id",one.getId());
         companyAdvertisingService.remove(qw4);
         this.removeById(userId);
+        QueryWrapper qw5 = new QueryWrapper<CompanyDetails>();
+        qw5.eq("id",one.getId());
+        companyDetailsService.remove(qw5);
         return R.ok("删除成功");
     }
 
