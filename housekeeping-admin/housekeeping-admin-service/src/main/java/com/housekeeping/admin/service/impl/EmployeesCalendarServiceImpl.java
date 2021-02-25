@@ -238,7 +238,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                     jobAndPriceDTO.setPrice(employeesCalendarDetails.getPrice());
                     jobAndPriceDTO.setCode(employeesCalendarDetails.getCode());
                 }else {
-                    BigDecimal price = currencyService.exchangeRateToBigDecimal(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
+                    BigDecimal price;
+                    if (employeesCalendarDetails.getCode().equals(toCode)){
+                        price = new BigDecimal(employeesCalendarDetails.getPrice());
+                    }else {
+                        price = currencyService.exchangeRateToBigDecimal(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
+                    }
                     jobAndPriceDTO.setPrice(new Float(price.toString()));
                     jobAndPriceDTO.setCode(toCode);
                 }

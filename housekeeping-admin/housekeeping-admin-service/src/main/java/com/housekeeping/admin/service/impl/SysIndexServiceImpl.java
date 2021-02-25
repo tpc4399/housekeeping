@@ -705,7 +705,12 @@ public class SysIndexServiceImpl
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
                 //达到出勤率标准
-                BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), toCode, new BigDecimal(wage));
+                BigDecimal totalWage;
+                if (employeesContract.getCode().equals(toCode)){
+                    totalWage = new BigDecimal(wage);
+                }else {
+                    totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), toCode, new BigDecimal(wage));
+                }
                 attendance.setTotalPrice(totalWage);
                 //添加到结果域
                 ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
