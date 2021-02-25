@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -167,6 +168,7 @@ public class SysIndexServiceImpl
                 .getBean(QueryIndexDTO::getHighPrice).get();
         AddressDetailsDTO addressDetailsDTO = OptionalBean.ofNullable(dto)
                 .getBean(QueryIndexDTO::getAddressDetails).get();
+        String toCode = "TWD";
 
         List<String> resFailed = new ArrayList<>();
         if (CommonUtils.isEmpty(indexId)) resFailed.add("元素_id為空");
@@ -192,7 +194,7 @@ public class SysIndexServiceImpl
         List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
-        Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new Hashtable<>();
+        Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new ConcurrentHashMap<>();
 
         /** indexQueryResultEmployeesList 匹配的员工信息整合 */
         List<IndexQueryResultEmployees> matchingEmployeesDetails = Collections.synchronizedList(new ArrayList<>());
@@ -206,7 +208,6 @@ public class SysIndexServiceImpl
 
         ExecutorService exr = Executors.newCachedThreadPool();
         Long startMill = System.currentTimeMillis();
-
         employeesSearchPool.get(type).forEach(existEmployeesId -> {
             EmployeesHandleVo vo = new EmployeesHandleVo(
                     existEmployeesId,
@@ -222,7 +223,7 @@ public class SysIndexServiceImpl
                 @Override
                 public void run() {
                     Long startMill = System.currentTimeMillis();
-                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails, toCode);
                     Long endMill = System.currentTimeMillis();
                     Long length = endMill - startMill;
                     log.info("employeesId:" + existEmployeesId +"  use:"+ length+"ms");
@@ -678,7 +679,7 @@ public class SysIndexServiceImpl
                                               LocalDate end,
                                               List<LocalTime> requireTime,
                                               Float totalTimeRequired,
-                                              DateSlot dateSlot){
+                                              DateSlot dateSlot, String toCode){
         List<ContractAndPriceDetails> service2 = new ArrayList<>();
         employeesContractList.forEach(employeesContract -> {
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
@@ -704,7 +705,7 @@ public class SysIndexServiceImpl
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
                 //达到出勤率标准
-                BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), "TWD", new BigDecimal(wage));
+                BigDecimal totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), toCode, new BigDecimal(wage));
                 attendance.setTotalPrice(totalWage);
                 //添加到结果域
                 ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
@@ -791,7 +792,7 @@ public class SysIndexServiceImpl
 
     public void existEmployeesHandle(EmployeesHandleVo vo,
                                      Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
-                                     List<IndexQueryResultEmployees> matchingEmployeesDetails){
+                                     List<IndexQueryResultEmployees> matchingEmployeesDetails, String toCode){
         /** indexQueryResultEmployees 保洁员返回信息 */
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
@@ -814,7 +815,7 @@ public class SysIndexServiceImpl
 
         /** calendar： 钟点工闲置时间准备 */
         DateSlot dateSlot = new DateSlot(vo.getStart(), vo.getEnd());
-        Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, vo.getExistEmployeesId());
+        Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, vo.getExistEmployeesId(), toCode);
 
         /** employeesContractList: 保洁员的相关工作内容的包工准备 */
         QueryWrapper contractQw = new QueryWrapper();
@@ -848,7 +849,7 @@ public class SysIndexServiceImpl
                 return;
             }
         }else if (vo.getType() == 2){
-            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot);
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
             if (service2.size() != 0){
                 indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
@@ -860,7 +861,7 @@ public class SysIndexServiceImpl
             }
         }else if (vo.getType() == 3){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
-            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot);
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
             if (service1.size() == 0 && service2.size() == 0){
                 isOk = false;
                 return;

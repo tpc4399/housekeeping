@@ -47,7 +47,7 @@ public class EmployeesCalendarController {
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的時間表，就是员工设定的可工作时间，而非员工的空闲时间。以详细列举形式返回")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
-        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getId());
+        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getCalendarByDateSlot(dto.getDateSlot(), dto.getId(), "");
         if (CommonUtils.isEmpty(res)){
             return R.failed("該員工沒有設置時間表");
         }else {
@@ -58,7 +58,7 @@ public class EmployeesCalendarController {
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
-        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getFreeTimeByDateSlot(dto.getDateSlot(), dto.getId());
+        Map<LocalDate, List<TimeSlotDTO>> res = employeesCalendarService.getFreeTimeByDateSlot(dto.getDateSlot(), dto.getId(), "");
         if (CommonUtils.isEmpty(res)){
             return R.failed("該員工沒有設置時間表或没有闲置时间");
         }else {

@@ -17,6 +17,7 @@ import com.housekeeping.common.utils.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ManagerDetailsService managerDetailsService;
     @Resource
     private ICustomerDetailsService customerDetailsService;
+    @Resource
+    private ICurrencyService currencyService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -211,7 +214,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
-    public Map<LocalDate, List<TimeSlotDTO>> getCalendarByDateSlot(DateSlot dateSlot, Integer employeesId) {
+    public Map<LocalDate, List<TimeSlotDTO>> getCalendarByDateSlot(DateSlot dateSlot, Integer employeesId, String toCode) {
 
         /* 先得到三大map */
         SortListUtil<TimeSlotDTO> sort = new SortListUtil<TimeSlotDTO>();
@@ -231,8 +234,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             List<JobAndPriceDTO> jobAndPriceDTOList = employeesCalendarDetailsList.stream().map(employeesCalendarDetails -> {
                 JobAndPriceDTO jobAndPriceDTO = new JobAndPriceDTO();
                 jobAndPriceDTO.setJobId(employeesCalendarDetails.getJobId());
-                jobAndPriceDTO.setPrice(employeesCalendarDetails.getPrice());
-                jobAndPriceDTO.setCode(employeesCalendarDetails.getCode());
+                if (toCode.equals("")){
+                    jobAndPriceDTO.setPrice(employeesCalendarDetails.getPrice());
+                    jobAndPriceDTO.setCode(employeesCalendarDetails.getCode());
+                }else {
+                    BigDecimal price = currencyService.exchangeRateToBigDecimal(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
+                    jobAndPriceDTO.setPrice(new Float(price.toString()));
+                    jobAndPriceDTO.setCode(toCode);
+                }
                 return jobAndPriceDTO;
             }).collect(Collectors.toList());
             TimeSlotDTO timeSlotDTO = new TimeSlotDTO();
@@ -281,9 +290,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
-    public Map<LocalDate, List<TimeSlotDTO>> getFreeTimeByDateSlot(DateSlot dateSlot, Integer employeesId) {
+    public Map<LocalDate, List<TimeSlotDTO>> getFreeTimeByDateSlot(DateSlot dateSlot, Integer employeesId, String toCode) {
         /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
-        return this.getCalendarByDateSlot(dateSlot, employeesId);
+        return this.getCalendarByDateSlot(dateSlot, employeesId, toCode);
     }
 
     /*時間段合理性判斷   假設都不為空*/

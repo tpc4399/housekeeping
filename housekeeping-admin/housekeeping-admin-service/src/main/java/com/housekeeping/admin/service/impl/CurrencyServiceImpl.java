@@ -76,7 +76,6 @@ public class CurrencyServiceImpl implements ICurrencyService {
         querys.put("money", money.toString());
         querys.put("toCode", toCode);
 
-
         try {
             /**
              * 重要提示如下:
@@ -88,7 +87,7 @@ public class CurrencyServiceImpl implements ICurrencyService {
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-            log.info("阿里云外汇换算接口调用");
+            log.info("阿里云汇率换算接口被调用");
             JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
             JSONObject showApiResBody = jsonObject.getJSONObject("showapi_res_body");
             String toMoney = showApiResBody.getString("money");
