@@ -40,4 +40,11 @@ public class CurrencyController {
         return currencyService.exchangeRate(fromCode, toCode, money);
     }
 
+    @ApiOperation("实时汇率查询")
+    @GetMapping("/list")
+    public R list(){
+        Map<String, Float> map = currencyService.realTimeExchangeRate();
+        return R.ok(map);
+    }
+
 }

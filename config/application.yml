@@ -53,6 +53,7 @@ currency:
   exchangeRate:
     host: https://ali-waihui.showapi.com
     path: /waihui-transform
+    path1: /waihui-list
     method: GET
     appcode: 74bf2f4aaa8e4bb3a67d287c53509cda
 address:

@@ -28,6 +28,7 @@ import java.time.Period;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -203,6 +204,9 @@ public class SysIndexServiceImpl
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
 
+        ExecutorService exr = Executors.newCachedThreadPool();
+        Long startMill = System.currentTimeMillis();
+
         employeesSearchPool.get(type).forEach(existEmployeesId -> {
             EmployeesHandleVo vo = new EmployeesHandleVo(
                     existEmployeesId,
@@ -214,12 +218,22 @@ public class SysIndexServiceImpl
                     type,
                     contendId
             );
-            Long startMill = System.currentTimeMillis();
-            existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
-            Long endMill = System.currentTimeMillis();
-            Long length = endMill - startMill;
-            log.info("employeesId:" + existEmployeesId +"  use "+ length);
+            exr.submit(new Runnable() {
+                @Override
+                public void run() {
+                    Long startMill = System.currentTimeMillis();
+                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails);
+                    Long endMill = System.currentTimeMillis();
+                    Long length = endMill - startMill;
+                    log.info("employeesId:" + existEmployeesId +"  use:"+ length+"ms");
+                }
+            });
         });
+        exr.shutdown();
+        exr.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        Long endMill = System.currentTimeMillis();
+        Long length = endMill - startMill;
+        log.info("all" +"  use:"+ length+"ms");
         /**
          * 如果只选钟点工：
          * 【推荐公司】  1、公司推广列表里面的公司 2、公司手底下有保洁员被匹配（时间段，工作内容） 3、排序: 推荐值降序
@@ -574,11 +588,11 @@ public class SysIndexServiceImpl
                                          Map<LocalDate, List<TimeSlotDTO>> calendar,
                                          List<LocalTime> requireTime,
                                          Float totalTimeRequired){
-        ExecutorService ex = Executors.newCachedThreadPool();
         List<JobAndPriceDetails> service1 = new ArrayList<>();
         contendId.forEach(jobId -> {
             Attendance attendance = new Attendance(jobId, new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
+            ExecutorService ex = Executors.newCachedThreadPool();
             for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
                 LocalDate finalDate = date;
                 ex.submit(new Runnable() {
@@ -587,6 +601,19 @@ public class SysIndexServiceImpl
                         judgeTheDay1(calendar, finalDate, requireTime, jobId, attendance, noAttendanceDetails);//判断date日期的出勤情况
                     }
                 });
+            }
+            /***
+             * shutdown调用后，不可以再submit新的task，已经submit的将继续执行。
+             *
+             * shutdownNow试图停止当前正执行的task，并返回尚未执行的task的list
+             *
+             * awaitTermination调用后等待线程，代线程执行完毕
+             */
+            ex.shutdown();
+            try {
+                ex.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -598,7 +625,6 @@ public class SysIndexServiceImpl
                 //未达到标准
             }
         });
-        ex.shutdown();
         return service1;
     }
 
@@ -622,11 +648,11 @@ public class SysIndexServiceImpl
                             canBeOnDuty.set(true);
                             attendance.halfAnHourMore();
                             /* halfAnHourWage 半小时价格 TWD货币代码 */
-//                                    BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
+//                                 BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
 //                                            jobAndPriceDTO.getCode(),
 //                                            "TWD",
 //                                            new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2))
-//                                    );
+//                               );
                             BigDecimal halfAnHourWage = new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2));
                             attendance.increaseTheTotalPrice(halfAnHourWage);
                         }
@@ -653,13 +679,13 @@ public class SysIndexServiceImpl
                                               List<LocalTime> requireTime,
                                               Float totalTimeRequired,
                                               DateSlot dateSlot){
-        ExecutorService ex = Executors.newCachedThreadPool();
         List<ContractAndPriceDetails> service2 = new ArrayList<>();
         employeesContractList.forEach(employeesContract -> {
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
             float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
             Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
+            ExecutorService ex = Executors.newCachedThreadPool();
             for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
                 LocalDate finalDate = date;
                 ex.submit(new Runnable() {
@@ -668,6 +694,12 @@ public class SysIndexServiceImpl
                         judgeTheDay2(calendarContractFreeTime, finalDate, requireTime, attendance, noAttendanceDetails);//判断date日期的出勤情况
                     }
                 });
+            }
+            ex.shutdown();
+            try {
+                ex.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
             if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
@@ -681,7 +713,6 @@ public class SysIndexServiceImpl
                 //未达到标准
             }
         });
-        ex.shutdown();
         return service2;
     }
 
@@ -718,7 +749,6 @@ public class SysIndexServiceImpl
     }
 
     List<Integer> indexIdHandleContendId(Integer indexId){
-        System.out.println("线程"+Thread.currentThread().getName()+" 1启动");
         QueryWrapper qw0 = new QueryWrapper();
         qw0.eq("index_id", indexId);
         List<SysIndexContent> sysIndexContentList = sysIndexContentService.list(qw0);
@@ -729,7 +759,6 @@ public class SysIndexServiceImpl
     }
 
     List<Integer> getPromoteCompanyIds(){
-        System.out.println("线程"+Thread.currentThread().getName()+" 2启动");
         List<Integer> promoteCompanyIds = new ArrayList<>();
         QueryWrapper qw2 = new QueryWrapper();
         qw2.select("company_id").gt("end_time", LocalDateTime.now());
@@ -738,7 +767,6 @@ public class SysIndexServiceImpl
     }
 
     List<Integer> getPromoteEmployeeIds(){
-        System.out.println("线程"+Thread.currentThread().getName()+" 3启动");
         List<Integer> promoteEmployeeIds = new ArrayList<>();
         QueryWrapper qw3 = new QueryWrapper();
         qw3.select("employees_id").gt("end_time", LocalDateTime.now());
@@ -747,7 +775,6 @@ public class SysIndexServiceImpl
     }
 
     Map<Integer, List<Integer>> getEmployeesSearchPool(){
-        System.out.println("线程"+Thread.currentThread().getName()+" 4启动");
         Map<Integer, List<Integer>> employeesSearchPool = new HashMap<>();
         QueryWrapper qw1 = new QueryWrapper();
         qw1.select("employees_id").groupBy("employees_id");
@@ -765,7 +792,6 @@ public class SysIndexServiceImpl
     public void existEmployeesHandle(EmployeesHandleVo vo,
                                      Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
                                      List<IndexQueryResultEmployees> matchingEmployeesDetails){
-        System.out.println(Thread.currentThread().getName()+ " employeesId:" + vo.getExistEmployeesId());
         /** indexQueryResultEmployees 保洁员返回信息 */
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 

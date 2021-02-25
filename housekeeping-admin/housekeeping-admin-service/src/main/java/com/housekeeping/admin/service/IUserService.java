@@ -23,7 +23,7 @@ public interface IUserService extends IService<User> {
     R page(Page page, PageOfUserDTO dto);
     /* 添加管理员、公司、家庭账户 */
     R add1(AdminAdd1DTO dto);
-    /* 添加管理员、公司、家庭账户 */
+    /* 添加经理、保洁员账户 */
     R add2(AdminAdd2DTO dto);
 
     R removeAdmin(Integer userId);
