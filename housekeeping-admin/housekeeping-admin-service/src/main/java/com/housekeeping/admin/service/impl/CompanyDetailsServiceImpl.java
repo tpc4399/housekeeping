@@ -6,13 +6,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.CompanyScale;
-import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ICompanyScaleService;
+import com.housekeeping.admin.service.ISysOrderService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -27,6 +26,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -43,7 +43,8 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     private EmployeesDetailsService employeesDetailsService;
     @Resource
     private ICompanyScaleService companyScaleService;
-
+    @Resource
+    ISysOrderService sysOrderService;
     @Override
     public String uploadLogo(MultipartFile file, Integer reviserId) throws IOException {
 
@@ -269,12 +270,48 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
 
     @Override
     public R pay(Integer type) {
-        return null;
+        Integer companyId = this.getCompanyIdByUserId(TokenUtils.getCurrentUserId());
+        CompanyDetails company = this.getById(companyId);
+        if(CommonUtils.isEmpty(company.getExpireDate())||LocalDateTime.now().isAfter(company.getExpireDate())){
+            LocalDateTime now = LocalDateTime.now();
+            if(type.equals(0)){
+                company.setExpireDate(now.plusDays(30L));
+            }else {
+                company.setExpireDate(now.plusDays(365L));
+            }
+
+        }else {
+            if(type.equals(0)){
+                company.setExpireDate(company.getExpireDate().plusDays(30L));
+            }else {
+                company.setExpireDate(company.getExpireDate().plusDays(365L));
+            }
+        }
+        company.setLastReviserId(TokenUtils.getCurrentUserId());
+        this.updateById(company);
+        return R.ok("续费成功");
     }
 
     public void promotion(Integer companyId,Integer tokens){
         CompanyDetails byId = this.getById(companyId);
         baseMapper.promotion(companyId,byId.getTokens(),tokens);
+    }
+
+    @Override
+    public Boolean checkCompPay(Integer companyId) {
+        Integer scaleSwitch = baseMapper.getScaleSwitch();
+        List<Integer> empIds = employeesDetailsService.getAllIdsByCompanyId(companyId);
+        int count = sysOrderService.count(new QueryWrapper<SysOrder>().lambda().in(SysOrder::getEmployeesId, empIds));
+        CompanyDetails company = this.getById(companyId);
+        Boolean Renewed = true;
+        if(CommonUtils.isEmpty(company.getExpireDate())||LocalDateTime.now().isAfter(company.getExpireDate())){
+            Renewed = false;
+        }
+        if(scaleSwitch.equals(0)||count<=3||Renewed){
+            return false;
+        }else {
+            return true;
+        }
     }
 
 }

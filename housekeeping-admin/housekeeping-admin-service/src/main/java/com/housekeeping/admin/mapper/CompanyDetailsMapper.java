@@ -23,4 +23,6 @@ public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void buyTokens(@Param("tokens") Integer tokens,@Param("id") Integer id,@Param("buyTokens") int buyTokens);
 
     void promotion(@Param("companyId") Integer companyId,@Param("ctokens")  Integer ctokens,@Param("tokens") Integer tokens);
+
+    Integer getScaleSwitch();
 }

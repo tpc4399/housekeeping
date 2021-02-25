@@ -41,6 +41,10 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="getScaleSwitch" resultType="java.lang.Integer">
+        SELECT scale_fee_switch FROM sys_config
+    </select>
+
     <update id="authSuccess">
         UPDATE company_details
         SET is_validate = true, company_name = #{companyName}

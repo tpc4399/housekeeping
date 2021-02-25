@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type);
@@ -26,4 +27,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     Boolean isMe(Integer employeesId);
 
     R cusRemove(Integer employeesId);
+
+    public List<Integer> getAllIdsByCompanyId(Integer companyId);
 }

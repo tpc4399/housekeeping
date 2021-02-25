@@ -462,6 +462,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             ManagerDetails manager = new ManagerDetails();
             manager.setUserId(maxUserId);
             manager.setCompanyId(dto.getCompanyId());
+            manager.setName(dto.getName());
             if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
                 manager.setPhonePrefix(dto.getPhonePrefix());
                 manager.setPhone(dto.getPhone());
@@ -493,6 +494,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             EmployeesDetails employees = new EmployeesDetails();
             employees.setUserId(maxUserId);
             employees.setCompanyId(dto.getCompanyId());
+            employees.setName(dto.getName());
             if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
                 employees.setPhonePrefix(dto.getPhonePrefix());
                 employees.setPhone(dto.getPhone());
@@ -560,6 +562,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         qw4.eq("company_id",one.getId());
         companyAdvertisingService.remove(qw4);
         this.removeById(userId);
+        QueryWrapper qw5 = new QueryWrapper<CompanyDetails>();
+        qw5.eq("id",one.getId());
+        companyDetailsService.remove(qw5);
         return R.ok("删除成功");
     }
 
