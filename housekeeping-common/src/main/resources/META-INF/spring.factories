@@ -6,6 +6,9 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
     com.housekeeping.common.config.DateformatConfig,\
     com.housekeeping.common.config.InsertStaticVariable,\
     com.housekeeping.common.config.OSSConfig,\
-    com.housekeeping.common.config.GlobalExceptionHandler
+    com.housekeeping.common.config.GlobalExceptionHandler,\
+    com.housekeeping.common.config.CORSConfig,\
+    com.housekeeping.common.config.OthersBeanConfig
 org.springframework.context.ApplicationContextInitializer=\
     com.housekeeping.common.logs.init.ApplicationLoggerInitializer
+

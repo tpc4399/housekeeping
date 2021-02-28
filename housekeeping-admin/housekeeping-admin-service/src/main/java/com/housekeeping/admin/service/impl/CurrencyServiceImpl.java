@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service.impl;
 
 import com.housekeeping.admin.service.ICurrencyService;
+import com.housekeeping.common.entity.ConversionRatio;
 import com.housekeeping.common.utils.HttpUtils;
 import com.housekeeping.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,11 @@ public class CurrencyServiceImpl implements ICurrencyService {
     private String method;
     @Value("${currency.exchangeRate.appcode}")
     private String appcode;
+    @Resource
+    private ConversionRatio conversionRatio;
+
+    public InheritableThreadLocal<ConversionRatio> inheritableThreadLocal = new InheritableThreadLocal<>();
+
 
     @Override
     public R exchangeRate(String fromCode, String toCode, BigDecimal money) {
@@ -87,7 +94,7 @@ public class CurrencyServiceImpl implements ICurrencyService {
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
             HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-            log.info("阿里云汇率换算接口被调用");
+            log.info("阿里云汇率换算接口被调用"+fromCode+toCode+money);
             JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
             JSONObject showApiResBody = jsonObject.getJSONObject("showapi_res_body");
             String toMoney = showApiResBody.getString("money");
@@ -135,8 +142,23 @@ public class CurrencyServiceImpl implements ICurrencyService {
 
     @Override
     public BigDecimal exchangeRateToBigDecimalAfterOptimization(String fromCode, String toCode, BigDecimal money) {
-
-        return null;
+        /**
+         * 1、先查看request域有无比率
+         * 2、有则直接get
+         * 3、无则请求阿里云，用完put
+         */
+        BigDecimal res = new BigDecimal(0);
+        BigDecimal ratio = new BigDecimal(0);
+        String key = fromCode+toCode;
+        if (conversionRatio.containsByKey(key)) {
+            ratio = conversionRatio.getValueByKey(key);
+            res = ratio.multiply(money);
+        }else {
+            res = this.exchangeRateToBigDecimal(fromCode, toCode, money);
+            ratio = res.divide(money);
+            conversionRatio.putKeyValue(key, ratio);
+        }
+        return res;
     }
 
     @Test

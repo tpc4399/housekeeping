@@ -8,13 +8,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import net.sf.json.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @Author su
@@ -79,4 +84,17 @@ public class TestController {
         return R.ok();
     }
 
+
+    @RequestMapping(value = "/test6", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @ApiOperation("长链接测试")
+    public String test6() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String re = "目前C股票价格为："+ new Random().nextInt(1000)+100;
+        System.out.println("fawfgajkhugwak");
+        return re;
+    }
 }

@@ -7,6 +7,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * 用於注入static變量
  * @Author su
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InsertStaticVariable implements ApplicationRunner {
 
-    @Autowired
+    @Resource
     private RedisUtils redisUtils;
 
     @Override

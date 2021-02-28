@@ -12,6 +12,7 @@ import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.admin.vo.TimeSlotVo;
+import com.housekeeping.common.entity.ConversionRatio;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
 import org.springframework.stereotype.Service;
@@ -242,7 +243,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                     if (employeesCalendarDetails.getCode().equals(toCode)){
                         price = new BigDecimal(employeesCalendarDetails.getPrice());
                     }else {
-                        price = currencyService.exchangeRateToBigDecimal(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
+                        price = currencyService.exchangeRateToBigDecimalAfterOptimization(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
                     }
                     jobAndPriceDTO.setPrice(new Float(price.toString()));
                     jobAndPriceDTO.setCode(toCode);

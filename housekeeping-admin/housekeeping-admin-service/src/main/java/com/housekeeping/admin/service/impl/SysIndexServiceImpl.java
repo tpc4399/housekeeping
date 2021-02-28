@@ -10,6 +10,7 @@ import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.PriceSlotVo;
 import com.housekeeping.admin.vo.SysIndexVo;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.common.entity.ConversionRatio;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.*;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -149,6 +152,7 @@ public class SysIndexServiceImpl
 
     @Override
     public R query(QueryIndexDTO dto) throws InterruptedException {
+
         /***
          * 判空
          */
@@ -205,6 +209,9 @@ public class SysIndexServiceImpl
 
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
+
+        /** conversionRatio 货币折算比率准备 */
+        Map<String, BigDecimal> conversionRatio = new ConcurrentHashMap<>();
 
         ExecutorService exr = Executors.newCachedThreadPool();
         Long startMill = System.currentTimeMillis();
@@ -709,7 +716,7 @@ public class SysIndexServiceImpl
                 if (employeesContract.getCode().equals(toCode)){
                     totalWage = new BigDecimal(wage);
                 }else {
-                    totalWage = currencyService.exchangeRateToBigDecimal(employeesContract.getCode(), toCode, new BigDecimal(wage));
+                    totalWage = currencyService.exchangeRateToBigDecimalAfterOptimization(employeesContract.getCode(), toCode, new BigDecimal(wage));
                 }
                 attendance.setTotalPrice(totalWage);
                 //添加到结果域

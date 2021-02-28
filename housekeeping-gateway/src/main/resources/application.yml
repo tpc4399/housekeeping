@@ -60,6 +60,7 @@ housekeeping:
       - /api/admin/companyHuman/verfifyCompanyCode
       - /api/admin/customer/verfifyCustomerCode
       - /api/admin/admin/verfifyAdminCode
+      - /api/admin/test6
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
