@@ -60,7 +60,7 @@ public class SysUserController {
     @PostMapping("/updateAccount2")
     @ApiOperation("【管理员】修改经理、保洁员账户信息接口")
     public R updateAccount2(@RequestBody AdminUpdate2DTO dto){
-        return R.ok();
+        return userService.update2(dto);
     }
 
     @ApiOperation("【管理员】黑名单操作 roleType:12345分别为 管理员 公司 家庭 经理 保洁员  id:为他们自己的id而非userId， 目前仅支持拉黑家庭和保洁员  action：true代表拉黑操作，false代表从移出黑名单")
