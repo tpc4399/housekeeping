@@ -2,9 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.housekeeping.admin.dto.AdminAdd1DTO;
-import com.housekeeping.admin.dto.AdminAdd2DTO;
-import com.housekeeping.admin.dto.PageOfUserDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.User;
@@ -47,10 +45,22 @@ public class SysUserController {
         return userService.add1(dto);
     }
 
+    @PostMapping("/updateAccount1")
+    @ApiOperation("【管理员】修改管理员、公司、家庭账户接口")
+    public R update1(@RequestBody AdminUpdate1DTO dto){
+        return userService.update1(dto);
+    }
+
     @PostMapping("/addAccount2")
-    @ApiOperation("【管理员】添加经理、保洁员接口")
+    @ApiOperation("【管理员】添加经理、保洁员账户接口")
     public R add2(@RequestBody AdminAdd2DTO dto){
         return userService.add2(dto);
+    }
+
+    @PostMapping("/updateAccount2")
+    @ApiOperation("【管理员】修改经理、保洁员账户信息接口")
+    public R updateAccount2(@RequestBody AdminUpdate2DTO dto){
+        return R.ok();
     }
 
     @ApiOperation("【管理员】黑名单操作 roleType:12345分别为 管理员 公司 家庭 经理 保洁员  id:为他们自己的id而非userId， 目前仅支持拉黑家庭和保洁员  action：true代表拉黑操作，false代表从移出黑名单")

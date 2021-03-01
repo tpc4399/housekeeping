@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface IUserService extends IService<User> {
 
@@ -25,6 +26,10 @@ public interface IUserService extends IService<User> {
     R add1(AdminAdd1DTO dto);
     /* 添加经理、保洁员账户 */
     R add2(AdminAdd2DTO dto);
+    /* 修改管理员、公司、家庭账户 */
+    R update1(AdminUpdate1DTO dto);
+    /* 修改经理、保洁员账户 */
+    R update2(AdminUpdate2DTO dto);
 
     R removeAdmin(Integer userId);
 

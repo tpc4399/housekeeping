@@ -519,6 +519,119 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    public R update1(AdminUpdate1DTO dto) {
+        LocalDateTime now = LocalDateTime.now();
+        Integer mineUserId = TokenUtils.getCurrentUserId();
+        User user = new User();
+        user.setId(dto.getId());
+        user.setDeptId(dto.getDeptId());
+        user.setName(dto.getName());
+        user.setNickname(dto.getNickName());
+        user.setPhonePrefix(dto.getPhonePrefix());
+        user.setPhone(dto.getPhone());
+        if (CommonUtils.isNotEmpty(dto.getEmail())){
+            user.setEmail(dto.getEmail());
+        }
+        user.setPassword(DESEncryption.getEncryptString(dto.getPassword()));
+        user.setUpdateTime(now);
+        user.setLastReviserId(mineUserId);
+        Integer maxUserId = 0;
+        this.updateById(user);
+
+        if (dto.getDeptId() == 1){
+            //管理员，不修改任何详细信息
+        }else if (dto.getDeptId() == 2){
+            //公司账户，不修改任何信息
+        }else if (dto.getDeptId() == 3){
+            //家庭账户，修改手机号和手机号前缀
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("user_id", dto.getId());
+            CustomerDetails customerDetails = customerDetailsService.getOne(qw);
+            if (dto.getPhone().equals(customerDetails.getPhone()) && dto.getPhonePrefix().equals(customerDetails.getPhonePrefix())){
+
+            }else {
+                if (CommonUtils.isNotEmpty(dto.getPhone()) && CommonUtils.isNotEmpty(dto.getPhonePrefix())){
+                    customerDetails.setPhone(dto.getPhone());
+                    customerDetails.setPhonePrefix(dto.getPhonePrefix());
+                }else {
+                    customerDetails.setPhone(null);
+                    customerDetails.setPhonePrefix(null);
+                }
+                customerDetails.setUpdateTime(now);
+                customerDetailsService.updateById(customerDetails);
+            }
+
+        }
+        return R.ok("賬戶修改成功");
+    }
+
+    @Override
+    public R update2(AdminUpdate2DTO dto) {
+        LocalDateTime now = LocalDateTime.now();
+        Integer mineUserId = TokenUtils.getCurrentUserId();
+        User user = new User();
+        user.setId(dto.getId());
+        user.setDeptId(dto.getDeptId());
+        user.setName(dto.getName());
+        user.setNickname(dto.getNickName());
+        if (CommonUtils.isNotEmpty(dto.getPhonePrefix()) && CommonUtils.isNotEmpty(dto.getPhone())){
+            user.setPhonePrefix(dto.getPhonePrefix());
+            user.setPhone(dto.getPhone());
+        }
+        if (CommonUtils.isNotEmpty(dto.getEmail())){
+            user.setEmail(dto.getEmail());
+        }
+        user.setUpdateTime(now);
+        user.setLastReviserId(mineUserId);
+        this.updateById(user);
+        if (dto.getDeptId() == 4){
+            //經理賬戶
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("user_id", dto.getId());
+            ManagerDetails managerDetails = managerDetailsService.getOne(qw);
+            if (dto.getPhone().equals(managerDetails.getPhone()) &&
+                    dto.getPhonePrefix().equals(managerDetails.getPhonePrefix()) &&
+                    dto.getEmail().equals(managerDetails.getEmail())){
+
+            }else {
+                if (CommonUtils.isNotEmpty(dto.getPhone()) && CommonUtils.isNotEmpty(dto.getPhonePrefix())){
+                    managerDetails.setPhone(dto.getPhone());
+                    managerDetails.setPhonePrefix(dto.getPhonePrefix());
+                }else {
+                    managerDetails.setPhone(null);
+                    managerDetails.setPhonePrefix(null);
+                }
+                managerDetails.setEmail(dto.getEmail());
+                managerDetails.setUpdateTime(now);
+                managerDetailsService.updateById(managerDetails);
+            }
+
+        }else if (dto.getDeptId() == 5){
+            //保潔員賬戶
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("user_id", dto.getId());
+            EmployeesDetails employeesDetails = employeesDetailsService.getOne(qw);
+            if (dto.getPhone().equals(employeesDetails.getPhone()) &&
+                    dto.getPhonePrefix().equals(employeesDetails.getPhonePrefix()) &&
+                    dto.getName().equals(employeesDetails.getName())){
+
+            }else {
+                if (CommonUtils.isNotEmpty(dto.getPhone()) && CommonUtils.isNotEmpty(dto.getPhonePrefix())){
+                    employeesDetails.setPhone(dto.getPhone());
+                    employeesDetails.setPhonePrefix(dto.getPhonePrefix());
+                }else {
+                    employeesDetails.setPhone(null);
+                    employeesDetails.setPhonePrefix(null);
+                }
+                employeesDetails.setName(dto.getName());
+                employeesDetails.setUpdateTime(now);
+                employeesDetailsService.updateById(employeesDetails);
+            }
+        }
+        return R.ok("賬戶修改成功");
+    }
+
+    @Override
     public R removeAdmin(Integer userId) {
         return R.ok(this.removeById(userId));
     }

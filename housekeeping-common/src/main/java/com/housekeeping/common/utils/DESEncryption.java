@@ -89,7 +89,7 @@ public class DESEncryption {
     }
 
     public static void main(String[] args) {
-        System.out.println(getEncryptString("Qawe1"));
+        System.out.println(getEncryptString("QaweQawe123"));
         System.out.println(getDecryptString("UAlClM+FccyHfzGjBX5Njx8kB9Ww/4zb"));
         System.out.println(getDecryptString("Z7yTjVjepk2y1hC1SBJZ6A=="));
 
