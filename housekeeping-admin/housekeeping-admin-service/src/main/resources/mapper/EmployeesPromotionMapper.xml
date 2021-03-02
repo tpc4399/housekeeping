@@ -61,4 +61,30 @@
 		WHERE
 			end_time > NOW()
 	</select>
+
+    <select id="getEmpInfoByAdmin" resultType="com.housekeeping.admin.dto.EmployeesPromotionDTO">
+		SELECT
+		ed.id,
+		ed.name,
+		ed.head_url,
+		ed.star_rating,
+		ed.account_line,
+		ep.promotion,
+		ep.start_time,
+		ep.end_time,
+		ep.days,
+		cd.tokens
+		FROM
+		employees_details AS ed
+		LEFT JOIN employees_promotion AS ep ON ed.id = ep.employees_id
+		LEFT JOIN company_details AS cd ON ed.company_id = cd.id
+		<where>
+		<if test=" empId != null and  empId != ''">
+			ed.id =  #{empId}
+		</if>
+		<if test=" empName != null and  empName != ''">
+			and ed.name like concat('%',#{empName},'%')
+		</if>
+		</where>
+	</select>
 </mapper>

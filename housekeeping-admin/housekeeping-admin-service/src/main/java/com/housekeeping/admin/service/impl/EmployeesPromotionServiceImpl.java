@@ -146,6 +146,59 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
     }
 
     @Override
+    public R getEmpInfoByAdmin(Integer empId, String empName, Boolean status) {
+        List<EmployeesPromotionDTO> employeesPromotionDTOS = baseMapper.getEmpInfoByAdmin(empId,empName);
+        List<EmployeesPromotionDTO> employeesPromotionDTOS1 = new ArrayList<>();
+        if(CommonUtils.isNotEmpty(status)){
+            if(status){
+                for (int i = 0; i < employeesPromotionDTOS.size(); i++) {
+                    if(CommonUtils.isEmpty(employeesPromotionDTOS.get(i).getEndTime())||LocalDateTime.now().isAfter(employeesPromotionDTOS.get(i).getEndTime())){
+                        employeesPromotionDTOS.get(i).setPromotion(false);
+                        employeesPromotionDTOS.get(i).setStartTime(null);
+                        employeesPromotionDTOS.get(i).setDays(0);
+                    }else {
+                        employeesPromotionDTOS.get(i).setPromotion(true);
+                        Duration duration = Duration.between(employeesPromotionDTOS.get(i).getStartTime(),LocalDateTime.now());
+                        int days = (int)duration.toDays();
+                        employeesPromotionDTOS.get(i).setDays(days);
+                        employeesPromotionDTOS1.add(employeesPromotionDTOS.get(i));
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < employeesPromotionDTOS.size(); i++) {
+                    if(CommonUtils.isEmpty(employeesPromotionDTOS.get(i).getEndTime())||LocalDateTime.now().isAfter(employeesPromotionDTOS.get(i).getEndTime())){
+                        employeesPromotionDTOS.get(i).setPromotion(false);
+                        employeesPromotionDTOS.get(i).setStartTime(null);
+                        employeesPromotionDTOS.get(i).setDays(0);
+                        employeesPromotionDTOS1.add(employeesPromotionDTOS.get(i));
+                    }else {
+                        employeesPromotionDTOS.get(i).setPromotion(true);
+                        Duration duration = Duration.between(employeesPromotionDTOS.get(i).getStartTime(),LocalDateTime.now());
+                        int days = (int)duration.toDays();
+                        employeesPromotionDTOS.get(i).setDays(days);
+                    }
+                }
+            }
+            return R.ok(employeesPromotionDTOS1);
+        }else {
+            for (int i = 0; i < employeesPromotionDTOS.size(); i++) {
+                if(CommonUtils.isEmpty(employeesPromotionDTOS.get(i).getEndTime())||LocalDateTime.now().isAfter(employeesPromotionDTOS.get(i).getEndTime())){
+                    employeesPromotionDTOS.get(i).setPromotion(false);
+                    employeesPromotionDTOS.get(i).setStartTime(null);
+                    employeesPromotionDTOS.get(i).setDays(0);
+                }else {
+                    employeesPromotionDTOS.get(i).setPromotion(true);
+                    Duration duration = Duration.between(employeesPromotionDTOS.get(i).getStartTime(),LocalDateTime.now());
+                    int days = (int)duration.toDays();
+                    employeesPromotionDTOS.get(i).setDays(days);
+                }
+            }
+            return R.ok(employeesPromotionDTOS);
+        }
+    }
+
+    @Override
     @Transactional
     public R getEmpInfoByCompanyId(Integer empId,String empName) {
         Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());

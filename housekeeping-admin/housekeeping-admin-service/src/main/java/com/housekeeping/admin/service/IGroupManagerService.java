@@ -1,10 +1,7 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.GroupAdminDTO;
-import com.housekeeping.admin.dto.GroupDTO;
-import com.housekeeping.admin.dto.GroupEmployeesDTO;
-import com.housekeeping.admin.dto.GroupManagerDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.common.utils.R;
 
@@ -20,4 +17,6 @@ public interface IGroupManagerService extends IService<GroupManager> {
     R getAllManById(Integer groupId);
 
     R getAllManByAdmin(GroupAdminDTO groupDTO);
+
+    R saveByAdmin(GroupManagerAdminDTO groupManagerDTO);
 }

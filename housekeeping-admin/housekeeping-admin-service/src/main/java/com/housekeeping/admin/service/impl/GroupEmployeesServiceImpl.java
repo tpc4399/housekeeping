@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
+import com.housekeeping.admin.dto.GroupEmployeesAdminDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -156,6 +158,25 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
         }else {
             return R.ok(empVos);
         }
+    }
+
+    @Override
+    public R saveByAdmin(GroupEmployeesAdminDTO groupEmployeesDTO) {
+        //刪
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("group_id", groupEmployeesDTO.getGroupId());
+        baseMapper.delete(queryWrapper);
+
+        String[] split = groupEmployeesDTO.getEmployeesId().split(",");
+        List<String> strings = Arrays.asList(split);
+        //增
+        strings.forEach(x -> {
+            GroupEmployees groupEmployees = new GroupEmployees();
+            groupEmployees.setEmployeesId(Integer.parseInt(x));
+            groupEmployees.setGroupId(groupEmployeesDTO.getGroupId());
+            baseMapper.insert(groupEmployees);
+        });
+        return R.ok("員工修改成功");
     }
 
     public List<Integer> getIdsByGroupId(Integer groupId){

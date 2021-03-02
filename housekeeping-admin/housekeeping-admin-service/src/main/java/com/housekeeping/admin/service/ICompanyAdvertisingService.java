@@ -30,4 +30,6 @@ public interface ICompanyAdvertisingService extends IService<CompanyAdvertising>
     R addByAdmin(CompanyAdvertisingAdminVo companyAdvertising);
 
     R renewalByAdmin(AdvertisingRenewalAdminVo companyAdvertising);
+
+    R getByAdmin(Integer id, String name, Boolean status);
 }

@@ -17,4 +17,6 @@ public interface EmployeesPromotionMapper extends BaseMapper<EmployeesPromotion>
     List<Integer> getEmpByRan(Integer random);
 
     List<Integer> getAllProEmpIds();
+
+    List<EmployeesPromotionDTO> getEmpInfoByAdmin(@Param("empId")Integer empId,@Param("empName") String empName);
 }

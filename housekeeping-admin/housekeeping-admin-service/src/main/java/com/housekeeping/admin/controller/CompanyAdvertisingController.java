@@ -58,6 +58,12 @@ public class CompanyAdvertisingController {
         return iCompanyAdvertisingService.getByCompanyId(companyId, id, name);
     }
 
+    @GetMapping("/getByAdmin")
+    @ApiOperation("【管理员】查詢所有廣告（推广）")
+    public R getByAdmin(Integer id,String name,Boolean status){
+        return iCompanyAdvertisingService.getByAdmin(id, name,status);
+    }
+
     @GetMapping("/getByUserId")
     @ApiOperation("【管理员】查詢公司推广中的廣告")
     public R getByUserId(Integer userId,Integer id,String name){

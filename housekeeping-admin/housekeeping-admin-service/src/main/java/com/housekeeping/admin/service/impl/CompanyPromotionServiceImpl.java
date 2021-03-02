@@ -4,7 +4,9 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.CompanyDetailsPromotionDTO;
 import com.housekeeping.admin.dto.CompanyPromotionDTO;
+import com.housekeeping.admin.entity.CompanyAdvertising;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CompanyPromotion;
 import com.housekeeping.admin.mapper.CompanyPromotionMapper;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service("companyPromotionService")
@@ -155,6 +158,40 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
                 this.updateById(one);
                 return R.ok("推廣成功");
         }
+    }
+
+    @Override
+    public R getInfoByAdmin(Integer id, String name, Boolean status) {
+        List<CompanyDetailsPromotionDTO> companyPromotionDTO = baseMapper.getInfoByAdmin(id,name);
+        for (int i = 0; i < companyPromotionDTO.size(); i++) {
+            LocalDateTime endTime = companyPromotionDTO.get(i).getEndTime();
+            if(CommonUtils.isEmpty(companyPromotionDTO.get(i).getEndTime())||LocalDateTime.now().isAfter(endTime)){
+                companyPromotionDTO.get(i).setPromotion(false);
+            }else {
+                companyPromotionDTO.get(i).setPromotion(true);
+            }
+        }
+        if(CommonUtils.isNotEmpty(status)){
+            if(status){
+                Iterator<CompanyDetailsPromotionDTO> iterator = companyPromotionDTO.iterator();
+                while (iterator.hasNext()) {
+                    CompanyDetailsPromotionDTO s = iterator.next();
+                    if (s.getPromotion()!=true) {
+                        iterator.remove();
+                    }
+                }
+            }else {
+                Iterator<CompanyDetailsPromotionDTO> iterator = companyPromotionDTO.iterator();
+                while (iterator.hasNext()) {
+                    CompanyDetailsPromotionDTO s = iterator.next();
+                    if (s.getPromotion()==true) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        return R.ok(companyPromotionDTO);
+
     }
 
     public List<Integer> getAllProCompIds(){

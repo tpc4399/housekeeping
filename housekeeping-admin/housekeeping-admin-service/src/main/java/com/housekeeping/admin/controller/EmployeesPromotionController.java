@@ -26,6 +26,12 @@ public class EmployeesPromotionController {
         return employeesPromotionService.getEmpInfoByCompanyId(empId,empName);
     }
 
+    @ApiOperation("【管理员】查詢所有員工推廣狀態")
+    @GetMapping("/getEmpInfoByAdmin")
+    public R getEmpInfoByAdmin(Integer empId,String empName,Boolean status){
+        return employeesPromotionService.getEmpInfoByAdmin(empId,empName,status);
+    }
+
     @ApiOperation("【公司】推廣員工一天")
     @GetMapping("/promotionDay")
     public R promotionDay(Integer empId){
