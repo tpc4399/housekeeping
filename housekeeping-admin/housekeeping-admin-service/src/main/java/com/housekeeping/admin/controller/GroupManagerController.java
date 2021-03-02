@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
+import com.housekeeping.admin.dto.GroupManagerAdminDTO;
 import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.service.IGroupManagerService;
 import com.housekeeping.common.utils.R;
@@ -26,6 +27,12 @@ public class GroupManagerController {
     @PostMapping
     public R save(@RequestBody GroupManagerDTO groupManagerDTO){
         return groupManagerService.save(groupManagerDTO);
+    }
+
+    @ApiOperation("【管理员】分组增加删除经理")
+    @PostMapping("/saveByAdmin")
+    public R saveByAdmin(@RequestBody GroupManagerAdminDTO groupManagerDTO){
+        return groupManagerService.saveByAdmin(groupManagerDTO);
     }
 
     @GetMapping("/getAllMan")

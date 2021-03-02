@@ -46,6 +46,12 @@ public class CompanyPromotionController {
         return companyPromotionService.getAllProCompany();
     }
 
+    @ApiOperation("【管理员】查询所有公司（推广状态）")
+    @GetMapping("/getInfoByAdmin")
+    public R getInfoByAdmin(Integer id,String name,Boolean status){
+        return companyPromotionService.getInfoByAdmin(id,name,status);
+    }
+
     @ApiOperation("【管理员】推廣公司")
     @GetMapping("/promotionByAdmin")
     public R promotionByAdmin(Integer companyId,Integer days){

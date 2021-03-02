@@ -4,13 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
+import com.housekeeping.admin.dto.GroupManagerAdminDTO;
 import com.housekeeping.admin.dto.GroupManagerDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.mapper.GroupManagerMapper;
 import com.housekeeping.admin.service.IGroupManagerService;
-import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.vo.EmpVo;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -21,8 +21,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -155,6 +155,25 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
         }else {
             return R.ok(empVos);
         }
+    }
+
+    @Override
+    public R saveByAdmin(GroupManagerAdminDTO groupManagerDTO) {
+        //先删
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("group_id", groupManagerDTO.getGroupId());
+        baseMapper.delete(queryWrapper);
+
+        String[] split = groupManagerDTO.getManagerId().split(",");
+        List<String> strings = Arrays.asList(split);
+        //再加
+        strings.forEach(x -> {
+            GroupManager groupManager = new GroupManager();
+            groupManager.setManagerId(Integer.parseInt(x));
+            groupManager.setGroupId(groupManagerDTO.getGroupId());
+            baseMapper.insert(groupManager);
+        });
+        return R.ok("經理保存成功");
     }
 
     public List<EmpVo> search(String name,List<EmpVo> list){

@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Iterator;
 import java.util.List;
 
 @Service("companyAdvertisingService")
@@ -217,4 +218,44 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
                 this.updateById(byId);
             return R.ok("續費成功");
     }
+
+    @Override
+    public R getByAdmin(Integer id, String name, Boolean status) {
+        QueryWrapper<CompanyAdvertising> qw = new QueryWrapper<>();
+        if(CommonUtils.isNotEmpty(id)){
+            qw.eq("id",id);
+        }
+        if(CommonUtils.isNotEmpty(name)){
+            qw.like("title",name);
+        }
+        List<CompanyAdvertising> list = this.list(qw);
+        for (int i = 0; i < list.size(); i++) {
+            if(CommonUtils.isEmpty(list.get(i).getEndTime())||LocalDateTime.now().isAfter(list.get(i).getEndTime())){
+                list.get(i).setPromotion(false);
+            }else {
+                list.get(i).setPromotion(true);
+            }
+        }
+        if(CommonUtils.isNotEmpty(status)){
+           if(status){
+               Iterator<CompanyAdvertising> iterator = list.iterator();
+               while (iterator.hasNext()) {
+                   CompanyAdvertising s = iterator.next();
+                   if (s.getPromotion()!=true) {
+                       iterator.remove();
+                   }
+               }
+           }else {
+               Iterator<CompanyAdvertising> iterator = list.iterator();
+               while (iterator.hasNext()) {
+                   CompanyAdvertising s = iterator.next();
+                   if (s.getPromotion()==true) {
+                       iterator.remove();
+                   }
+               }
+           }
+        }
+        return R.ok(list);
+    }
+
 }

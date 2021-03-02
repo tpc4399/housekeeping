@@ -13,6 +13,17 @@
 		<result property="tokens" column="tokens"/>
 		<result property="companyName" column="company_name"/>
 	</resultMap>
+	<resultMap id="baseResultMap1" type="com.housekeeping.admin.dto.CompanyDetailsPromotionDTO">
+		<id property="companyId" column="id"/>
+		<result property="number" column="number"/>
+		<result property="companyName" column="company_name"/>
+		<result property="companyProfile" column="company_profile"/>
+		<result property="logoUrl" column="logo_url"/>
+		<result property="tokens" column="tokens"/>
+		<result property="promotion" column="promotion"/>
+		<result property="startTime" column="start_time"/>
+		<result property="endTime" column="end_time"/>
+	</resultMap>
 
 	<select id="getInfoById" resultMap="baseResultMap">
 		SELECT
@@ -45,4 +56,29 @@
 		company_promotion
 		WHERE end_time > NOW()
 	</select>
+
+	<select id="getInfoByAdmin" resultMap="baseResultMap1">
+		SELECT
+		cd.id,
+		cd.number,
+		cd.company_name,
+		cd.company_profile,
+		cd.logo_url,
+		cd.tokens,
+		cp.promotion,
+		cp.start_time,
+		cp.end_time
+		FROM
+		company_details AS cd
+		LEFT JOIN company_promotion cp ON cd.id = cp.company_id
+		<where>
+			<if test=" id != null and  id != ''">
+				cd.id =  #{id}
+			</if>
+			<if test=" name != null and  name != ''">
+				and cd.company_name like concat('%',#{name},'%')
+			</if>
+		</where>
+	</select>
+
 </mapper>
