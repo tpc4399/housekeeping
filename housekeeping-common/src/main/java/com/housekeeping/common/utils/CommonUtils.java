@@ -449,6 +449,10 @@ public class CommonUtils {
 		Integer y = 129;
 		System.out.printf(String.valueOf(x*y));
 
+		String weekStrE = "123456";
+		String aaaa = "123";
+		System.out.println(weekStrE.contains(aaaa));
+
 	}
 
 }
