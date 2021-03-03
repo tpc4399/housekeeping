@@ -51,5 +51,7 @@ public class Message {
      */
     private long timestamp;
 
+    private int msgtype;
+
 
 }

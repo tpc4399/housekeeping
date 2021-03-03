@@ -209,6 +209,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imMessage.setContent(message.getContent());
         imMessage.setReadStatus(readStatus);
         imMessage.setType(message.getType());
+        imMessage.setMsgType(message.getMsgtype());
         iImMessageService.saveMessage(imMessage);
     }
 

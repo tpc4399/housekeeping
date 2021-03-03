@@ -1,7 +1,8 @@
 package com.housekeeping.im.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import com.housekeeping.im.common.utils.ChatUtils;
+import com.aliyun.oss.OSSClient;
+import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.R;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,49 +11,50 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.Objects;
-import java.util.UUID;
+import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Controller
 @RequestMapping("api")
 public class UploadController {
 
-    @Value("${web.upload-path}")
-    private String uploadPath;
+    @Resource
+    private OSSClient ossClient;
+
+    @Value("${oss.bucketName}")
+    private String bucketName;
+
+    @Value("${oss.urlPrefix}")
+    private String urlPrefix;
 
     /**
      * 上传接口
      *
      * @param file    文件
-     * @param request 请求
      * @return json
      */
     @PostMapping(value = "upload")
     @ResponseBody
-    public String upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        JSONObject json = new JSONObject();
+    public R upload(@RequestParam("file") MultipartFile file) {
+        String res = "";
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV;
+        String type = file.getOriginalFilename().split("\\.")[1];
+        String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
+
         try {
-            String host = ChatUtils.getHost(request);
-            String fileName = UUID.randomUUID() + "." + file.getOriginalFilename().substring(Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".") + 1);
-            File targetFile = new File(uploadPath);
-            if (!targetFile.exists()) {
-                if (!targetFile.mkdirs()) {
-                    json.put("msg", "error");
-                    return json.toJSONString();
-                }
-            }
-            File tempFile = new File(uploadPath, fileName);
-            file.transferTo(tempFile);
-            json.put("msg", "success");
-            json.put("filePath", host + "/" + fileName);
+            ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+            res = urlPrefix + fileAbstractPath;
         } catch (Exception e) {
             e.printStackTrace();
-            json.put("msg", "error");
-            return json.toJSONString();
+            return R.failed("error upload");
         }
-        return json.toJSONString();
+
+        return R.ok(res);
     }
 }

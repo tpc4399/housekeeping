@@ -84,6 +84,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setAddress(managerDetailsDTO.getAddress());
                 managerDetails.setDescribes(managerDetailsDTO.getDescribes());
                 managerDetails.setSex(managerDetailsDTO.getSex());
+                managerDetails.setEducationBackground(managerDetailsDTO.getEducationBackground());
                 managerDetails.setUpdateTime(LocalDateTime.now());
                 managerDetails.setCreateTime(LocalDateTime.now());
                 managerDetails.setCompanyId(one.getId());
@@ -121,6 +122,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         managerDetails.setDescribes(managerDetailsDTO.getDescribes());
         managerDetails.setSex(managerDetailsDTO.getSex());
         managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        managerDetails.setEducationBackground(managerDetailsDTO.getEducationBackground());
         managerDetails.setCreateTime(LocalDateTime.now());
         managerDetails.setUpdateTime(LocalDateTime.now());
         if(this.updateById(managerDetails)){

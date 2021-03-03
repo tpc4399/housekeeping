@@ -43,5 +43,6 @@ public class ImMessage implements Serializable {
      */
     private String readStatus;
 
+    private Integer msgType;
 
 }

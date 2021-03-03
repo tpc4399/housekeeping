@@ -165,6 +165,7 @@ public class TioWsMsgHandler implements IWsMsgHandler {
             message.setId(imMessage.getToId());
             message.setMine(false);
             message.setType(imMessage.getType());
+            message.setMsgtype(imMessage.getMsgType());
             ImUser imUser = imUserService.getById(imMessage.getFromId());
             message.setUsername(imUser.getName());
             message.setCid(String.valueOf(imMessage.getId()));
@@ -193,6 +194,7 @@ public class TioWsMsgHandler implements IWsMsgHandler {
         imMessage.setContent(message.getContent());
         imMessage.setReadStatus(readStatus);
         imMessage.setType(message.getType());
+        imMessage.setMsgType(message.getMsgtype());
         iImMessageService.saveMessage(imMessage);
     }
 
