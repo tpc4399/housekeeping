@@ -3,6 +3,7 @@ package com.housekeeping.admin.controller;
 import com.housekeeping.admin.dto.IndexQueryDTO;
 import com.housekeeping.admin.dto.QueryIndexDTO;
 import com.housekeeping.admin.dto.SysIndexAddDto;
+import com.housekeeping.admin.dto.SysIndexUpdateDTO;
 import com.housekeeping.admin.service.ISysIndexService;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -28,6 +29,12 @@ public class SysIndexController {
     @ApiOperation("【平台】新增分类")
     public R add(@RequestBody SysIndexAddDto sysIndexAddDto){
         return sysIndexService.add(sysIndexAddDto);
+    }
+
+    @PutMapping
+    @ApiOperation("【平台】修改分类")
+    public R update(@RequestBody SysIndexUpdateDTO dto){
+        return sysIndexService.update(dto);
     }
 
     @ApiOperation("【平台】删除分类")

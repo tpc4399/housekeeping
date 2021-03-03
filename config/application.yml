@@ -22,6 +22,8 @@ spring:
         max-wait: -1
         min-idle: 0
     timeout: 1000
+  mongodb:
+    uri: mongodb://root:snaildy123@47.56.146.107:27017/housekeeping
   mail:
     host: smtp.qq.com
     username: 1213225994@qq.com

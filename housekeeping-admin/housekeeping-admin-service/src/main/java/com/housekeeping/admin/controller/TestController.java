@@ -3,6 +3,7 @@ package com.housekeeping.admin.controller;
 import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.common.utils.MongoUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,6 +37,8 @@ public class TestController {
     private final IEmployeesCalendarService employeesCalendarService;
     private final IEmployeesContractService employeesContractService;
     private final ITestService testService;
+    @Resource
+    private MongoUtils mongoUtils;
 
     @GetMapping("/test1")
     @ApiOperation("测试1")
@@ -97,4 +101,12 @@ public class TestController {
         System.out.println("fawfgajkhugwak");
         return re;
     }
+
+    @GetMapping("/test7")
+    @ApiOperation("测试7")
+    public R test7(){
+        mongoUtils.createCollection("testddf");
+        return R.ok();
+    }
+
 }

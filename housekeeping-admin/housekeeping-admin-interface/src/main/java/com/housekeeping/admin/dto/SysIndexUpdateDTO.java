@@ -7,10 +7,11 @@ import java.util.List;
 
 /**
  * @Author su
- * @Date 2021/1/26 15:14
+ * @Date 2021/3/3 17:01
  */
 @Data
-public class SysIndexAddDto {
+public class SysIndexUpdateDTO {
+    private Integer id;
     private String name;                        /* 元素名字 */
     private List<Integer> jobParentIds;         /* 工作内容父_ids */
     private List<PriceSlotVo> priceSlotList;    /* 推荐价格区间 */

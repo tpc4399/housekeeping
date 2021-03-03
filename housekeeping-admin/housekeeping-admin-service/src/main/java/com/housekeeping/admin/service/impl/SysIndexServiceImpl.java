@@ -76,6 +76,8 @@ public class SysIndexServiceImpl
         SysIndex sysIndex = new SysIndex();
         sysIndex.setName(sysIndexAddDto.getName());
         sysIndex.setOrderValue(sysIndexAddDto.getOrderValue());
+        sysIndex.setSelectedLogo(sysIndexAddDto.getSelectedLogo());
+        sysIndex.setUncheckedLogo(sysIndexAddDto.getUncheckedLogo());
         StringBuilder priceSlot = new StringBuilder("");
         sysIndexAddDto.getPriceSlotList().forEach(x->{
             priceSlot.append(x.getLowPrice());
@@ -97,6 +99,35 @@ public class SysIndexServiceImpl
         });
 
         return R.ok("添加成功");
+    }
+
+    @Override
+    public R update(SysIndexUpdateDTO dto) {
+        SysIndex sysIndex = new SysIndex();
+        sysIndex.setName(dto.getName());
+        sysIndex.setOrderValue(dto.getOrderValue());
+        sysIndex.setSelectedLogo(dto.getSelectedLogo());
+        sysIndex.setUncheckedLogo(dto.getUncheckedLogo());
+        StringBuilder priceSlot = new StringBuilder("");
+        dto.getPriceSlotList().forEach(x->{
+            priceSlot.append(x.getLowPrice());
+            priceSlot.append(" ");
+        });
+        sysIndex.setPriceSlot(new String(priceSlot).trim().replace(" ", ","));
+        this.updateById(sysIndex);
+
+        List<SysIndexContent> contendIds = new ArrayList<>();
+        dto.getJobParentIds().forEach(x->{
+            SysIndexContent sysIndexContent = new SysIndexContent();
+            sysIndexContent.setIndexId(dto.getId());
+            sysIndexContent.setContentId(x);
+            contendIds.add(sysIndexContent);
+        });
+        QueryWrapper deleteQw = new QueryWrapper();
+        deleteQw.eq("index_id", dto.getId());
+        sysIndexContentService.remove(deleteQw);
+        sysIndexContentService.saveBatch(contendIds);
+        return R.ok("修改成功");
     }
 
     @Override

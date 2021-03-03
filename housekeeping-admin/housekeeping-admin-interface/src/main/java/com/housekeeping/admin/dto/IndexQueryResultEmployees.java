@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 被匹配的保洁员
  * @Author su
  * @Date 2021/2/4 14:51
  */

@@ -14,12 +14,12 @@ import lombok.EqualsAndHashCode;
 @TableName("sys_config")
 public class SysConfig extends Model<SysConfig> {
 
-    private Float matchmakingFee;                       /* 媒合費百分比 */
-    private Boolean matchmakingFeeSwitch;               /* 媒合費开关 */
-    private Float systemServiceFee;                     /* 系统服务费百分比 */
-    private Boolean systemServiceFeeSwitch;             /* 系统服务费开关 */
-    private Float servicesChargeForCreditCard;          /* 刷卡手续费百分比 */
-    private Boolean servicesChargeForCreditCardSwitch;  /* 刷卡手续费开关 */
-    private Boolean scaleFeeSwitch;                     /* 公司规模费开关 */
+//    private Float matchmakingFee;                       /* 媒合費百分比 */
+//    private Boolean matchmakingFeeSwitch;               /* 媒合費开关 */
+//    private Float systemServiceFee;                     /* 系统服务费百分比 */
+//    private Boolean systemServiceFeeSwitch;             /* 系统服务费开关 */
+//    private Float servicesChargeForCreditCard;          /* 刷卡手续费百分比 */
+//    private Boolean servicesChargeForCreditCardSwitch;  /* 刷卡手续费开关 */
+//    private Boolean scaleFeeSwitch;                     /* 公司规模费开关 */
 
 }
