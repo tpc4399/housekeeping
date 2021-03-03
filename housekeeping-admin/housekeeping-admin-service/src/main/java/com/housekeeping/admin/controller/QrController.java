@@ -125,7 +125,7 @@ public class QrController {
         String res = "";
         try {
             String destPath = "/Qrcode/id.png";
-            String impPath = "D:/head.jpg";
+            String impPath = "/head.jpg";
             String logoPath = null;
 
             if(typeId == 1){
