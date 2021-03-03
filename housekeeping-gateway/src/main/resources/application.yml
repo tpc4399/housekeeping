@@ -61,6 +61,9 @@ housekeeping:
       - /api/admin/customer/verfifyCustomerCode
       - /api/admin/admin/verfifyAdminCode
       - /api/admin/test6
+      - /api/admin/index
+      - /api/admin/index/getById
+      - /api/admin/index/query
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

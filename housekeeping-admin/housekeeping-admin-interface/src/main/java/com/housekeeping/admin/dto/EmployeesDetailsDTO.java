@@ -24,7 +24,7 @@ public class EmployeesDetailsDTO {
     private String address4;    /* 詳細地址 */
     private Float lng;          /* 经度 */
     private Float lat;          /* 纬度 */
-    private String recordOfFormalSchooling; /* 学历，直接传本科 */
+    private String educationBackground; /* 学历，直接传本科 */
     private String phonePrefix; /* 手机号前缀 */
     private String phone;    /* 手機號 */
     private String accountLine;    /* line賬號 */

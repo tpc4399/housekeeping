@@ -113,7 +113,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
                 /** 2021/1/14 su 新增存放地址經緯度 **/
 
-                employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+                employeesDetails.setEducationBackground(employeesDetailsDTO.getEducationBackground());
                 employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
                 employeesDetails.setPhone(employeesDetailsDTO.getPhone());
                 employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
@@ -178,7 +178,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
         /** 2021/1/14 su 新增存放地址經緯度 **/
 
-        employeesDetails.setRecordOfFormalSchooling(employeesDetailsDTO.getRecordOfFormalSchooling());
+        employeesDetails.setEducationBackground(employeesDetailsDTO.getEducationBackground());
         employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());

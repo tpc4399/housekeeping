@@ -1,15 +1,9 @@
 package com.housekeeping.im.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
-import com.housekeeping.im.entity.*;
-import com.housekeeping.im.service.IImMessageService;
 import com.housekeeping.im.service.IImUserService;
-import com.housekeeping.im.service.impl.ImChatGroupServiceImpl;
-import com.housekeeping.im.service.impl.ImChatGroupUserServiceImpl;
-import com.housekeeping.im.tio.StartTioRunner;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -19,9 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 @Api(tags = "用户")
 @RestController
