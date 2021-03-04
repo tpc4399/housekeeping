@@ -182,6 +182,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         }
                         //在保存後台管理員詳情信息
                         CustomerDetails customerDetails = new CustomerDetails();
+                        customerDetails.setName(dto.getName());
                         customerDetails.setPhonePrefix(dto.getPhonePrefix());
                         customerDetails.setPhone(dto.getPhone());
                         customerDetails.setUserId(maxUserId);
@@ -420,6 +421,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }else if (dto.getDeptId() == 3){
             //家庭账户
             CustomerDetails customer = new CustomerDetails();
+            customer.setName(dto.getName());
             customer.setUserId(maxUserId);
             customer.setPhonePrefix(dto.getPhonePrefix());
             customer.setPhone(dto.getPhone());

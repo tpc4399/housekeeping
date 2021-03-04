@@ -1,5 +1,6 @@
 package com.housekeeping.im.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.im.entity.ImMessage;
@@ -10,7 +11,7 @@ import java.util.Map;
 public interface IImMessageService extends IService<ImMessage> {
 
 
-    R listMessage(String chatId, String fromId, String chatType, Long pageNo);
+    R listMessage(String chatId, String fromId, String chatType, Page page);
 
     /**
      * 保存消息

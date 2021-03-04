@@ -1,6 +1,7 @@
 package com.housekeeping.im.controller;
 
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.im.service.IImMessageService;
 import io.swagger.annotations.Api;
@@ -33,8 +34,8 @@ public class ImMessageController {
     @ApiOperation("获取聊天记录")
     @ResponseBody
     @GetMapping("list")
-    public R listMessage(String chatId, String fromId, String chatType, Long pageNo) {
-       return iImMessageService.listMessage(chatId,fromId,chatType,pageNo);
+    public R listMessage(String chatId, String fromId, String chatType, Page page) {
+       return iImMessageService.listMessage(chatId,fromId,chatType,page);
     }
 
 }
