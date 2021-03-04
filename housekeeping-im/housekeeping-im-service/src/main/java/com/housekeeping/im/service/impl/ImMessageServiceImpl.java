@@ -66,6 +66,7 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setCid(String.valueOf(imMessage.getId()));
             message.setContent(imMessage.getContent());
             message.setTimestamp(new Date().getTime());
+            message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }
         Page pages = getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
