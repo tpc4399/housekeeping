@@ -219,6 +219,12 @@ public class SysIndexServiceImpl
             return R.failed(resFailed, "存在空值");
         }
 
+        //TODO 多段時間段的合理性判斷
+        List<String> collections = rationalityJudgmentTimeSlotList(timeSlots);
+        if (collections.size() != 0){
+            return R.failed(collections, "時間段不合理，請核查");
+        }
+
         /** resultEmployeesList： 变量准备，匹配到的员工集合 */
         List<IndexQueryResultEmployees> resultEmployeesList = new ArrayList<>();
 
@@ -934,6 +940,26 @@ public class SysIndexServiceImpl
         indexQueryResultEmployeesList.add(indexQueryResultEmployees);
         matchingCompanyIdsAndEmployeesDetails.put(companyId, indexQueryResultEmployeesList);
         matchingEmployeesDetails.add(indexQueryResultEmployees);
+    }
+
+    List<String> rationalityJudgmentTimeSlotList(List<TimeSlot> timeSlotVos){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        SortListUtil<TimeSlot> sort = new SortListUtil<>();
+        sort.Sort(timeSlotVos, "getTimeSlotStart", null);
+        for (int i = 0; i < timeSlotVos.size()-1; i++) {
+            PeriodOfTime period1 = new PeriodOfTime(timeSlotVos.get(i).getTimeSlotStart(), timeSlotVos.get(i).getTimeSlotLength());
+            PeriodOfTime period2 = new PeriodOfTime(timeSlotVos.get(i+1).getTimeSlotStart(), timeSlotVos.get(i+1).getTimeSlotLength());
+            if (CommonUtils.doRechecking(period1, period2)){
+                //重複的處理方式
+                StringBuilder res = new StringBuilder();
+                res.append("周模板存在時間段重複： week ").append(i).append("  ");
+                res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                res.append("與");
+                res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                resCollections.add(res.toString());
+            }
+        }
+        return resCollections;
     }
 
     @Test
