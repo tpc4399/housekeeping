@@ -380,6 +380,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R add1(AdminAdd1DTO dto) {
+        Boolean existPhone = this.isExistPhone(dto.getPhonePrefix(), dto.getPhone(), dto.getDeptId());
+        if (existPhone){
+            return R.failed(null, "該手機號已存在，請勿重新註冊");
+        }
         LocalDateTime now = LocalDateTime.now();
         Integer mineUserId = TokenUtils.getCurrentUserId();
         User user = new User();
@@ -522,6 +526,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R update1(AdminUpdate1DTO dto) {
+        Boolean existPhone = this.isExistPhone(dto.getPhonePrefix(), dto.getPhone(), dto.getDeptId());
+        if (existPhone){
+            return R.failed(null, "該手機號已存在");
+        }
         LocalDateTime now = LocalDateTime.now();
         Integer mineUserId = TokenUtils.getCurrentUserId();
         User user = new User();
@@ -681,6 +689,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         qw5.eq("id",one.getId());
         companyDetailsService.remove(qw5);
         return R.ok("删除成功");
+    }
+
+    @Override
+    public Boolean isExistPhone(String phonePrefix, String phone, Integer deptId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("phone_prefix", phonePrefix);
+        qw.eq("phone", phone);
+        qw.eq("dept_id", deptId);
+        List<User> users = this.list(qw);
+        if (users.size() == 0){
+            return false;
+        }else {
+            return true;
+        }
     }
 
 }

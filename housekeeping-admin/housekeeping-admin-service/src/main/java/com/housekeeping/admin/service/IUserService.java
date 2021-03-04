@@ -36,4 +36,7 @@ public interface IUserService extends IService<User> {
     R removeCus(Integer userId);
 
     R removeComp(Integer userId);
+
+    /* 判断手机号是否存在,true代表已存在，false代表不存在 */
+    Boolean isExistPhone(String phonePrefix, String phone, Integer deptId);
 }
