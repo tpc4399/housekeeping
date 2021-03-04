@@ -53,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private IGroupDetailsService groupDetailsService;
     @Resource
     private ICompanyAdvertisingService companyAdvertisingService;
+    @Resource
+    private IUserService userService;
 
     @Override
     public User getUserByPhone(String phonePrefix, String phone, Integer deptId) {
@@ -646,8 +648,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         QueryWrapper<CustomerAddress> qw2 = new QueryWrapper<>();
         qw2.eq("customer_id",one.getId());
-        //删除通信地址
-        customerAddressService.remove(qw2);
+        customerAddressService.remove(qw2);//依赖1：删除通信地址
+        userService.removeById(one.getUserId());//依赖2：sysUser
         this.removeById(userId);
         return R.ok("删除成功");
     }
