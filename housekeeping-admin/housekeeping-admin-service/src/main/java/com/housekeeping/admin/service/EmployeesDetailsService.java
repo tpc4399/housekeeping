@@ -29,4 +29,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R cusRemove(Integer employeesId);
 
     public List<Integer> getAllIdsByCompanyId(Integer companyId);
+
+    /* 根据employeesId判断运功是否存在,存在true，不存在false */
+    Boolean judgmentOfExistence(Integer employeesId);
 }

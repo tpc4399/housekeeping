@@ -478,4 +478,14 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return baseMapper.getAllIdsByCompanyId(companyId);
     }
 
+    @Override
+    public Boolean judgmentOfExistence(Integer employeesId) {
+        EmployeesDetails details = this.getById(employeesId);
+        if (CommonUtils.isNotEmpty(details)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 }

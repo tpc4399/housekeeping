@@ -5,6 +5,15 @@ spring:
     username: root
     password: snaildy123
     driver-class-name: com.mysql.cj.jdbc.Driver
+    primary:
+      max-idle: 10
+      max-wait: 10000
+      min-idle: 5
+      initial-size: 5
+      validation-query: SELECT 1
+      test-on-borrow: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 18800
   rabbitmq:
     host: 47.56.146.107
     port: 5672

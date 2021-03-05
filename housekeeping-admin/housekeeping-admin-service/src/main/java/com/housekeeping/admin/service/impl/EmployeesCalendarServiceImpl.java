@@ -68,6 +68,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             return R.failed(null, authenticationResult);
         }
 
+        /* 员工存在性判断 */
+        Boolean isOk = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
+        if (isOk){
+
+        }else {
+            return R.failed(null, "該員工不存在");
+        }
+
         /* 删掉原有的 */
         QueryWrapper deleteQw = new QueryWrapper();
         deleteQw.eq("employees_id", dto.getEmployeesId());
@@ -128,6 +136,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             return R.failed(null, authenticationResult);
         }
 
+        /* 员工存在性判断 */
+        Boolean isOk = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
+        if (isOk){
+
+        }else {
+            return R.failed(null, "該員工不存在");
+        }
+
         /* 添加新的 */
         StringBuilder week = new StringBuilder();
         dto.getWeek().forEach(wk->{
@@ -179,6 +195,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         String authenticationResult = this.authenticationProcessing(dto.getEmployeesId());
         if (!authenticationResult.equals(CommonConstants.AUTHENTICATION_SUCCESSFUL)){
             return R.failed(null, authenticationResult);
+        }
+
+        /* 员工存在性判断 */
+        Boolean isOk = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
+        if (isOk){
+
+        }else {
+            return R.failed(null, "該員工不存在");
         }
 
         /* 添加新的 */

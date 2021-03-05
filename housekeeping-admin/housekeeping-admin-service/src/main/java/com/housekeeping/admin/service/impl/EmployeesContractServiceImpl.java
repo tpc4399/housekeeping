@@ -7,6 +7,7 @@ import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.entity.EmployeesContractDetails;
 import com.housekeeping.admin.mapper.EmployeesContractMapper;
+import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.IEmployeesContractDetailsService;
 import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.TimeSlot;
@@ -34,6 +35,8 @@ public class EmployeesContractServiceImpl
 
     @Resource
     private IEmployeesContractDetailsService employeesContractDetailsService;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -41,6 +44,14 @@ public class EmployeesContractServiceImpl
         List<String> resCollections = rationalityJudgment(dto);//不合理性结果收集
         if (resCollections.size() != 0){
             return R.failed(resCollections, "時間段不合理");
+        }
+
+        /* 员工存在性判断 */
+        Boolean isOk = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
+        if (isOk){
+
+        }else {
+            return R.failed(null, "該員工不存在");
         }
 
         /* 添加包工業務 */
