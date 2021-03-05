@@ -82,6 +82,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 //先保存User
                 User user = new User();
                 String ss = String.valueOf(System.currentTimeMillis());
+                user.setName(employeesDetailsDTO.getName());
                 user.setNumber("c"+ss);
                 user.setDeptId(5);
                 user.setLastReviserId(TokenUtils.getCurrentUserId());
