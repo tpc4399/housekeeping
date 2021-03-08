@@ -727,7 +727,9 @@ public class SysIndexServiceImpl
         List<ContractAndPriceDetails> service2 = new ArrayList<>();
         employeesContractList.forEach(employeesContract -> {
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
-            float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
+//            float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
+            long daysTotal = end.toEpochDay() - start.toEpochDay();
+            float wage = daysTotal * employeesContract.getDayWage();
             Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
             ExecutorService ex = Executors.newCachedThreadPool();
@@ -787,7 +789,6 @@ public class SysIndexServiceImpl
 
             if (canBeOnDuty.get()) {
                 //能出勤
-                //什么也不做
             }else {
                 //不能出勤
                 noAttendanceTime.add(time);
