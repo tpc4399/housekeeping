@@ -27,20 +27,24 @@ public class SysConfigController {
     @GetMapping
     @ApiOperation("【管理员】获取所有系统配置")
     public R getAll(){
-        return R.ok(sysConfigService.getOne(new QueryWrapper<>()), "查询成功");
+        return R.ok(sysConfigService.list(), "查询成功");
     }
 
-    @PutMapping
+    @GetMapping("/config")
     @ApiOperation("【管理员】设置配置信息")
-    public R config(@RequestBody SysConfig sysConfig){
+    public R config(String key, String value, String description){
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("config_key", key);
         List<SysConfig> sysConfigList = sysConfigService.list();
-        if (sysConfigList.size() == 0){
-            sysConfigService.save(sysConfig);
-        }else if (sysConfigList.size() == 1){
-            sysConfigService.update(sysConfig, new QueryWrapper<>());
-        }else if (sysConfigList.size() > 1){
-            sysConfigService.remove(new QueryWrapper<>());
-            sysConfigService.save(sysConfig);
+        SysConfig config = sysConfigService.getOne(qw);
+        if (CommonUtils.isEmpty(config)){
+            sysConfigService.save(new SysConfig(null, key, value, description));
+        }else {
+            if (value.equals(config.getConfigValue())){
+                //还是这个值，不用管
+            }else {
+                sysConfigService.updateById(new SysConfig(config.getId(), key, value, description));
+            }
         }
         return R.ok("设置成功");
     }

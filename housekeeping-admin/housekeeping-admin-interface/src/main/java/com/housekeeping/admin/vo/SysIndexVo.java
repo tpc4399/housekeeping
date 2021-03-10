@@ -13,5 +13,7 @@ public class SysIndexVo {
     private Integer id;                         /* 主鍵id */
     private String name;                        /* 元素名字 */
     private List<PriceSlotVo> priceSlotList;    /* 推荐价格区间 */
-    private Integer orderValue;                      /* 顺序 */
+    private Integer orderValue;                 /* 顺序 */
+    private String selectedLogo;                /* 已选中的logo--base64 */
+    private String uncheckedLogo;               /* 未选中的logo——base64 */
 }

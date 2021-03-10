@@ -147,6 +147,8 @@ public class SysIndexServiceImpl
             sysIndexVo.setId(x.getId());
             sysIndexVo.setName(x.getName());
             sysIndexVo.setOrderValue(x.getOrderValue());
+            sysIndexVo.setSelectedLogo(x.getSelectedLogo());
+            sysIndexVo.setUncheckedLogo(x.getUncheckedLogo());
             List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
             String[] arr = x.getPriceSlot().split(",");
             for (int i = 0; i < arr.length - 1; i++) {

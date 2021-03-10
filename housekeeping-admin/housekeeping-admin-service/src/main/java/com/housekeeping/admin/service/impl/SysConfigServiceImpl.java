@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.entity.SysConfig;
 import com.housekeeping.admin.mapper.SysConfigMapper;
 import com.housekeeping.admin.service.ISysConfigService;
+import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,4 +15,5 @@ import org.springframework.stereotype.Service;
 public class SysConfigServiceImpl
         extends ServiceImpl<SysConfigMapper, SysConfig>
         implements ISysConfigService {
+
 }
