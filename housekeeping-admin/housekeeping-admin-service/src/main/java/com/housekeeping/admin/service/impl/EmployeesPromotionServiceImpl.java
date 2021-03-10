@@ -199,6 +199,17 @@ public class EmployeesPromotionServiceImpl extends ServiceImpl<EmployeesPromotio
     }
 
     @Override
+    public Boolean getStatus(Integer empId) {
+        QueryWrapper<EmployeesPromotion> qw = new QueryWrapper<>();
+        qw.eq("employees_id",empId);
+        EmployeesPromotion one = this.getOne(qw);
+        if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     @Transactional
     public R getEmpInfoByCompanyId(Integer empId,String empName) {
         Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());

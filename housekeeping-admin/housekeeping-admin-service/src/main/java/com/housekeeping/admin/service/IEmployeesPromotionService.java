@@ -23,4 +23,6 @@ public interface IEmployeesPromotionService extends IService<EmployeesPromotion>
     R promotionDayByAdmin(Integer empId, Integer days);
 
     R getEmpInfoByAdmin(Integer empId, String empName, Boolean status);
+
+    Boolean getStatus(Integer empId);
 }

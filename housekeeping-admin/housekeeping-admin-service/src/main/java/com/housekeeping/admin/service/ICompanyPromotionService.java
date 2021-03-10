@@ -21,4 +21,6 @@ public interface ICompanyPromotionService extends IService<CompanyPromotion> {
     R promotionByAdmin(Integer companyId, Integer days);
 
     R getInfoByAdmin(Integer id, String name, Boolean status);
+
+    Boolean getStatus(Integer companyId);
 }

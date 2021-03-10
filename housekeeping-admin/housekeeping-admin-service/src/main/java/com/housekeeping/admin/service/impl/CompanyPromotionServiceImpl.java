@@ -9,6 +9,7 @@ import com.housekeeping.admin.dto.CompanyPromotionDTO;
 import com.housekeeping.admin.entity.CompanyAdvertising;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CompanyPromotion;
+import com.housekeeping.admin.entity.EmployeesPromotion;
 import com.housekeeping.admin.mapper.CompanyPromotionMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ICompanyPromotionService;
@@ -192,6 +193,17 @@ public class CompanyPromotionServiceImpl extends ServiceImpl<CompanyPromotionMap
         }
         return R.ok(companyPromotionDTO);
 
+    }
+
+    @Override
+    public Boolean getStatus(Integer companyId) {
+        QueryWrapper<CompanyPromotion> qw = new QueryWrapper<>();
+        qw.eq("company_id",companyId);
+        CompanyPromotion one = this.getOne(qw);
+        if(CommonUtils.isEmpty(one.getEndTime())||LocalDateTime.now().isAfter(one.getEndTime())){
+            return false;
+        }
+        return true;
     }
 
     public List<Integer> getAllProCompIds(){
