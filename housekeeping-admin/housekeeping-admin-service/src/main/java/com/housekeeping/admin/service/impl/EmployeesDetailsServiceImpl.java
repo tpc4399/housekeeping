@@ -61,6 +61,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private IGroupEmployeesService groupEmployeesService;
     @Resource
+    private EmployeesDetailsService employeesDetailsService;
+    @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -486,6 +488,23 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         }else {
             return false;
         }
+    }
+
+    @Override
+    public R putWorkArea(List<Integer> areaIds) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        EmployeesDetails employeesDetails = employeesDetailsService.getOne(qw);
+        if (areaIds.size() > 3){
+            return R.failed("最多隻能設置三個");
+        }
+        StringBuilder sb = new StringBuilder();
+        areaIds.forEach(x -> {
+            sb.append(x).append(" ");
+        });
+        baseMapper.setWorkingArea(employeesDetails.getId(), sb.toString().trim());
+        return R.ok(null, "設置成功");
     }
 
 }

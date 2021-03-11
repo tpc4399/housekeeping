@@ -3,6 +3,8 @@ package com.housekeeping.admin.controller;
 import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.MongoUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -106,6 +108,13 @@ public class TestController {
     @ApiOperation("测试7")
     public R test7(){
         mongoUtils.createCollection("testddf");
+        return R.ok();
+    }
+
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.SYSTEM_ADMIN})
+    @ApiOperation("測試8")
+    @GetMapping("/test8")
+    public R test8(){
         return R.ok();
     }
 

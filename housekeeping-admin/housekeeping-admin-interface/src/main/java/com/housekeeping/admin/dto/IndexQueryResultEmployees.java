@@ -19,4 +19,5 @@ public class IndexQueryResultEmployees {
     private Double instance;                            /* 保洁员的距离 m */
     private Float score;                                /* 保洁员的评分 */
     private Integer recommendedValue;                   /* 推荐值 */
+    private Double recommendedScope;                    /* 推荐分数 */
 }

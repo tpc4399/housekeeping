@@ -10,24 +10,19 @@ import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.PriceSlotVo;
 import com.housekeeping.admin.vo.SysIndexVo;
 import com.housekeeping.admin.vo.TimeSlot;
-import com.housekeeping.common.entity.ConversionRatio;
+import com.housekeeping.common.entity.EmployeesScope;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.*;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Period;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -70,6 +65,10 @@ public class SysIndexServiceImpl
     private ICompanyDetailsService companyDetailsService;
     @Resource
     private IEmployeesContractService employeesContractService;
+    @Resource
+    private ISysConfigService sysConfigService;
+    @Resource
+    private ISysAddressAreaService sysAddressAreaService;
 
     @Override
     public R add(SysIndexAddDto sysIndexAddDto) {
@@ -205,6 +204,8 @@ public class SysIndexServiceImpl
                 .getBean(QueryIndexDTO::getHighPrice).get();
         AddressDetailsDTO addressDetailsDTO = OptionalBean.ofNullable(dto)
                 .getBean(QueryIndexDTO::getAddressDetails).get();
+        Integer priorityType = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getPriorityType).get();
         String toCode = "TWD";
 
         List<String> resFailed = new ArrayList<>();
@@ -228,13 +229,13 @@ public class SysIndexServiceImpl
         }
 
         /** resultEmployeesList： 变量准备，匹配到的员工集合 */
-        List<IndexQueryResultEmployees> resultEmployeesList = new ArrayList<>();
+//        List<IndexQueryResultEmployees> resultEmployeesList = new ArrayList<>();
 
         /** contendIds元素内容加工: 根据主页元素id获取工作内容一级标签 */
         List<Integer> contendId = this.indexIdHandleContendId(indexId);
 
         /** promoteCompanyIds 推广公司搜索池 */
-        List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
+//        List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
         Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new ConcurrentHashMap<>();
@@ -244,13 +245,16 @@ public class SysIndexServiceImpl
 
 
         /** promoteEmployeeIds 推广员工搜索池 */
-        List<Integer> promoteEmployeeIds = this.getPromoteEmployeeIds();
+//        List<Integer> promoteEmployeeIds = this.getPromoteEmployeeIds();
 
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
 
         /** conversionRatio 货币折算比率准备 */
-        Map<String, BigDecimal> conversionRatio = new ConcurrentHashMap<>();
+//        Map<String, BigDecimal> conversionRatio = new ConcurrentHashMap<>();
+
+        /** score 匹配方案的各项权重，分值 */
+        Map<String, String> weight = sysConfigService.getScopeConfig(priorityType);
 
         ExecutorService exr = Executors.newCachedThreadPool();
         Long startMill = System.currentTimeMillis();
@@ -269,7 +273,7 @@ public class SysIndexServiceImpl
                 @Override
                 public void run() {
                     Long startMill = System.currentTimeMillis();
-                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails, toCode);
+                    existEmployeesHandle(vo, matchingCompanyIdsAndEmployeesDetails, matchingEmployeesDetails, toCode, weight, lowPrice, highPrice);
                     Long endMill = System.currentTimeMillis();
                     Long length = endMill - startMill;
                     log.info("employeesId:" + existEmployeesId +"  use:"+ length+"ms");
@@ -307,42 +311,28 @@ public class SysIndexServiceImpl
             IndexQueryResultCompany indexQueryResultCompany = new IndexQueryResultCompany();
             indexQueryResultCompany.setCompanyDetail(companyDetailsService.getById(x));
             indexQueryResultCompany.setMatchingEmployeesDetails(y);
-            AtomicReference<Integer> recommendedValue = new AtomicReference<>(0);
+            AtomicReference<Double> recommendScope = new AtomicReference<>(new Double(0.0));
             y.forEach(z -> {
-                recommendedValue.updateAndGet(v -> v + z.getService1().size());
-                recommendedValue.updateAndGet(v -> v + z.getService2().size());
+                recommendScope.set(recommendScope.get() + z.getRecommendedScope());
             });
-            if (promoteCompanyIds.contains(x)){
-
-            }else {
-                return;
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.gt("end_time", LocalDateTime.now());
+            qw2.eq("company_id", x);
+            CompanyPromotion res = companyPromotionService.getOne(qw2);
+            if (CommonUtils.isNotEmpty(res)){
+                recommendScope.set(recommendScope.get() + new Double(weight.get(ApplicationConfigConstants.extensionCompanyScopeDouble)));
             }
-            indexQueryResultCompany.setRecommendedValue(recommendedValue.get());
+            indexQueryResultCompany.setRecommendedScope(recommendScope.get());
             recommendedCompany.add(indexQueryResultCompany);
         });
-        sort1.Sort(recommendedCompany, "getRecommendedValue", null);//需要根据推荐值降序排序
+        sort1.Sort(recommendedCompany, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
-        //234
-        matchingEmployeesDetails.forEach(x -> {
-            Integer employeesId = x.getEmployeesDetails().getId();
-            Integer recommendedValue = x.getService1().size() + x.getService2().size();
-            x.setRecommendedValue(recommendedValue);
-
-            if (promoteEmployeeIds.contains(employeesId)){
-                recommendedCleaner.add(x);
-            }
-            bestCleaner.add(x);
-            nearbyCleaner.add(x);
-        });
-        sort2.Sort(recommendedCleaner, "getRecommendedValue", null);//需要根据推荐值降序排序
-        sort2.Sort(nearbyCleaner, "getInstance", null);//评分降序
-        sort2.Sort(bestCleaner, "getInstance", "desc");//距离升序
+        recommendedCleaner = new ArrayList<>(matchingEmployeesDetails);
+        sort2.Sort(recommendedCleaner, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
         Map<String, List> map = new HashMap<>();
         map.put("recommendedCompany", recommendedCompany);
         map.put("recommendedCleaner", recommendedCleaner);
-        map.put("nearbyCleaner", nearbyCleaner);
-        map.put("bestCleaner", bestCleaner);
 
         return R.ok(map, "搜索成功");
     }
@@ -844,23 +834,20 @@ public class SysIndexServiceImpl
 
     public void existEmployeesHandle(EmployeesHandleVo vo,
                                      Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
-                                     List<IndexQueryResultEmployees> matchingEmployeesDetails, String toCode){
+                                     List<IndexQueryResultEmployees> matchingEmployeesDetails, String toCode, Map<String, String> weight, BigDecimal lowPrice, BigDecimal highPrice){
         /** indexQueryResultEmployees 保洁员返回信息 */
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
         /** existEmployee 当前保洁员信息 */
         EmployeesDetails existEmployee = employeesDetailsService.getById(vo.getExistEmployeesId());
-        /** isOk 这个员工是否ok */
-        Boolean isOk = true;
+
 
         /** instance: 距离准备、筛选 */
-//            Double instance = addressCodingService.getInstanceByPointByWalking(existEmployee.getLat(), existEmployee.getLng(), addressDetailsDTO.getLat().toString(), addressDetailsDTO.getLng().toString());
         String str = CommonUtils.getInstanceByPoint(existEmployee.getLat(), existEmployee.getLng(), vo.getAddressDetailsDTO().getLat().toString(), vo.getAddressDetailsDTO().getLng().toString());
         Double instance = new Double(str);
         Double scopeOfOrder = new Double(existEmployee.getScopeOfOrder());//默认3000米接单范围
         if (instance > scopeOfOrder){
-            isOk = false;
-            return;
+
         }else {
             indexQueryResultEmployees.setInstance(instance);
         }
@@ -886,6 +873,25 @@ public class SysIndexServiceImpl
         /** requireTime 客户需求时段加工准备 */
         List<LocalTime> requireTime = this.periodSplittingB(vo.getTimeSlots());
 
+        /** score: 评分(星级)准备 */
+        Float score = existEmployee.getStarRating();
+        indexQueryResultEmployees.setScore(score);
+
+        /** extensionIsOk: 是否推广准备 */
+        Boolean extensionIsOk = false;
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.gt("end_time", LocalDateTime.now());
+        qw2.eq("employees_id", existEmployee.getId());
+        EmployeesPromotion res = employeesPromotionService.getOne(qw2);
+        if (CommonUtils.isNotEmpty(res)){
+            extensionIsOk = true;
+        }
+
+        /** areaIsOk: 地區是否匹配 */
+        Boolean areaIsOk = sysAddressAreaService.matchingArea(vo.getAddressDetailsDTO().getAddress(), existEmployee.getWorkingArea());
+
+        EmployeesScope employeesScope = new EmployeesScope(scopeOfOrder, instance, areaIsOk, extensionIsOk, null, null, lowPrice, highPrice, score, weight);
+
         /**
          * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok
          */
@@ -896,9 +902,8 @@ public class SysIndexServiceImpl
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
                 indexQueryResultEmployees.setService2(new ArrayList<>());
                 indexQueryResultEmployees.setService1(service1);
-            }else {
-                isOk = false;
-                return;
+                employeesScope.setService1(service1);
+                employeesScope.setService2(new ArrayList<>());
             }
         }else if (vo.getType() == 2){
             List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
@@ -907,16 +912,14 @@ public class SysIndexServiceImpl
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
                 indexQueryResultEmployees.setService2(service2);
                 indexQueryResultEmployees.setService1(new ArrayList<>());
-            }else {
-                isOk = false;
-                return;
+                employeesScope.setService1(new ArrayList<>());
+                employeesScope.setService2(service2);
             }
         }else if (vo.getType() == 3){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
             List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
             if (service1.size() == 0 && service2.size() == 0){
-                isOk = false;
-                return;
+
             }else {
                 if (service1.size() != 0 && service2.size() == 0){
                     indexQueryResultEmployees.setEmployeesType(1);
@@ -928,12 +931,11 @@ public class SysIndexServiceImpl
                 indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
                 indexQueryResultEmployees.setService2(service2);
                 indexQueryResultEmployees.setService1(service1);
+                employeesScope.setService1(service1);
+                employeesScope.setService2(service2);
             }
         }
-
-        /** score: 评分(星级)准备 */
-        Float score = existEmployee.getStarRating();
-        indexQueryResultEmployees.setScore(score);
+        indexQueryResultEmployees.setRecommendedScope(employeesScope.getScopeTotal());
 
         /** companyId: 所属公司准备 */
         Integer companyId = existEmployee.getCompanyId();
@@ -971,11 +973,7 @@ public class SysIndexServiceImpl
         TimeSlot timeSlot1 = new TimeSlot();
         timeSlot1.setTimeSlotStart(LocalTime.of(9, 0));
         timeSlot1.setTimeSlotLength(new Float(0f));
-//        TimeSlot timeSlot2 = new TimeSlot();
-//        timeSlot2.setTimeSlotStart(LocalTime.of(16, 0));
-//        timeSlot2.setTimeSlotLength(new Float(3.5f));
         slots.add(timeSlot1);
-//        slots.add(timeSlot2);
         List<LocalTime> res = this.periodSplittingB(slots);
 
         Map<LocalDate, List<LocalTime>> periods = new HashMap<>();

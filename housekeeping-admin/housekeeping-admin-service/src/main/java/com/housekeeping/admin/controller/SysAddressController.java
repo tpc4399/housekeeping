@@ -32,7 +32,7 @@ public class SysAddressController {
     @ApiOperation("【all】获取市里所有区")
     @GetMapping("/areaByCityId")
     public R areaByCityId(Integer cityId){
-        return R.ok();
+        return sysAddressAreaService.getAllByCityId(cityId);
     }
 
 }

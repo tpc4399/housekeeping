@@ -22,5 +22,14 @@ public class QueryIndexDTO {
     private BigDecimal lowPrice;/* 价格区间 低价 */
     private BigDecimal highPrice;/* 价格区间 高价 */
     private AddressDetailsDTO addressDetails;   /* 服务地址，经纬度 */
+    private Integer priorityType;   /* 优先类型
+                                                       0 | null 无优先选择，默认权重
+                                                       1    距離權重
+                                                       2    地區權重
+                                                       3    價格權重
+                                                       4    出勤率權重
+                                                       5    評價權重
+                                                       6    員工推廣權重
+                                                       */
 
 }

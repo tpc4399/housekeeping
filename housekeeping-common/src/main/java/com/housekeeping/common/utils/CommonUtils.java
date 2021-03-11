@@ -271,7 +271,7 @@ public class CommonUtils {
 
 		return geoCurve.getEllipsoidalDistance();
 	}
-
+	
 	public static void main(String[] args) throws UnknownHostException {
 		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
 		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();

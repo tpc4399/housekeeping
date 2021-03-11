@@ -21,4 +21,7 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
     void blacklist(@Param("employeesId") Integer employeesId,
                    @Param("action") Boolean action);
 
+    void setWorkingArea(@Param("employeesId") Integer employeesId,
+                        @Param("areaIds") String areaIds);
+
 }

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.util.List;
 
 @Api(value="員工controller",tags={"【员工详情】接口"})
 @RestController
@@ -108,6 +109,12 @@ public class EmployeesDetailsController {
     @GetMapping("/canSheMakeAnWork")
     public R canSheMakeAnWork(Integer employeesId){
         return employeesDetailsService.canSheMakeAnWork(employeesId);
+    }
+
+    @ApiOperation("【保洁员】设置自己的可工作区域，最多设置三个")
+    @PutMapping("/workArea")
+    public R putWorkArea(List<Integer> areaIds){
+        return R.ok();
     }
 
 }

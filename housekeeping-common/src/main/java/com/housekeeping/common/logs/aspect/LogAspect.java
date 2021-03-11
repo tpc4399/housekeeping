@@ -26,8 +26,6 @@ public class LogAspect {
     @Resource
     private Sender sender;
 
-    Logger logger = LoggerFactory.getLogger(LogAspect.class);
-
     @Around("@annotation(logFlag)")
     @SneakyThrows
     public Object around(ProceedingJoinPoint point, LogFlag logFlag) {

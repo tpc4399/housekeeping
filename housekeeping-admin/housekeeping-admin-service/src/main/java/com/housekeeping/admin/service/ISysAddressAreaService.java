@@ -12,4 +12,7 @@ public interface ISysAddressAreaService extends IService<SysAddressArea> {
 
     R getAllByCityId(Integer cityId);
 
+    /* 判斷地址在不在這些區 */
+    Boolean matchingArea(String address, String areaIds);
+
 }

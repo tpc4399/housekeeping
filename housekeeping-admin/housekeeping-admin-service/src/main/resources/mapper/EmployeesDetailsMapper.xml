@@ -64,4 +64,10 @@
 		SET blacklist_flag = #{action}
 		WHERE id = #{employeesId}
 	</update>
+
+	<update id="setWorkingArea">
+		UPDATE employees_details
+		SET working_area = #{areaIds}
+		WHERE id = #{employeesId}
+	</update>
 </mapper>
