@@ -3,6 +3,8 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.housekeeping.admin.entity.SysMenu;
 import com.housekeeping.admin.service.ISysMenuService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -28,7 +30,8 @@ public class SysMenuController {
 
     private final ISysMenuService sysMenuService;
 
-    @ApiOperation("獲取經歷可能的所有的菜單名稱")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理员】【公司】【经理】獲取經歷可能的所有的菜單名稱")
     @GetMapping
     public R getMenusManager(){
         QueryWrapper qw = new QueryWrapper();
@@ -38,7 +41,8 @@ public class SysMenuController {
         return R.ok(sysMenus, "查詢成功");
     }
 
-    @ApiOperation("獲取菜單名稱")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理员】【公司】【经理】獲取菜單名稱")
     @GetMapping("/getMenu/{id}")
     public R getMenuById(@PathVariable Integer id){
         SysMenu sysMenu = sysMenuService.getById(id);

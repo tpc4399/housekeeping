@@ -13,6 +13,8 @@ import com.housekeeping.admin.service.IManagerMenuService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.service.impl.GroupManagerServiceImpl;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
@@ -35,6 +37,7 @@ public class ManagerDetailsController {
     private final IManagerMenuService managerMenuService;
     private final IUserService userService;
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】新增經理")
     @LogFlag(description = "新增經理")
     @PostMapping("/saveEmp")
@@ -42,6 +45,7 @@ public class ManagerDetailsController {
         return managerDetailsService.saveEmp(managerDetailsDTO);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
     @ApiOperation("【管理员】【公司】修改經理信息")
     @LogFlag(description = "修改經理信息")
     @PostMapping("/updateEmp")
@@ -49,6 +53,7 @@ public class ManagerDetailsController {
         return managerDetailsService.updateEmp(managerDetailsDTO);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
     @ApiOperation("【管理员】【公司】刪除經理")
     @LogFlag(description = "刪除經理")
     @DeleteMapping("/deleteEmp")
@@ -56,12 +61,14 @@ public class ManagerDetailsController {
         return managerDetailsService.cusRemove(managerId);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】根据id生成登入参数")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return managerDetailsService.getLinkToLogin(id, h);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】查詢所有公司經理")
     @LogFlag(description = "查詢經理")
     @GetMapping("/page1")
@@ -69,6 +76,7 @@ public class ManagerDetailsController {
         return managerDetailsService.cusPage1(page, pageOfEmployeesDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】查詢该公司所有經理")
     @LogFlag(description = "查詢經理")
     @GetMapping("/page2")
@@ -76,6 +84,7 @@ public class ManagerDetailsController {
         return managerDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
+    @Access({RolesEnum.USER_MANAGER})
     @ApiOperation("【经理】上传头像")
     @PostMapping("/uploadHead")
     public R uploadHead(@RequestParam("file") MultipartFile file) throws IOException {
@@ -88,6 +97,7 @@ public class ManagerDetailsController {
     }
 
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】根据公司的userId列出公司下面所有的经理")
     @GetMapping("/listHisManager/{companyUserId}")
     public R getAllByCompanyUserId(@PathVariable Integer companyUserId){

@@ -10,6 +10,8 @@ import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.service.impl.GroupEmployeesServiceImpl;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
@@ -39,6 +41,7 @@ public class EmployeesDetailsController {
     private final IEmployeesContractService employeesContractService;
     private final IUserService userService;
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
@@ -46,6 +49,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
+    @Access({RolesEnum.USER_MANAGER})
     @ApiOperation("【经理】新增員工")
     @LogFlag(description = "经理新增員工")
     @PostMapping("/saveEmpByMan")
@@ -53,6 +57,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
     @ApiOperation("【管理员】【公司】修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
@@ -60,6 +65,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.updateEmp(employeesDetailsDTO);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @ApiOperation("【管理员】【公司】【經理】刪除員工")
     @LogFlag(description = "刪除員工")
     @DeleteMapping("/deleteEmp")
@@ -67,6 +73,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusRemove(employeesId);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】查詢所有公司員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page1")
@@ -74,6 +81,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage1(page, pageOfEmployeesDTO, CommonConstants.REQUEST_ORIGIN_ADMIN);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】查詢该公司所有員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page2")
@@ -81,6 +89,7 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
+    @Access({RolesEnum.USER_MANAGER})
     @ApiOperation("【经理】查詢所在公司所有員工")
     @LogFlag(description = "查詢員工")
     @GetMapping("/page3")
@@ -88,12 +97,14 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @ApiOperation("【公司】【經理】根据id生成员工登入参数")
     @GetMapping("/getLinkToLogin/{id}")
     public R getLinkToLogin(@PathVariable Integer id, @RequestParam("h") Long h) throws UnknownHostException {
         return employeesDetailsService.getLinkToLogin(id, h);
     }
 
+    @Access({RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】上传头像")
     @PostMapping("/uploadHead")
     public R uploadHead(@RequestParam("file") MultipartFile file) throws IOException {
@@ -105,16 +116,18 @@ public class EmployeesDetailsController {
         return R.ok("頭像保存成功");
     }
 
-    @ApiOperation("有无排班记录决定能否做钟点， 有无发布包工服务决定能否做包工")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【all】有无排班记录决定能否做钟点， 有无发布包工服务决定能否做包工")
     @GetMapping("/canSheMakeAnWork")
     public R canSheMakeAnWork(Integer employeesId){
         return employeesDetailsService.canSheMakeAnWork(employeesId);
     }
 
+    @Access({RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【保洁员】设置自己的可工作区域，最多设置三个")
     @PutMapping("/workArea")
     public R putWorkArea(List<Integer> areaIds){
-        return R.ok();
+        return employeesDetailsService.putWorkArea(areaIds);
     }
 
 }

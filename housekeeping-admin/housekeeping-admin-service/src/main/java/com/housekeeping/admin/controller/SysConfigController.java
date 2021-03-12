@@ -3,6 +3,8 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.housekeeping.admin.entity.SysConfig;
 import com.housekeeping.admin.service.ISysConfigService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -24,12 +26,14 @@ public class SysConfigController {
 
     private final ISysConfigService sysConfigService;
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @GetMapping
     @ApiOperation("【管理员】获取所有系统配置")
     public R getAll(){
         return R.ok(sysConfigService.list(), "查询成功");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @GetMapping("/config")
     @ApiOperation("【管理员】设置配置信息")
     public R config(String key, String value, String description){

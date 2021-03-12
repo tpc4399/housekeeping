@@ -9,6 +9,8 @@ import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -80,6 +82,7 @@ public class CompanyController {
         return userService.verfifyCode(phonePrefix, phone,code,2);
     }
 
+    @Access(RolesEnum.USER_COMPANY)
     @ApiOperation("【公司】获取公司详情信息")
     @GetMapping("/info")
     public R getCompanyDetailsByUserId(){
@@ -94,6 +97,7 @@ public class CompanyController {
         }
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @ApiOperation("【管理员】获取公司详情信息")
     @GetMapping("/getInfoById")
     public R getInfoById(@RequestParam("userId") Integer userId){
@@ -107,12 +111,14 @@ public class CompanyController {
         }
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @GetMapping("/getAllCompany")
     @ApiOperation("【管理员】查询所有公司賬戶")
     public R getAllCompany(Page page, AdminPageDTO adminPageDTO){
         return userService.getAllUser(page,adminPageDTO,2);
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @DeleteMapping("/removeComp")
     @ApiOperation("【管理员】删除公司账户")
     public R removeComp(@RequestParam("userId")Integer userId){

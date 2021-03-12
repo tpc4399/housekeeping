@@ -8,6 +8,8 @@ import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -39,6 +41,7 @@ public class CompanyDetailsController {
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】【管理员】修改公司信息")
     @LogFlag(description = "修改公司信息")
     @PostMapping("/update")
@@ -47,6 +50,7 @@ public class CompanyDetailsController {
         return R.ok("修改成功");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】给公司上传logo")
     @LogFlag(description = "公司上传logo")
     @PostMapping("/uploadLogoByAdmin")
@@ -59,6 +63,7 @@ public class CompanyDetailsController {
         return R.ok("logo保存成功");
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】公司上传logo")
     @LogFlag(description = "公司上传logo")
     @PostMapping("/uploadLogo")
@@ -71,6 +76,7 @@ public class CompanyDetailsController {
         return R.ok("logo保存成功");
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/uploadFiveImg", headers = "content-type=multipart/form-data")
     public R uploadFiveImg(@RequestParam("file") MultipartFile[] file){
@@ -82,6 +88,7 @@ public class CompanyDetailsController {
         return R.ok("圖片上傳成功");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】多圖片上傳接口,幾張都可以，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/uploadFiveImgByAdmin", headers = "content-type=multipart/form-data")
     public R uploadFiveImg(@RequestParam("file") MultipartFile[] file,
@@ -93,6 +100,7 @@ public class CompanyDetailsController {
         return R.ok("圖片上傳成功");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
     @ApiOperation("【公司、管理员】获取公司详情信息")
     @GetMapping("/details")
     public R getCompanyDetailsByUserId(@RequestParam("userId") Integer userId){
@@ -106,42 +114,49 @@ public class CompanyDetailsController {
         }
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】分页查询所有公司")
     @GetMapping("/pageOfCompany")
     public R pageOfCompany(Page page, CompanyDetailsPageDTO companyDetailsPageDTO){
         return companyDetailsService.pageOfCompanyByAdmin(page, companyDetailsPageDTO);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】新公司领取5代币")
     @GetMapping("/getFiveTokens")
     public R getFiveTokens(){
         return companyDetailsService.getFiveTokens();
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】購買一百代幣")
     @GetMapping("/buyHundredTokens")
     public R buyHundredTokens(){
         return companyDetailsService.buyHundredTokens();
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】購買一千代幣")
     @GetMapping("/buyThousandTokens")
     public R buyThousandTokens(){
         return companyDetailsService.buyThousandTokens();
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】1查询月或者年应缴纳费用(0月费用 1年费用)")
     @GetMapping("/getPay")
     public R getPay(@RequestParam("type") Integer type){
         return companyDetailsService.getPay(type);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】2缴费完成(0月费用 1年费用)")
     @GetMapping("/pay")
     public R pay(@RequestParam("type") Integer type){
         return companyDetailsService.pay(type);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】校验公司是否需要按照规模缴费（true需要续费 false不需要续费）")
     @GetMapping("checkCompPay")
     public R checkCompPay(@RequestParam("companyId")Integer companyId){

@@ -1,6 +1,8 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +24,8 @@ public class EmployeesWorkExperienceController {
 
     private final IEmployeesWorkExperienceService employeesWorkExperienceService;
 
-    @ApiOperation("获取某員工工作经验")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【all】获取某員工工作经验")
     @GetMapping
     public R getAll(Integer employeesId){
         return employeesWorkExperienceService.getAll(employeesId);

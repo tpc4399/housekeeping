@@ -1,6 +1,8 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.service.ICustomerDetailsService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
@@ -23,12 +25,14 @@ public class CustomerDetailsController {
 
     private final ICustomerDetailsService customerDetailsService;
 
+    @Access({RolesEnum.USER_CUSTOMER})
     @ApiOperation("【客户】设置为默认地址")
     @PutMapping("/toDefault")
     public R toDefault(Integer id){
         return customerDetailsService.toDefault(id);
     }
 
+    @Access({RolesEnum.USER_CUSTOMER})
     @ApiOperation("【客户】上传头像")
     @PostMapping("/uploadHead")
     public R uploadHead(@RequestParam("file") MultipartFile file) throws IOException {
@@ -40,6 +44,7 @@ public class CustomerDetailsController {
         return R.ok("頭像保存成功");
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】获取客户列表")
     @GetMapping("/getCustomerList")
     public R getCustomerList(Integer cid,String name){

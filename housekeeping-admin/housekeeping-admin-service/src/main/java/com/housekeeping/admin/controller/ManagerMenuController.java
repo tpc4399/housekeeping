@@ -2,6 +2,8 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.UpdateManagerMenuDTO;
 import com.housekeeping.admin.service.IManagerMenuService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,12 +22,14 @@ public class ManagerMenuController {
 
     private final IManagerMenuService managerMenuService;
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】修改经理权限")
     @PutMapping
     public R updateManagerMenu(@RequestBody UpdateManagerMenuDTO dto){
         return managerMenuService.updateManagerMenu(dto);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】获取经理权限")
     @GetMapping
     public R getManagerMenu(Integer managerId){

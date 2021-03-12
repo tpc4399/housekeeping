@@ -2,6 +2,8 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
@@ -26,24 +28,28 @@ public class EmployeesCalendarController {
 
     private final IEmployeesCalendarService employeesCalendarService;
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 通用模板：每日")
     @PutMapping("/setCalendar")
     public R setCalendar(@RequestBody SetEmployeesCalendarDTO dto){
         return employeesCalendarService.setCalendar(dto);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 周模板添加內容")
     @PutMapping("/addCalendarWeek")
     public R addCalendarWeek(@RequestBody SetEmployeesCalendarWeekDTO dto){
         return employeesCalendarService.addCalendarWeek(dto);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 按日期添加內容")
     @PutMapping("/setCalendarDate")
     public R setCalendarDate(@RequestBody SetEmployeesCalendarDateDTO dto){
         return employeesCalendarService.addCalendarDate(dto);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的時間表，就是员工设定的可工作时间，而非员工的空闲时间。以详细列举形式返回")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
@@ -55,6 +61,7 @@ public class EmployeesCalendarController {
         }
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){

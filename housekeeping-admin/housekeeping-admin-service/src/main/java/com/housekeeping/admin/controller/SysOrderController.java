@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.SysOrderDTO;
 import com.housekeeping.admin.entity.SysOrder;
 import com.housekeeping.admin.service.ISysOrderService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +32,7 @@ public class SysOrderController {
 //    }
 //
 //
+    @Access({RolesEnum.USER_CUSTOMER})
     @ApiOperation("【客户】评价发布接口")
     @PostMapping(value = "/doEvaluation", headers = "content-type=multipart/form-data")
     public R doEvaluation(@RequestParam(value = "file", required = false) MultipartFile[] file,

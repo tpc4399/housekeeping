@@ -2,6 +2,8 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.service.IReleaseRequirementService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +26,7 @@ public class ReleaseRequirementsController {
 
     private final IReleaseRequirementService releaseRequirementService;
 
+    @Access({RolesEnum.USER_CUSTOMER})
     @PostMapping
     @ApiOperation("【家庭端】需求发布接口")
     public R releaseRequirements(@RequestBody ReleaseRequirementBDTO dto) throws InterruptedException {

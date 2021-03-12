@@ -9,6 +9,8 @@ import com.housekeeping.admin.dto.RegisterDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.User;
 import com.housekeeping.admin.service.IUserService;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -78,12 +80,14 @@ public class AdminController {
         return userService.verfifyCode(phonePrefix, phone,code,1);
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @GetMapping("/getAllAdmin")
     @ApiOperation("【管理员】查询所有管理员")
     public R getAllAdmin(Page page, AdminPageDTO adminPageDTO){
         return userService.getAllUser(page,adminPageDTO,1);
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @ApiOperation("【管理员】获取当前管理员信息")
     @GetMapping("/info")
     public R getCompanyDetailsByUserId(){
@@ -98,6 +102,7 @@ public class AdminController {
         }
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
     @ApiOperation("【管理员】删除管理员账号")
     @DeleteMapping("/remove")
     public R removeAdmin(@RequestParam("userId")Integer userId){

@@ -5,6 +5,8 @@ import com.housekeeping.admin.dto.GetCalendarByDateSlotDTO;
 import com.housekeeping.admin.dto.TimeSlotDTO;
 import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -28,24 +30,28 @@ public class EmployeesContractController {
 
     private final IEmployeesContractService employeesContractService;
 
-    @ApiOperation("給員工添加一个包工服务")
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @ApiOperation("【管理员】給員工添加一个包工服务")
     @PostMapping("/add")
     public R add(@RequestBody AddEmployeesContractDTO dto){
         return employeesContractService.add(dto);
     }
 
-    @ApiOperation("获取员工的所有包工服务")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【管理员】【公司】【经理】【员工】【客户】获取员工的所有包工服务")
     @GetMapping("{employeesId}")
     public R getByEmployeesId(@PathVariable Integer employeesId){
         return employeesContractService.getByEmployeesId(employeesId);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】获取所有包工服务")
     @GetMapping
     public R getAll(){
         return R.ok(employeesContractService.list());
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和包工_id 獲取包工時間表，就是这个包工的服务时间的一个详细列举")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
@@ -57,6 +63,7 @@ public class EmployeesContractController {
         }
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和包工_id 獲取員工包工時間表的闲置时间表，就是这段时间内这个员工可以做这个包工的时间。以详细列举形式返回")
     @PostMapping("/getFreeTimeByDateSlot")
     public R getFreeTimeByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
