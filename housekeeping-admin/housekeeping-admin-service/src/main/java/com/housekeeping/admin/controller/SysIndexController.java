@@ -21,9 +21,8 @@ public class SysIndexController {
 
     private final ISysIndexService sysIndexService;
 
-    @Access({RolesEnum.USER_CUSTOMER})
     @GetMapping
-    @ApiOperation("【客户】获取所有分类")
+    @ApiOperation("获取所有分类")
     public R getAll(){
         return sysIndexService.getAll();
     }
@@ -49,15 +48,13 @@ public class SysIndexController {
         return sysIndexService.delete(indexId);
     }
 
-    @Access({RolesEnum.USER_CUSTOMER})
     @GetMapping("/getById")
-    @ApiOperation("【客户】通过首页分类获取一级分类")
+    @ApiOperation("通过首页分类获取一级分类")
     public R getById(Integer id){
         return sysIndexService.getCusById(id);
     }
 
-    @Access({RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【客户】主页搜索")
+    @ApiOperation("主页搜索")
     @PostMapping("/query")
     public R query(@RequestBody QueryIndexDTO dto) throws InterruptedException {
         return sysIndexService.query(dto);

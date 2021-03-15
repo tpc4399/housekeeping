@@ -35,7 +35,7 @@ public class CompanyController {
      * @param type 1 手机号 2 邮箱
      * @return
      */
-    @ApiOperation("【公司】异步检测公司手机号或者邮箱是否重复(1 手机号 2 邮箱)")
+    @ApiOperation("异步检测公司手机号或者邮箱是否重复(1 手机号 2 邮箱)")
     @GetMapping("/checkEmp/{data}/{type}")
     public R checkDataEmp(@PathVariable("data")String data, @PathVariable("type")Integer type){
         R r = this.userService.checkData(2, data, type);
@@ -43,7 +43,7 @@ public class CompanyController {
     }
 
 
-    @ApiOperation("【公司】注册1发送验证码")
+    @ApiOperation("公司注册1发送验证码")
     @LogFlag(description = "手機號注册獲取驗證碼")
     @GetMapping("/EmpSMS")
     public R registerB(@RequestParam("phonePrefix") String phonePrefix,
@@ -51,14 +51,14 @@ public class CompanyController {
         return userService.sendRegisterMSMessage(phonePrefix,phone,2);
     }
 
-    @ApiOperation("【公司】注册2发送注册信息")
+    @ApiOperation("公司注册2发送注册信息")
     @LogFlag(description = "注册公司账号")
     @PostMapping("/saveEmp")
     public R saveEmp(@RequestBody RegisterCompanyDTO dto){
         return userService.saveEmp(dto);
     }
 
-    @ApiOperation("【公司】忘记密码1发送验证码")
+    @ApiOperation("公司忘记密码1发送验证码")
     @LogFlag(description = "公司人员忘記密碼")
     @GetMapping("/EmpForgetSMS")
     public R empForgetSMS(@RequestParam("phonePrefix") String phonePrefix,
@@ -66,7 +66,7 @@ public class CompanyController {
         return userService.sendForgetMSMessage(phonePrefix,phone,2);
     }
 
-    @ApiOperation("【公司】忘记密码2发送新密码")
+    @ApiOperation("公司忘记密码2发送新密码")
     @LogFlag(description = "公司忘記密碼,修改密碼")
     @PostMapping("/EmpUpdatePwd")
     public R empUpdatePwd(@RequestBody ForgetDTO forgetDTO){
@@ -74,7 +74,7 @@ public class CompanyController {
         return userService.updatePwd(forgetDTO);
     }
 
-    @ApiOperation("【公司】校验验证码")
+    @ApiOperation("公司校验验证码")
     @GetMapping("/verfifyCompanyCode")
     public R verfifyAdminCode(@RequestParam("phonePrefix") String phonePrefix,
                               @RequestParam("phone") String phone,

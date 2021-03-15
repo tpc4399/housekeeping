@@ -64,6 +64,7 @@ housekeeping:
       - /api/admin/index
       - /api/admin/index/getById
       - /api/admin/index/query
+      - /api/admin/employeesWorkExperience
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
