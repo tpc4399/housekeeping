@@ -49,7 +49,6 @@ public class EmployeesCalendarController {
         return employeesCalendarService.addCalendarDate(dto);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【管理员】【公司】【经理】【员工】【客户】根据时间段和员工_id 獲取員工日期段內的時間表，就是员工设定的可工作时间，而非员工的空闲时间。以详细列举形式返回")
     @PostMapping("/getCalendarByDateSlot")
     public R getCalendarByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
