@@ -20,13 +20,13 @@ public class SpecialLoginController {
 
     private final ISpecialLoginService specialLoginService;
 
-    @ApiOperation("【员工】链接登入：获取token")
+    @ApiOperation("员工链接登入：获取token")
     @GetMapping("/Employees/{key}")
     public R linkToLoginEmployees(@PathVariable String key){
         return specialLoginService.authEmployees(key);
     }
 
-    @ApiOperation("【经理】链接登入：获取token")
+    @ApiOperation("经理链接登入：获取token")
     @GetMapping("/Manager/{key}")
     public R linkToLoginManager(@PathVariable String key){
         return specialLoginService.authManager(key);

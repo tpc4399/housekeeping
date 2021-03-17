@@ -24,8 +24,7 @@ public class EmployeesWorkExperienceController {
 
     private final IEmployeesWorkExperienceService employeesWorkExperienceService;
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【all】获取某員工工作经验")
+    @ApiOperation("获取某員工工作经验")
     @GetMapping
     public R getAll(Integer employeesId){
         return employeesWorkExperienceService.getAll(employeesId);

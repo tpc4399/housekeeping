@@ -23,7 +23,7 @@ public class LoginCustomerController {
 
     private final ILoginService loginService;
 
-    @ApiOperation("【顾客登入】email+password")
+    @ApiOperation("顾客登入email+password")
     @LogFlag(description = "顾客登入【by：email+pwd】")
     @GetMapping("/byEmailPassword")
     public R loginA(@RequestParam("email") String email,
@@ -31,7 +31,7 @@ public class LoginCustomerController {
         return loginService.loginByEmailAndPasswordHandle(email, password, 3);
     }
 
-    @ApiOperation("【顾客登入】phone+password")
+    @ApiOperation("顾客登入phone+password")
     @LogFlag(description = "顾客登入【by：phone+pwd】")
     @GetMapping("/byPhonePassword")
     public R loginB(@RequestParam(value = "phonePrefix",required = false) String phonePrefix,
@@ -40,7 +40,7 @@ public class LoginCustomerController {
         return loginService.loginByPhoneAndPasswordHandle(phonePrefix, phone, password, 3);
     }
 
-    @ApiOperation("【顾客登入】发送验证码")
+    @ApiOperation("顾客登入发送验证码")
     @LogFlag(description = "顾客手機號登入獲取驗證碼")
     @GetMapping("/SMS")
     public R loginC(@RequestParam("phonePrefix") String phonePrefix,
@@ -48,7 +48,7 @@ public class LoginCustomerController {
         return loginService.sendLoginSMSMessage(phonePrefix, phone, 3);
     }
 
-    @ApiOperation("【顾客登入】phone+code")
+    @ApiOperation("顾客登入phone+code")
     @LogFlag(description = "顾客登入【by：phone+code】")
     @GetMapping("/byPhoneCode")
     public R loginC(@RequestParam("phonePrefix") String phonePrefix,
