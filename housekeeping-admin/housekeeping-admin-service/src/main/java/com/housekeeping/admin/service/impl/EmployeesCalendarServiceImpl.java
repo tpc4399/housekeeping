@@ -325,6 +325,11 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return this.getCalendarByDateSlot(dateSlot, employeesId, toCode);
     }
 
+    @Override
+    public R getSkillTags(Integer employeesId) {
+        return null;
+    }
+
     /*時間段合理性判斷   假設都不為空*/
     public List<String> rationalityJudgmentA(SetEmployeesCalendarDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集

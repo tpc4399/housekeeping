@@ -42,8 +42,6 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private Integer scopeOfOrder;    /* 接單範圍 */
     private Integer numberOfOrders;    /* 接單次數 */
     private String workingArea;   /* 期望工作区域 */
-    private Integer hourlyWage;    /* 時薪 */
-    private String code;    /* 时薪单位数字代码 */
     private String engName;    /* 时薪单位英文代码 */
     private String phoneUrl;    /* 照片 */
     private Boolean sex;    /* 性別 */

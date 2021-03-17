@@ -72,4 +72,11 @@ public class EmployeesCalendarController {
         }
     }
 
+    @ApiOperation("根据保洁员id获取保洁员技能标签")
+    @GetMapping("/tags")
+    public R getSkillTags(Integer employeesId){
+
+        return R.ok();
+    }
+
 }
