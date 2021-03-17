@@ -3,6 +3,7 @@ package com.housekeeping.admin.dto;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,4 +21,5 @@ public class IndexQueryResultEmployees {
     private Float score;                                /* 保洁员的评分 */
     private Integer recommendedValue;                   /* 推荐值 */
     private Double recommendedScope;                    /* 推荐分数 */
+    private BigDecimal price;                           /* 价格 */
 }

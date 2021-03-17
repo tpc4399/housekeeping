@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.service.IReleaseRequirementService;
 import com.housekeeping.common.annotation.Access;
@@ -9,10 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -31,6 +29,13 @@ public class ReleaseRequirementsController {
     @ApiOperation("【家庭端】需求发布接口")
     public R releaseRequirements(@RequestBody ReleaseRequirementBDTO dto) throws InterruptedException {
         return releaseRequirementService.releaseRequirements(dto);
+    }
+
+    @Access({RolesEnum.USER_COMPANY})
+    @GetMapping
+    @ApiOperation("【公司端】获取所有需求")
+    public R page(IPage page){
+        return releaseRequirementService.page(page);
     }
 
 }

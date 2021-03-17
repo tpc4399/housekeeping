@@ -33,6 +33,8 @@ public interface ApplicationConfigConstants {
     String extensionScopeDouble = "extensionScopeDouble";
     /** 公司推廣權重 */
     String extensionCompanyScopeDouble = "extensionCompanyScopeDouble";
+    /** 接单次数权重  */
+    String numberOfOrdersReceivedScopeDouble = "numberOfOrdersReceivedScopeDouble";
 
 
 

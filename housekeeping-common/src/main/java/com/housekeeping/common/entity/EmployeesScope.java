@@ -31,6 +31,7 @@ public class EmployeesScope {
     private BigDecimal highPrice;                       /* 最好价 */
     private Float score;                                /* 保洁员的评分 */
     private Map<String, String> weight;                 /* 匹配值得各项权重 */
+    private Integer numberOfOrdersReceived;             /* 接单次数 */
 
     /**
      *  距离分数 scope1
@@ -76,7 +77,7 @@ public class EmployeesScope {
             y = k1*x;
         }else if (x < highPrice.doubleValue()){
             y = b2;
-        }else {
+        }else if (x < lowPrice.doubleValue() + highPrice.doubleValue()){
             y = k3*x + b3;
         }
         return y;
@@ -119,14 +120,30 @@ public class EmployeesScope {
         return scope;
     }
 
+    /**
+     *  接单次数分数 scope7
+     */
+    public Double getScope7(){
+        Double scope = new Double(weight.get(ApplicationConfigConstants.numberOfOrdersReceivedScopeDouble));
+        Double x = new Double(this.numberOfOrdersReceived);
+        Double y = new Double(0.0);
+        if (x>=0 && x<scope-1){
+            y = x;
+        }else if (x>=scope-1){
+            y = Math.pow(x-scope+2, -1) + scope;
+        }
+        return y;
+    }
+
     public Double getScopeTotal(){
         Double scope =
                 this.getScope1()
                 + this.getScope2()
-//                + this.getScope3()
+                + this.getScope3()
                 + this.getScope4()
                 + this.getScope5()
-                + this.getScope6();
+                + this.getScope6()
+                + this.getScope7();
         return scope;
     }
 

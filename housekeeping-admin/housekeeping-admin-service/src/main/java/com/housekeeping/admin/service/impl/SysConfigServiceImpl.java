@@ -26,7 +26,7 @@ public class SysConfigServiceImpl
     public Map<String, String> getScopeConfig(Integer priorityType) {
         QueryWrapper qw = new QueryWrapper();
         qw.ge("id", 8);
-        qw.le("id", 15);
+        qw.le("id", 16);
         List<SysConfig> res = this.list(qw);
         Map<String, String> map = new HashMap<>();
         res.forEach(x -> {
@@ -65,6 +65,11 @@ public class SysConfigServiceImpl
                 case 6: map.put(
                         ApplicationConfigConstants.extensionScopeDouble,
                         String.valueOf(new Double(map.get(ApplicationConfigConstants.extensionScopeDouble))+new Double(100.0))
+                );
+                    break;
+                case 7: map.put(
+                        ApplicationConfigConstants.numberOfOrdersReceivedScopeDouble,
+                        String.valueOf(new Double(map.get(ApplicationConfigConstants.numberOfOrdersReceivedScopeDouble))+new Double(100.0))
                 );
                     break;
                 default: ;

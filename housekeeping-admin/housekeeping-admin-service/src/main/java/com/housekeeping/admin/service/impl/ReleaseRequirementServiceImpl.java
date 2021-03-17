@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.service.*;
@@ -101,6 +102,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         });
         demandOrderDetailsService.saveBatch(demandOrderDetails);
         return R.ok("發佈成功");
+    }
+
+    @Override
+    public R page(IPage page) {
+        return R.ok(demandOrderService.page(page), "獲取成功");
     }
 
     List<String> rationalityJudgmentWeek(ReleaseRequirementBDTO dto){

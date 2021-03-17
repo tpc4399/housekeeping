@@ -228,14 +228,8 @@ public class SysIndexServiceImpl
             return R.failed(collections, "時間段不合理，請核查");
         }
 
-        /** resultEmployeesList： 变量准备，匹配到的员工集合 */
-//        List<IndexQueryResultEmployees> resultEmployeesList = new ArrayList<>();
-
         /** contendIds元素内容加工: 根据主页元素id获取工作内容一级标签 */
         List<Integer> contendId = this.indexIdHandleContendId(indexId);
-
-        /** promoteCompanyIds 推广公司搜索池 */
-//        List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
         Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new ConcurrentHashMap<>();
@@ -243,15 +237,8 @@ public class SysIndexServiceImpl
         /** indexQueryResultEmployeesList 匹配的员工信息整合 */
         List<IndexQueryResultEmployees> matchingEmployeesDetails = Collections.synchronizedList(new ArrayList<>());
 
-
-        /** promoteEmployeeIds 推广员工搜索池 */
-//        List<Integer> promoteEmployeeIds = this.getPromoteEmployeeIds();
-
         /** employeesSearchPool 员工搜索池 */
         Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
-
-        /** conversionRatio 货币折算比率准备 */
-//        Map<String, BigDecimal> conversionRatio = new ConcurrentHashMap<>();
 
         /** score 匹配方案的各项权重，分值 */
         Map<String, String> weight = sysConfigService.getScopeConfig(priorityType);
@@ -838,6 +825,9 @@ public class SysIndexServiceImpl
         /** indexQueryResultEmployees 保洁员返回信息 */
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
+        /** price 保洁员价格准备 */
+        AtomicReference<BigDecimal> minPrice  = new AtomicReference<>(new BigDecimal(0));
+
         /** existEmployee 当前保洁员信息 */
         EmployeesDetails existEmployee = employeesDetailsService.getById(vo.getExistEmployeesId());
 
@@ -890,7 +880,7 @@ public class SysIndexServiceImpl
         /** areaIsOk: 地區是否匹配 */
         Boolean areaIsOk = sysAddressAreaService.matchingArea(vo.getAddressDetailsDTO().getAddress(), existEmployee.getWorkingArea());
 
-        EmployeesScope employeesScope = new EmployeesScope(scopeOfOrder, instance, areaIsOk, extensionIsOk, null, null, lowPrice, highPrice, score, weight);
+        EmployeesScope employeesScope = new EmployeesScope(scopeOfOrder, instance, areaIsOk, extensionIsOk, null, null, lowPrice, highPrice, score, weight, existEmployee.getNumberOfOrders());
 
         /**
          * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok
@@ -937,6 +927,15 @@ public class SysIndexServiceImpl
         }
         indexQueryResultEmployees.setRecommendedScope(employeesScope.getScopeTotal());
 
+        /** 最低价格计算 */
+        indexQueryResultEmployees.getService1().forEach(x-> {
+            minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+        });
+        indexQueryResultEmployees.getService2().forEach(x -> {
+            minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+        });
+        indexQueryResultEmployees.setPrice(minPrice.get());
+
         /** companyId: 所属公司准备 */
         Integer companyId = existEmployee.getCompanyId();
 
@@ -965,6 +964,26 @@ public class SysIndexServiceImpl
             }
         }
         return resCollections;
+    }
+
+    /***
+     *
+     * @param low    范围
+     * @param high   范围
+     * @param min    目前最小值
+     * @param exist  当前比较值
+     * @return
+     */
+    private BigDecimal getLowPrice(BigDecimal low, BigDecimal high, BigDecimal min, BigDecimal exist){
+        if (exist.compareTo(high) == -1 || exist.compareTo(low) == 1){
+            if (exist.compareTo(min) == -1){
+                return exist;
+            }else {
+                return min;
+            }
+        }else {
+            return low;
+        }
     }
 
     @Test

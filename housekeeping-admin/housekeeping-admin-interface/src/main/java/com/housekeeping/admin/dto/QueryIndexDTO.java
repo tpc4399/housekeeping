@@ -23,13 +23,14 @@ public class QueryIndexDTO {
     private BigDecimal highPrice;/* 价格区间 高价 */
     private AddressDetailsDTO addressDetails;   /* 服务地址，经纬度 */
     private Integer priorityType;   /* 优先类型
-                                                       0 | null 无优先选择，默认权重
-                                                       1    距離權重
-                                                       2    地區權重
-                                                       3    價格權重
-                                                       4    出勤率權重
-                                                       5    評價權重
-                                                       6    員工推廣權重
-                                                       */
+                                         0 | null 无优先选择，默认权重   默认排序优先级
+                                         1    距離權重                 距离近优先
+                                         2    地區權重                 地区合适优先
+                                         3    價格權重                 价格合适优先
+                                         4    出勤率權重               匹配度高优先
+                                         5    評價權重                 评分高优先
+                                         6    員工推廣權重              推广优先
+                                         7    接单次数优先              单次优先
+                                    */
 
 }

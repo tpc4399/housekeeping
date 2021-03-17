@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.common.utils.R;
 
@@ -10,5 +11,7 @@ import com.housekeeping.common.utils.R;
 public interface IReleaseRequirementService {
 
     R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException;
+
+    R page(IPage page);
 
 }

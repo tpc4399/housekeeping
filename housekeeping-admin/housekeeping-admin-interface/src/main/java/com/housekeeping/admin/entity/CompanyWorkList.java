@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 
 /**
- * 公司-工作列表
  * @Author su
  * @create 2020/11/18 16:00
  */
@@ -20,9 +19,11 @@ import java.time.LocalDateTime;
 public class CompanyWorkList extends Model<CompanyWorkList> {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;         /* 主键id */
-    private Integer groupId;    /* 分组_id */
-    private Integer orderId;    /* 订单_id */
+    private Integer id;                 /* 主键id */
+    private Integer companyId;          /* 公司_id */
+    private Integer demandOrderId;      /* 需求订单_id */
     private LocalDateTime createTime;   /* 创建时间 */
-    private Integer lastReviserId;      /* 最后修改人、创建人 */
+    private Boolean temporaryOrderRequest; /* 客户是否发送临时订单请求 */
+    private LocalDateTime requestTime;   /* 临时订单请求时间 */
+
 }
