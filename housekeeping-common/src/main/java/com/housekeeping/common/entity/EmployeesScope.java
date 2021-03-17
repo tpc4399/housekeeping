@@ -127,10 +127,8 @@ public class EmployeesScope {
         Double scope = new Double(weight.get(ApplicationConfigConstants.numberOfOrdersReceivedScopeDouble));
         Double x = new Double(this.numberOfOrdersReceived);
         Double y = new Double(0.0);
-        if (x>=0 && x<scope-1){
-            y = x;
-        }else if (x>=scope-1){
-            y = Math.pow(x-scope+2, -1) + scope;
+        if (x > 0){
+            y = -100/(x+100/scope)+scope;
         }
         return y;
     }
