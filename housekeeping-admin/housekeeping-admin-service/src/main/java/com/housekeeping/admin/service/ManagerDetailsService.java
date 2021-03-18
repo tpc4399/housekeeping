@@ -29,4 +29,5 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     R cusRemove(Integer managerId);
     R getAllByCompanyUserId(Integer companyUserId);
 
+    R getInfoById();
 }

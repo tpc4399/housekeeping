@@ -34,4 +34,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     Boolean judgmentOfExistence(Integer employeesId);
 
     R putWorkArea(List<Integer> areaIds);
+
+    R getInfoById();
 }

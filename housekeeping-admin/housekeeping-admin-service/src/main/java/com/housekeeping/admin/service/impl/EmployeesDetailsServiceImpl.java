@@ -507,4 +507,13 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(null, "設置成功");
     }
 
+    @Override
+    public R getInfoById() {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", currentUserId);
+        EmployeesDetails one = this.getOne(qw);
+        return R.ok(one);
+    }
+
 }

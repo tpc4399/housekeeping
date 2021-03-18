@@ -45,8 +45,8 @@ public class ManagerDetailsController {
         return managerDetailsService.saveEmp(managerDetailsDTO);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
-    @ApiOperation("【管理员】【公司】修改經理信息")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理员】【公司】【经理】修改經理信息")
     @LogFlag(description = "修改經理信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody ManagerDetailsDTO managerDetailsDTO){
@@ -104,4 +104,10 @@ public class ManagerDetailsController {
         return managerDetailsService.getAllByCompanyUserId(companyUserId);
     }
 
+    @Access({RolesEnum.USER_MANAGER})
+    @ApiOperation("【经理】查看自身信息")
+    @GetMapping("getInfoById")
+    public R getInfoById(){
+        return managerDetailsService.getInfoById();
+    }
 }

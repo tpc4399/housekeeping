@@ -13,6 +13,7 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -295,6 +296,15 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         qw2.eq("company_id", companyId);
         List<ManagerDetails> managerDetailsList = managerDetailsService.list(qw2);
         return R.ok(managerDetailsList, "查询成功");
+    }
+
+    @Override
+    public R getInfoById() {
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", currentUserId);
+        ManagerDetails one = this.getOne(qw);
+        return R.ok(one);
     }
 
     /**

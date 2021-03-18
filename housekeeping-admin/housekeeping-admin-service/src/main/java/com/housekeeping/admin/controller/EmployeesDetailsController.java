@@ -57,8 +57,8 @@ public class EmployeesDetailsController {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
-    @ApiOperation("【管理员】【公司】修改員工信息")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER,  RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【管理员】【公司】【经理】【员工】修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
@@ -130,4 +130,10 @@ public class EmployeesDetailsController {
         return employeesDetailsService.putWorkArea(areaIds);
     }
 
+    @Access({RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【员工】查看自身信息")
+    @GetMapping("getInfoById")
+    public R getInfoById(){
+        return employeesDetailsService.getInfoById();
+    }
 }
