@@ -72,14 +72,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Transactional
     @Override
     public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) {
-        boolean re = false;
-        if(type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
-            re = addEmployee();
-        }
-        if(type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
-            re = addEmployeeByMan();
-        }
-        if(re){
+
             if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
                 //先保存User
                 User user = new User();
@@ -154,11 +147,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                     TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                     return R.failed("添加失敗");
                 }
-
             }
-        }else {
-            return R.failed("公司員工人數達到上綫，請升級公司規模");
-        }
         return R.ok("添加員工成功");
     }
 

@@ -56,7 +56,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
 
     @Override
     public R saveEmp(ManagerDetailsDTO managerDetailsDTO) {
-        if(this.addManager()){
+
             if(CommonUtils.isNotEmpty(managerDetailsDTO)){
                 //先保存User
                 User user = new User();
@@ -106,9 +106,6 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 }).collect(Collectors.toList());
                 managerMenuService.saveBatch(managerMenuList);
             }
-        }else {
-            return R.failed("公司經理人數達到上綫，請升級公司規模");
-        }
         return R.ok("添加經理成功");
     }
 
@@ -317,7 +314,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         wrComp.inSql("id","select id from company_details where user_id=" + userId);
         CompanyDetails one = companyDetailsService.getOne(wrComp);
         String scaleById = baseMapper.getScaleById(one.getCompanySizeId());
-        String[] split = scaleById.split("~");
+        String[] split = scaleById.split(" ");
         Integer companyMaxsize;
         if(split[1].equals("n")){
             companyMaxsize = Integer.MAX_VALUE;
