@@ -3,6 +3,7 @@ package com.housekeeping.common.entity;
 import com.housekeeping.admin.dto.ContractAndPriceDetails;
 import com.housekeeping.admin.dto.JobAndPriceDetails;
 import com.housekeeping.common.utils.ApplicationConfigConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,15 +57,34 @@ public class EmployeesScope {
      *  价格分数 scope3
      */
     public Double getScope3(){
-        Integer length = service1.size() + service2.size();
-        AtomicReference<BigDecimal> total = new AtomicReference<>(new BigDecimal(0));
-        service1.forEach(x -> {
-            total.set(total.get().add(x.getTotalPrice()));
-        });
-        service2.forEach(x -> {
-            total.set(total.get().add(x.getTotalPrice()));
-        });
-        BigDecimal price = total.get().divide(new BigDecimal(length));
+        BigDecimal price = new BigDecimal(0);
+        if (CommonUtils.isEmpty(service1) && CommonUtils.isEmpty(service2)){
+            return new Double(0.0);
+        }else if (CommonUtils.isNotEmpty(service1) && CommonUtils.isEmpty(service2)){
+            Integer length = service1.size();
+            AtomicReference<BigDecimal> total = new AtomicReference<>(new BigDecimal(0));
+            service1.forEach(x -> {
+                total.set(total.get().add(x.getTotalPrice()));
+            });
+            price = total.get().divide(new BigDecimal(length));
+        }else if (CommonUtils.isEmpty(service1) && CommonUtils.isNotEmpty(service2)){
+            Integer length = service2.size();
+            AtomicReference<BigDecimal> total = new AtomicReference<>(new BigDecimal(0));
+            service2.forEach(x -> {
+                total.set(total.get().add(x.getTotalPrice()));
+            });
+            price = total.get().divide(new BigDecimal(length));
+        }else {
+            Integer length = service1.size() + service2.size();
+            AtomicReference<BigDecimal> total = new AtomicReference<>(new BigDecimal(0));
+            service1.forEach(x -> {
+                total.set(total.get().add(x.getTotalPrice()));
+            });
+            service2.forEach(x -> {
+                total.set(total.get().add(x.getTotalPrice()));
+            });
+            price = total.get().divide(new BigDecimal(length));
+        }
 
         Double k1 = new Double(weight.get(ApplicationConfigConstants.priceScopeDouble)) / lowPrice.doubleValue();
         Double b2 = new Double(weight.get(ApplicationConfigConstants.priceScopeDouble));
@@ -87,18 +107,42 @@ public class EmployeesScope {
      *  出勤率分数 scope4
      */
     public Double getScope4(){
-        Integer length = service1.size() + service2.size();
-        AtomicReference<BigDecimal> att = new AtomicReference<>(new BigDecimal(0));
-        service1.forEach(x -> {
-            att.set(att.get().add(new BigDecimal(x.getAttendance())));
-        });
-        service2.forEach(x -> {
-            att.set(att.get().add(new BigDecimal(x.getAttendance())));
-        });
-        BigDecimal attendance = att.get().divide(new BigDecimal(length));
-        BigDecimal totalScope = new BigDecimal(10.0 * length + new Double(weight.get(ApplicationConfigConstants.attendanceScopeDouble)));
-        Double scope =  attendance.multiply(totalScope).doubleValue();
-        return scope;
+        if (CommonUtils.isEmpty(service1) && CommonUtils.isEmpty(service2)){
+            return new Double(0.0);
+        }else if (CommonUtils.isNotEmpty(service1) && CommonUtils.isEmpty(service2)){
+            Integer length = service1.size();
+            AtomicReference<BigDecimal> att = new AtomicReference<>(new BigDecimal(0));
+            service1.forEach(x -> {
+                att.set(att.get().add(new BigDecimal(x.getAttendance())));
+            });
+            BigDecimal attendance = att.get().divide(new BigDecimal(length));
+            BigDecimal totalScope = new BigDecimal(10.0 * length + new Double(weight.get(ApplicationConfigConstants.attendanceScopeDouble)));
+            Double scope =  attendance.multiply(totalScope).doubleValue();
+            return scope;
+        }else if (CommonUtils.isEmpty(service1) && CommonUtils.isNotEmpty(service2)){
+            Integer length = service2.size();
+            AtomicReference<BigDecimal> att = new AtomicReference<>(new BigDecimal(0));
+            service2.forEach(x -> {
+                att.set(att.get().add(new BigDecimal(x.getAttendance())));
+            });
+            BigDecimal attendance = att.get().divide(new BigDecimal(length));
+            BigDecimal totalScope = new BigDecimal(10.0 * length + new Double(weight.get(ApplicationConfigConstants.attendanceScopeDouble)));
+            Double scope =  attendance.multiply(totalScope).doubleValue();
+            return scope;
+        }else {
+            Integer length = service1.size() + service2.size();
+            AtomicReference<BigDecimal> att = new AtomicReference<>(new BigDecimal(0));
+            service1.forEach(x -> {
+                att.set(att.get().add(new BigDecimal(x.getAttendance())));
+            });
+            service2.forEach(x -> {
+                att.set(att.get().add(new BigDecimal(x.getAttendance())));
+            });
+            BigDecimal attendance = att.get().divide(new BigDecimal(length));
+            BigDecimal totalScope = new BigDecimal(10.0 * length + new Double(weight.get(ApplicationConfigConstants.attendanceScopeDouble)));
+            Double scope =  attendance.multiply(totalScope).doubleValue();
+            return scope;
+        }
     }
 
     /**
