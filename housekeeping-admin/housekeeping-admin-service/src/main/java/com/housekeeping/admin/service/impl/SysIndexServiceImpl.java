@@ -285,9 +285,6 @@ public class SysIndexServiceImpl
          */
         List<IndexQueryResultCompany> recommendedCompany = new ArrayList<>();//推荐公司
         List<IndexQueryResultEmployees> recommendedCleaner = new ArrayList<>();//推荐保洁员
-        List<IndexQueryResultEmployees> nearbyCleaner = new ArrayList<>();//附近保洁员
-        List<IndexQueryResultEmployees> bestCleaner = new ArrayList<>();//最佳保洁员
-
 
         //排序器
         SortListUtil<IndexQueryResultCompany> sort1 = new SortListUtil<>();
@@ -826,7 +823,7 @@ public class SysIndexServiceImpl
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
         /** price 保洁员价格准备 */
-        AtomicReference<BigDecimal> minPrice  = new AtomicReference<>(new BigDecimal(0));
+        AtomicReference<BigDecimal> minPrice  = new AtomicReference<>(lowPrice);
 
         /** existEmployee 当前保洁员信息 */
         EmployeesDetails existEmployee = employeesDetailsService.getById(vo.getExistEmployeesId());
@@ -888,52 +885,65 @@ public class SysIndexServiceImpl
         if (vo.getType() == 1){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
             if (service1.size() != 0){
-                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
-                indexQueryResultEmployees.setService2(new ArrayList<>());
-                indexQueryResultEmployees.setService1(service1);
-                employeesScope.setService1(service1);
-                employeesScope.setService2(new ArrayList<>());
+            }else {
+                indexQueryResultEmployees.setEmployeesType(4);
             }
+            indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+            indexQueryResultEmployees.setService2(new ArrayList<>());
+            indexQueryResultEmployees.setService1(service1);
+            employeesScope.setService1(service1);
+            employeesScope.setService2(new ArrayList<>());
         }else if (vo.getType() == 2){
             List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
             if (service2.size() != 0){
-                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
-                indexQueryResultEmployees.setService2(service2);
-                indexQueryResultEmployees.setService1(new ArrayList<>());
-                employeesScope.setService1(new ArrayList<>());
-                employeesScope.setService2(service2);
+            }else {
+                indexQueryResultEmployees.setEmployeesType(4);
             }
+            indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+            indexQueryResultEmployees.setService2(service2);
+            indexQueryResultEmployees.setService1(new ArrayList<>());
+            employeesScope.setService1(new ArrayList<>());
+            employeesScope.setService2(service2);
         }else if (vo.getType() == 3){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
             List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
             if (service1.size() == 0 && service2.size() == 0){
-
-            }else {
-                if (service1.size() != 0 && service2.size() == 0){
-                    indexQueryResultEmployees.setEmployeesType(1);
-                }else if (service1.size() == 0 && service2.size() != 0){
-                    indexQueryResultEmployees.setEmployeesType(2);
-                }else if (service1.size() != 0 && service2.size() != 0){
-                    indexQueryResultEmployees.setEmployeesType(3);
-                }
-                indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
-                indexQueryResultEmployees.setService2(service2);
-                indexQueryResultEmployees.setService1(service1);
-                employeesScope.setService1(service1);
-                employeesScope.setService2(service2);
+                indexQueryResultEmployees.setEmployeesType(4);
+            }else if (service1.size() != 0 && service2.size() == 0){
+                indexQueryResultEmployees.setEmployeesType(1);
+            }else if (service1.size() == 0 && service2.size() != 0){
+                indexQueryResultEmployees.setEmployeesType(2);
+            }else if (service1.size() != 0 && service2.size() != 0){
+                indexQueryResultEmployees.setEmployeesType(3);
             }
+            indexQueryResultEmployees.setEmployeesDetails(employeesDetailsService.getById(vo.getExistEmployeesId()));
+            indexQueryResultEmployees.setService2(service2);
+            indexQueryResultEmployees.setService1(service1);
+            employeesScope.setService1(service1);
+            employeesScope.setService2(service2);
         }
         indexQueryResultEmployees.setRecommendedScope(employeesScope.getScopeTotal());
 
         /** 最低价格计算 */
-        indexQueryResultEmployees.getService1().forEach(x-> {
-            minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
-        });
-        indexQueryResultEmployees.getService2().forEach(x -> {
-            minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
-        });
+        if (CommonUtils.isNotEmpty(indexQueryResultEmployees.getService1()) && CommonUtils.isNotEmpty(indexQueryResultEmployees.getService2())){
+            indexQueryResultEmployees.getService1().forEach(x-> {
+                minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+            });
+            indexQueryResultEmployees.getService2().forEach(x -> {
+                minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+            });
+        }else if (CommonUtils.isNotEmpty(indexQueryResultEmployees.getService1()) && CommonUtils.isEmpty(indexQueryResultEmployees.getService2())){
+            indexQueryResultEmployees.getService1().forEach(x-> {
+                minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+            });
+        }else if (CommonUtils.isEmpty(indexQueryResultEmployees.getService1()) && CommonUtils.isNotEmpty(indexQueryResultEmployees.getService2())){
+            indexQueryResultEmployees.getService2().forEach(x -> {
+                minPrice.set(this.getLowPrice(lowPrice, highPrice, minPrice.get(), x.getTotalPrice()));
+            });
+        }
+
         indexQueryResultEmployees.setPrice(minPrice.get());
 
         /** companyId: 所属公司准备 */
