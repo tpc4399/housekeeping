@@ -35,7 +35,10 @@ public interface ApplicationConfigConstants {
     String extensionCompanyScopeDouble = "extensionCompanyScopeDouble";
     /** 接单次数权重  */
     String numberOfOrdersReceivedScopeDouble = "numberOfOrdersReceivedScopeDouble";
-
+    /** 连续公司数量 */
+    String numberOfConsecutiveCompanyInteger = "numberOfConsecutiveCompanyInteger";
+    /** 连续员工数量 */
+    String numberOfConsecutiveEmployeesInteger = "numberOfConsecutiveEmployeesInteger";
 
 
 

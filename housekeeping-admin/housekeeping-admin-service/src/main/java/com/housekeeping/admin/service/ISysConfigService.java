@@ -14,5 +14,6 @@ import java.util.Map;
 public interface ISysConfigService extends IService<SysConfig> {
 
     Map<String, String> getScopeConfig(Integer priorityType);
+    Map<String, Integer> getNumber();
 
 }

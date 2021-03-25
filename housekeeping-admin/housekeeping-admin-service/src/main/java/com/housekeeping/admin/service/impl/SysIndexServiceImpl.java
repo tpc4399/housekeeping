@@ -319,11 +319,48 @@ public class SysIndexServiceImpl
         List<IndexQueryResultEmployees> recommendedCleaner = new ArrayList<>(matchingEmployeesDetails);//推荐保洁员
         sort2.SortByDouble(recommendedCleaner, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
-        Map<String, List> map = new HashMap<>();
-        map.put("recommendedCompany", recommendedCompany);
-        map.put("recommendedCleaner", recommendedCleaner);
+        Map<String, Integer> number = sysConfigService.getNumber();
+        Integer a= number.get(ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger);
+        Integer b = number.get(ApplicationConfigConstants.numberOfConsecutiveCompanyInteger);
+        Integer sum = a + b;
+        Integer count = recommendedCleaner.size() + recommendedCompany.size();
+        List<IndexResult> indexResults = new ArrayList<>();
+        for (int i = 0; i < count ; i++) {
+            Integer exist = i%sum;
+            IndexResult indexResult = null;
+//            if (recommendedCleaner.size() == 0 && recommendedCompany.size() == 0){
+//                break;
+//            }
+            if (recommendedCleaner.size() == 0 && recommendedCompany.size() != 0){
+                //公司
+                indexResult = new IndexResult(recommendedCompany.remove(0));
+                indexResults.add(indexResult);
+                continue;
+            }
+            if (recommendedCompany.size() == 0 && recommendedCleaner.size() != 0){
+                //保洁
+                indexResult = new IndexResult(recommendedCleaner.remove(0));
+                indexResults.add(indexResult);
+                continue;
+            }
+            if (0 <= exist && exist < a){
+                //保洁
+                indexResult = new IndexResult(recommendedCleaner.remove(0));
+                indexResults.add(indexResult);
+                continue;
+            }
+            if (a <= exist && exist < sum){
+                //公司
+                indexResult = new IndexResult(recommendedCompany.remove(0));
+                indexResults.add(indexResult);
+                continue;
+            }
+        }
+//        Map<String, List> map = new HashMap<>();
+//        map.put("recommendedCompany", recommendedCompany);
+//        map.put("recommendedCleaner", recommendedCleaner);
 
-        return R.ok(map, "搜索成功");
+        return R.ok(indexResults, "搜索成功");
     }
 
     @Override
