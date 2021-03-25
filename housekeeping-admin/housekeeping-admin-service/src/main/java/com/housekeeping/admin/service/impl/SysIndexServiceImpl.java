@@ -192,6 +192,8 @@ public class SysIndexServiceImpl
          */
         Integer indexId = OptionalBean.ofNullable(dto)
                 .getBean(QueryIndexDTO::getIndexId).get();
+        List<Integer> jobs = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getJobs).get();
         Integer type = OptionalBean.ofNullable(dto)
                 .getBean(QueryIndexDTO::getType).get();
         LocalDate start = OptionalBean.ofNullable(dto)
@@ -212,6 +214,7 @@ public class SysIndexServiceImpl
 
         List<String> resFailed = new ArrayList<>();
         if (CommonUtils.isEmpty(indexId)) resFailed.add("元素_id為空");
+        if (CommonUtils.isEmpty(jobs)) resFailed.add("元素_jobs為空");
         if (CommonUtils.isEmpty(type)) resFailed.add("元素_type為空");
         if (CommonUtils.isEmpty(start)) resFailed.add("元素_start為空");
         if (CommonUtils.isEmpty(end)) resFailed.add("元素_end為空");
@@ -231,7 +234,8 @@ public class SysIndexServiceImpl
         }
 
         /** contendIds元素内容加工: 根据主页元素id获取工作内容标签 */
-        List<Integer> contendId = this.indexIdHandleContendId(indexId);
+//        List<Integer> contendId = this.indexIdHandleContendId(indexId);
+        List<Integer> contendId = new ArrayList<>(jobs);
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
         Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails = new ConcurrentHashMap<>();
