@@ -1,5 +1,6 @@
 package com.housekeeping.admin.vo;
 
+import com.housekeeping.admin.entity.SysJobContend;
 import lombok.Data;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public class SysIndexVo {
     private Integer orderValue;                 /* 顺序 */
     private String selectedLogo;                /* 已选中的logo--base64 */
     private String uncheckedLogo;               /* 未选中的logo——base64 */
+    private List<SysJobContend> sysJobContends; /* 工作内容 */
 }

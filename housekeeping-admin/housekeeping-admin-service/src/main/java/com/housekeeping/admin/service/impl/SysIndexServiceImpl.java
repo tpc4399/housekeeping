@@ -324,22 +324,44 @@ public class SysIndexServiceImpl
 
     @Override
     public R tree() {
-        List<IndexData> indexDataList = new ArrayList<>();
-        List<SysIndex> indexList = this.list();
-        indexList.forEach(index -> {
-            IndexData indexData = new IndexData(index);
+        List<SysIndex> sysIndexList = this.list();
+        List<SysIndexVo> sysIndexVoList = sysIndexList.stream().map(x->{
+            SysIndexVo sysIndexVo = new SysIndexVo();
+            sysIndexVo.setId(x.getId());
+            sysIndexVo.setName(x.getName());
+            sysIndexVo.setOrderValue(x.getOrderValue());
+            sysIndexVo.setSelectedLogo(x.getSelectedLogo());
+            sysIndexVo.setUncheckedLogo(x.getUncheckedLogo());
+            List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
+            String[] arr = x.getPriceSlot().split(",");
+            for (int i = 0; i < arr.length - 1; i++) {
+                // i和i+1
+                String lowPrice = arr[i];
+                String highPrice = arr[i+1];
+                PriceSlotVo priceSlot = new PriceSlotVo(
+                        new BigDecimal(lowPrice),
+                        new BigDecimal(highPrice)
+                );
+                priceSlotVoList.add(priceSlot);
+            }
+            PriceSlotVo priceSlot = new PriceSlotVo(
+                    new BigDecimal(arr[arr.length-1]),
+                    null
+            );
+            priceSlotVoList.add(priceSlot);
+            sysIndexVo.setPriceSlotList(priceSlotVoList);
             List<SysJobContend> sysJobContends = new ArrayList<>();
             QueryWrapper qw = new QueryWrapper();
-            qw.eq("index_id", indexData.getId());
+            qw.eq("index_id", x.getId());
             List<SysIndexContent> sysIndexContents = sysIndexContentService.list(qw);
             sysIndexContents.forEach(sysIndexContent -> {
                 SysJobContend sysJobContend = sysJobContendService.getById(sysIndexContent.getContentId());
                 sysJobContends.add(sysJobContend);
             });
-            indexData.setSysJobContends(sysJobContends);
-            indexDataList.add(indexData);
-        });
-        return R.ok(indexDataList, "查詢成功");
+            sysIndexVo.setSysJobContends(sysJobContends);
+            return sysIndexVo;
+        }).collect(Collectors.toList());
+        return R.ok(sysIndexVoList, "查詢成功");
     }
 
     /* 求交集,不改变原list */

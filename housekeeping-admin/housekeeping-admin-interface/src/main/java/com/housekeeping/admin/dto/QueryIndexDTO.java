@@ -15,6 +15,7 @@ import java.util.List;
 public class QueryIndexDTO {
 
     private Integer indexId;    /* 主页元素类型 */
+    private List<Integer> jobs; /* 工作内容 */
     private Integer type;       /* 类型 1:钟点工   2：包工   3：全都要 */
     private LocalDate start;    /* 开始时间 */
     private LocalDate end;      /* 结束时间 */
