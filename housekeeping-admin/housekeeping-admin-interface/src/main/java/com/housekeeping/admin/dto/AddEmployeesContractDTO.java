@@ -12,7 +12,7 @@ import java.util.List;
 public class AddEmployeesContractDTO {
 
     private Integer employeesId;        /* 保洁员_id */
-    private Integer type;               /* 包工类型 */
+    private List<Integer> jobs;         /* 包工类型 */
     private String name;                /* 名称 */
     private List<WeekAndTimeSlotsDTO> weekAndTimeSlotsList; /* 具体时间安排 */
     private String description;         /* 包工描述 */

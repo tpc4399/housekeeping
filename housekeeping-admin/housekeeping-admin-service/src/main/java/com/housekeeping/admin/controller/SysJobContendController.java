@@ -1,5 +1,7 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.housekeeping.admin.dto.AddJobContendDTO;
 import com.housekeeping.admin.service.ISysJobContendService;
 import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.annotation.Access;
@@ -24,39 +26,23 @@ public class SysJobContendController {
 
     private final ISysJobContendService sysJobContendService;
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【all】根据ids获取树")
-    @GetMapping("/getTreeByIds")
-    public R getTreeByIds(Integer[] ids){
-        return sysJobContendService.getTreeByIds(ids);
-    }
-
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【all】获取整树")
-    @GetMapping("/getTree")
-    public R getTree(){
-        return sysJobContendService.getTree();
-    }
-
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【all】获取一级分类")
-    @GetMapping("/getParents")
-    public R getParents(){
-        return sysJobContendService.getParents();
-    }
-
     @Access({RolesEnum.SYSTEM_ADMIN})
     @PostMapping
-    @ApiOperation("【管理员】增加工作内容")
-    public R add(@RequestBody SysJobContendVo vo){
-        return sysJobContendService.add(vo);
+    @ApiOperation("【管理员】批量或单个地增加工作内容")
+    public R add(@RequestBody List<AddJobContendDTO> dos){
+        return sysJobContendService.add(dos);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN})
-    @PutMapping
-    @ApiOperation("【管理员】设置整树")
-    public R set(@RequestBody List<SysJobContendVo> vos){
-        return sysJobContendService.set(vos);
+    @ApiOperation("获取所有工作内容标签，ids為null--查詢所有  ids有值--查詢id對應的工作內容標籤")
+    @GetMapping("/getAll")
+    public R getAll(@RequestParam(value = "ids", required = false) List<Integer> ids){
+        return sysJobContendService.getAll(ids);
+    }
+
+    @ApiOperation("获取所有工作内容标签, 根据'1000 1001 1002 1003'这样的字符串ids查询工作内容，参数只能含有数字字符以及空格")
+    @GetMapping("/getAll2")
+    public R getAll2(String ids){
+        return sysJobContendService.getAll2(ids);
     }
 
 }

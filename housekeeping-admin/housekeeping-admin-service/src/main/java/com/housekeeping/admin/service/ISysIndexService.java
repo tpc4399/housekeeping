@@ -22,4 +22,5 @@ public interface ISysIndexService extends IService<SysIndex> {
     R getAll();
     R getCusById(Integer id);
     R query(QueryIndexDTO dto) throws InterruptedException;
+    R tree();
 }

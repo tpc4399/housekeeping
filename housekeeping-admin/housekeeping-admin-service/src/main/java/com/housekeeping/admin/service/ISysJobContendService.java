@@ -1,6 +1,8 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.AddJobContendDTO;
 import com.housekeeping.admin.entity.SysJobContend;
 import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.utils.R;
@@ -14,10 +16,8 @@ import java.util.List;
  */
 public interface ISysJobContendService extends IService<SysJobContend> {
 
-    R getTreeByIds(Integer[] ids);
-    R getTree();
-    R getParents();
-    R add(SysJobContendVo vo);
-    R set(List<SysJobContendVo> vos);
+    R add(List<AddJobContendDTO> dos);
+    R getAll(List<Integer> ids);
+    R getAll2(String ids);
 
 }

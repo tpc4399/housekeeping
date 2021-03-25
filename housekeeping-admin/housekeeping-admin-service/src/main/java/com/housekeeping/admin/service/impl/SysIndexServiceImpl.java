@@ -69,6 +69,8 @@ public class SysIndexServiceImpl
     private ISysConfigService sysConfigService;
     @Resource
     private ISysAddressAreaService sysAddressAreaService;
+    @Resource
+    private ISysJobContendService sysJobContendService;
 
     @Override
     public R add(SysIndexAddDto sysIndexAddDto) {
@@ -90,7 +92,7 @@ public class SysIndexServiceImpl
         }
 
         Integer finalMaxIndexId = maxIndexId;
-        sysIndexAddDto.getJobParentIds().forEach(x->{
+        sysIndexAddDto.getJobs().forEach(x->{
             SysIndexContent sysIndexContent = new SysIndexContent();
             sysIndexContent.setIndexId(finalMaxIndexId);
             sysIndexContent.setContentId(x);
@@ -116,7 +118,7 @@ public class SysIndexServiceImpl
         this.updateById(sysIndex);
 
         List<SysIndexContent> contendIds = new ArrayList<>();
-        dto.getJobParentIds().forEach(x->{
+        dto.getJobs().forEach(x->{
             SysIndexContent sysIndexContent = new SysIndexContent();
             sysIndexContent.setIndexId(dto.getId());
             sysIndexContent.setContentId(x);
@@ -228,7 +230,7 @@ public class SysIndexServiceImpl
             return R.failed(collections, "時間段不合理，請核查");
         }
 
-        /** contendIds元素内容加工: 根据主页元素id获取工作内容一级标签 */
+        /** contendIds元素内容加工: 根据主页元素id获取工作内容标签 */
         List<Integer> contendId = this.indexIdHandleContendId(indexId);
 
         /** matchingCompanyIds 匹配的公司的ids和员工信息 需要后续填入 */
@@ -284,7 +286,6 @@ public class SysIndexServiceImpl
          * 评分：所有订单评分的平均值
          */
         List<IndexQueryResultCompany> recommendedCompany = new ArrayList<>();//推荐公司
-        List<IndexQueryResultEmployees> recommendedCleaner = new ArrayList<>();//推荐保洁员
 
         //排序器
         SortListUtil<IndexQueryResultCompany> sort1 = new SortListUtil<>();
@@ -309,16 +310,36 @@ public class SysIndexServiceImpl
             indexQueryResultCompany.setRecommendedScope(recommendScope.get());
             recommendedCompany.add(indexQueryResultCompany);
         });
-        sort1.Sort(recommendedCompany, "getRecommendedScope", "desc");//需要根据推荐分降序排序
+        sort1.SortByDouble(recommendedCompany, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
-        recommendedCleaner = new ArrayList<>(matchingEmployeesDetails);
-        sort2.Sort(recommendedCleaner, "getRecommendedScope", "desc");//需要根据推荐分降序排序
+        List<IndexQueryResultEmployees> recommendedCleaner = new ArrayList<>(matchingEmployeesDetails);//推荐保洁员
+        sort2.SortByDouble(recommendedCleaner, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
         Map<String, List> map = new HashMap<>();
         map.put("recommendedCompany", recommendedCompany);
         map.put("recommendedCleaner", recommendedCleaner);
 
         return R.ok(map, "搜索成功");
+    }
+
+    @Override
+    public R tree() {
+        List<IndexData> indexDataList = new ArrayList<>();
+        List<SysIndex> indexList = this.list();
+        indexList.forEach(index -> {
+            IndexData indexData = new IndexData(index);
+            List<SysJobContend> sysJobContends = new ArrayList<>();
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("index_id", indexData.getId());
+            List<SysIndexContent> sysIndexContents = sysIndexContentService.list(qw);
+            sysIndexContents.forEach(sysIndexContent -> {
+                SysJobContend sysJobContend = sysJobContendService.getById(sysIndexContent.getContentId());
+                sysJobContends.add(sysJobContend);
+            });
+            indexData.setSysJobContends(sysJobContends);
+            indexDataList.add(indexData);
+        });
+        return R.ok(indexDataList, "查詢成功");
     }
 
     /* 求交集,不改变原list */
@@ -668,12 +689,6 @@ public class SysIndexServiceImpl
                             //这个班可以出席
                             canBeOnDuty.set(true);
                             attendance.halfAnHourMore();
-                            /* halfAnHourWage 半小时价格 TWD货币代码 */
-//                                 BigDecimal halfAnHourWage = currencyService.exchangeRateToBigDecimal(
-//                                            jobAndPriceDTO.getCode(),
-//                                            "TWD",
-//                                            new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2))
-//                               );
                             BigDecimal halfAnHourWage = new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2));
                             attendance.increaseTheTotalPrice(halfAnHourWage);
                         }
@@ -699,11 +714,19 @@ public class SysIndexServiceImpl
                                               LocalDate end,
                                               List<LocalTime> requireTime,
                                               Float totalTimeRequired,
-                                              DateSlot dateSlot, String toCode){
+                                              DateSlot dateSlot,
+                                              String toCode,
+                                              List<Integer> contendId){
         List<ContractAndPriceDetails> service2 = new ArrayList<>();
         employeesContractList.forEach(employeesContract -> {
+            /* 筛选工作内容不满足要求的包工服务 */
+            String jobStr = employeesContract.getJobs();
+            long num = (long) contendId.stream().filter(id -> jobStr.contains(id.toString())).count();
+            if (num == 0){
+                return;
+            }
+
             Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
-//            float wage = (Period.between(start, end).getDays()+1) * employeesContract.getDayWage();
             long daysTotal = end.toEpochDay() - start.toEpochDay();
             float wage = daysTotal * employeesContract.getDayWage();
             Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
@@ -839,13 +862,12 @@ public class SysIndexServiceImpl
             indexQueryResultEmployees.setInstance(instance);
         }
 
-        /** calendar： 钟点工闲置时间准备 */
+        /** calendar：该钟点工闲置时间准备 */
         DateSlot dateSlot = new DateSlot(vo.getStart(), vo.getEnd());
         Map<LocalDate, List<TimeSlotDTO>> calendar = employeesCalendarService.getFreeTimeByDateSlot(dateSlot, vo.getExistEmployeesId(), toCode);
 
-        /** employeesContractList: 保洁员的相关工作内容的包工准备 */
+        /** employeesContractList: 该保洁员的包工准备 */
         QueryWrapper contractQw = new QueryWrapper();
-        contractQw.eq("type", vo.getIndexId());
         contractQw.eq("employees_id", existEmployee.getId());
         List<EmployeesContract> employeesContractList = employeesContractService.list(contractQw);
 
@@ -895,7 +917,7 @@ public class SysIndexServiceImpl
             employeesScope.setService1(service1);
             employeesScope.setService2(new ArrayList<>());
         }else if (vo.getType() == 2){
-            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode, vo.getContendId());
             if (service2.size() != 0){
                 indexQueryResultEmployees.setEmployeesType(vo.getType());
             }else {
@@ -908,7 +930,7 @@ public class SysIndexServiceImpl
             employeesScope.setService2(service2);
         }else if (vo.getType() == 3){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);
-            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode);
+            List<ContractAndPriceDetails> service2 = this.getService2(employeesContractList, vo.getStart(), vo.getEnd(), requireTime, totalTimeRequired, dateSlot, toCode, vo.getContendId());
             if (service1.size() == 0 && service2.size() == 0){
                 indexQueryResultEmployees.setEmployeesType(4);
             }else if (service1.size() != 0 && service2.size() == 0){

@@ -49,7 +49,7 @@ public class SysIndexController {
     }
 
     @GetMapping("/getById")
-    @ApiOperation("通过首页分类获取一级分类")
+    @ApiOperation("通过首页大类获取下面工作内容标签")
     public R getById(Integer id){
         return sysIndexService.getCusById(id);
     }
@@ -58,6 +58,12 @@ public class SysIndexController {
     @PostMapping("/query")
     public R query(@RequestBody QueryIndexDTO dto) throws InterruptedException {
         return sysIndexService.query(dto);
+    }
+
+    @GetMapping("/tree")
+    @ApiOperation("获取六大类包括类下的工作内容")
+    public R tree(){
+        return sysIndexService.tree();
     }
 
 }

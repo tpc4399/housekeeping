@@ -62,6 +62,11 @@ public class EmployeesContractServiceImpl
             activityIdsStr.append(x);
         });
         employeesContract.setActivityIds(activityIdsStr.toString());
+        StringBuilder jobs = new StringBuilder();
+        dto.getJobs().forEach(jobId -> {
+            jobs.append(" " + jobId);
+        });
+        employeesContract.setJobs(jobs.toString().trim());
         Integer maxContractId = 0;
         synchronized (this){
             this.save(employeesContract);

@@ -15,7 +15,7 @@ import java.util.List;
 public class ReleaseRequirementBDTO {
     private Boolean liveAtHome;             /* 能否居家 */
     private AddressDetailsDTO addressDTO;   /* 地址的dto */
-    private List<Integer> sonIds;           /* 被选中的工作内容二级分类 */
+    private List<Integer> jobs;             /* 被选中的工作内容标签 */
     private String housingArea;             /* 房屋面积 */
     private RulesWeekVo rulesWeekVo;        /* 服务时间安排 */
     private BigDecimal estimatedSalary;     /* 预计薪资 */

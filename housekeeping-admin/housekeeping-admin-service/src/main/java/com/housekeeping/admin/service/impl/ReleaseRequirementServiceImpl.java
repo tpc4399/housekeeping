@@ -56,27 +56,22 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             return R.failed(resCollections, "服務時間不合理");
         }
 
-        //TODO 根据选中的工作内容二级分类获取到工作内容一级分类
-        List<Integer> parentIds = contendIds(dto.getSonIds());
+        //TODO 选中的工作内容标签
+        List<Integer> jobIds = dto.getJobs();
 
         //TODO 服务时间二象化展开
         Map<LocalDate, List<PeriodOfTime>> listMap =  timeExpansion(dto.getRulesWeekVo());
 
         //TODO 生成订单+订单详情表记录存储
-        AtomicReference<String> parentIdsStr = new AtomicReference<>("");
-        AtomicReference<String> sonIdsStr = new AtomicReference<>("");
-        parentIds.forEach(x -> {
-            parentIdsStr.set(parentIdsStr.get() + x.toString() + " ");
-        });
-        dto.getSonIds().forEach(x -> {
-            sonIdsStr.set(sonIdsStr.get() + x.toString() + " ");
+        AtomicReference<String> jobIdsStr = new AtomicReference<>("");
+        jobIds.forEach(x -> {
+            jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
         });
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
                 dto.getLiveAtHome(),
-                parentIdsStr.get(),
-                sonIdsStr.get(),
+                jobIdsStr.get(),
                 dto.getHousingArea(),
                 dto.getEstimatedSalary(),
                 dto.getCode()
@@ -128,22 +123,6 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             }
         }
         return resCollections;
-    }
-
-    List<Integer> contendIds(List<Integer> sonIds){
-        List<Integer> parentIds = new ArrayList<>();
-        QueryWrapper qw = new QueryWrapper();
-        qw.in("id", sonIds);
-        List<SysJobContend> sysJobContends = sysJobContendService.list(qw);
-        sysJobContends.forEach(sysJobContend -> {
-            Integer parentId = sysJobContend.getParentId();
-            if (parentIds.contains(parentId)){
-
-            }else {
-                parentIds.add(parentId);
-            }
-        });
-        return parentIds;
     }
 
     Map<LocalDate, List<PeriodOfTime>> timeExpansion(RulesWeekVo vo) throws InterruptedException {

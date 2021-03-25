@@ -99,6 +99,8 @@ public class EmployeesScope {
             y = b2;
         }else if (x < lowPrice.doubleValue() + highPrice.doubleValue()){
             y = k3*x + b3;
+        }else {
+            y = 0.0;
         }
         return y;
     }
@@ -178,14 +180,15 @@ public class EmployeesScope {
     }
 
     public Double getScopeTotal(){
-        Double scope =
-                this.getScope1()
-                + this.getScope2()
-                + this.getScope3()
-                + this.getScope4()
-                + this.getScope5()
-                + this.getScope6()
-                + this.getScope7();
+        Double scope1 = this.getScope1(); //距离分数
+        Double scope2 = this.getScope2(); //地区分数
+        Double scope3 = this.getScope3(); //价格分数
+        Double scope4 = this.getScope4(); //出勤率分数
+        Double scope5 = this.getScope5(); //评价分数
+        Double scope6 = this.getScope6(); //推广分数
+        Double scope7 = this.getScope7(); //接单次数分数
+
+        Double scope = scope1 + scope2 + scope3 + scope4 + scope5 + scope6 + scope7;
         return scope;
     }
 

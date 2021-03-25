@@ -67,6 +67,9 @@ housekeeping:
       - /api/admin/employeesWorkExperience
       - /api/admin/employeesCalendar/getCalendarByDateSlot
       - /api/admin/employeesCalendar/tags
+      - /api/admin/sysJobContend/getAll
+      - /api/admin/sysJobContend/getAll2
+      - /api/admin/index/tree
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

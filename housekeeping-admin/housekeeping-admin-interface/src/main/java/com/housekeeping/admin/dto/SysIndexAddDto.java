@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class SysIndexAddDto {
     private String name;                        /* 元素名字 */
-    private List<Integer> jobParentIds;         /* 工作内容父_ids */
+    private List<Integer> jobs;                 /* 工作内容_ids */
     private List<PriceSlotVo> priceSlotList;    /* 推荐价格区间 */
     private Integer orderValue;                 /* 顺序 */
     private String selectedLogo;                /* 已选中的logo--base64 */

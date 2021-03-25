@@ -17,7 +17,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Attendance {
     private ReadWriteLock rwl = new ReentrantReadWriteLock();
 
-    AtomicInteger d;
     private Integer jobId;              /* 工作内容一级标签_id */
     private Float enableTotalHourly;    /* 可出勤时长 */
     private BigDecimal totalPrice;      /* 总价格 */
