@@ -96,12 +96,11 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         List<GroupDetails> groupDetailsList = new ArrayList<>();
         QueryWrapper queryWrapper1 = new QueryWrapper();
         queryWrapper1.eq("company_id", companyId);
-        groupDetailsList = baseMapper.selectList(queryWrapper1);
+        queryWrapper1.eq("group_name",groupDetailsUpdateDTO.getGroupName());
 
-        for (int i = 0; i < groupDetailsList.size(); i++) {
-            if (groupDetailsList.get(i).getGroupName().equals(groupDetailsUpdateDTO.getGroupName())){
-                return R.failed("贵公司组名"+ groupDetailsUpdateDTO.getGroupName() +"已经被占有");
-            }
+        GroupDetails one = this.getOne(queryWrapper1);
+        if(CommonUtils.isNotEmpty(one)&&!groupDetailsUpdateDTO.getId().equals(one.getId())){
+            return R.failed("贵公司组名"+ groupDetailsUpdateDTO.getGroupName() +"已经被占有");
         }
 
         GroupDetails groupDetails = new GroupDetails();
