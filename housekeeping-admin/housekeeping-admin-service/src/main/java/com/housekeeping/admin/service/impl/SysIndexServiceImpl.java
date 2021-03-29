@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -403,6 +404,41 @@ public class SysIndexServiceImpl
             return sysIndexVo;
         }).collect(Collectors.toList());
         return R.ok(sysIndexVoList, "查詢成功");
+    }
+
+    @Override
+    public R defaultRecommendation(AddressDetailsDTO dto) {
+        Map<String, List> res = new HashMap<>();
+        Map<String, Integer> map = sysConfigService.getDefaultRecommendationInteger();
+        Integer defaultRecommendationCompanyInteger = map.get(ApplicationConfigConstants.defaultRecommendationCompanyInteger);
+        Integer defaultRecommendationEmployeesInteger = map.get(ApplicationConfigConstants.defaultRecommendationEmployeesInteger);
+        List<Integer> promoteEmployeeIds = this.getPromoteEmployeeIds();
+        List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
+        List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
+        Collections.shuffle(employeesDetails);//先随机打乱排序
+        List<EmployeesInstanceDTO> dos = employeesDetails.stream().map(x -> {
+            String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
+            Double instance = new Double(str);
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance);
+            return employeesInstanceDTO;
+        }).collect(Collectors.toList());
+        SortListUtil<EmployeesInstanceDTO> sort = new SortListUtil<>();
+        sort.SortByDouble(dos, "getInstance", null);
+        List<Integer> companyIds = new ArrayList<>();
+        for (int i = 0; i < defaultRecommendationCompanyInteger*5; i++) {
+            EmployeesInstanceDTO emp = dos.get(i);
+            Integer comId = emp.getEmployeesDetails().getCompanyId();
+            if (!companyIds.contains(comId)){
+                companyIds.add(comId);
+            }
+            if (companyIds.size() >= defaultRecommendationCompanyInteger) break;
+        }
+        List<CompanyDetails> companyDetails = companyDetailsService.listByIds(companyIds);
+
+        dos = new ArrayList<>(dos.subList(0, defaultRecommendationEmployeesInteger));
+        res.put("employees", dos);
+        res.put("company", companyDetails);
+        return R.ok(res, "獲取成功");
     }
 
     /* 求交集,不改变原list */
@@ -919,11 +955,7 @@ public class SysIndexServiceImpl
         String str = CommonUtils.getInstanceByPoint(existEmployee.getLat(), existEmployee.getLng(), vo.getAddressDetailsDTO().getLat().toString(), vo.getAddressDetailsDTO().getLng().toString());
         Double instance = new Double(str);
         Double scopeOfOrder = new Double(existEmployee.getScopeOfOrder());//默认3000米接单范围
-        if (instance > scopeOfOrder){
-
-        }else {
-            indexQueryResultEmployees.setInstance(instance);
-        }
+        indexQueryResultEmployees.setInstance(instance);
 
         /** calendar：该钟点工闲置时间准备 */
         DateSlot dateSlot = new DateSlot(vo.getStart(), vo.getEnd());

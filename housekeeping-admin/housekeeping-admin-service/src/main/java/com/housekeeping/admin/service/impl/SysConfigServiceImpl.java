@@ -90,4 +90,17 @@ public class SysConfigServiceImpl
         });
         return map;
     }
+
+    @Override
+    public Map<String, Integer> getDefaultRecommendationInteger() {
+        QueryWrapper qw = new QueryWrapper();
+        qw.ge("id", 19);
+        qw.le("id", 20);
+        List<SysConfig> res = this.list(qw);
+        Map<String, Integer> map = new HashMap<>();
+        res.forEach(x -> {
+            map.put(x.getConfigKey(), Integer.valueOf(x.getConfigValue()));
+        });
+        return map;
+    }
 }

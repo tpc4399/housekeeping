@@ -1,10 +1,7 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.IndexQueryDTO;
-import com.housekeeping.admin.dto.QueryIndexDTO;
-import com.housekeeping.admin.dto.SysIndexAddDto;
-import com.housekeeping.admin.dto.SysIndexUpdateDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.SysIndex;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.common.utils.R;
@@ -23,4 +20,5 @@ public interface ISysIndexService extends IService<SysIndex> {
     R getCusById(Integer id);
     R query(QueryIndexDTO dto) throws InterruptedException;
     R tree();
+    R defaultRecommendation(AddressDetailsDTO dto);
 }

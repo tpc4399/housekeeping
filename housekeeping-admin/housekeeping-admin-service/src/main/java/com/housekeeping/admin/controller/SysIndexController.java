@@ -1,9 +1,6 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.IndexQueryDTO;
-import com.housekeeping.admin.dto.QueryIndexDTO;
-import com.housekeeping.admin.dto.SysIndexAddDto;
-import com.housekeeping.admin.dto.SysIndexUpdateDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.ISysIndexService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
@@ -64,6 +61,12 @@ public class SysIndexController {
     @ApiOperation("获取六大类包括类下的工作内容")
     public R tree(){
         return sysIndexService.tree();
+    }
+
+    @ApiOperation("获取默认推荐")
+    @PostMapping("/defaultRecommendation")
+    public R defaultRecommendation(@RequestBody AddressDetailsDTO dto){
+        return sysIndexService.defaultRecommendation(dto);
     }
 
 }

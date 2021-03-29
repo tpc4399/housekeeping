@@ -39,6 +39,10 @@ public interface ApplicationConfigConstants {
     String numberOfConsecutiveCompanyInteger = "numberOfConsecutiveCompanyInteger";
     /** 连续员工数量 */
     String numberOfConsecutiveEmployeesInteger = "numberOfConsecutiveEmployeesInteger";
+    /** 默认推荐公司数量 */
+    String defaultRecommendationCompanyInteger = "defaultRecommendationCompanyInteger";
+    /** 默认推荐员工数量 */
+    String defaultRecommendationEmployeesInteger = "defaultRecommendationEmployeesInteger";
 
 
 
