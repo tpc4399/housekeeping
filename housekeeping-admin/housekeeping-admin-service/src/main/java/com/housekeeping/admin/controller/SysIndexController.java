@@ -63,9 +63,9 @@ public class SysIndexController {
         return sysIndexService.tree();
     }
 
-    @ApiOperation("获取默认推荐")
+    @ApiOperation("获取默认推荐,如果没有地址，body直接置null")
     @PostMapping("/defaultRecommendation")
-    public R defaultRecommendation(@RequestBody AddressDetailsDTO dto){
+    public R defaultRecommendation(@RequestBody AddressDTO dto){
         return sysIndexService.defaultRecommendation(dto);
     }
 

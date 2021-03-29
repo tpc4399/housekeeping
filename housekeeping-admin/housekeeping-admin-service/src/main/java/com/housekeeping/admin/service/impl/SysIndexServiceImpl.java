@@ -407,23 +407,28 @@ public class SysIndexServiceImpl
     }
 
     @Override
-    public R defaultRecommendation(AddressDetailsDTO dto) {
+    public R defaultRecommendation(AddressDTO dto) {
         Map<String, List> res = new HashMap<>();
         Map<String, Integer> map = sysConfigService.getDefaultRecommendationInteger();
         Integer defaultRecommendationCompanyInteger = map.get(ApplicationConfigConstants.defaultRecommendationCompanyInteger);
         Integer defaultRecommendationEmployeesInteger = map.get(ApplicationConfigConstants.defaultRecommendationEmployeesInteger);
-        List<Integer> promoteEmployeeIds = this.getPromoteEmployeeIds();
-        List<Integer> promoteCompanyIds = this.getPromoteCompanyIds();
         List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
         Collections.shuffle(employeesDetails);//先随机打乱排序
         List<EmployeesInstanceDTO> dos = employeesDetails.stream().map(x -> {
-            String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
-            Double instance = new Double(str);
-            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance);
-            return employeesInstanceDTO;
+            if (dto.getGetGPSSuccess()){
+                String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
+                Double instance = new Double(str);
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance);
+                return employeesInstanceDTO;
+            }else {
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, new Double(0));
+                return employeesInstanceDTO;
+            }
         }).collect(Collectors.toList());
-        SortListUtil<EmployeesInstanceDTO> sort = new SortListUtil<>();
-        sort.SortByDouble(dos, "getInstance", null);
+        if (dto.getGetGPSSuccess()){
+            SortListUtil<EmployeesInstanceDTO> sort = new SortListUtil<>();
+            sort.SortByDouble(dos, "getInstance", null);
+        }
         List<Integer> companyIds = new ArrayList<>();
         for (int i = 0; i < defaultRecommendationCompanyInteger*5; i++) {
             EmployeesInstanceDTO emp = dos.get(i);

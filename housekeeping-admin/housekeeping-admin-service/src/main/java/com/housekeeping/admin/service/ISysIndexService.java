@@ -20,5 +20,5 @@ public interface ISysIndexService extends IService<SysIndex> {
     R getCusById(Integer id);
     R query(QueryIndexDTO dto) throws InterruptedException;
     R tree();
-    R defaultRecommendation(AddressDetailsDTO dto);
+    R defaultRecommendation(AddressDTO dto);
 }
