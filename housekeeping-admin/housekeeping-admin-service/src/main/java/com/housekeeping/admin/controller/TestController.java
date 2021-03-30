@@ -1,16 +1,20 @@
 package com.housekeeping.admin.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.housekeeping.admin.dto.DateSlot;
+import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
-import com.housekeeping.common.utils.MongoUtils;
-import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import net.sf.json.JSONObject;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +25,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,6 +38,7 @@ import java.util.Random;
 @Api(tags={"【ZZ】单元测试接口"})
 @RestController
 @AllArgsConstructor
+@RequestMapping("/test")
 public class TestController {
 
     private final ICurrencyService currencyService;
@@ -39,6 +46,11 @@ public class TestController {
     private final IEmployeesCalendarService employeesCalendarService;
     private final IEmployeesContractService employeesContractService;
     private final ITestService testService;
+    private final RedisUtils redisUtils;
+    private final EmployeesDetailsService employeesDetailsService;
+    private final ICompanyDetailsService companyDetailsService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
     @Resource
     private MongoUtils mongoUtils;
 
@@ -111,11 +123,36 @@ public class TestController {
         return R.ok();
     }
 
-    @Access({RolesEnum.USER_COMPANY, RolesEnum.SYSTEM_ADMIN})
-    @ApiOperation("測試8")
-    @GetMapping("/test8")
+    @ApiOperation("redis数据导入")
+    @GetMapping("/redisInto")
     public R test8(){
-        return R.ok();
+        /* 保洁员数据 */
+        List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
+        fun(employeesDetails, "employees", "details");
+        /* 公司数据 */
+        List<CompanyDetails> companyDetails = companyDetailsService.list();
+        fun(companyDetails, "company", "details");
+
+        return R.ok(null, "存入成功");
     }
 
+    private void fun(List list, String name1, String name2){
+        list.forEach(x -> {
+            Map<String, Object> map = new HashMap<>();
+            try {
+                map = CommonUtils.objectToMap(x);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            String key = name1+":"+map.get("id")+":"+name2;
+            redisUtils.hmset(key, map);
+//            try {
+////                redisTemplate.opsForHash().put(key, "sss", CommonConstants.JacksonMapper.writeValueAsString(LocalDateTime.of(2020,1,8,20,30,00,00)));
+//                redisTemplate.opsForHash().put(key, "sss", CommonConstants.JacksonMapper.writeValueAsString(x));
+//
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+        });
+    }
 }

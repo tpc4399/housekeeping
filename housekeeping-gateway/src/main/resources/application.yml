@@ -60,7 +60,7 @@ housekeeping:
       - /api/admin/companyHuman/verfifyCompanyCode
       - /api/admin/customer/verfifyCustomerCode
       - /api/admin/admin/verfifyAdminCode
-      - /api/admin/test6
+      - /api/admin/test/redisInto
       - /api/admin/index
       - /api/admin/index/getById
       - /api/admin/index/query

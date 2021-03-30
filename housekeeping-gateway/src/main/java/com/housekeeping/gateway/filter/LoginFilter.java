@@ -66,12 +66,14 @@ public class LoginFilter extends ZuulFilter {
         // 判断白名单
         // 遍历允许访问的路径
         for (String path : this.filterProp.getAllowPaths()) {
-            // 然后判断是否是符合
+//            if (this.match(requestURI, path)){
+//                return false;//如果匹配就放行
+//            }
             if(requestURI.startsWith(path)){
-                return false;
+                return false;//放行
             }
         }
-        return true;
+        return true;//需要鉴权
     }
 
     @Override
@@ -167,5 +169,34 @@ public class LoginFilter extends ZuulFilter {
         }
         /**** 验证token，密码正确性 *****/
         return null;
+    }
+
+    /***
+     * 需要处理*和**通配符
+     * @param uri
+     * @param okPattern
+     * @return
+     */
+    public Boolean match(String uri, String okPattern){
+        String[] arr = okPattern.split("/");
+        String end = arr[arr.length-1];
+        if (end.equals("*")){
+            String pattern = okPattern.substring(0, okPattern.length()-1);
+            Integer lastIndex = uri.lastIndexOf("/");
+            String subUri = uri.substring(0, lastIndex);
+            if (subUri.equals(pattern)){
+                return true;
+            }
+        } else if (end.equals("**")){
+            String pattern = okPattern.substring(0, okPattern.length()-2);
+            if (uri.startsWith(pattern)){
+                return true;
+            }
+        }else {
+            if (uri.equals(okPattern)){
+                return true;
+            }
+        }
+        return false;
     }
 }

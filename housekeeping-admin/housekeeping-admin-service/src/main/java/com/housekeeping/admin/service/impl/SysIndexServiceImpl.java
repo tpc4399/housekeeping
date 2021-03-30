@@ -16,6 +16,8 @@ import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,12 @@ public class SysIndexServiceImpl
     private ISysAddressAreaService sysAddressAreaService;
     @Resource
     private ISysJobContendService sysJobContendService;
+    @Resource
+    private IAsyncService asyncService;
+    @Resource
+    private RedisUtils redisUtils;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public R add(SysIndexAddDto sysIndexAddDto) {
@@ -429,6 +436,10 @@ public class SysIndexServiceImpl
             SortListUtil<EmployeesInstanceDTO> sort = new SortListUtil<>();
             sort.SortByDouble(dos, "getInstance", null);
         }
+
+        /* 生成异步任务，将dos和dos的公司保存到redis */
+        asyncService.setRedisDos(dos);
+
         List<Integer> companyIds = new ArrayList<>();
         for (int i = 0; i < defaultRecommendationCompanyInteger*5; i++) {
             EmployeesInstanceDTO emp = dos.get(i);
@@ -445,6 +456,101 @@ public class SysIndexServiceImpl
         res.put("company", companyDetails);
         return R.ok(res, "獲取成功");
     }
+
+    @Override
+    public R more1(AddressDTO dto) {
+//        Set<ZSetOperations.TypedTuple<Object>> set = new HashSet<>();
+//        if (dto.getGetGPSSuccess()){
+//            List<Object> field = Arrays.asList("lat", "lng");
+//            set = (Set<ZSetOperations.TypedTuple<Object>>) redisUtils.keys("employees:*:details").stream().map(x -> {
+//                List<String> position = redisUtils.hmget((String) x, field);
+//                String str = CommonUtils.getInstanceByPoint(position.get(0), position.get(1), dto.getLat().toString(), dto.getLng().toString());
+//                Double instance = new Double(str);
+//                return new DefaultTypedTuple<Object>((String)x,instance);
+//            }).collect(Collectors.toSet());
+//
+//        }else {
+//            set = (Set<ZSetOperations.TypedTuple<Object>>) redisUtils.keys("employees:*:details").stream().map(x -> {
+//                return new DefaultTypedTuple<Object>((String)x, new Double(0));
+//            }).collect(Collectors.toSet());
+//        }
+//        String code = CommonUtils.getMysteriousCode();
+//        String key = "employeesMoreSet:"+code;
+//        redisTemplate.opsForZSet().add(key, set);//先存一份zSet
+        List<AddrDTO> list = new ArrayList<>();
+        if (dto.getGetGPSSuccess()){
+            List<Object> field = Arrays.asList("lat", "lng");
+            list = (List<AddrDTO>) redisUtils.keys("employees:*:details").stream().map(x -> {
+                List<String> position = redisUtils.hmget((String) x, field);
+                String str = CommonUtils.getInstanceByPoint(position.get(0), position.get(1), dto.getLat().toString(), dto.getLng().toString());
+                Double instance = new Double(str);
+                return new AddrDTO((String)x,instance);
+            }).collect(Collectors.toList());
+            SortListUtil<AddrDTO> sortListUtil = new SortListUtil();
+            sortListUtil.SortByDouble(list, "getInstance", ""); //按照距离升序排序
+        }else {
+            list = (List<AddrDTO>) redisUtils.keys("employees:*:details").stream().map(x -> {
+                return new AddrDTO((String)x, new Double(0));
+            }).collect(Collectors.toList());
+            Collections.shuffle(list); //打乱
+        }
+        String code = CommonUtils.getMysteriousCode();
+        String key = "employeesMoreList:"+code;
+        list.forEach(x->{
+            redisTemplate.opsForList().rightPush(key, x);
+        });
+
+        List<AddrDTO> addrDTOS = new ArrayList<>();
+        List<EmployeesInstanceDTO> res = new ArrayList<>();
+        //一次调用弹出十个
+        for (int i = 0; i < 10; i++) {
+            AddrDTO addrDTO = (AddrDTO) redisTemplate.opsForList().leftPop(key);
+            addrDTOS.add(addrDTO);
+            EmployeesDetails employeesDetails = null;
+            String key2 = addrDTO.getKey();
+            Map<Object, Object> maps = redisTemplate.opsForHash().entries(key2);
+            try {
+                employeesDetails = (EmployeesDetails) CommonUtils.mapToObject(maps, EmployeesDetails.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
+            res.add(employeesInstanceDTO);
+        }
+        return R.ok(res, "获取成功");
+    }
+
+    @Override
+    public R more2(AddressDTO dto) {
+        return null;
+    }
+
+    @Override
+    public R goon1(String credential) {
+        String key = "employeesMoreList:"+credential;
+        List<AddrDTO> addrDTOS = new ArrayList<>();
+        List<EmployeesInstanceDTO> res = new ArrayList<>();
+        //一次调用弹出十个
+        for (int i = 0; i < 10; i++) {
+            AddrDTO addrDTO = (AddrDTO) redisTemplate.opsForList().leftPop(key);
+            addrDTOS.add(addrDTO);
+            EmployeesDetails employeesDetails = null;
+            try {
+                employeesDetails = (EmployeesDetails) CommonUtils.mapToObject(redisTemplate.opsForHash().entries(addrDTO.getKey()), EmployeesDetails.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
+            res.add(employeesInstanceDTO);
+        }
+        return R.ok(res, "获取成功");
+    }
+
+    @Override
+    public R goon2(String credential) {
+        return null;
+    }
+
 
     /* 求交集,不改变原list */
     private List<Integer> getIntersection(List<Integer> a, List<Integer> b){

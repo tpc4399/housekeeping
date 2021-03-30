@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.ISysIndexService;
+import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
@@ -63,10 +64,39 @@ public class SysIndexController {
         return sysIndexService.tree();
     }
 
-    @ApiOperation("获取默认推荐,如果没有地址，body直接置null")
+    @PassToken
+    @ApiOperation("获取默认推荐,如果没有地址")
     @PostMapping("/defaultRecommendation")
     public R defaultRecommendation(@RequestBody AddressDTO dto){
         return sysIndexService.defaultRecommendation(dto);
+    }
+
+    @PassToken
+    @ApiOperation("获取默认推荐,更多保洁员,点击更多保洁员时调用")
+    @PostMapping("/more1")
+    public R more1(@RequestBody AddressDTO dto){
+        return sysIndexService.more1(dto);
+    }
+
+    @PassToken
+    @ApiOperation("获取默认推荐,继续获取保洁员，点击加载更多时调用")
+    @GetMapping("/goon1")
+    public R goon1(String credential){
+        return sysIndexService.goon1(credential);
+    }
+
+    @PassToken
+    @ApiOperation("获取默认推荐,更多公司，点击更公司时调用")
+    @PostMapping("/more2")
+    public R more2(@RequestBody AddressDTO dto){
+        return sysIndexService.more2(dto);
+    }
+
+    @PassToken
+    @ApiOperation("获取默认推荐,继续获取公司，点击加载更多时调用")
+    @GetMapping("/goon2")
+    public R goon2(String credential){
+        return sysIndexService.goon2(credential);
     }
 
 }

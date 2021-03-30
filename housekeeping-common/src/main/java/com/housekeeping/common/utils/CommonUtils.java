@@ -17,6 +17,8 @@ import org.gavaghan.geodesy.GlobalCoordinates;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -261,7 +263,6 @@ public class CommonUtils {
 
 		Double meter = getDistanceMeter(source, target, Ellipsoid.Sphere);
 
-		System.out.println("Sphere坐标系计算结果："+meter + "米");
 		return meter.toString();
 	}
 	public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid){
@@ -271,187 +272,120 @@ public class CommonUtils {
 
 		return geoCurve.getEllipsoidalDistance();
 	}
-	
-	public static void main(String[] args) throws UnknownHostException {
-		SysOrderPlanDTO sysOrderPlanDTO = new SysOrderPlanDTO();
-		RulesMonthlyVo rulesMonthlyVo = new RulesMonthlyVo();
-		rulesMonthlyVo.setStart(LocalDate.of(2020, 02,03));
-		rulesMonthlyVo.setEnd(LocalDate.of(2021, 02,03));
-		sysOrderPlanDTO.setRulesMonthlyVo(rulesMonthlyVo);
-		Object ba = OptionalBean.ofNullable(sysOrderPlanDTO)
-				.getBean(SysOrderPlanDTO::getRulesMonthlyVo)
-				.getBean(RulesMonthlyVo::getStart).get();
-		Object ba2 = OptionalBean.ofNullable(sysOrderPlanDTO)
-				.getBean(SysOrderPlanDTO::getRulesMonthlyVo)
-				.getBean(RulesMonthlyVo::getEnd).get();
-		System.out.println("ssdaw");
-
-		PasswordEncoder ENCODER = new BCryptPasswordEncoder();
-		System.out.println(ENCODER.encode("Qawe1"));
-		System.out.println(ENCODER.encode("Qawe1"));
-		System.out.println(ENCODER.encode("Qawe1"));
-		System.out.println(ENCODER.encode("Qawe1"));
-		System.out.println(ENCODER.encode("Qawe1"));
-
-		Integer a = 127;
-		Integer b = 127;
-		Integer c = 128;
-		Integer d = 128;
-		System.out.println(a == b);  //true
-		System.out.println(c == d);	 //false
-
-		Integer aa = -128;
-		Integer bb = -128;
-		Integer cc = -129;
-		Integer dd = -129;
-		System.out.println(aa == bb);  //true
-		System.out.println(cc == dd);  //false
-
-		char sss = '1';
-
-		Integer ss = Integer.valueOf(String.valueOf(sss));
-		System.out.println(ss);
-
-		Map<String, String> map = new HashMap<>();
-		map.put("1", "2");
-		String res = map.put("1", "3");
-		System.out.println(res);
-
-//		String host = "https://ali-waihui.showapi.com";
-//		String path = "/list";
-//		String method = "GET";
-//		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
-//		Map<String, String> headers = new HashMap<String, String>();
-//		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-//		headers.put("Authorization", "APPCODE " + appcode);
-//		Map<String, String> querys = new HashMap<String, String>();
-
-//		String host = "https://ali-waihui.showapi.com";
-//		String path = "/waihui-list";
-//		String method = "GET";
-//		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
-//		Map<String, String> headers = new HashMap<String, String>();
-//		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-//		headers.put("Authorization", "APPCODE " + appcode);
-//		Map<String, String> querys = new HashMap<String, String>();
-////		querys.put("code", "CNY");
 
 
-
-
-		String host = "https://ali-waihui.showapi.com";
-		String path = "/waihui-transform";
-		String method = "GET";
-		String appcode = "74bf2f4aaa8e4bb3a67d287c53509cda";
-		Map<String, String> headers = new HashMap<String, String>();
-		//最后在header中的格式(中间是英文空格)为Authorization:APPCODE 83359fd73fe94948385f570e3c139105
-		headers.put("Authorization", "APPCODE " + appcode);
-		Map<String, String> querys = new HashMap<String, String>();
-		querys.put("fromCode", "USD");
-		querys.put("money", "100");
-		querys.put("toCode", "CNY");
-
-
-		try {
-			/**
-			 * 重要提示如下:
-			 * HttpUtils请从
-			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/src/main/java/com/aliyun/api/gateway/demo/util/HttpUtils.java
-			 * 下载
-			 *
-			 * 相应的依赖请参照
-			 * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
-			 */
-			HttpResponse response = HttpUtils.doGet(host, path, method, headers, querys);
-			JSONObject jsonObject = JSONObject.fromObject(EntityUtils.toString(response.getEntity(), "UTF-8"));
-			//获取response的body
-			System.out.println("..");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		System.out.println(getInstanceByPoint(
-				"22.988608",
-				"120.1680851",
-				"22.9886068",
-				"120.1686336"
-		));
-
-
-		List<String> arg = Arrays.asList("dwa", "fffga", "dwaghhhhhh", "14324ffg", "sf");
-		arg.forEach(x -> {
-			if (x.length()>=5){
-				return;
+	//Object转Map
+	public static Map<String, Object> objectToMap(Object obj) throws IllegalAccessException {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Class<?> clazz = obj.getClass();
+		for (Field field : clazz.getDeclaredFields()) {
+			field.setAccessible(true);
+			String fieldName = field.getName();
+			Object value = field.get(obj);
+			if (value == null) {
+				value = "";
 			}
-			System.out.println(x);
-		});
-		BigDecimal bigDecimal = new BigDecimal(0);
-		bigDecimal.add(new BigDecimal(100));
-		System.out.println(bigDecimal);
-		System.out.println(bigDecimal.add(new BigDecimal(100)));
+			map.put(fieldName, value);
+		}
+		return map;
+	}
 
-		List<Integer> integerList = Arrays.asList(1,2,3,4,5,6,7,8,9);
-		Collections.shuffle(integerList);
-		System.out.println(Arrays.toString(integerList.toArray()));
+	//Map转Object
+	public static Object mapToObject(Map<Object, Object> map, Class<?> beanClass) throws Exception {
+		if (map == null)
+			return null;
+		Object obj = beanClass.newInstance();
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			int mod = field.getModifiers();
+			if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+				continue;
+			}
+			field.setAccessible(true);
+			if (map.containsKey(field.getName())) {
+				Object value = null;
+				if (field.getType().equals(LocalDate.class)){
+					String str = (String) map.get(field.getName());
+					LocalDate localDate = LocalDate.of(Integer.valueOf(str.substring(0, 4)), Integer.valueOf(str.substring(5, 7)), Integer.valueOf(str.substring(8, 10)));
+					value = localDate;
+				}else if (field.getType().equals(LocalTime.class)){
+					String str = (String) map.get(field.getName());
+					LocalTime localTime = LocalTime.of(Integer.valueOf(str.substring(0, 2)), Integer.valueOf(str.substring(3, 5)), Integer.valueOf(str.substring(6, 8)));
+					value = localTime;
+				}else if (field.getType().equals(LocalDateTime.class)){
+					String str = (String) map.get(field.getName());
+					LocalDateTime localDateTime = LocalDateTime.of(
+							Integer.valueOf(str.substring(0, 4)),
+							Integer.valueOf(str.substring(5, 7)),
+							Integer.valueOf(str.substring(8, 10)),
+							Integer.valueOf(str.substring(11, 13)),
+							Integer.valueOf(str.substring(14, 16)),
+							Integer.valueOf(str.substring(17, 19))
+					);
+					value = localDateTime;
+				}else if (field.getType().equals(Float.class)){
+					value = new Float((Double) map.get(field.getName()));
+				}else {
+					value = map.get(field.getName());
+				}
+				field.set(obj, value);
+			}
+		}
+		return obj;
+	}
 
-		BigDecimal lowPrice = new BigDecimal(100);
-		BigDecimal highPrice = new BigDecimal(200);
-		BigDecimal anchorPrice = lowPrice.add(highPrice).divide(new BigDecimal(2));
-		System.out.println(anchorPrice);
+	public static void main(String[] args) throws UnknownHostException {
 
-
+		long section0 = System.currentTimeMillis();
 		//默认升序 desc降序
 		SortListUtil<RecommendedEmployeesVo> sortList = new SortListUtil<RecommendedEmployeesVo>();
 		List<RecommendedEmployeesVo> reList = new ArrayList<>();
-		RecommendedEmployeesVo re1 = new RecommendedEmployeesVo(1, 6000, new BigDecimal(111), 3.1f);
-		RecommendedEmployeesVo re2 = new RecommendedEmployeesVo(2, 5000, new BigDecimal(333), 3.5f);
-		RecommendedEmployeesVo re3 = new RecommendedEmployeesVo(3, 4000, new BigDecimal(222), 3.1f);
-		RecommendedEmployeesVo re4 = new RecommendedEmployeesVo(4, 3000, new BigDecimal(666), 3.7f);
-		RecommendedEmployeesVo re5 = new RecommendedEmployeesVo(5, 2000, new BigDecimal(555), 3.2f);
-		RecommendedEmployeesVo re6 = new RecommendedEmployeesVo(6, 1000, new BigDecimal(444), 3.3f);
-		reList.add(re1);reList.add(re2);reList.add(re3);reList.add(re4);reList.add(re5);reList.add(re6);
-		System.out.println("==========原来的顺序==========");
-		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-			RecommendedEmployeesVo re = iterator.next();
-			System.out.println(re);
+		for (int i = 0; i < 1000000; i++) {
+			RecommendedEmployeesVo re = new RecommendedEmployeesVo(i, new Random().nextInt(10000), new BigDecimal(new Random().nextInt(10000)), new Random().nextFloat());
+			reList.add(re);
 		}
-
+		long section1 = System.currentTimeMillis();
+		Collections.shuffle(reList);
+		long section2 = System.currentTimeMillis();
+		System.out.println("==========原来的顺序==========");
+//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+//			RecommendedEmployeesVo re = iterator.next();
+//			System.out.println(re);
+//		}
+		long section3 = System.currentTimeMillis();
 		System.out.println("======按照instance排序=======");
 		sortList.Sort(reList, "getInstance", null);
-		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-			RecommendedEmployeesVo re = iterator.next();
-			System.out.println(re);
-		}
+//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+//			RecommendedEmployeesVo re = iterator.next();
+//			System.out.println(re);
+//		}
+		long section4 = System.currentTimeMillis();
 
 		System.out.println("========按照price排序========");
 		sortList.Sort(reList, "getPrice", null);
-		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-			RecommendedEmployeesVo re = iterator.next();
-			System.out.println(re);
-		}
+//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+//			RecommendedEmployeesVo re = iterator.next();
+//			System.out.println(re);
+//		}
+		long section5 = System.currentTimeMillis();
 
 		System.out.println("========按照score排序========");
 		sortList.Sort(reList, "getScore", null);
-		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-			RecommendedEmployeesVo re = iterator.next();
-			System.out.println(re);
-		}
+//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
+//			RecommendedEmployeesVo re = iterator.next();
+//			System.out.println(re);
+//		}
+		long section6 = System.currentTimeMillis();
 
-		List<Integer> week = new ArrayList<>();
-		String weekStr = "12367";
-		for (int i = 0; i < weekStr.length(); i++) {
-			week.add(Integer.valueOf(weekStr.charAt(i)-48));
-		}
+		System.out.println("总时间："+(section6 - section0)+"ms");
+		System.out.println("生成数据的时间："+(section1 - section0)+"ms");
+		System.out.println("打乱数据的时间："+(section2 - section1)+"ms");
+		System.out.println("输出数据的时间："+(section3 - section2)+"ms");
+		System.out.println("按照instance排序+输出数据的时间："+(section4 - section3)+"ms");
+		System.out.println("按照price排序+输出数据的时间："+(section5 - section4)+"ms");
+		System.out.println("按照score排序+输出数据的时间："+(section6 - section5)+"ms");
 
-		System.out.println("Arrays.toString(chars)");
 
-		Float x = 0.8f;
-		Integer y = 129;
-		System.out.printf(String.valueOf(x*y));
-
-		String weekStrE = "123456";
-		String aaaa = "123";
-		System.out.println(weekStrE.contains(aaaa));
 
 	}
 

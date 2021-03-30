@@ -174,6 +174,10 @@ public class RedisUtils {
         return redisTemplate.opsForHash().entries(key);
     }
 
+    public List hmget(String key, List<Object> fieldList){
+        return redisTemplate.opsForHash().multiGet(key, fieldList);
+    }
+
     /**
      * HashSet
      * @param key 键

@@ -1,5 +1,7 @@
 package com.housekeeping.common.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.housekeeping.common.annotation.RolesEnum;
 
 import java.util.HashMap;
@@ -85,5 +87,8 @@ public interface CommonConstants {
 	Integer SUCCESS = 0;
 	/** R的失败标记 */
 	Integer FAIL = 1;
+	/** 全局配置Redis序列化LocalDateTime */
+	ObjectMapper JacksonMapper = new ObjectMapper()
+			.registerModule(new JavaTimeModule());
 
 }
