@@ -97,6 +97,12 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
+    @ApiOperation("首页获取公司旗下所有员工")
+    @GetMapping("/getAllEmpByCompanyId")
+    public R getAllEmpByCompanyId(Integer companyId){
+        return employeesDetailsService.getAllEmpByCompanyId(companyId);
+    }
+
     @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @ApiOperation("【公司】【經理】根据id生成员工登入参数")
     @GetMapping("/getLinkToLogin/{id}")

@@ -36,4 +36,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R putWorkArea(List<Integer> areaIds);
 
     R getInfoById();
+
+    R getAllEmpByCompanyId(Integer companyId);
 }

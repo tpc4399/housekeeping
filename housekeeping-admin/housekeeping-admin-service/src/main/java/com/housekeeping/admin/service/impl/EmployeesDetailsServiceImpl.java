@@ -505,4 +505,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(one);
     }
 
+    @Override
+    public R getAllEmpByCompanyId(Integer companyId) {
+        QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
+        qw.eq("company_id",companyId);
+        List<EmployeesDetails> list = this.list(qw);
+        return R.ok(list);
+    }
+
 }
