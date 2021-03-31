@@ -306,15 +306,15 @@ public class CommonUtils {
 				Object value = null;
 				if (field.getType().equals(LocalDate.class)){
 					String str = (String) map.get(field.getName());
-					LocalDate localDate = LocalDate.of(Integer.valueOf(str.substring(0, 4)), Integer.valueOf(str.substring(5, 7)), Integer.valueOf(str.substring(8, 10)));
+					LocalDate localDate = str.length() == 0 ? null : LocalDate.of(Integer.valueOf(str.substring(0, 4)), Integer.valueOf(str.substring(5, 7)), Integer.valueOf(str.substring(8, 10)));
 					value = localDate;
 				}else if (field.getType().equals(LocalTime.class)){
 					String str = (String) map.get(field.getName());
-					LocalTime localTime = LocalTime.of(Integer.valueOf(str.substring(0, 2)), Integer.valueOf(str.substring(3, 5)), Integer.valueOf(str.substring(6, 8)));
+					LocalTime localTime = str.length() == 0 ? null : LocalTime.of(Integer.valueOf(str.substring(0, 2)), Integer.valueOf(str.substring(3, 5)), Integer.valueOf(str.substring(6, 8)));
 					value = localTime;
 				}else if (field.getType().equals(LocalDateTime.class)){
 					String str = (String) map.get(field.getName());
-					LocalDateTime localDateTime = LocalDateTime.of(
+					LocalDateTime localDateTime = str.length() == 0 ? null : LocalDateTime.of(
 							Integer.valueOf(str.substring(0, 4)),
 							Integer.valueOf(str.substring(5, 7)),
 							Integer.valueOf(str.substring(8, 10)),

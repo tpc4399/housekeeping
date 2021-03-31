@@ -86,6 +86,13 @@ public class SysIndexController {
     }
 
     @PassToken
+    @ApiOperation("获取默认推荐,清除缓存，离开更多保洁员界面并且确定不需要缓存时调用")
+    @PostMapping("/flush1")
+    public R flush1(String credential){
+        return sysIndexService.flush1(credential);
+    }
+
+    @PassToken
     @ApiOperation("获取默认推荐,更多公司，点击更公司时调用")
     @PostMapping("/more2")
     public R more2(@RequestBody AddressDTO dto){
@@ -97,6 +104,13 @@ public class SysIndexController {
     @GetMapping("/goon2")
     public R goon2(String credential){
         return sysIndexService.goon2(credential);
+    }
+
+    @PassToken
+    @ApiOperation("获取默认推荐,继续获取公司，离开更多公司界面并且确定不需要缓存时调用")
+    @GetMapping("/flush2")
+    public R flush2(String credential){
+        return sysIndexService.flush2(credential);
     }
 
 }

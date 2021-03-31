@@ -459,24 +459,6 @@ public class SysIndexServiceImpl
 
     @Override
     public R more1(AddressDTO dto) {
-//        Set<ZSetOperations.TypedTuple<Object>> set = new HashSet<>();
-//        if (dto.getGetGPSSuccess()){
-//            List<Object> field = Arrays.asList("lat", "lng");
-//            set = (Set<ZSetOperations.TypedTuple<Object>>) redisUtils.keys("employees:*:details").stream().map(x -> {
-//                List<String> position = redisUtils.hmget((String) x, field);
-//                String str = CommonUtils.getInstanceByPoint(position.get(0), position.get(1), dto.getLat().toString(), dto.getLng().toString());
-//                Double instance = new Double(str);
-//                return new DefaultTypedTuple<Object>((String)x,instance);
-//            }).collect(Collectors.toSet());
-//
-//        }else {
-//            set = (Set<ZSetOperations.TypedTuple<Object>>) redisUtils.keys("employees:*:details").stream().map(x -> {
-//                return new DefaultTypedTuple<Object>((String)x, new Double(0));
-//            }).collect(Collectors.toSet());
-//        }
-//        String code = CommonUtils.getMysteriousCode();
-//        String key = "employeesMoreSet:"+code;
-//        redisTemplate.opsForZSet().add(key, set);//先存一份zSet
         List<AddrDTO> list = new ArrayList<>();
         if (dto.getGetGPSSuccess()){
             List<Object> field = Arrays.asList("lat", "lng");
@@ -499,14 +481,17 @@ public class SysIndexServiceImpl
         list.forEach(x->{
             redisTemplate.opsForList().rightPush(key, x);
         });
+        redisTemplate.expire(key, 12, TimeUnit.HOURS);//设置12小时的过期时间
 
-        List<AddrDTO> addrDTOS = new ArrayList<>();
-        List<EmployeesInstanceDTO> res = new ArrayList<>();
+        List<EmployeesInstanceDTO> employeesInstanceDTOArrayList = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
         //一次调用弹出十个
         for (int i = 0; i < 10; i++) {
             AddrDTO addrDTO = (AddrDTO) redisTemplate.opsForList().leftPop(key);
-            addrDTOS.add(addrDTO);
             EmployeesDetails employeesDetails = null;
+            if (CommonUtils.isEmpty(addrDTO)){
+                break;
+            }
             String key2 = addrDTO.getKey();
             Map<Object, Object> maps = redisTemplate.opsForHash().entries(key2);
             try {
@@ -515,40 +500,105 @@ public class SysIndexServiceImpl
                 e.printStackTrace();
             }
             EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
-            res.add(employeesInstanceDTO);
+            employeesInstanceDTOArrayList.add(employeesInstanceDTO);
         }
+        res.put("list", employeesInstanceDTOArrayList);
+        res.put("credential", code);
         return R.ok(res, "获取成功");
     }
 
     @Override
     public R more2(AddressDTO dto) {
-        return null;
+        List<Integer> comIds = (List<Integer>) redisUtils.keys("company:*:details").stream().map(x -> {
+            return Integer.valueOf(((String)x).split(":")[1]);
+        }).collect(Collectors.toList());
+        Collections.shuffle(comIds);
+        String code = CommonUtils.getMysteriousCode();
+        String key = "companyMoreList:"+code;
+        comIds.forEach(x->{
+            redisTemplate.opsForList().rightPush(key, x);
+        });
+        redisTemplate.expire(key, 12, TimeUnit.HOURS);//设置12小时的过期时间
+        List<CompanyDetails> companyDetails = new ArrayList<>();
+        Map<String, Object> res = new HashMap<>();
+        //一次调用弹出十个
+        for (int i = 0; i < 10; i++) {
+            Integer comId = (Integer) redisTemplate.opsForList().leftPop(key);
+            CompanyDetails companyDetail = null;
+            if (CommonUtils.isEmpty(comId)){
+                break;
+            }
+            String key2 = "company:"+comId+":details";
+            Map<Object, Object> maps = redisTemplate.opsForHash().entries(key2);
+            try {
+                companyDetail = (CompanyDetails) CommonUtils.mapToObject(maps, CompanyDetails.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            companyDetails.add(companyDetail);
+        }
+        res.put("list", companyDetails);
+        res.put("credential", code);
+        return R.ok(res, "获取成功");
     }
 
     @Override
     public R goon1(String credential) {
         String key = "employeesMoreList:"+credential;
-        List<AddrDTO> addrDTOS = new ArrayList<>();
-        List<EmployeesInstanceDTO> res = new ArrayList<>();
+        List<EmployeesInstanceDTO> employeesInstanceDTOS = new ArrayList<>();
         //一次调用弹出十个
         for (int i = 0; i < 10; i++) {
             AddrDTO addrDTO = (AddrDTO) redisTemplate.opsForList().leftPop(key);
-            addrDTOS.add(addrDTO);
             EmployeesDetails employeesDetails = null;
+            if (CommonUtils.isEmpty(addrDTO)){
+                break;
+            }
             try {
                 employeesDetails = (EmployeesDetails) CommonUtils.mapToObject(redisTemplate.opsForHash().entries(addrDTO.getKey()), EmployeesDetails.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
-            res.add(employeesInstanceDTO);
+            employeesInstanceDTOS.add(employeesInstanceDTO);
         }
-        return R.ok(res, "获取成功");
+        return R.ok(employeesInstanceDTOS, "获取成功");
     }
 
     @Override
     public R goon2(String credential) {
-        return null;
+        String key = "companyMoreList:"+credential;
+        List<CompanyDetails> companyDetails = new ArrayList<>();
+        //一次调用弹出十个
+        for (int i = 0; i < 10; i++) {
+            Integer comId = (Integer) redisTemplate.opsForList().leftPop(key);
+            CompanyDetails companyDetail = null;
+            if (CommonUtils.isEmpty(comId)){
+                break;
+            }
+            String key2 = "company:"+comId+":details";
+            Map<Object, Object> maps = redisTemplate.opsForHash().entries(key2);
+            try {
+                companyDetail = (CompanyDetails) CommonUtils.mapToObject(maps, CompanyDetails.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            companyDetails.add(companyDetail);
+        }
+        return R.ok(companyDetails, "获取成功");
+    }
+
+    @Override
+    public R flush1(String credential) {
+        String key = "employeesMoreList:"+credential;
+        redisTemplate.delete(key);
+        return R.ok(null, "成功清除緩存");
+    }
+
+    @Override
+    public R flush2(String credential) {
+        String key = "companyMoreList:"+credential;
+        redisTemplate.delete(key);
+        return R.ok(null, "成功清除緩存");
     }
 
 

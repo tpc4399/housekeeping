@@ -27,4 +27,7 @@ public interface ISysIndexService extends IService<SysIndex> {
     R more2(AddressDTO dto);
     R goon1(String credential);
     R goon2(String credential);
+    R flush1(String credential);
+    R flush2(String credential);
+
 }
