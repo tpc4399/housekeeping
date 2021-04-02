@@ -143,4 +143,9 @@ public class EmployeesDetailsController {
         return employeesDetailsService.getInfoById();
     }
 
+    @ApiOperation("首页根据员工id获取详细信息")
+    @GetMapping("getDetailById")
+    public R getDetailById(Integer empId){
+        return employeesDetailsService.getDetailById(empId);
+    }
 }

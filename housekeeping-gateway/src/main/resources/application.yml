@@ -75,6 +75,7 @@ housekeeping:
       - /api/admin/index/tree
       - /api/admin/index/defaultRecommendation
       - /api/admin/employeesDetails/getAllEmpByCompanyId
+      - /api/admin/employeesDetails/getDetailById
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

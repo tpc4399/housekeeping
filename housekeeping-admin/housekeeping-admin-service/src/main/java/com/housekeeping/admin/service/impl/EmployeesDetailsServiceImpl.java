@@ -513,4 +513,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(list);
     }
 
+    @Override
+    public R getDetailById(Integer empId) {
+        EmployeesDetails byId = this.getById(empId);
+        return R.ok(byId);
+    }
+
 }

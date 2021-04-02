@@ -38,4 +38,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R getInfoById();
 
     R getAllEmpByCompanyId(Integer companyId);
+
+    R getDetailById(Integer empId);
 }
