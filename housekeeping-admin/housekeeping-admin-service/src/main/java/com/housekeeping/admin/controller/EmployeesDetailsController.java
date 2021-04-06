@@ -148,4 +148,6 @@ public class EmployeesDetailsController {
     public R getDetailById(Integer empId){
         return employeesDetailsService.getDetailById(empId);
     }
+
+
 }

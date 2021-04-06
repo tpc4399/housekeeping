@@ -29,4 +29,6 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     /* 根据保洁员id获取技能标签 */
     R getSkillTags(Integer employeesId);
 
+    /* 获取这段日期的时间表 時間表減去已排任務時間 */
+    List<FreeDateDTO> getFreeTimeByDateSlot2(DateSlot dateSlot, Integer empId, String code);
 }

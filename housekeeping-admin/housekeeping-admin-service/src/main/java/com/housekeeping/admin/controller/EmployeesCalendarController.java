@@ -71,6 +71,17 @@ public class EmployeesCalendarController {
         }
     }
 
+    @ApiOperation("根据时间段和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回2")
+    @PostMapping("/getFreeTimeByDateSlot2")
+    public R getFreeTimeByDateSlot2(@RequestBody GetCalendarByDateSlotDTO dto){
+        List<FreeDateDTO> res = employeesCalendarService.getFreeTimeByDateSlot2(dto.getDateSlot(), dto.getId(), "");
+        if (CommonUtils.isEmpty(res)){
+            return R.failed("該員工沒有設置時間表或没有闲置时间");
+        }else {
+            return R.ok(res, "獲取成功");
+        }
+    }
+
     @ApiOperation("根据保洁员id获取保洁员技能标签")
     @GetMapping("/tags")
     public R getSkillTags(Integer employeesId){

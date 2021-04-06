@@ -336,6 +336,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return R.ok(baseMapper.getSkillTags(employeesId),"獲取成功");
     }
 
+    @Override
+    public List<FreeDateDTO> getFreeTimeByDateSlot2(DateSlot dateSlot, Integer empId, String code) {
+        /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
+        return this.getCalendarByDateSlot2(dateSlot, empId, code);
+    }
+
     /*時間段合理性判斷   假設都不為空*/
     public List<String> rationalityJudgmentA(SetEmployeesCalendarDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集
@@ -464,5 +470,91 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
     }
 
+
+    public List<FreeDateDTO> getCalendarByDateSlot2(DateSlot dateSlot, Integer employeesId, String toCode) {
+
+        /* 先得到三大map */
+        SortListUtil<TimeSlotDTO> sort = new SortListUtil<TimeSlotDTO>();
+        Map<LocalDate, List<TimeSlotDTO>> map1 = new HashMap<>();
+        Map<Integer, List<TimeSlotDTO>> map2 = new HashMap<>();
+        Map<String, List<TimeSlotDTO>> map3 = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        if (CommonUtils.isEmpty(employeesCalendarList)){
+            return null;
+        }
+        employeesCalendarList.forEach(employeesCalendar -> {
+            QueryWrapper qw1 = new QueryWrapper();
+            qw1.eq("calendar_id", employeesCalendar.getId());
+            List<EmployeesCalendarDetails> employeesCalendarDetailsList = employeesCalendarDetailsService.list(qw1);
+            List<JobAndPriceDTO> jobAndPriceDTOList = employeesCalendarDetailsList.stream().map(employeesCalendarDetails -> {
+                JobAndPriceDTO jobAndPriceDTO = new JobAndPriceDTO();
+                jobAndPriceDTO.setJobId(employeesCalendarDetails.getJobId());
+                if (toCode.equals("")){
+                    jobAndPriceDTO.setPrice(employeesCalendarDetails.getPrice());
+                    jobAndPriceDTO.setCode(employeesCalendarDetails.getCode());
+                }else {
+                    BigDecimal price;
+                    if (employeesCalendarDetails.getCode().equals(toCode)){
+                        price = new BigDecimal(employeesCalendarDetails.getPrice());
+                    }else {
+                        price = currencyService.exchangeRateToBigDecimalAfterOptimization(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
+                    }
+                    jobAndPriceDTO.setPrice(new Float(price.toString()));
+                    jobAndPriceDTO.setCode(toCode);
+                }
+                return jobAndPriceDTO;
+            }).collect(Collectors.toList());
+            TimeSlotDTO timeSlotDTO = new TimeSlotDTO();
+            timeSlotDTO.setTimeSlotStart(employeesCalendar.getTimeSlotStart());
+            timeSlotDTO.setTimeSlotLength(employeesCalendar.getTimeSlotLength());
+            timeSlotDTO.setJobAndPriceList(jobAndPriceDTOList);
+            if (CommonUtils.isEmpty(employeesCalendar.getStander())){
+                List<TimeSlotDTO> timeSlotDTOS = map3.getOrDefault("", new ArrayList<>());
+                timeSlotDTOS.add(timeSlotDTO);
+                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
+                map3.put("", timeSlotDTOS);
+            }else if (employeesCalendar.getStander() == false){ //日期
+                List<TimeSlotDTO> timeSlotDTOS = map1.getOrDefault(employeesCalendar.getDate(), new ArrayList<>());
+                timeSlotDTOS.add(timeSlotDTO);
+                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
+                map1.put(employeesCalendar.getDate(), timeSlotDTOS);
+            }else if (employeesCalendar.getStander() == true){ //周
+                String weekString = employeesCalendar.getWeek();
+                for (int i = 0; i < weekString.length(); i++) {
+                    Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
+                    List<TimeSlotDTO> timeSlotDTOS = map2.getOrDefault(weekInteger, new ArrayList<>());
+                    timeSlotDTOS.add(timeSlotDTO);
+                    sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
+                    map2.put(weekInteger, timeSlotDTOS);
+                }
+            }
+        });
+
+        List<FreeDateDTO> freeDateDTOS = new ArrayList<>();
+
+        LocalDate start = dateSlot.getStart();
+        LocalDate end = dateSlot.getEnd();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+            FreeDateDTO freeDateDTO = new FreeDateDTO();
+            if (map1.containsKey(date)){
+                //日期模板生效
+                freeDateDTO.setDate(date);
+                freeDateDTO.setTimes(map1.get(date));
+            }else if (!map2.isEmpty()){
+                //周模板生效
+                freeDateDTO.setDate(date);
+                freeDateDTO.setTimes(map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>()));
+            }else if (!map3.isEmpty()){
+                freeDateDTO.setDate(date);
+                freeDateDTO.setTimes(map3.get(""));
+                //通用模板生效
+            }
+            freeDateDTOS.add(freeDateDTO);
+        }
+
+        return freeDateDTOS;
+    }
 
 }
