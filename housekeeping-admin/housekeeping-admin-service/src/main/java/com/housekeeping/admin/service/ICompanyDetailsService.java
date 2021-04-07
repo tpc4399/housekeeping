@@ -35,4 +35,6 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     R pay(Integer type);
 
     Boolean checkCompPay(Integer companyId);
+
+    R getAllCompany();
 }

@@ -49,11 +49,10 @@
     <select id="getAllIdsByCompanyId" resultType="java.lang.Integer">
 		SELECT id FROM employees_details WHERE company_id  = #{companyId}
 	</select>
-	<select id="getEmpVoById" resultType="com.housekeeping.admin.entity.EmployeesDetails">
 
-	</select>
+    <select id="getAllEmployeesByAdmin" resultType="java.util.List"></select>
 
-	<update id="updateHeadUrlById">
+    <update id="updateHeadUrlById">
 		UPDATE employees_details
 		SET head_url = #{headUrl}
 		WHERE user_id = #{userId}

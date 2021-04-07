@@ -314,4 +314,9 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
         }
     }
 
+    @Override
+    public R getAllCompany() {
+        return null;
+    }
+
 }

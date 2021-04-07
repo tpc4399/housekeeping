@@ -78,6 +78,8 @@ housekeeping:
       - /api/admin/employeesDetails/getAllEmpByCompanyId
       - /api/admin/employeesDetails/getDetailById
       - /api/admin/test/*
+      - /api/admin/employeesDetails/getAllEmployees
+      - /api/admin/companyDetails/getAllCompany
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
