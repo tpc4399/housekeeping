@@ -28,11 +28,11 @@ zuul:
 housekeeping:
   filter:
     allowPaths:
-      - /api/auth/login/company/
-      - /api/auth/login/admin/
-      - /api/auth/login/customer/
-      - /api/auth/Employees/
-      - /api/auth/Manager/
+      - /api/auth/login/company/*
+      - /api/auth/login/admin/*
+      - /api/auth/login/customer/*
+      - /api/auth/Employees/*
+      - /api/auth/Manager/*
       - /api/auth/others/checkToken
       - /v2/api-docs
       - /swagger-resources/configuration/ui
@@ -77,6 +77,7 @@ housekeeping:
       - /api/admin/index/defaultRecommendation
       - /api/admin/employeesDetails/getAllEmpByCompanyId
       - /api/admin/employeesDetails/getDetailById
+      - /api/admin/test/*
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

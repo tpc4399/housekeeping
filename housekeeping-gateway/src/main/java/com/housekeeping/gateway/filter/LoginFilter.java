@@ -66,10 +66,7 @@ public class LoginFilter extends ZuulFilter {
         // 判断白名单
         // 遍历允许访问的路径
         for (String path : this.filterProp.getAllowPaths()) {
-//            if (this.match(requestURI, path)){
-//                return false;//如果匹配就放行
-//            }
-            if(requestURI.startsWith(path)){
+            if(this.match(requestURI, path)){
                 return false;//放行
             }
         }
@@ -181,14 +178,14 @@ public class LoginFilter extends ZuulFilter {
         String[] arr = okPattern.split("/");
         String end = arr[arr.length-1];
         if (end.equals("*")){
-            String pattern = okPattern.substring(0, okPattern.length()-1);
+            String pattern = okPattern.substring(0, okPattern.length()-2);
             Integer lastIndex = uri.lastIndexOf("/");
             String subUri = uri.substring(0, lastIndex);
             if (subUri.equals(pattern)){
                 return true;
             }
         } else if (end.equals("**")){
-            String pattern = okPattern.substring(0, okPattern.length()-2);
+            String pattern = okPattern.substring(0, okPattern.length()-3);
             if (uri.startsWith(pattern)){
                 return true;
             }
