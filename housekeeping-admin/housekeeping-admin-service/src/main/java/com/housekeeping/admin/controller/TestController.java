@@ -54,11 +54,13 @@ public class TestController {
     @Resource
     private MongoUtils mongoUtils;
 
+    @PassToken
     @GetMapping("/test1")
     @ApiOperation("测试1")
     public R test1(){
-        currencyService.exchangeRateToBigDecimal("TWD", "CNY", BigDecimal.valueOf(100));
-        return R.ok();
+        BigDecimal res = currencyService.exchangeRateToBigDecimal("TWD", "CNY", BigDecimal.valueOf(100));
+        Map<String, Float> res1 =  currencyService.realTimeExchangeRate();
+        return R.ok(res);
     }
 
     @GetMapping("/test2")
@@ -90,8 +92,15 @@ public class TestController {
     @GetMapping("/test4")
     @ApiOperation("多线程测试")
     public R test4(){
-        for (int i = 0; i < 20; i++) {
-            testService.syncMethod(i);
+        synchronized (this){
+            int stock = Integer.valueOf((String) redisTemplate.opsForValue().get("stock"));
+            if (stock > 0){
+                int realStock = stock - 1;
+                redisTemplate.opsForValue().set("stock", realStock+"");
+                System.out.println("扣款成功，剩余库存："+realStock);
+            }else {
+                System.out.println("扣款失败，库存不足");
+            }
         }
         return R.ok();
     }
@@ -146,13 +155,6 @@ public class TestController {
             }
             String key = name1+":"+map.get("id")+":"+name2;
             redisUtils.hmset(key, map);
-//            try {
-////                redisTemplate.opsForHash().put(key, "sss", CommonConstants.JacksonMapper.writeValueAsString(LocalDateTime.of(2020,1,8,20,30,00,00)));
-//                redisTemplate.opsForHash().put(key, "sss", CommonConstants.JacksonMapper.writeValueAsString(x));
-//
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
         });
     }
 }
