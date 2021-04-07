@@ -328,10 +328,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     @Override
     public R getSkillTags(Integer employeesId) {
         /***
-         * select job_id
-         * from employees_calendar as a, employees_calendar_details as b
-         * where a.id = b.calendar_id and employees_id = #{employeesId}
-         * group by job_id
+         * select c.id, c.contend
+         *         from employees_calendar as a, employees_calendar_details as b, sys_job_contend as c
+         *         where a.id = b.calendar_id and b.job_id = c.id and employees_id = #{employeesId}
+         *         group by job_id;
          */
         return R.ok(baseMapper.getSkillTags(employeesId),"獲取成功");
     }
