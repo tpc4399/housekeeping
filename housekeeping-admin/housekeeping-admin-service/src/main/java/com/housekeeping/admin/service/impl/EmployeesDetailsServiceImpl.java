@@ -519,4 +519,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(byId);
     }
 
+    @Override
+    public IPage getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO) {
+        return baseMapper.getAllEmployeesByAdmin(page,pageOfEmployeesDTO);
+    }
+
+
 }

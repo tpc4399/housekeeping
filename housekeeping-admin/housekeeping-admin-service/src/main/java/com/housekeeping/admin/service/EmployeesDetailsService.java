@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
@@ -40,4 +41,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R getAllEmpByCompanyId(Integer companyId);
 
     R getDetailById(Integer empId);
+
+    IPage getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO);
 }

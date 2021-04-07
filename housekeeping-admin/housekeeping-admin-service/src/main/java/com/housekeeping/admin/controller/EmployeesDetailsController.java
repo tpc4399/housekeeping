@@ -1,10 +1,12 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.admin.entity.GroupManager;
@@ -147,6 +149,19 @@ public class EmployeesDetailsController {
     @GetMapping("getDetailById")
     public R getDetailById(Integer empId){
         return employeesDetailsService.getDetailById(empId);
+    }
+
+    @ApiOperation("首页查看所有保洁员")
+    @GetMapping("/getAllEmployees")
+    public R getAllCompany(Page page, EmployeesDetails employeesDetails){
+        return R.ok(employeesDetailsService.page(page, Wrappers.query(employeesDetails)));
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @ApiOperation("【管理员】查詢所有保洁员")
+    @GetMapping("/getAllEmployeesByAdmin")
+    public R getAllEmployeesByAdmin(Page page , PageOfEmployeesDTO pageOfEmployeesDTO){
+        return R.ok(employeesDetailsService.getAllEmployeesByAdmin(page, pageOfEmployeesDTO));
     }
 
 

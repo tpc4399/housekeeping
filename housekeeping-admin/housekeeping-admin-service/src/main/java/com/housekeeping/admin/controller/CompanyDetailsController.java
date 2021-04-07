@@ -3,6 +3,7 @@ package com.housekeeping.admin.controller;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
@@ -14,6 +15,7 @@ import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -161,6 +163,12 @@ public class CompanyDetailsController {
     @GetMapping("checkCompPay")
     public R checkCompPay(@RequestParam("companyId")Integer companyId){
         return R.ok(companyDetailsService.checkCompPay(companyId));
+    }
+
+    @ApiOperation("首页查看所有公司")
+    @GetMapping("/getAllCompany")
+    public R getAllCompany(Page page,CompanyDetails companyDetails){
+        return R.ok(companyDetailsService.page(page, Wrappers.query(companyDetails)));
     }
 
 }

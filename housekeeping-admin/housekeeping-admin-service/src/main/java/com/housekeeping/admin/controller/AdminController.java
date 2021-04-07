@@ -15,6 +15,8 @@ import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin")
+@DefaultProperties(defaultFallback = "fallBackMethod")
 public class AdminController {
 
     private final IUserService userService;
@@ -36,7 +39,9 @@ public class AdminController {
      */
     @ApiOperation("异步检测管理员手机号或者邮箱是否重复(1 手机号 2 邮箱)")
     @GetMapping("/checkAdmin/{data}/{type}")
+    @HystrixCommand
     public R checkDataAdmin(@PathVariable("data")String data, @PathVariable("type")Integer type){
+        int a = 1/0;
         R r = this.userService.checkData(1, data, type);
         return r;
     }
@@ -109,5 +114,14 @@ public class AdminController {
         return userService.removeAdmin(userId);
     }
 
+    /**
+     * 熔断方法
+     * 返回值要和被熔断的方法的返回值一致
+     * 熔断方法不需要参数
+     * @return
+     */
+    public R fallBackMethod(){
+        return R.failed("请求繁忙，请稍后再试！");
+    }
 
 }
