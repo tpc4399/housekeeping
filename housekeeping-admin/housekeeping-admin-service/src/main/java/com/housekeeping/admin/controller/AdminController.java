@@ -40,8 +40,7 @@ public class AdminController {
     @ApiOperation("异步检测管理员手机号或者邮箱是否重复(1 手机号 2 邮箱)")
     @GetMapping("/checkAdmin/{data}/{type}")
     @HystrixCommand
-    public R checkDataAdmin(@PathVariable("data")String data, @PathVariable("type")Integer type){
-        int a = 1/0;
+    public R checkDataAdmin(@PathVariable("data")String data, @PathVariable("type")Integer type) throws InterruptedException {
         R r = this.userService.checkData(1, data, type);
         return r;
     }
