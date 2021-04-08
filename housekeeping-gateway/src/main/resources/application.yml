@@ -43,8 +43,8 @@ housekeeping:
       - /api/auth/v2/api-docs
       - /api/im/v2/api-docs
       - /api/admin/checkAdmin
-      - /api/admin/customer/checkCus
-      - /api/admin/companyHuman/checkEmp
+      - /api/admin/customer/checkCus/**
+      - /api/admin/companyHuman/checkEmp/**
       - /api/admin/admin/AdminSMS
       - /api/admin/companyHuman/EmpSMS
       - /api/admin/customer/CusSMS
