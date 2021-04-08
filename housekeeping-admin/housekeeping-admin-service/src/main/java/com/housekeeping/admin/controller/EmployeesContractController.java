@@ -37,8 +37,7 @@ public class EmployeesContractController {
         return employeesContractService.add(dto);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【管理员】【公司】【经理】【员工】【客户】获取员工的所有包工服务")
+    @ApiOperation("获取员工的所有包工服务")
     @GetMapping("{employeesId}")
     public R getByEmployeesId(@PathVariable Integer employeesId){
         return employeesContractService.getByEmployeesId(employeesId);

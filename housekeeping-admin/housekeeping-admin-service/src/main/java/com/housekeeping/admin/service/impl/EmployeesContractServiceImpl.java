@@ -93,7 +93,10 @@ public class EmployeesContractServiceImpl
 
     @Override
     public R getByEmployeesId(Integer employeesId) {
-        return null;
+        QueryWrapper<EmployeesContract> qw = new QueryWrapper<>();
+        qw.eq("employees_id",employeesId);
+        List<EmployeesContract> list = this.list(qw);
+        return R.ok(list);
     }
 
     @Override

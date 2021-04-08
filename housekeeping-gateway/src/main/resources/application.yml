@@ -43,8 +43,8 @@ housekeeping:
       - /api/auth/v2/api-docs
       - /api/im/v2/api-docs
       - /api/admin/checkAdmin
-      - /api/admin/customer/checkCus
-      - /api/admin/companyHuman/checkEmp
+      - /api/admin/customer/checkCus/**
+      - /api/admin/companyHuman/checkEmp/**
       - /api/admin/admin/AdminSMS
       - /api/admin/companyHuman/EmpSMS
       - /api/admin/customer/CusSMS
@@ -69,7 +69,7 @@ housekeeping:
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot
       - /api/admin/employeesContract/getCalendarByDateSlot
       - /api/admin/employeesContract/getFreeTimeByDateSlot
-      - /api/admin/employeesContract/getFreeTimeByDateSlot2
+      - /api/admin/employeesCalendar/getFreeTimeByDateSlot2
       - /api/admin/employeesCalendar/tags
       - /api/admin/sysJobContend/getAll
       - /api/admin/sysJobContend/getAll2
@@ -80,6 +80,7 @@ housekeeping:
       - /api/admin/test/noToken/*
       - /api/admin/employeesDetails/getAllEmployees
       - /api/admin/companyDetails/getAllCompany
+      - /api/admin/employeesContract/*
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
