@@ -12,9 +12,7 @@ import com.housekeeping.admin.service.IEmployeesContractDetailsService;
 import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.SortListUtil;
+import com.housekeeping.common.utils.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -47,11 +45,12 @@ public class EmployeesContractServiceImpl
         }
 
         /* 员工存在性判断 */
-        Boolean isOk = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
-        if (isOk){
-
-        }else {
-            return R.failed(null, "該員工不存在");
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN) || roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            if (!employeesDetailsService.judgmentOfExistence(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!employeesDetailsService.judgmentOfExistenceFromCompany(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
         }
 
         /* 添加包工業務 */

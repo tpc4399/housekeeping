@@ -480,6 +480,20 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
+    public Boolean judgmentOfExistenceFromCompany(Integer employeesId) {
+        EmployeesDetails details = this.getById(employeesId);
+        if (CommonUtils.isEmpty(details)) return false;
+
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        CompanyDetails companyDetails = companyDetailsService.getOne(qw);
+        if (companyDetails.getId().equals(details.getCompanyId())) return true;
+
+        return false;
+    }
+
+    @Override
     public R putWorkArea(List<Integer> areaIds) {
         Integer userId = TokenUtils.getCurrentUserId();
         QueryWrapper qw = new QueryWrapper();

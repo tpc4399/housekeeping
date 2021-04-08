@@ -30,7 +30,7 @@ public class EmployeesContractController {
 
     private final IEmployeesContractService employeesContractService;
 
-    @Access({RolesEnum.SYSTEM_ADMIN})
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_COMPANY})
     @ApiOperation("【管理员】給員工添加一个包工服务")
     @PostMapping("/add")
     public R add(@RequestBody AddEmployeesContractDTO dto){
