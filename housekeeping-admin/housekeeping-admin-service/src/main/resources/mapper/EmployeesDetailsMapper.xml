@@ -50,7 +50,9 @@
 		SELECT id FROM employees_details WHERE company_id  = #{companyId}
 	</select>
 
-    <select id="getAllEmployeesByAdmin" resultType="java.util.List"></select>
+    <select id="getAllEmployeesByAdmin" resultType="java.util.List">
+
+	</select>
 
     <update id="updateHeadUrlById">
 		UPDATE employees_details
