@@ -3,10 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
-import com.housekeeping.admin.entity.EmployeesCalendar;
-import com.housekeeping.admin.entity.EmployeesCalendarDetails;
-import com.housekeeping.admin.entity.EmployeesContractDetails;
-import com.housekeeping.admin.entity.User;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +33,8 @@ import java.util.stream.Collectors;
 @Service("employeesCalendarService")
 public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarMapper, EmployeesCalendar> implements IEmployeesCalendarService {
 
+    @Resource
+    private IEmployeesCalendarService employeesCalendarService;
     @Resource
     private IEmployeesCalendarDetailsService employeesCalendarDetailsService;
     @Resource
@@ -236,6 +236,142 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
         });
         return R.ok("設置成功");
+    }
+
+    @Override
+    public R setCalendar2(SetEmployeesCalendar2DTO dto) {
+        /* dto合理性判斷 */
+        List<String> res = this.rationalityJudgmentD(dto);
+        if (res.size() == 0){
+            //这是合理的
+        }else {
+            return R.failed(res, "數據不合理");
+        }
+
+        /* 员工存在性判断 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN) || roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            if (!employeesDetailsService.judgmentOfExistence(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!employeesDetailsService.judgmentOfExistenceFromCompany(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            if (!employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(dto.getEmployeesId())) return R.failed(null, "該員工不存在或不受您管辖");
+        }
+
+        /* 添加新的 */
+        StringBuilder week = new StringBuilder();
+        dto.getWeek().forEach(wk->{
+            week.append(wk);
+        });
+        /* 填入工作内容，优先填入预设置的工作内容，如果为空，那么填入技能标签的工作内容 */
+        List<Integer> jobIds = new ArrayList<>();
+        EmployeesDetails employeesDetails = employeesDetailsService.getById(dto.getEmployeesId());
+        String presetJobIds = employeesDetails.getPresetJobIds();
+        if (CommonUtils.isNotEmpty(presetJobIds)){
+            String[] ids = presetJobIds.split(" ");
+            for (int i = 0; i < ids.length; i++) {
+                jobIds.add(Integer.valueOf(ids[i]));
+            }
+        }else {
+            List<SysJobContend> skillTag = (List<SysJobContend>) employeesCalendarService.getSkillTags(dto.getEmployeesId()).getData();
+            jobIds = skillTag.stream().map(x->{
+                return x.getId();
+            }).collect(Collectors.toList());
+        }
+
+        List<Integer> finalJobIds = jobIds;
+        dto.getTimeSlotPriceDTOList().forEach(timeSlot -> {
+            EmployeesCalendar employeesCalendar =
+                    new EmployeesCalendar(
+                            dto.getEmployeesId(),
+                            true,
+                            null,
+                            week.toString(),
+                            timeSlot.getTimeSlotStart(),
+                            timeSlot.getTimeSlotLength()
+                    );
+            Integer maxCalendarId = 0;
+            synchronized (this){
+                baseMapper.insert(employeesCalendar);
+                maxCalendarId = ((EmployeesCalendar) CommonUtils.getMaxId("employees_calendar", this)).getId();
+            }
+            List<EmployeesCalendarDetails> employeesCalendarDetailsList = new ArrayList<>();
+            Integer finalMaxCalendarId = maxCalendarId;
+            finalJobIds.forEach(jobId -> {
+                EmployeesCalendarDetails employeesCalendarDetails =
+                        new EmployeesCalendarDetails(
+                                finalMaxCalendarId,
+                                jobId,
+                                timeSlot.getPrice(),
+                                timeSlot.getCode()
+                        );
+                employeesCalendarDetailsList.add(employeesCalendarDetails);
+            });
+            employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
+        });
+
+        return R.ok("設置成功");
+    }
+
+    @Override
+    public R setJobs(SetEmployeesJobsDTO dto) {
+
+        /* 员工存在性判断 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN) || roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            if (!employeesDetailsService.judgmentOfExistence(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!employeesDetailsService.judgmentOfExistenceFromCompany(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            if (!employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(dto.getEmployeesId())) return R.failed(null, "該員工不存在或不受您管辖");
+        }
+
+        /* 先设置到预设工作内容字段 */
+        StringBuilder sb = new StringBuilder();
+        dto.getJobIds().forEach(jobId->{
+            sb.append(jobId);
+            sb.append(" ");
+        });
+        String jobIdsString = new String(sb).trim();
+        employeesDetailsService.setPresetJobIds(jobIdsString, dto.getEmployeesId());
+
+        /* 再设置到现有的时间表中去 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", dto.getEmployeesId());
+        List<EmployeesCalendar> employeesCalendarList = employeesCalendarService.list(qw);
+        List<Integer> calendarIds = employeesCalendarList.stream().map(x -> {
+            return x.getId();
+        }).collect(Collectors.toList());
+        if (CommonUtils.isEmpty(employeesCalendarList)) return R.ok(null, "已設置預設鐘點工工作內容，但是該員工沒有設置鐘點工時間表");
+
+        List<EmployeesCalendarDetails> employeesCalendarDetailsList = employeesCalendarDetailsService.groupByCalendarIdHaving(calendarIds);
+        if (CommonUtils.isEmpty(employeesCalendarDetailsList)) return R.ok(null, "已設置預設鐘點工工作內容，但是該員工鐘點工時間表沒有設置工作內容");
+
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.in("calendar_id", calendarIds);
+        employeesCalendarDetailsService.remove(qw2);
+
+        List<EmployeesCalendarDetails> employeesCalendarDetailsList2 = new ArrayList<>();
+
+        dto.getJobIds().forEach(jobId -> {
+            employeesCalendarDetailsList.forEach(employeesCalendarDetails -> {
+                EmployeesCalendarDetails res = new EmployeesCalendarDetails(
+                        null,
+                        employeesCalendarDetails.getCalendarId(),
+                        jobId,
+                        employeesCalendarDetails.getPrice(),
+                        employeesCalendarDetails.getCode()
+                );
+                employeesCalendarDetailsList2.add(res);
+            });
+        });
+        employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList2);
+
+        return R.ok(null, "已設置預設鐘點工工作內容，同時也設置了鐘點工時間表的工作內容");
     }
 
     @Override
@@ -446,6 +582,58 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 resCollections.add(res.toString());
             }
         }
+        return resCollections;
+    }
+
+    /*時間段合理性判斷：周   假設都不為空*/
+    public List<String> rationalityJudgmentD(SetEmployeesCalendar2DTO dto){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        Map<Integer, List<PeriodOfTime>> map = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", dto.getEmployeesId());
+        qw.eq("stander", true);
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        employeesCalendarList.forEach(calendar -> {
+            List<Integer> weekList = new ArrayList<>();
+            String weekStr = calendar.getWeek();
+            for (int i = 0; i < weekStr.length(); i++) {
+                weekList.add(Integer.valueOf(weekStr.charAt(i)-48));
+            }
+            PeriodOfTime period = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+            weekList.forEach(week -> {
+                List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+                exist.add(period);
+                map.put(week, exist);
+            });
+        });
+        /*已准备好现有数据*/
+
+        List<Integer> weekList = dto.getWeek();
+        List<TimeSlotPriceDTO> timeSlotDTOS = dto.getTimeSlotPriceDTOList();
+        weekList.forEach(week -> {
+            timeSlotDTOS.forEach(timeSlot -> {
+                List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+                exist.add(new PeriodOfTime(timeSlot.getTimeSlotStart(), timeSlot.getTimeSlotLength()));
+                map.put(week, exist);
+            });
+            /*下面对一周的每一天进行筛查*/
+            List<PeriodOfTime> existDay = map.getOrDefault(week, new ArrayList<>());
+            SortListUtil<PeriodOfTime> sortList = new SortListUtil<PeriodOfTime>();
+            sortList.Sort(existDay, "getTimeSlotStart", null);
+            for (int i = 0; i < existDay.size()-1; i++) {
+                PeriodOfTime period1 = existDay.get(i);
+                PeriodOfTime period2 = existDay.get(i+1);
+                if (CommonUtils.doRechecking(period1, period2)){
+                    //重複的處理方式
+                    StringBuilder res = new StringBuilder();
+                    res.append("周模板存在時間段重複： week ").append(week).append("  ");
+                    res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                    res.append("與");
+                    res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                    resCollections.add(res.toString());
+                }
+            }
+        });
         return resCollections;
     }
 

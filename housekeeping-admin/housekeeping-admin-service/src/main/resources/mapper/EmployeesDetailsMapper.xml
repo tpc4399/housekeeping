@@ -69,4 +69,10 @@
 		SET working_area = #{areaIds}
 		WHERE id = #{employeesId}
 	</update>
+
+	<update id="setPresetJobIds">
+		UPDATE employees_details
+		SET preset_job_ids = #{presetJobIds}
+		WHERE id = #{employeesId}
+    </update>
 </mapper>

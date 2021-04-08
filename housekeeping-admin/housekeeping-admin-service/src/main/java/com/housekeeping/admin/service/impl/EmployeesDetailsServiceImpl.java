@@ -33,6 +33,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service("employeesDetailsService")
@@ -60,6 +62,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     private IEmployeesContractService employeesContractService;
     @Resource
     private IGroupEmployeesService groupEmployeesService;
+    @Resource
+    private IGroupManagerService groupManagerService;
     @Resource
     private EmployeesDetailsService employeesDetailsService;
     @Resource
@@ -491,6 +495,57 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (companyDetails.getId().equals(details.getCompanyId())) return true;
 
         return false;
+    }
+
+    @Override
+    public Boolean judgmentOfExistenceFromManager(Integer employeesId) {
+        EmployeesDetails details = this.getById(employeesId);
+        if (CommonUtils.isEmpty(details)) return false;
+
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        ManagerDetails managerDetails = managerDetailsService.getOne(qw);
+        if (managerDetails.getCompanyId().equals(details.getCompanyId())) return true;
+
+        return false;
+    }
+
+    @Override
+    public Boolean judgmentOfExistenceHaveJurisdictionOverManager(Integer employeesId) {
+        EmployeesDetails details = this.getById(employeesId);
+        if (CommonUtils.isEmpty(details)) return false;
+
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        ManagerDetails managerDetails = managerDetailsService.getOne(qw);
+        Integer managerId = managerDetails.getId();
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.eq("employees_id", employeesId);
+        List<GroupEmployees> groupEmployeesList = groupEmployeesService.list(qw2); //该员工所属的组
+        Set<Integer> groupIds1 = groupEmployeesList.stream().map(x -> {
+            return x.getId();
+        }).collect(Collectors.toSet());
+        if (CommonUtils.isEmpty(groupIds1)) return false;
+
+        QueryWrapper qw3 = new QueryWrapper();
+        qw3.eq("manager_id", managerId);
+        List<GroupManager> groupManagerList = groupManagerService.list(qw3);   //该经理所属的组
+        Set<Integer> groupIds2 = groupManagerList.stream().map(x -> {
+            return x.getGroupId();
+        }).collect(Collectors.toSet());
+        if (CommonUtils.isEmpty(groupIds2)) return false;
+
+        groupIds1.retainAll(groupIds2);
+        if (CommonUtils.isNotEmpty(groupIds1)) return true;
+
+        return false;
+    }
+
+    @Override
+    public void setPresetJobIds(String presetJobIds, Integer employeesId) {
+        baseMapper.setPresetJobIds(presetJobIds, employeesId);
     }
 
     @Override

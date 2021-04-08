@@ -26,5 +26,9 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
     void setWorkingArea(@Param("employeesId") Integer employeesId,
                         @Param("areaIds") String areaIds);
 
-    IPage<List<EmployeesVo>> getAllEmployeesByAdmin(Page page, @Param("query") PageOfEmployeesDTO pageOfEmployeesDTO);
+    IPage<List<EmployeesVo>> getAllEmployeesByAdmin(Page page,
+                                                    @Param("query") PageOfEmployeesDTO pageOfEmployeesDTO);
+
+    void setPresetJobIds(@Param("presetJobIds") String presetJobIds,
+                         @Param("employeesId") Integer employeesId);
 }

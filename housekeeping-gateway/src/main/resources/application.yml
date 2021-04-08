@@ -77,7 +77,7 @@ housekeeping:
       - /api/admin/index/defaultRecommendation
       - /api/admin/employeesDetails/getAllEmpByCompanyId
       - /api/admin/employeesDetails/getDetailById
-      - /api/admin/test/*
+      - /api/admin/test/noToken/*
       - /api/admin/employeesDetails/getAllEmployees
       - /api/admin/companyDetails/getAllCompany
 

@@ -10,6 +10,7 @@ import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -26,10 +27,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @Author su
@@ -55,7 +53,7 @@ public class TestController {
     private MongoUtils mongoUtils;
 
     @PassToken
-    @GetMapping("/test1")
+    @GetMapping("/noToken/test1")
     @ApiOperation("测试1")
     public R test1(){
         BigDecimal res = currencyService.exchangeRateToBigDecimal("TWD", "CNY", BigDecimal.valueOf(100));
@@ -63,7 +61,7 @@ public class TestController {
         return R.ok(res);
     }
 
-    @GetMapping("/test2")
+    @GetMapping("/noToken/test2")
     @ApiOperation("测试2")
     public R test2(String address){
         //把地址存為經緯度 湖北省武汉市洪山区茉莉公馆 高雄市苓雅区四维三路2号 高雄市议会台北联络处 湖北省武汉市洪山区绿地国际理想城
@@ -79,7 +77,7 @@ public class TestController {
         return R.ok(jsonObject,"解析成功");
     }
 
-    @GetMapping("/test3")
+    @GetMapping("/noToken/test3")
     @ApiOperation("测试3")
     public R test3() {
         DateSlot dateSlot = new DateSlot();
@@ -89,7 +87,7 @@ public class TestController {
         return R.ok("解析成功");
     }
 
-    @GetMapping("/test4")
+    @GetMapping("/noToken/test4")
     @ApiOperation("多线程测试")
     public R test4(){
         synchronized (this){
@@ -104,7 +102,7 @@ public class TestController {
         }
         return R.ok();
     }
-    @GetMapping("/test5")
+    @GetMapping("/noToken/test5")
     @ApiOperation("多线程测试2")
     public R test5(){
         testService.threadMethod();
@@ -112,7 +110,7 @@ public class TestController {
     }
 
 
-    @RequestMapping(value = "/test6", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @RequestMapping(value = "/noToken/test6", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation("长链接测试")
     public String test6() {
         try {
@@ -125,7 +123,7 @@ public class TestController {
         return re;
     }
 
-    @GetMapping("/test7")
+    @GetMapping("/noToken/test7")
     @ApiOperation("测试7")
     public R test7(){
         mongoUtils.createCollection("testddf");
@@ -133,7 +131,7 @@ public class TestController {
     }
 
     @ApiOperation("redis数据导入")
-    @GetMapping("/redisInto")
+    @GetMapping("/noToken/redisInto")
     public R test8(){
         /* 保洁员数据 */
         List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
@@ -157,4 +155,11 @@ public class TestController {
             redisUtils.hmset(key, map);
         });
     }
+
+    @ApiOperation("员工判断存在性检索")
+    @GetMapping("/judgment")
+    public R test9(Integer employeesId){
+        return R.ok(employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(employeesId), "员工存在性检索");
+    }
+
 }

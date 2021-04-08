@@ -30,6 +30,7 @@ public class EmployeesDetails extends Model<EmployeesDetails> {
     private String phonePrefix;/* 手機號前綴 */
     private String phone;    /* 手機號 */
     private String email;    /* 郵箱 */
+    private String presetJobIds;/* 预设工作内容 */
     private String headUrl;   /* 头像url */
     private Integer companyId;    /* 所屬公司id */
     private String idCard;    /* 身份證 */

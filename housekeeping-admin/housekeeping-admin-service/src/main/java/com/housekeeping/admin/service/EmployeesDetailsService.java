@@ -31,11 +31,20 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     public List<Integer> getAllIdsByCompanyId(Integer companyId);
 
-    /* 根据employeesId判断员工是否存在,存在true，不存在false */
+    /* 根据employeesId判断员工是否存在于系统,存在true，不存在false    (全数据检索)*/
     Boolean judgmentOfExistence(Integer employeesId);
 
-    /* 根据employeesId判断员工是否存在于公司,存在true，不存在false */
+    /* 根据employeesId判断员工是否存在于公司,存在true，不存在false     (本公司检索)*/
     Boolean judgmentOfExistenceFromCompany(Integer employeesId);
+
+    /* 根据employeesId判断员工是否存在于经理所在公司,存在true，不存在false   (本公司检索) */
+    Boolean judgmentOfExistenceFromManager(Integer employeesId);
+
+    /* 根据employeesId判断员工是否管辖于经理,存在true，不存在false   (本组检索) */
+    Boolean judgmentOfExistenceHaveJurisdictionOverManager(Integer employeesId);
+
+    /* 设置预设工作内容 */
+    void setPresetJobIds(String presetJobIds, Integer employeesId);
 
     R putWorkArea(List<Integer> areaIds);
 

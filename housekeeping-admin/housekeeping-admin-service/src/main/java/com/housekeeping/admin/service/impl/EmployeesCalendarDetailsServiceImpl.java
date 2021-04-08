@@ -7,6 +7,8 @@ import com.housekeeping.admin.service.IEmployeesCalendarDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @Author su
  * @Date 2021/1/29 16:56
@@ -16,4 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class EmployeesCalendarDetailsServiceImpl
         extends ServiceImpl<EmployeesCalendarDetailsMapper, EmployeesCalendarDetails>
         implements IEmployeesCalendarDetailsService {
+    @Override
+    public List<EmployeesCalendarDetails> groupByCalendarIdHaving(List<Integer> calendarIds) {
+        return baseMapper.groupByCalendarIdHaving(calendarIds);
+    }
 }

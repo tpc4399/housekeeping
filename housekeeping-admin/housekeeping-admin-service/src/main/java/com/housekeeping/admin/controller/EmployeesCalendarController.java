@@ -29,6 +29,20 @@ public class EmployeesCalendarController {
     private final IEmployeesCalendarService employeesCalendarService;
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【员工】【經理】【公司】【平台】設置员工钟点工工作内容")
+    @PutMapping("/setJobs")
+    public R setJobs(@RequestBody SetEmployeesJobsDTO dto){
+        return employeesCalendarService.setJobs(dto);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 新接口，价格只与时段相关，需要先设置员工工作内容")
+    @PutMapping("/setCalendar2")
+    public R setCalendar2(@RequestBody SetEmployeesCalendar2DTO dto){
+        return employeesCalendarService.setCalendar2(dto);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 通用模板：每日")
     @PutMapping("/setCalendar")
     public R setCalendar(@RequestBody SetEmployeesCalendarDTO dto){
