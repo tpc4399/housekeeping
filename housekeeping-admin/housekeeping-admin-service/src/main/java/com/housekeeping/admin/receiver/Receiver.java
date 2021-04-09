@@ -7,6 +7,8 @@ import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+
 /**
  * @Author su
  * @create 2020/10/31 18:11
@@ -22,7 +24,7 @@ import org.springframework.stereotype.Component;
 )
 public class Receiver {
 
-    @Autowired
+    @Resource
     private ILogService logService;
 
     @RabbitHandler
