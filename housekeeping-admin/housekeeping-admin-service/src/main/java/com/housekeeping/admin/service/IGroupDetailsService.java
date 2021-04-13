@@ -33,4 +33,6 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
     R saveGroupByAdmin(Integer companyId, String groupName);
 
     R updateGroupByAdmin(Integer id, String groupName, Integer companyId);
+
+    R getAllGroups(Page page, String groupName);
 }

@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.AdvertisingRenewalAdminVo;
 import com.housekeeping.admin.dto.CompanyAdvertisingAdminVo;
 import com.housekeeping.admin.service.ICompanyAdvertisingService;
@@ -62,8 +63,8 @@ public class CompanyAdvertisingController {
 
     @GetMapping("/getByAdmin")
     @ApiOperation("【管理员】查詢所有廣告（推广）")
-    public R getByAdmin(Integer id,String name,Boolean status){
-        return iCompanyAdvertisingService.getByAdmin(id, name,status);
+    public R getByAdmin(Integer id,String title,Boolean status){
+        return iCompanyAdvertisingService.getByAdmin(id, title,status);
     }
 
     @GetMapping("/getByUserId")
@@ -88,5 +89,11 @@ public class CompanyAdvertisingController {
     @ApiOperation("【公司】【管理员】删除广告")
     public R remove(Integer id){
         return R.ok(iCompanyAdvertisingService.removeById(id));
+    }
+
+    @GetMapping("/getAllAdverByAdmin")
+    @ApiOperation("【管理员】广告列表查詢所有廣告")
+    public R getAllAdverByAdmin(Page page, Integer id, String name, Boolean status){
+        return iCompanyAdvertisingService.getAllAdverByAdmin(page,id, name,status);
     }
 }

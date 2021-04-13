@@ -38,4 +38,12 @@ public class ImMessageController {
        return iImMessageService.listMessage(chatId,fromId,chatType,page);
     }
 
+
+    @ApiOperation("【管理员】获取所有聊天记录")
+    @ResponseBody
+    @GetMapping("getAllMessage")
+    public R getAllMessage(Page page) {
+        return iImMessageService.getAllMessage(page);
+    }
+
 }

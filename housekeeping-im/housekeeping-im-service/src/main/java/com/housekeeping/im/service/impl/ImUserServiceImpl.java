@@ -65,7 +65,9 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
 
     @Override
     public R getChatUserList(String chatId) {
-        return R.ok(baseMapper.getChatUserList(chatId));
+        List<ImUserInfo> chatUserList = baseMapper.getChatUserList(chatId);
+        chatUserList.forEach(x -> x.setHeadUrl(CommonUtils.isEmpty(getHeadUrl(x.getId(), x.getDeptId()))?"":getHeadUrl(x.getId(), x.getDeptId())));
+        return R.ok(chatUserList);
     }
 
     @Override
@@ -138,7 +140,16 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         Map<String, Object> objectMap = new HashMap<>();
         String userId = TokenUtils.getCurrentUserId().toString();
 
-        ImUser user = imUserService.getById(userId);
+        ImUser byId = imUserService.getById(userId);
+        ImUserInfo user = new ImUserInfo();
+        user.setId(byId.getId());
+        user.setNumber(byId.getNumber());
+        user.setDeptId(byId.getDeptId());
+        user.setName(byId.getName());
+        user.setNickname(byId.getNickname());
+        String headUrl = getHeadUrl(user.getId(), user.getDeptId());
+        user.setHeadUrl(headUrl);
+        user.setDateOfBirth(byId.getDateOfBirth());
 
         QueryWrapper<ImUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("id", userId);
@@ -213,5 +224,21 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         iImMessageService.saveMessage(imMessage);
     }
 
+    public String getHeadUrl(Integer userId,Integer deptId){
+        String headUrl = null;
+        if(deptId.equals(2)){
+            headUrl =  baseMapper.getCompanyLogo(userId);
+        }
+        if(deptId.equals(3)){
+            headUrl =  baseMapper.customerHeadUrl(userId);
+        }
+        if(deptId.equals(4)){
+            headUrl =  baseMapper.managerHeadUrl(userId);
+        }
+        if(deptId.equals(5)){
+            headUrl =  baseMapper.employeesHeadUrl(userId);
+        }
+        return headUrl;
+    }
 
 }

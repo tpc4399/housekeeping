@@ -15,11 +15,10 @@ import com.housekeeping.admin.mapper.GroupDetailsMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
+import com.housekeeping.admin.vo.EmployeesVo;
+import com.housekeeping.admin.vo.GroupDetailsVo;
 import com.housekeeping.admin.vo.GroupVO;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -246,6 +245,18 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         /*baseMapper.updateGroup(groupDetails);*/
         this.updateById(groupDetails);
         return R.ok("成功修改分組");
+    }
+
+    @Override
+    public R getAllGroups(Page page, String groupName) {
+        List<GroupDetailsVo> groupDetailsVos = baseMapper.getAllGroups(groupName);
+        for (int i = 0; i < groupDetailsVos.size(); i++) {
+            if(CommonUtils.isEmpty(groupDetailsVos.get(i).getCompanyName())){
+                groupDetailsVos.get(i).setCompanyName("未认证公司");
+            }
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupDetailsVos);
+        return R.ok(pages);
     }
 
     public List<GroupVO> search(String name, List<GroupVO> list){

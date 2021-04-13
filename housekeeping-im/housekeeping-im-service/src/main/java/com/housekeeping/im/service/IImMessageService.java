@@ -27,4 +27,6 @@ public interface IImMessageService extends IService<ImMessage> {
      */
     List<ImMessage> getUnReadMessage(String toId);
 
+
+    R getAllMessage(Page page);
 }

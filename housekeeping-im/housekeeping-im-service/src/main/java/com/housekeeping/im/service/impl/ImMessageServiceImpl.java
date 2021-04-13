@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.PageUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.im.common.utils.ChatUtils;
 import com.housekeeping.im.entity.ImMessage;
@@ -60,8 +61,13 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setId(imMessage.getToId());
             message.setMine(fromId.equals(imMessage.getFromId()));
             message.setType(imMessage.getType());
+
             ImUser imUser = imUserService.getById(imMessage.getFromId());
             message.setUsername(imUser.getName());
+
+            String headUrl = imUserService.getHeadUrl(imUser.getId(), imUser.getDeptId());
+            message.setAvatar(headUrl);
+
             message.setFromid(imMessage.getFromId());
             message.setCid(String.valueOf(imMessage.getId()));
             message.setContent(imMessage.getContent());
@@ -69,38 +75,10 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }
-        Page pages = getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
+        Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
         return R.ok(pages);
     }
 
-    private Page getPages(Integer currentPage, Integer pageSize, List list) {
-        Page page = new Page();
-        int size = list.size();
-
-        if(pageSize > size) {
-            pageSize = size;
-        }
-
-        // 求出最大页数，防止currentPage越界
-        int maxPage = size % pageSize == 0 ? size / pageSize : size / pageSize + 1;
-
-        if(currentPage > maxPage) {
-            currentPage = maxPage;
-        }
-
-        // 当前页第一条数据的下标
-        int curIdx = currentPage > 1 ? (currentPage - 1) * pageSize : 0;
-
-        List pageList = new ArrayList();
-
-        // 将当前页的数据放进pageList
-        for(int i = 0; i < pageSize && curIdx + i < size; i++) {
-            pageList.add(list.get(curIdx + i));
-        }
-
-        page.setCurrent(currentPage).setSize(pageSize).setTotal(list.size()).setRecords(pageList);
-        return page;
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -122,10 +100,40 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
         return messageList;
     }
 
+    @Override
+    public R getAllMessage(Page page) {
+        List<ImMessage> imMessages = new ArrayList<>();
+        List<Integer> chatIds = baseMapper.getAllChatIds();
+        for (int i = 0; i < chatIds.size(); i++) {
+            QueryWrapper<ImMessage> qw = new QueryWrapper<>();
+            qw.eq("to_id",chatIds.get(i));
+            qw.orderByDesc("send_time");
+            imMessages.addAll(this.list(qw));
+        }
 
+        List<Message> messageList = new ArrayList<>();
+        for (ImMessage imMessage : imMessages) {
+            Message message = new Message();
+            message.setId(imMessage.getToId());
+            message.setMine(false);
+            message.setType(imMessage.getType());
 
+            ImUser imUser = imUserService.getById(imMessage.getFromId());
+            message.setUsername(imUser.getName());
 
+            String headUrl = imUserService.getHeadUrl(imUser.getId(), imUser.getDeptId());
+            message.setAvatar(headUrl);
 
+            message.setFromid(imMessage.getFromId());
+            message.setCid(String.valueOf(imMessage.getId()));
+            message.setContent(imMessage.getContent());
+            message.setTimestamp(new Date().getTime());
+            message.setMsgtype(imMessage.getMsgType());
+            messageList.add(message);
+        }
+        Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
+        return R.ok(pages);
+    }
 
 
     /**

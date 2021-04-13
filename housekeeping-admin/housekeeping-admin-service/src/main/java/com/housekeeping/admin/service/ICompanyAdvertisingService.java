@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.AdvertisingRenewalAdminVo;
 import com.housekeeping.admin.dto.CompanyAdvertisingAdminVo;
@@ -32,4 +33,6 @@ public interface ICompanyAdvertisingService extends IService<CompanyAdvertising>
     R renewalByAdmin(AdvertisingRenewalAdminVo companyAdvertising);
 
     R getByAdmin(Integer id, String name, Boolean status);
+
+    R getAllAdverByAdmin(Page page, Integer id, String title, Boolean status);
 }

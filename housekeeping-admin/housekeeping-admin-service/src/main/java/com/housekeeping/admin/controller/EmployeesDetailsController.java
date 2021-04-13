@@ -158,10 +158,10 @@ public class EmployeesDetailsController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})
-    @ApiOperation("【管理员】查詢所有保洁员")
+    @ApiOperation("【管理员】保洁员列表所有查詢所有保洁员")
     @GetMapping("/getAllEmployeesByAdmin")
     public R getAllEmployeesByAdmin(Page page , PageOfEmployeesDTO pageOfEmployeesDTO){
-        return R.ok(employeesDetailsService.getAllEmployeesByAdmin(page, pageOfEmployeesDTO));
+        return employeesDetailsService.getAllEmployeesByAdmin(page, pageOfEmployeesDTO);
     }
 
 

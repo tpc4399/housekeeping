@@ -95,4 +95,10 @@ public class GroupDetailsController {
         return groupDetailsService.saveGroupByAdmin(companyId,groupName);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @ApiOperation("【管理员】分组列表获取所有分组")
+    @GetMapping("/getAllGroups")
+    public R getAllGroups(Page page,String groupName){
+        return groupDetailsService.getAllGroups(page,groupName);
+    }
 }

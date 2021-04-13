@@ -12,6 +12,8 @@ import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.EmployeesVo;
+import com.housekeeping.admin.vo.ManagerVo;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Value;
@@ -302,6 +304,18 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         qw.eq("user_id", currentUserId);
         ManagerDetails one = this.getOne(qw);
         return R.ok(one);
+    }
+
+    @Override
+    public R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO) {
+        List<ManagerVo> managerVos = baseMapper.getAllManagerByAdmin(pageOfEmployeesDTO);
+        for (int i = 0; i < managerVos.size(); i++) {
+            if(CommonUtils.isEmpty(managerVos.get(i).getCompanyName())){
+                managerVos.get(i).setCompanyName("未认证公司");
+            }
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), managerVos);
+        return R.ok(pages);
     }
 
     /**

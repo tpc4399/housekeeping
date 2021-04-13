@@ -53,4 +53,25 @@
             </if>
         </where>
     </select>
+
+    <select id="getAllGroups" resultType="com.housekeeping.admin.vo.GroupDetailsVo">
+        SELECT
+        gd.id,
+        gd.company_id,
+        gd.head_url,
+        gd.group_name,
+        gd.create_time,
+        gd.update_time,
+        gd.last_reviser_id,
+        cd.company_name
+        FROM
+        group_details gd
+        LEFT JOIN
+        company_details cd
+        ON
+        gd.company_id = cd.id
+        <if test="groupName != null and groupName != ''">
+        where gd.group_name LIKE CONCAT('%',#{groupName},'%')
+        </if>
+    </select>
 </mapper>

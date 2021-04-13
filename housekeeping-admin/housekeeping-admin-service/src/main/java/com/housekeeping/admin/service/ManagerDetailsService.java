@@ -30,4 +30,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     R getAllByCompanyUserId(Integer companyUserId);
 
     R getInfoById();
+
+    R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO);
 }

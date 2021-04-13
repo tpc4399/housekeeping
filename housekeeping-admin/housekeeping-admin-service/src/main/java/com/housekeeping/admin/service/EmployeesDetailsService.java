@@ -54,5 +54,5 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     R getDetailById(Integer empId);
 
-    IPage getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO);
+    R getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO);
 }

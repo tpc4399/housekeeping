@@ -77,6 +77,57 @@
 		SELECT id FROM manager_details WHERE company_id  = #{companyId}
 	</select>
 
+    <select id="getAllManagerByAdmin" resultType="com.housekeeping.admin.vo.ManagerVo">
+		SELECT
+		md.id,
+		md.user_id,
+		md.number,
+		md.`name`,
+		md.date_of_birth,
+		md.phone_prefix,
+		md.phone,
+		md.real_name,
+		md.email,
+		md.head_url,
+		md.`schedule`,
+		md.company_id,
+		md.id_card,
+		md.location,
+		md.address,
+		md.work_year,
+		md.education_background,
+		md.account_line,
+		md.describes,
+		md.qrcode,
+		md.link,
+		md.phone_url,
+		md.sex,
+		md.create_time,
+		md.update_time,
+		md.last_reviser_id,
+		cd.company_name
+		FROM
+		manager_details md
+		LEFT JOIN
+		company_details cd
+		ON
+		md.company_id = cd.id
+		<where>
+			<if test="query.id != null and query.id != ''">
+				md.id = #{query.id}
+			</if>
+			<if test="query.companyId != null and query.companyId != ''">
+				and md.company_id = #{query.companyId}
+			</if>
+			<if test="query.name != null and query.name != ''">
+				and md.name LIKE CONCAT('%',#{query.name},'%')
+			</if>
+			<if test="query.accountLine != null and query.accountLine != ''">
+				and md.account_line LIKE CONCAT('%',#{query.accountLine},'%')
+			</if>
+		</where>
+	</select>
+
     <update id="updateHeadUrlById">
 		UPDATE manager_details
 		SET head_url = #{headUrl}

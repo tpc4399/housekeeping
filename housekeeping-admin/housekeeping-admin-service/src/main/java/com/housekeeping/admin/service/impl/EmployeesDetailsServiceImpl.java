@@ -14,6 +14,7 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
+import com.housekeeping.admin.vo.EmployeesVo;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONObject;
@@ -77,81 +78,81 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Override
     public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) {
 
-            if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
-                //先保存User
-                User user = new User();
-                String ss = String.valueOf(System.currentTimeMillis());
-                user.setName(employeesDetailsDTO.getName());
-                user.setNumber("c"+ss);
-                user.setDeptId(5);
-                user.setLastReviserId(TokenUtils.getCurrentUserId());
-                user.setCreateTime(LocalDateTime.now());
-                user.setUpdateTime(LocalDateTime.now());
-                Integer maxUserId = 0;
-                synchronized (this) {
-                    userService.save(user);
-                    maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
-                }
-
-                EmployeesDetails employeesDetails = new EmployeesDetails();
-                QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
-                wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
-                CompanyDetails one = companyDetailsService.getOne(wrComp);
-                employeesDetails.setUserId(maxUserId);
-                employeesDetails.setNumber(employeesDetailsDTO.getNumber());
-                employeesDetails.setName(employeesDetailsDTO.getName());
-                employeesDetails.setSex(employeesDetailsDTO.getSex());
-                employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
-                employeesDetails.setIdCard(employeesDetailsDTO.getIdCard());
-                employeesDetails.setAddress1(employeesDetailsDTO.getAddress1());
-                employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
-                employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
-                employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
-
-                /** 2021/1/14 su 新增存放地址經緯度 **/
-                employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
-                employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
-                /** 2021/1/14 su 新增存放地址經緯度 **/
-
-                employeesDetails.setEducationBackground(employeesDetailsDTO.getEducationBackground());
-                employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
-                employeesDetails.setPhone(employeesDetailsDTO.getPhone());
-                employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
-                employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
-                employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
-                employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
-                employeesDetails.setBlacklistFlag(false);
-
-                employeesDetails.setUpdateTime(LocalDateTime.now());
-                employeesDetails.setCreateTime(LocalDateTime.now());
-                employeesDetails.setCompanyId(one.getId());
-                employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
-                Integer maxEmployeesId = 0;
-                Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
-                try {
-                    synchronized (this){
-                        this.save(employeesDetails);
-                        maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
-                    }
-                    /**
-                     * 順便建個員工推廣的表記錄
-                     */
-                    EmployeesPromotion employeesPromotion = new EmployeesPromotion();
-                    employeesPromotion.setEmployeesId(maxEmployeesId);
-                    employeesPromotionService.save(employeesPromotion);
-                    /**
-                     * 工作经验保存
-                     */
-                    employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
-                    /**
-                     * 可工作内容设置
-                     */
-//                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
-                } catch (Exception e){
-                    TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
-                    return R.failed("添加失敗");
-                }
+        if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
+            //先保存User
+            User user = new User();
+            String ss = String.valueOf(System.currentTimeMillis());
+            user.setName(employeesDetailsDTO.getName());
+            user.setNumber("c"+ss);
+            user.setDeptId(5);
+            user.setLastReviserId(TokenUtils.getCurrentUserId());
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
+            Integer maxUserId = 0;
+            synchronized (this) {
+                userService.save(user);
+                maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
             }
+
+            EmployeesDetails employeesDetails = new EmployeesDetails();
+            QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
+            wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
+            CompanyDetails one = companyDetailsService.getOne(wrComp);
+            employeesDetails.setUserId(maxUserId);
+            employeesDetails.setNumber(employeesDetailsDTO.getNumber());
+            employeesDetails.setName(employeesDetailsDTO.getName());
+            employeesDetails.setSex(employeesDetailsDTO.getSex());
+            employeesDetails.setDateOfBirth(employeesDetailsDTO.getDateOfBirth());
+            employeesDetails.setIdCard(employeesDetailsDTO.getIdCard());
+            employeesDetails.setAddress1(employeesDetailsDTO.getAddress1());
+            employeesDetails.setAddress2(employeesDetailsDTO.getAddress2());
+            employeesDetails.setAddress3(employeesDetailsDTO.getAddress3());
+            employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
+
+            /** 2021/1/14 su 新增存放地址經緯度 **/
+            employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
+            employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
+            /** 2021/1/14 su 新增存放地址經緯度 **/
+
+            employeesDetails.setEducationBackground(employeesDetailsDTO.getEducationBackground());
+            employeesDetails.setPhonePrefix(employeesDetailsDTO.getPhonePrefix());
+            employeesDetails.setPhone(employeesDetailsDTO.getPhone());
+            employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
+            employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
+            employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
+            employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
+            employeesDetails.setBlacklistFlag(false);
+
+            employeesDetails.setUpdateTime(LocalDateTime.now());
+            employeesDetails.setCreateTime(LocalDateTime.now());
+            employeesDetails.setCompanyId(one.getId());
+            employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+            Integer maxEmployeesId = 0;
+            Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+            try {
+                synchronized (this){
+                    this.save(employeesDetails);
+                    maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
+                }
+                /**
+                 * 順便建個員工推廣的表記錄
+                 */
+                EmployeesPromotion employeesPromotion = new EmployeesPromotion();
+                employeesPromotion.setEmployeesId(maxEmployeesId);
+                employeesPromotionService.save(employeesPromotion);
+                /**
+                 * 工作经验保存
+                 */
+                employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
+                /**
+                 * 可工作内容设置
+                 */
+//                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
+            } catch (Exception e){
+                TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
+                return R.failed("添加失敗");
+            }
+        }
         return R.ok("添加員工成功");
     }
 
@@ -589,8 +590,15 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public IPage getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO) {
-        return baseMapper.getAllEmployeesByAdmin(page,pageOfEmployeesDTO);
+    public R getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO) {
+        List<EmployeesVo> allEmployeesByAdmin = baseMapper.getAllEmployeesByAdmin(page,pageOfEmployeesDTO);
+        for (int i = 0; i < allEmployeesByAdmin.size(); i++) {
+            if(CommonUtils.isEmpty(allEmployeesByAdmin.get(i).getCompanyName())){
+                allEmployeesByAdmin.get(i).setCompanyName("未认证公司");
+            }
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), allEmployeesByAdmin);
+        return R.ok(pages);
     }
 
 

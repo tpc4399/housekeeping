@@ -110,4 +110,11 @@ public class ManagerDetailsController {
     public R getInfoById(){
         return managerDetailsService.getInfoById();
     }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @ApiOperation("【管理员】经理列表查看所有经理")
+    @GetMapping("/getAllManagerByAdmin")
+    public R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO){
+        return managerDetailsService.getAllManagerByAdmin(page,pageOfEmployeesDTO);
+    }
 }

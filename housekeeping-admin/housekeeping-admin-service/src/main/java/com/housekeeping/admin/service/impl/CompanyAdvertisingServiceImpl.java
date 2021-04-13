@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AdvertisingRenewalAdminVo;
 import com.housekeeping.admin.dto.CompanyAdvertisingAdminVo;
@@ -10,13 +11,8 @@ import com.housekeeping.admin.entity.CompanyAdvertising;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.mapper.CompanyAdvertisingMapper;
 import com.housekeeping.admin.service.ICompanyAdvertisingService;
-import com.housekeeping.admin.vo.AdvertisingRenewalVo;
-import com.housekeeping.admin.vo.AdvertisingVo;
-import com.housekeeping.admin.vo.CompanyAdvertisingVo;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.admin.vo.*;
+import com.housekeeping.common.utils.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -237,17 +233,16 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
             }
         }
         if(CommonUtils.isNotEmpty(status)){
-           if(status){
-               Iterator<CompanyAdvertising> iterator = list.iterator();
-               while (iterator.hasNext()) {
+            Iterator<CompanyAdvertising> iterator = list.iterator();
+            if(status){
+                while (iterator.hasNext()) {
                    CompanyAdvertising s = iterator.next();
                    if (s.getPromotion()!=true) {
                        iterator.remove();
                    }
                }
            }else {
-               Iterator<CompanyAdvertising> iterator = list.iterator();
-               while (iterator.hasNext()) {
+                while (iterator.hasNext()) {
                    CompanyAdvertising s = iterator.next();
                    if (s.getPromotion()==true) {
                        iterator.remove();
@@ -256,6 +251,41 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
            }
         }
         return R.ok(list);
+    }
+
+    @Override
+    public R getAllAdverByAdmin(Page page, Integer id, String title, Boolean status) {
+        List<CompanyAdvertisingsVo> companyAdvertisingsVos = baseMapper.getAllAdverByAdmin(id,title);
+        for (int i = 0; i < companyAdvertisingsVos.size(); i++) {
+            if(CommonUtils.isEmpty(companyAdvertisingsVos.get(i).getCompanyName())){
+                companyAdvertisingsVos.get(i).setCompanyName("未认证公司");
+            }
+            if(CommonUtils.isEmpty(companyAdvertisingsVos.get(i).getEndTime())||LocalDateTime.now().isAfter(companyAdvertisingsVos.get(i).getEndTime())){
+                companyAdvertisingsVos.get(i).setPromotion(false);
+            }else {
+                companyAdvertisingsVos.get(i).setPromotion(true);
+            }
+        }
+        if(CommonUtils.isNotEmpty(status)){
+            Iterator<CompanyAdvertisingsVo> iterator = companyAdvertisingsVos.iterator();
+            if(status){
+                while (iterator.hasNext()) {
+                    CompanyAdvertising s = iterator.next();
+                    if (s.getPromotion()!=true) {
+                        iterator.remove();
+                    }
+                }
+            }else {
+                while (iterator.hasNext()) {
+                    CompanyAdvertising s = iterator.next();
+                    if (s.getPromotion()==true) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), companyAdvertisingsVos);
+        return R.ok(pages);
     }
 
 }
