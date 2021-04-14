@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service.impl;
 
+import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
@@ -13,14 +14,19 @@ import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Author su
@@ -35,6 +41,12 @@ public class EmployeesContractServiceImpl
     private IEmployeesContractDetailsService employeesContractDetailsService;
     @Resource
     private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private OSSClient ossClient;
+    @Value("${oss.bucketName}")
+    private String bucketName;
+    @Value("${oss.urlPrefix}")
+    private String urlPrefix;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -134,6 +146,56 @@ public class EmployeesContractServiceImpl
     public Map<LocalDate, List<TimeSlot>> getFreeTimeByContractId(DateSlot dateSlot, Integer contractId) {
         /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
         return this.getCalendarByContractId(dateSlot, contractId);
+    }
+
+    @Override
+    public R add2(Integer employeesId, String name, MultipartFile[] image, Integer dateLength, Float timeLength, BigDecimal totalPrice, Integer[] jobs, String description, Integer[] actives) {
+        /* 员工存在性判断 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            employeesId = employeesDetailsService.getEmployeesIdByExistToken();
+            if (!employeesDetailsService.judgmentOfExistence(employeesId)) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN)){
+            if (!employeesDetailsService.judgmentOfExistence(employeesId)) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!employeesDetailsService.judgmentOfExistenceFromCompany(employeesId)) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            if (employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(employeesId)) return R.failed(null, "该员工不存在或不受您管辖");
+        }
+
+        /* 先将image存入oss，返回链接然后将数据存入数据库 */
+        AtomicReference<String> res = new AtomicReference<>("");
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_CONTRACT_PHOTOS_ABSTRACT_PATH_PREFIX_PROV;
+        File mkdir = new File(catalogue);
+        if (!mkdir.exists()){
+            mkdir.mkdirs();
+        }
+        AtomicReference<Integer> count = new AtomicReference<>(0);
+        Arrays.stream(image).forEach(file -> {
+            String fileType = file.getOriginalFilename().split("\\.")[1];
+            String fileName = nowString + "[" + count.toString() + "]."+ fileType;
+            String fileAbstractPath = catalogue + fileName;
+            try {
+                ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+                res.set(urlPrefix + fileAbstractPath + " " + res.get());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                count.getAndSet(count.get() + 1);
+            }
+        });
+        String photoUrls = res.get().trim();
+        String jobsStr = CommonUtils.arrToString(jobs);
+        String activesStr = CommonUtils.arrToString(actives);
+        EmployeesContract ec = new EmployeesContract(null, employeesId, jobsStr, name, description, photoUrls, null, "TWD", activesStr, dateLength, timeLength, totalPrice);
+        this.save(ec);
+        return R.ok(null, "添加成功");
     }
 
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){

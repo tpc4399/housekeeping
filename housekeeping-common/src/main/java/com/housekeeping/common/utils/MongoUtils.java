@@ -22,7 +22,7 @@ import java.util.Map;
  * @Author su
  * @Date 2021/3/3 16:10
  */
-@Service("mongoUtils")
+//@Service("mongoUtils")
 public class MongoUtils<T> {
 
     @Resource

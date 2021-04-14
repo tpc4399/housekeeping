@@ -13,8 +13,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -70,6 +73,48 @@ public class EmployeesContractController {
         }else {
             return R.ok(res, "獲取成功");
         }
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】预约包工服务")
+    @PostMapping("/makeAnAppointment")
+    public R makeAnAppointment(){
+        return R.ok();
+    }
+
+    @Access({RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【保洁员】添加一个包工服务，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @PostMapping(value = "/add2_1", headers = "content-type=multipart/form-data")
+    public R add2(@RequestParam("name") String name,
+                  @RequestParam("image") MultipartFile[] image,
+                  @RequestParam("days") Integer dateLength,
+                  @RequestParam("times") Float timeLength,
+                  @RequestParam("totalPrice") BigDecimal totalPrice,
+                  @RequestParam("jobs") Integer[] jobs,
+                  @RequestParam("description") String description,
+                  @RequestParam("actives") Integer[] actives){
+
+        employeesContractService.add2(null, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
+
+        return R.ok();
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理员】【公司】【经理】給員工添加一个包工服务，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @PostMapping(value = "/add2_2", headers = "content-type=multipart/form-data")
+    public R add2(@RequestParam("employeesId") Integer employeesId,
+                  @RequestParam("name") String name,
+                  @RequestParam("image") MultipartFile[] image,
+                  @RequestParam("days") Integer dateLength,
+                  @RequestParam("times") Float timeLength,
+                  @RequestParam("totalPrice") BigDecimal totalPrice,
+                  @RequestParam("jobs") Integer[] jobs,
+                  @RequestParam("description") String description,
+                  @RequestParam("actives") Integer[] actives){
+
+        employeesContractService.add2(employeesId, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
+
+        return R.ok();
     }
 
 }

@@ -102,4 +102,11 @@ public class EmployeesCalendarController {
         return employeesCalendarService.getSkillTags(employeesId);
     }
 
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】预约钟点工服务")
+    @PostMapping("/makeAnAppointment")
+    public R makeAnAppointment(@RequestBody MakeAnAppointmentDTO dto){
+        return R.ok();
+    }
+
 }

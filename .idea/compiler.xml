@@ -7,27 +7,24 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="housekeeping-admin-service" />
-        <module name="housekeeping-im-service" />
         <module name="housekeeping-auth-service" />
         <module name="housekeeping-interfaces" />
         <module name="housekeeping-common" />
+        <module name="housekeeping-order-interface" />
+        <module name="housekeeping-gateway" />
+        <module name="housekeeping-auth-interface" />
+        <module name="housekeeping-admin-service" />
+        <module name="housekeeping-im-service" />
         <module name="housekeeping-log" />
         <module name="housekeeping-register" />
         <module name="housekeeping-im-interface" />
-        <module name="housekeeping-gateway" />
+        <module name="housekeeping-order-service" />
         <module name="housekeeping-admin-interface" />
-        <module name="housekeeping-auth-interface" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="common-core" target="1.8" />
-      <module name="housekeeping-log" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="common-core" options="-parameters" />
       <module name="housekeeping-admin" options="-parameters" />
       <module name="housekeeping-admin-interface" options="-parameters" />
       <module name="housekeeping-admin-service" options="-parameters" />
@@ -40,7 +37,9 @@
       <module name="housekeeping-im-interface" options="-parameters" />
       <module name="housekeeping-im-service" options="-parameters" />
       <module name="housekeeping-interfaces" options="-parameters" />
-      <module name="housekeeping-log" options="-parameters" />
+      <module name="housekeeping-order" options="-parameters" />
+      <module name="housekeeping-order-interface" options="-parameters" />
+      <module name="housekeeping-order-service" options="-parameters" />
       <module name="housekeeping-register" options="-parameters" />
     </option>
   </component>

@@ -1,5 +1,6 @@
 package com.housekeeping.gateway;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -10,7 +11,7 @@ import org.springframework.core.annotation.Order;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Order(10)
-@SpringBootApplication
+@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
 @EnableDiscoveryClient
 @EnableZuulProxy
 @EnableFeignClients

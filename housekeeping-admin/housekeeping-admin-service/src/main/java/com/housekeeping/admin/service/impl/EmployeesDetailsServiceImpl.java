@@ -601,5 +601,14 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(pages);
     }
 
+    @Override
+    public Integer getEmployeesIdByExistToken() {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        EmployeesDetails employeesDetails = employeesDetailsService.getOne(qw);
+        return employeesDetails.getId();
+    }
+
 
 }

@@ -40,6 +40,8 @@ public interface CommonConstants {
 	String HK_ORDER_EVALUATION_IMAGE_ABSTRACT_PATH_PREFIX_PROV = "HKFile/OrderEvaluationImage/orderId=";
 	/** 正式環境的经理员工登入二维码存放地 */
 	String HK_LOGIN_IN_QR_ABSTRACT_PATH_PREFIX_PROV = "HKFile/QrCode";
+	/** 正式環境的存儲包工五张照片的絕對路徑 */
+	String HK_CONTRACT_PHOTOS_ABSTRACT_PATH_PREFIX_PROV = "HKFile/ContractPhotos/";
 
 	/** 神秘代码的零件 */
 	String[] emn = new String[]{
@@ -90,5 +92,7 @@ public interface CommonConstants {
 	/** 全局配置Redis序列化LocalDateTime */
 	ObjectMapper JacksonMapper = new ObjectMapper()
 			.registerModule(new JavaTimeModule());
+	/** redis存储待使用订单编号集合的key */
+	String ORDER_ID_SET = "orderIdSet";
 
 }

@@ -334,6 +334,25 @@ public class CommonUtils {
 		return obj;
 	}
 
+	//list转string 空格隔开
+	public static String listToString(List<Object> list){
+		StringBuilder sb = new StringBuilder();
+		list.forEach(x->{
+			sb.append(x.toString());
+			sb.append(" ");
+		});
+		return new String(sb).trim();
+	}
+
+	public static String arrToString(Object[] arr){
+		StringBuilder sb = new StringBuilder();
+		for (Object o : arr) {
+			sb.append(o.toString());
+			sb.append(" ");
+		}
+		return new String(sb).trim();
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 
 		long section0 = System.currentTimeMillis();

@@ -1,5 +1,6 @@
 package com.housekeeping.admin;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
@@ -11,11 +12,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Order(2)
 @EnableAsync
-@SpringBootApplication
 @EnableEurekaClient
 @EnableCircuitBreaker
 @EnableFeignClients
 @EnableTransactionManagement
+@SpringBootApplication(exclude = DruidDataSourceAutoConfigure.class)
 public class HousekeepingAdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(HousekeepingAdminApplication.class, args);

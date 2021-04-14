@@ -9,12 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.housekeeping.admin</groupId>
-    <artifactId>housekeeping-admin</artifactId>
+    <groupId>com.housekeeping.order</groupId>
+    <artifactId>housekeeping-order</artifactId>
     <version>1.0.0</version>
     <modules>
-        <module>housekeeping-admin-interface</module>
-        <module>housekeeping-admin-service</module>
+        <module>housekeeping-order-interface</module>
+        <module>housekeeping-order-service</module>
     </modules>
     <packaging>pom</packaging>
 

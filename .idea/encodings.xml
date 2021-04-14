@@ -10,6 +10,8 @@
     <file url="file://$PROJECT_DIR$/housekeeping-im/housekeeping-im-interface/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-im/housekeeping-im-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-interfaces/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/housekeeping-order/housekeeping-order-interface/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/housekeeping-order/housekeeping-order-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/housekeeping-register/src/main/java" charset="UTF-8" />
   </component>
 </project>

@@ -8,6 +8,8 @@ import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,4 +57,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R getDetailById(Integer empId);
 
     R getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO);
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    Integer getEmployeesIdByExistToken();
 }

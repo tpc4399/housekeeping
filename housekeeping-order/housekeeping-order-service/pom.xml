@@ -3,17 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>housekeeping-admin</artifactId>
-        <groupId>com.housekeeping.admin</groupId>
+        <groupId>com.housekeeping.order</groupId>
+        <artifactId>housekeeping-order</artifactId>
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.housekeeping.admin</groupId>
-    <artifactId>housekeeping-admin-service</artifactId>
+    <groupId>com.housekeeping.order</groupId>
+    <artifactId>housekeeping-order-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-
     <dependencies>
         <!-- web启动器 -->
         <dependency>
@@ -87,7 +86,6 @@
             <artifactId>google-maps-services</artifactId>
             <version>0.9.4</version>
         </dependency>
-
     </dependencies>
 
     <build>

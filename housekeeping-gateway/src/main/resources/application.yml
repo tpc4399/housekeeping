@@ -21,6 +21,7 @@ zuul:
   prefix: /api
   routes:
     admin-service: /admin/**
+    order-service: /order/**
     auth-service: /auth/**
     im-service: /im/**
   add-host-header: true
@@ -40,6 +41,7 @@ housekeeping:
       - /swagger-resources/configuration/security
       - /swagger-ui.html
       - /api/admin/v2/api-docs
+      - /api/order/v2/api-docs
       - /api/auth/v2/api-docs
       - /api/im/v2/api-docs
       - /api/admin/checkAdmin

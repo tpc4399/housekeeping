@@ -49,9 +49,6 @@ public class TestController {
     private final ICompanyDetailsService companyDetailsService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @Resource
-    private MongoUtils mongoUtils;
-
     @PassToken
     @GetMapping("/noToken/test1")
     @ApiOperation("测试1")
@@ -126,7 +123,6 @@ public class TestController {
     @GetMapping("/noToken/test7")
     @ApiOperation("测试7")
     public R test7(){
-        mongoUtils.createCollection("testddf");
         return R.ok();
     }
 

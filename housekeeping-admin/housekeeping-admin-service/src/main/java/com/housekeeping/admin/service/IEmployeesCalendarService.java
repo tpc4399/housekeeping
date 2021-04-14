@@ -35,4 +35,7 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 获取这段日期的时间表 時間表減去已排任務時間 */
     List<FreeDateDTO> getFreeTimeByDateSlot2(DateSlot dateSlot, Integer empId, String code);
+
+    /* 预约钟点工 */
+    R makeAnAppointment(MakeAnAppointmentDTO dto);
 }

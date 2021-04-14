@@ -478,6 +478,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return this.getCalendarByDateSlot2(dateSlot, empId, code);
     }
 
+    @Override
+    public R makeAnAppointment(MakeAnAppointmentDTO dto) {
+
+        return null;
+    }
+
     /*時間段合理性判斷   假設都不為空*/
     public List<String> rationalityJudgmentA(SetEmployeesCalendarDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集
