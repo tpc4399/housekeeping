@@ -82,7 +82,7 @@ housekeeping:
       - /api/admin/test/noToken/*
       - /api/admin/employeesDetails/getAllEmployees
       - /api/admin/companyDetails/getAllCompany
-      - /api/admin/employeesContract/*
+      - /api/admin/employeesContract/getAllById
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

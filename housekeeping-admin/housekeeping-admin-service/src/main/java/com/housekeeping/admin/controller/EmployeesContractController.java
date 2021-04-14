@@ -41,8 +41,8 @@ public class EmployeesContractController {
     }
 
     @ApiOperation("获取员工的所有包工服务")
-    @GetMapping("{employeesId}")
-    public R getByEmployeesId(@PathVariable Integer employeesId){
+    @GetMapping("/getAllById")
+    public R getByEmployeesId(@RequestParam Integer employeesId){
         return employeesContractService.getByEmployeesId(employeesId);
     }
 
