@@ -92,6 +92,7 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
         Integer customerId = customerDetails.getId();
         QueryWrapper queryWrapper1 = new QueryWrapper();
         queryWrapper1.eq("customer_id", customerId);
+        queryWrapper1.orderByDesc("is_default");
         List<CustomerAddress> customerAddressList = baseMapper.selectList(queryWrapper1);
         return R.ok(customerAddressList, "成功查詢我的地址列表");
     }

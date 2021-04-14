@@ -48,6 +48,13 @@ public class CustomerAddressController {
     }
 
     @Access({RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【客户】根据id查询地址")
+    @GetMapping("/getById")
+    public R getById(Integer id){
+       return R.ok(customerAddressService.getById(id));
+    }
+
+    @Access({RolesEnum.USER_CUSTOMER})
     @ApiOperation("【客戶】設置為默認地址")
     @GetMapping("/setDefault")
     public R setDefault(Integer addressId){
@@ -61,8 +68,8 @@ public class CustomerAddressController {
         return customerAddressService.getAll(page, customerId);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN})
-    @ApiOperation("【管理员】刪除地址")
+    @Access({RolesEnum.SYSTEM_ADMIN,RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【管理员】【客戶】刪除地址")
     @DeleteMapping("/{id}")
     public R deleteAddress(@PathVariable Integer id){
         customerAddressService.removeById(id);
