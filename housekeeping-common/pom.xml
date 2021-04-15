@@ -186,11 +186,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.7.0</version>
         </dependency>
-        <!-- mongoDB -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
         <!-- redis序列化LocalDateTime解决方案 -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

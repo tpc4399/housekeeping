@@ -1,8 +1,10 @@
 package com.housekeeping.order.service.impl;
 
 import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.order.service.IOrderIdService;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -10,6 +12,7 @@ import javax.annotation.Resource;
  * @Author su
  * @Date 2021/4/14 11:55
  */
+@Service("orderIdService")
 public class OrderIdServiceImpl implements IOrderIdService {
 
     @Resource
@@ -135,5 +138,20 @@ public class OrderIdServiceImpl implements IOrderIdService {
         for (int i = 0; i < counter; i++) {
             redisTemplate.opsForSet().add(CommonConstants.ORDER_ID_SET, worker.nextId());
         }
+    }
+
+    @Override
+    public long generateId() {
+        Long id = null;
+        if(redisTemplate.opsForSet().size(CommonConstants.ORDER_ID_SET) == 0)
+            this.orderIdGenerate(300);
+//        Object idObj = redisTemplate.opsForSet().randomMember(CommonConstants.ORDER_ID_SET);
+        Object idObj = redisTemplate.opsForSet().pop(CommonConstants.ORDER_ID_SET);
+        if (idObj instanceof Integer) {
+            id = ((Integer) idObj).longValue();
+        } else if (idObj instanceof Long) {
+            id = (Long) idObj;
+        }
+        return id;
     }
 }

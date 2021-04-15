@@ -60,8 +60,8 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.housekeeping.admin</groupId>
-            <artifactId>housekeeping-admin-interface</artifactId>
+            <groupId>com.housekeeping.order</groupId>
+            <artifactId>housekeeping-order-interface</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>

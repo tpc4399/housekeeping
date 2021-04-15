@@ -6,6 +6,8 @@ package com.housekeeping.order.service;
  */
 public interface IOrderIdService {
 
+    /* 生成几百个订单编号到redis */
     void orderIdGenerate(Integer counter);
+    long generateId();
 
 }
