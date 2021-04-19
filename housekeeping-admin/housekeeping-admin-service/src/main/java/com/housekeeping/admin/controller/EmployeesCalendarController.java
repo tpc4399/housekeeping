@@ -44,6 +44,20 @@ public class EmployeesCalendarController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【员工】【經理】【公司】【平台】修改员工时间表")
+    @PutMapping("/updateCalendar2")
+    public R updateCalendar2(@RequestBody UpdateEmployeesCalendarDTO dto){
+        return employeesCalendarService.updateCalendar2(dto);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【员工】【經理】【公司】【平台】修改员工时间表")
+    @DeleteMapping("{id}")
+    public R del(@PathVariable Integer id){
+        return employeesCalendarService.del(id);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【员工】【經理】【公司】【平台】設置员工时间表 通用模板：每日")
     @PutMapping("/setCalendar")
     public R setCalendar(@RequestBody SetEmployeesCalendarDTO dto){
@@ -107,7 +121,7 @@ public class EmployeesCalendarController {
     @ApiOperation("【客户】预约钟点工服务")
     @PostMapping("/makeAnAppointment")
     public R makeAnAppointment(@RequestBody MakeAnAppointmentDTO dto){
-        return R.ok();
+        return employeesCalendarService.makeAnAppointment(dto);
     }
 
 

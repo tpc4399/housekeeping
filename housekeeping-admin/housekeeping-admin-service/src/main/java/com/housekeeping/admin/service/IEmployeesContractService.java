@@ -38,4 +38,14 @@ public interface IEmployeesContractService extends IService<EmployeesContract> {
            String description,
            Integer[] actives);
 
+    R update(Integer id,
+             String name,
+             MultipartFile[] image,
+             Integer dateLength,
+             Float timeLength,
+             BigDecimal totalPrice,
+             Integer[] jobs,
+             String description,
+             Integer[] actives);
+
 }

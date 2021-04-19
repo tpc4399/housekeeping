@@ -6,6 +6,7 @@ import com.housekeeping.admin.entity.EmployeesCalendar;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.ConversionRatio;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
@@ -25,6 +26,10 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R addCalendarDate(SetEmployeesCalendarDateDTO dto);
     /* 新版设置周规则 */
     R setCalendar2(SetEmployeesCalendar2DTO dto);
+    /* 修改某条周规则 */
+    R updateCalendar2(UpdateEmployeesCalendarDTO dto);
+    /* 删除某条周规则 */
+    R del(Integer id);
     R setJobs(SetEmployeesJobsDTO dto);
     /* 获取这段日期的时间表 */
     Map<LocalDate, List<TimeSlotDTO>> getCalendarByDateSlot(DateSlot dateSlot, Integer employeesId, String toCode);

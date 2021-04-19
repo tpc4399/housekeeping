@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MakeAnAppointmentDTO {
 
+    private Integer employeesId;
     private List<Integer> weeks;
     private List<Integer> jobIds;
     private List<TimeSlot> timeSlotDTOS;

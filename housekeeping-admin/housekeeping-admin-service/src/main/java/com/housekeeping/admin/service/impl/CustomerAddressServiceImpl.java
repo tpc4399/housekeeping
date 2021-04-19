@@ -121,4 +121,16 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
         return R.ok(customerAddressList, "分頁查詢成功");
     }
 
+    @Override
+    public Boolean judgeExistenceDefaultCA(Integer employeesId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        return null;
+    }
+
+    @Override
+    public CustomerAddress getDefaultCAByEmployeesId(Integer employeesId) {
+        return null;
+    }
+
 }

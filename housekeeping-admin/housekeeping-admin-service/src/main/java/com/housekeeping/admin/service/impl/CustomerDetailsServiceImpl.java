@@ -174,6 +174,14 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
         return R.ok(null, "操作成功");
     }
 
+    @Override
+    public CustomerDetails getByUserId(Integer userId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        CustomerDetails cd = this.getOne(qw);
+        return cd;
+    }
+
     public List<CustomerDetails> search(String name, List<CustomerDetails> list){
         List<CustomerDetails> results = new ArrayList();
         Pattern pattern = Pattern.compile(name);

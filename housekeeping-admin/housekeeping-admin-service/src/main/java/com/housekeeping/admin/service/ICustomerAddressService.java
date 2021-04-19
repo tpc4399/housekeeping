@@ -22,4 +22,10 @@ public interface ICustomerAddressService extends IService<CustomerAddress> {
     R setDefault(Integer addressId);
 
     R getAll(Page page, Integer customerId);
+
+    /* 判断保洁员的默认地址是否存在 */
+    Boolean judgeExistenceDefaultCA(Integer employeesId);
+
+    /* 获取保洁员的默认地址 */
+    CustomerAddress getDefaultCAByEmployeesId(Integer employeesId);
 }

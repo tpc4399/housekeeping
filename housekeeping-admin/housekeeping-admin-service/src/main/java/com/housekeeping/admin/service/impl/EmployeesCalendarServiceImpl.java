@@ -51,6 +51,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ICustomerDetailsService customerDetailsService;
     @Resource
     private ICurrencyService currencyService;
+    @Resource
+    private IOrderIdService orderIdService;
+    @Resource
+    private IOrderDetailsService orderDetailsService;
+    @Resource
+    private ICustomerAddressService customerAddressService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -316,6 +322,51 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
+    public R updateCalendar2(UpdateEmployeesCalendarDTO dto) {
+        /* dto合理性判斷 */
+        List<String> res = this.rationalityJudgmentE(dto);
+        if (!res.isEmpty()) return R.failed(res, "數據不合理");
+
+        /* 修改 */
+        EmployeesCalendar ec = this.getById(dto.getId());
+        StringBuilder week = new StringBuilder();
+        dto.getWeeks().forEach(wk->{
+            week.append(wk);
+        });
+        ec.setWeek(week.toString());
+        ec.setTimeSlotStart(dto.getTimeSlotStart());
+        ec.setTimeSlotLength(dto.getTimeSlotLength());
+
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("calendar_id", ec.getId());
+        List<EmployeesCalendarDetails> ecd = employeesCalendarDetailsService.list(qw);
+        ecd = ecd.stream().map(x -> {
+            x.setPrice(dto.getPrice());
+            x.setCode(dto.getCode());
+            return x;
+        }).collect(Collectors.toList());
+
+        this.updateById(ec);
+        employeesCalendarDetailsService.updateBatchById(ecd);
+        return R.ok(null, "修改成功");
+    }
+
+    @Override
+    public R del(Integer id) {
+        EmployeesCalendar ec = this.getById(id);
+
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("calendar_id", ec.getId());
+        List<EmployeesCalendarDetails> ecd = employeesCalendarDetailsService.list(qw);
+        List<Integer> ecdIds = ecd.stream().map(x -> {
+            return x.getId();
+        }).collect(Collectors.toList());
+        employeesCalendarDetailsService.removeByIds(ecdIds);//删除依赖1
+        this.removeById(id);
+        return R.ok(null, "刪除成功");
+    }
+
+    @Override
     public R setJobs(SetEmployeesJobsDTO dto) {
 
         /* 员工存在性判断 */
@@ -480,8 +531,34 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Override
     public R makeAnAppointment(MakeAnAppointmentDTO dto) {
+        OrderDetails od = new OrderDetails();
 
-        return null;
+        /* 订单编号 */
+        od.setNumber(orderIdService.generateId());
+        /* 订单甲方 */
+        Boolean exist = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
+        if (!exist) return R.failed(null, "保潔員不存在");
+        EmployeesDetails ed = employeesDetailsService.getById(dto.getEmployeesId());
+        od.setEmployeesId(ed.getId());
+        od.setName1(ed.getName());
+        od.setPhPrefix1(ed.getPhonePrefix());
+        od.setPhone1(ed.getPhone());
+
+        /* 订单乙方 */
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        od.setCustomerId(ed.getId());
+        od.setName2(cd.getName());
+        od.setPhPrefix2(cd.getPhonePrefix());
+        od.setPhone2(cd.getPhone());
+
+        /* 订单工作内容 */
+        String jobIds = CommonUtils.arrToString(dto.getJobIds().toArray(new Integer[0]));
+        od.setJobIds(jobIds);
+
+        /* 地址 */
+
+        orderDetailsService.save(od);
+        return R.ok();
     }
 
     @Override
@@ -669,6 +746,57 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 exist.add(new PeriodOfTime(timeSlot.getTimeSlotStart(), timeSlot.getTimeSlotLength()));
                 map.put(week, exist);
             });
+            /*下面对一周的每一天进行筛查*/
+            List<PeriodOfTime> existDay = map.getOrDefault(week, new ArrayList<>());
+            SortListUtil<PeriodOfTime> sortList = new SortListUtil<PeriodOfTime>();
+            sortList.Sort(existDay, "getTimeSlotStart", null);
+            for (int i = 0; i < existDay.size()-1; i++) {
+                PeriodOfTime period1 = existDay.get(i);
+                PeriodOfTime period2 = existDay.get(i+1);
+                if (CommonUtils.doRechecking(period1, period2)){
+                    //重複的處理方式
+                    StringBuilder res = new StringBuilder();
+                    res.append("周模板存在時間段重複： week ").append(week).append("  ");
+                    res.append(period1.getTimeSlotStart().toString()).append("+").append(period1.getTimeSlotLength()).append("h");
+                    res.append("與");
+                    res.append(period2.getTimeSlotStart().toString()).append("+").append(period2.getTimeSlotLength()).append("h");
+                    resCollections.add(res.toString());
+                }
+            }
+        });
+        return resCollections;
+    }
+
+    /*時間段合理性判斷：周   假設都不為空*/
+    public List<String> rationalityJudgmentE(UpdateEmployeesCalendarDTO dto){
+        List<String> resCollections = new ArrayList<>();//不合理性结果收集
+        Map<Integer, List<PeriodOfTime>> map = new HashMap<>();
+        EmployeesCalendar ec = this.getById(dto.getId());
+        QueryWrapper qw = new QueryWrapper<>();
+        qw.eq("employees_id", ec.getEmployeesId());
+        qw.eq("stander", true);
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        employeesCalendarList.forEach(calendar -> {
+            if (calendar.getId().equals(ec.getId())) return;   //把当前dto要暂时删掉
+            List<Integer> weekList = new ArrayList<>();
+            String weekStr = calendar.getWeek();
+            for (int i = 0; i < weekStr.length(); i++) {
+                weekList.add(Integer.valueOf(weekStr.charAt(i)-48));
+            }
+            PeriodOfTime period = new PeriodOfTime(calendar.getTimeSlotStart(), calendar.getTimeSlotLength());
+            weekList.forEach(week -> {
+                List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+                exist.add(period);
+                map.put(week, exist);
+            });
+        });
+        /*已准备好现有数据*/
+
+        List<Integer> weekList = dto.getWeeks();
+        weekList.forEach(week -> {
+            List<PeriodOfTime> exist = map.getOrDefault(week, new ArrayList<>());
+            exist.add(new PeriodOfTime(dto.getTimeSlotStart(), dto.getTimeSlotLength()));
+            map.put(week, exist);
             /*下面对一周的每一天进行筛查*/
             List<PeriodOfTime> existDay = map.getOrDefault(week, new ArrayList<>());
             SortListUtil<PeriodOfTime> sortList = new SortListUtil<PeriodOfTime>();

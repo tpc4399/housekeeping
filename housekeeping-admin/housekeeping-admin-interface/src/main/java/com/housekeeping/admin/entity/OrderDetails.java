@@ -1,18 +1,21 @@
-package com.housekeeping.admin.pojo;
+package com.housekeeping.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
- * 订单的完整所有所有信息
  * @Author su
- * @Date 2021/4/15 9:37
+ * @Date 2021/4/19 9:40
  */
 @Data
-public class OrderDetailsPOJO {
+@EqualsAndHashCode(callSuper = true)
+@TableName("order_details")
+public class OrderDetails extends Model<OrderDetails> {
 
     private Long number;                        //订单编号
 
@@ -31,10 +34,10 @@ public class OrderDetailsPOJO {
     private Float lng;                          //经度
     private Float lat;                          //纬度
 
-    private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
+//    private List<WorkDetailsPOJO> workDetails;//订单安排详情 (工作内容、时间安排)
     private BigDecimal priceBeforeDiscount;     //优惠前的价格(台币元)
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
-    private List<Integer> discounts;            //参与到的优惠
+//    private List<Integer> discounts;          //参与到的优惠
     private String payType;                     //支付方式
     private String remarks;                     //备注
     private LocalDateTime startDateTime;        //订单生成时间

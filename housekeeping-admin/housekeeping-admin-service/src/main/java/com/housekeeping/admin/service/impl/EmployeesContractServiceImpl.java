@@ -198,6 +198,51 @@ public class EmployeesContractServiceImpl
         return R.ok(null, "添加成功");
     }
 
+    @Override
+    public R update(Integer id, String name, MultipartFile[] image, Integer dateLength, Float timeLength, BigDecimal totalPrice, Integer[] jobs, String description, Integer[] actives) {
+        EmployeesContract ec = this.getById(id);
+
+        if (image.length != 0){
+            /* 先将image存入oss，返回链接然后将数据存入数据库 */
+            AtomicReference<String> res = new AtomicReference<>("");
+
+            LocalDateTime now = LocalDateTime.now();
+            String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            String catalogue = CommonConstants.HK_CONTRACT_PHOTOS_ABSTRACT_PATH_PREFIX_PROV;
+            File mkdir = new File(catalogue);
+            if (!mkdir.exists()){
+                mkdir.mkdirs();
+            }
+            AtomicReference<Integer> count = new AtomicReference<>(0);
+            Arrays.stream(image).forEach(file -> {
+                String fileType = file.getOriginalFilename().split("\\.")[1];
+                String fileName = nowString + "[" + count.toString() + "]."+ fileType;
+                String fileAbstractPath = catalogue + fileName;
+                try {
+                    ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+                    res.set(urlPrefix + fileAbstractPath + " " + res.get());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    count.getAndSet(count.get() + 1);
+                }
+            });
+            String photoUrls = res.get().trim();
+            ec.setPhotoUrls(photoUrls);
+        }
+        String jobsStr = CommonUtils.arrToString(jobs);
+        String activesStr = CommonUtils.arrToString(actives);
+        ec.setJobs(jobsStr);
+        ec.setName(name);
+        ec.setDescription(description);
+        ec.setActivityIds(activesStr);
+        ec.setDateLength(dateLength);
+        ec.setTimeLength(timeLength);
+        ec.setTotalPrice(totalPrice);
+        this.updateById(ec);
+        return R.ok(null, "修改成功");
+    }
+
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集
         SortListUtil<TimeSlot> sort = new SortListUtil<TimeSlot>();
