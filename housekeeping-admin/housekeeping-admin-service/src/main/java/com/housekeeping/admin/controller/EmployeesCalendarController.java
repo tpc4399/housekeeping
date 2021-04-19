@@ -125,4 +125,10 @@ public class EmployeesCalendarController {
         return employeesCalendarService.getSchedulingByUserId(userId);
     }
 
+    @ApiOperation("获取保洁员的排班")
+    @GetMapping("/getScheduling2/{employeesId}")
+    public R getScheduling2(@PathVariable Integer employeesId){
+        return employeesCalendarService.getSchedulingByEmployeesId(employeesId);
+    }
+
 }

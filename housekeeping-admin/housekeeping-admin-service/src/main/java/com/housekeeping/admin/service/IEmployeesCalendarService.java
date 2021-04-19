@@ -42,6 +42,9 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     /* 根据保洁员userId获取保洁员的排班 */
     R getSchedulingByUserId(Integer userId);
 
+    /* 根据保洁员employeesId获取保洁员的排班 */
+    R getSchedulingByEmployeesId(Integer employeesId);
+
     /* 判断employeesId的时间表存在性 */
     Boolean judgmentOfExistenceByEmployeesId(Integer employeesId);
 }

@@ -84,6 +84,7 @@ housekeeping:
       - /api/admin/companyDetails/getAllCompany
       - /api/admin/employeesContract/getAllById
       - /api/admin/employeesCalendar/getScheduling/*
+      - /api/admin/employeesCalendar/getScheduling2/*
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

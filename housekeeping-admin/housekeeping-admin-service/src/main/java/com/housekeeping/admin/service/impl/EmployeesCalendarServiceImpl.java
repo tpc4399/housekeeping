@@ -505,6 +505,24 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
+    public R getSchedulingByEmployeesId(Integer employeesId) {
+        /* 保洁员存在性判断 */
+        Boolean existing = employeesDetailsService.judgmentOfExistence(employeesId);
+        if (!existing) return R.failed(null, "保潔員不存在");
+
+        /* 數據從數據庫獲取 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        List<EmployeesCalendar> re = employeesCalendarService.list(qw);
+
+        /* 時間表存在性判斷 */
+        if (re.isEmpty()) return R.failed(null, "該保潔員未設置時間表");
+
+        /* 返回信息 */
+        return R.ok(re, "獲取成功");
+    }
+
+    @Override
     public Boolean judgmentOfExistenceByEmployeesId(Integer employeesId) {
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
