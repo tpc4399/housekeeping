@@ -6,7 +6,7 @@
 
 	<update id="updateAddress">
 		UPDATE customer_address
-		SET `name` = #{name}, address = #{address}
+		SET `name` = #{name}, address = #{address},phone_prefix = #{phonePrefix},phone = #{phone}
 		WHERE id = #{id}
 	</update>
 

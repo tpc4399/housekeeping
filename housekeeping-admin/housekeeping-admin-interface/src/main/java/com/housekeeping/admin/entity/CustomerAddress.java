@@ -24,4 +24,6 @@ public class CustomerAddress extends Model<CustomerAddress> {
     private String address;         /* 详细地址 */
     private String lat;             /* 经度 */
     private String lng;             /* 纬度 */
+    private String phonePrefix;     /* 手機號前綴 */
+    private String phone;           /* 手機號 */
 }

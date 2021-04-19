@@ -44,6 +44,8 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
         customerAddress.setCustomerId(customerDetails.getId());
         customerAddress.setIsDefault(false);
         customerAddress.setName(customerAddressAddDTO.getName());
+        customerAddress.setPhonePrefix(customerAddressAddDTO.getPhonePrefix());
+        customerAddress.setPhone(customerAddressAddDTO.getPhone());
         customerAddress.setAddress(customerAddressAddDTO.getAddress());
         //把地址存為經緯度
         customerAddress.setLng(customerAddressAddDTO.getLng().toString());
