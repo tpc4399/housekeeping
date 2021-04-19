@@ -43,7 +43,7 @@ public class UploadController {
 
         LocalDateTime now = LocalDateTime.now();
         String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String catalogue = CommonConstants.HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV;
+        String catalogue = CommonConstants.HK_IM_PHOTO_ABSTRACT_PATH_PREFIX_PROV;
         String type = file.getOriginalFilename().split("\\.")[1];
         String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
 

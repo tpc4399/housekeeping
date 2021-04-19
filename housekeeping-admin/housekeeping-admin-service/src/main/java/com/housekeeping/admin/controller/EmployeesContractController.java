@@ -46,6 +46,12 @@ public class EmployeesContractController {
         return employeesContractService.getByEmployeesId(employeesId);
     }
 
+    @ApiOperation("根据id获取包工服务")
+    @GetMapping("/getById")
+    public R getById(@RequestParam Integer id){
+        return R.ok(employeesContractService.getById(id));
+    }
+
     @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】获取所有包工服务")
     @GetMapping
