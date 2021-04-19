@@ -610,5 +610,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return employeesDetails.getId();
     }
 
+    @Override
+    public Integer getEmployeesIdByUserId(Integer userId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        EmployeesDetails employeesDetails = employeesDetailsService.getOne(qw);
+        return employeesDetails.getId();
+    }
 
 }

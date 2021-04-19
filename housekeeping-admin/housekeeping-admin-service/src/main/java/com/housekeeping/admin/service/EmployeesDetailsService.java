@@ -60,4 +60,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     @Access(RolesEnum.USER_EMPLOYEES)
     Integer getEmployeesIdByExistToken();
+
+    /* 根据保洁员userId快速获取employeesId (经常用到) */
+    Integer getEmployeesIdByUserId(Integer userId);
 }

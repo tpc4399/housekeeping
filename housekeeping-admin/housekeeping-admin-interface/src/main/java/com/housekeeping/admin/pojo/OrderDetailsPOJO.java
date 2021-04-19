@@ -1,4 +1,4 @@
-package com.housekeeping.order.pojo;
+package com.housekeeping.admin.pojo;
 
 import lombok.Data;
 

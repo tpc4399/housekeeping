@@ -38,4 +38,10 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 预约钟点工 */
     R makeAnAppointment(MakeAnAppointmentDTO dto);
+
+    /* 根据保洁员userId获取保洁员的排班 */
+    R getSchedulingByUserId(Integer userId);
+
+    /* 判断employeesId的时间表存在性 */
+    Boolean judgmentOfExistenceByEmployeesId(Integer employeesId);
 }

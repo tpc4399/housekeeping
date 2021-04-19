@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
+import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;
@@ -107,6 +108,21 @@ public class EmployeesCalendarController {
     @PostMapping("/makeAnAppointment")
     public R makeAnAppointment(@RequestBody MakeAnAppointmentDTO dto){
         return R.ok();
+    }
+
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("【保洁员】获取自己的排班")
+    @GetMapping("/getMyScheduling")
+    public R getMyScheduling(){
+        Integer userId = TokenUtils.getCurrentUserId();
+        return employeesCalendarService.getSchedulingByUserId(userId);
+    }
+
+    @ApiOperation("获取保洁员的排班")
+    @GetMapping("/getScheduling/{userId}")
+    public R getScheduling(@PathVariable Integer userId){
+        return employeesCalendarService.getSchedulingByUserId(userId);
     }
 
 }
