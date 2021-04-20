@@ -49,7 +49,7 @@ public class EmployeesContractController {
     @ApiOperation("根据id获取包工服务")
     @GetMapping("/getById")
     public R getById(@RequestParam Integer id){
-        return R.ok(employeesContractService.getById(id));
+        return employeesContractService.cusGetById(id);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})

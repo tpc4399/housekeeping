@@ -7,13 +7,16 @@ import com.housekeeping.admin.dto.AddEmployeesContractDTO;
 import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.entity.EmployeesContractDetails;
+import com.housekeeping.admin.entity.SysIndex;
+import com.housekeeping.admin.entity.SysIndexContent;
 import com.housekeeping.admin.mapper.EmployeesContractMapper;
-import com.housekeeping.admin.service.EmployeesDetailsService;
-import com.housekeeping.admin.service.IEmployeesContractDetailsService;
-import com.housekeeping.admin.service.IEmployeesContractService;
+import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.ContractJobVo;
+import com.housekeeping.admin.vo.EmployeesContractJobVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -47,6 +51,12 @@ public class EmployeesContractServiceImpl
     private String bucketName;
     @Value("${oss.urlPrefix}")
     private String urlPrefix;
+    @Resource
+    private ISysIndexContentService sysIndexContentService;
+    @Resource
+    private ISysIndexService sysIndexService;
+    @Resource
+    private ISysJobContendService sysJobContendService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -241,6 +251,71 @@ public class EmployeesContractServiceImpl
         ec.setTotalPrice(totalPrice);
         this.updateById(ec);
         return R.ok(null, "修改成功");
+    }
+
+    @Override
+    public R cusGetById(Integer id) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        EmployeesContract byId = this.getById(id);
+        if(CommonUtils.isEmpty(byId)){
+            return R.ok(null);
+        }
+
+        map.put("id",byId.getId());
+        map.put("employeesId",byId.getEmployeesId());
+        map.put("name",byId.getName());
+        map.put("description",byId.getDescription());
+        map.put("photoUrls",byId.getPhotoUrls());
+        map.put("dayWage",byId.getDayWage());
+        map.put("code",byId.getCode());
+        map.put("activityIds",byId.getActivityIds());
+        map.put("dateLength",byId.getDateLength());
+        map.put("timeLength",byId.getTimeLength());
+        map.put("totalPrice",byId.getTotalPrice());
+
+        HashSet<Integer> index = new HashSet<>();
+        String jobs = byId.getJobs();
+        String[] jobIds = jobs.split(" ");
+        for (int i = 0; i < jobIds.length; i++) {
+            QueryWrapper<SysIndexContent> qw = new QueryWrapper<>();
+            qw.eq("content_id",jobIds[i]);
+            SysIndexContent one = sysIndexContentService.getOne(qw);
+            index.add(one.getIndexId());
+        }
+
+        List<SysIndex> sysIndexList = sysIndexService.list();
+        List<EmployeesContractJobVo> employeesContractJobVos = sysIndexList.stream().map(x -> {
+            EmployeesContractJobVo employeesContractJobVo = new EmployeesContractJobVo();
+            employeesContractJobVo.setId(x.getId());
+            employeesContractJobVo.setName(x.getName());
+            if (index.contains(x.getId())) {
+                employeesContractJobVo.setStatus(true);
+            } else {
+                employeesContractJobVo.setStatus(false);
+            }
+            List<ContractJobVo> contractJobVos = new ArrayList<>();
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("index_id", x.getId());
+            List<SysIndexContent> sysIndexContents = sysIndexContentService.list(qw);
+            for (int i = 0; i < sysIndexContents.size(); i++) {
+                ContractJobVo contractJobVo = new ContractJobVo();
+                contractJobVo.setId(sysIndexContents.get(i).getId());
+                contractJobVo.setName(sysJobContendService.getById(sysIndexContents.get(i).getContentId()).getContend());
+                if (jobs.contains(sysIndexContents.get(i).getContentId().toString())) {
+                    contractJobVo.setStatus(true);
+                } else {
+                    contractJobVo.setStatus(false);
+                }
+                contractJobVos.add(contractJobVo);
+            }
+            employeesContractJobVo.setContents(contractJobVos);
+            return employeesContractJobVo;
+        }).collect(Collectors.toList());
+
+        map.put("jobs",employeesContractJobVos);
+
+        return R.ok(map);
     }
 
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){
