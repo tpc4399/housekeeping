@@ -48,4 +48,5 @@ public interface IEmployeesContractService extends IService<EmployeesContract> {
              String description,
              Integer[] actives);
 
+    R cusGetById(Integer id);
 }
