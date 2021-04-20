@@ -263,16 +263,16 @@ public class EmployeesContractServiceImpl
         }
 
         map.put("id",byId.getId());
-        map.put("employees_id",byId.getEmployeesId());
+        map.put("employeesId",byId.getEmployeesId());
         map.put("name",byId.getName());
         map.put("description",byId.getDescription());
-        map.put("photo_urls",byId.getPhotoUrls());
-        map.put("day_wage",byId.getDayWage());
+        map.put("photoUrls",byId.getPhotoUrls());
+        map.put("dayWage",byId.getDayWage());
         map.put("code",byId.getCode());
-        map.put("activity_ids",byId.getActivityIds());
-        map.put("date_length",byId.getDateLength());
-        map.put("time_length",byId.getTimeLength());
-        map.put("total_price",byId.getTotalPrice());
+        map.put("activityIds",byId.getActivityIds());
+        map.put("dateLength",byId.getDateLength());
+        map.put("timeLength",byId.getTimeLength());
+        map.put("totalPrice",byId.getTotalPrice());
 
         HashSet<Integer> index = new HashSet<>();
         String jobs = byId.getJobs();
@@ -313,7 +313,7 @@ public class EmployeesContractServiceImpl
             return employeesContractJobVo;
         }).collect(Collectors.toList());
 
-        map.put("content",employeesContractJobVos);
+        map.put("jobs",employeesContractJobVos);
 
         return R.ok(map);
     }
