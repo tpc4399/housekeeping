@@ -155,7 +155,7 @@ public class CurrencyServiceImpl implements ICurrencyService {
             res = ratio.multiply(money);
         }else {
             res = this.exchangeRateToBigDecimal(fromCode, toCode, money);
-            ratio = res.divide(money);
+            ratio = res.divide(money,5, BigDecimal.ROUND_HALF_UP);
             conversionRatio.putKeyValue(key, ratio);
         }
         return res;

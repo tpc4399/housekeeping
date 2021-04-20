@@ -4,10 +4,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.SysIndex;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -29,5 +31,9 @@ public interface ISysIndexService extends IService<SysIndex> {
     R goon2(String credential);
     R flush1(String credential);
     R flush2(String credential);
+    /* 拆分时间段及价格 */
+    List<TimeAndPrice> periodSplittingA(List<TimeSlotDTO> slots);
+    /* 拆分时间段 */
+    List<LocalTime> periodSplittingB(List<TimeSlot> slots);
 
 }

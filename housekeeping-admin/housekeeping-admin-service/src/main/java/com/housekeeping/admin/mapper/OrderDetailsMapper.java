@@ -8,4 +8,7 @@ import com.housekeeping.admin.entity.OrderDetails;
  * @Date 2021/4/19 9:47
  */
 public interface OrderDetailsMapper extends BaseMapper<OrderDetails> {
+
+    Integer orderRetentionTime(Integer employeesId);
+
 }

@@ -124,15 +124,23 @@ public class CustomerAddressServiceImpl extends ServiceImpl<CustomerAddressMappe
     }
 
     @Override
-    public Boolean judgeExistenceDefaultCA(Integer employeesId) {
+    public Boolean judgeExistenceDefaultCA(Integer customerId) {
         QueryWrapper qw = new QueryWrapper();
-        qw.eq("employees_id", employeesId);
-        return null;
+        qw.eq("customer_id", customerId);
+        qw.eq("is_default", true);
+        List<CustomerAddress> cas = this.list(qw);
+        if (cas.isEmpty()) return false;
+        return true;
     }
 
     @Override
-    public CustomerAddress getDefaultCAByEmployeesId(Integer employeesId) {
-        return null;
+    public CustomerAddress getDefaultCAByEmployeesId(Integer customerId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("customer_id", customerId);
+        qw.eq("is_default", true);
+        List<CustomerAddress> cas = this.list(qw);
+        if (cas.isEmpty()) return null;
+        return cas.get(0);
     }
 
 }

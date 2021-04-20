@@ -12,4 +12,8 @@ import org.springframework.stereotype.Service;
  */
 @Service("orderDetailsService")
 public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, OrderDetails> implements IOrderDetailsService {
+    @Override
+    public Integer orderRetentionTime(Integer employeesId) {
+        return baseMapper.orderRetentionTime(employeesId);
+    }
 }

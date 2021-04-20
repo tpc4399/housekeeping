@@ -142,7 +142,7 @@ public class EmployeesContractController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
-    @ApiOperation("【管理员】【公司】【经理】【保洁员】删除包工服务，1、盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯) 2、image只在数据有改变的时候传入完整数据，数据不改变就传空数组即可")
+    @ApiOperation("【管理员】【公司】【经理】【保洁员】删除包工服务")
     @DeleteMapping("/{id}")
     public R del(@PathVariable Integer id){
         employeesContractService.removeById(id);

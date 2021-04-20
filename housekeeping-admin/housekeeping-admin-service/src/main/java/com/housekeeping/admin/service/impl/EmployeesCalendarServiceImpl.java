@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
+import com.housekeeping.admin.pojo.OrderDetailsPOJO;
+import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
-import com.housekeeping.admin.vo.RecommendedEmployeesVo;
 import com.housekeeping.admin.vo.TimeSlot;
-import com.housekeeping.admin.vo.TimeSlotVo;
-import com.housekeeping.common.entity.ConversionRatio;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -57,6 +57,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private IOrderDetailsService orderDetailsService;
     @Resource
     private ICustomerAddressService customerAddressService;
+    @Resource
+    private ISysIndexService sysIndexService;
+    @Resource
+    private RedisTemplate redisTemplate;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -531,34 +535,70 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Override
     public R makeAnAppointment(MakeAnAppointmentDTO dto) {
-        OrderDetails od = new OrderDetails();
+        LocalDateTime now = LocalDateTime.now();
+        OrderDetailsPOJO odp = new OrderDetailsPOJO();
 
         /* 订单编号 */
-        od.setNumber(orderIdService.generateId());
-        /* 订单甲方 */
+        Long number = orderIdService.generateId();
+        odp.setNumber(number);
+        /* 订单甲方 保洁员 */
         Boolean exist = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
         if (!exist) return R.failed(null, "保潔員不存在");
         EmployeesDetails ed = employeesDetailsService.getById(dto.getEmployeesId());
-        od.setEmployeesId(ed.getId());
-        od.setName1(ed.getName());
-        od.setPhPrefix1(ed.getPhonePrefix());
-        od.setPhone1(ed.getPhone());
+        odp.setEmployeesId(ed.getId());
+        odp.setName1(ed.getName());
+        odp.setPhPrefix1(ed.getPhonePrefix());
+        odp.setPhone1(ed.getPhone());
 
-        /* 订单乙方 */
+        /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
-        od.setCustomerId(ed.getId());
-        od.setName2(cd.getName());
-        od.setPhPrefix2(cd.getPhonePrefix());
-        od.setPhone2(cd.getPhone());
+        CustomerAddress ca = customerAddressService.getDefaultCAByEmployeesId(cd.getId());
+        if (CommonUtils.isEmpty(ca)) return R.failed(null, "您沒設置默認地址");
+        odp.setCustomerId(ed.getId());
+        odp.setName2(cd.getName());
+        odp.setPhPrefix2(ca.getPhonePrefix());
+        odp.setPhone2(ca.getPhone());
 
         /* 订单工作内容 */
         String jobIds = CommonUtils.arrToString(dto.getJobIds().toArray(new Integer[0]));
-        od.setJobIds(jobIds);
+        odp.setJobIds(jobIds);
 
         /* 地址 */
+        odp.setAddress(ca.getAddress());
+        odp.setLat(new Float(ca.getLat()));
+        odp.setLng(new Float(ca.getLng()));
 
-        orderDetailsService.save(od);
-        return R.ok();
+
+        /* 工作时间安排 */
+        List<WorkDetailsPOJO> wds = this.makeAnAppointmentHandle(dto);
+        odp.setWorkDetails(wds);
+
+        /* 原价格计算 */
+        BigDecimal pdb = this.totalPrice(wds);
+        odp.setPriceBeforeDiscount(pdb);
+        odp.setPriceAfterDiscount(pdb);
+
+        /* 订单状态 */
+        odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态
+
+        /* 订单生成时间 */
+        odp.setStartDateTime(now);
+        odp.setUpdateDateTime(now);
+
+        /* 订单截止付款时间 */
+        Integer hourly = orderDetailsService.orderRetentionTime(dto.getEmployeesId());
+        LocalDateTime payDeadline = now.plusHours(hourly);
+        odp.setPayDeadline(payDeadline);
+
+        String key = "OrderToBePaid:employeesId"+dto.getEmployeesId()+":" + number;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map = CommonUtils.objectToMap(odp);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        redisTemplate.opsForHash().putAll(key, map);
+        return R.ok(null, "预约成功");
     }
 
     @Override
@@ -606,6 +646,42 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         List<EmployeesCalendar> re = employeesCalendarService.list(qw);
         if (re.isEmpty()) return false;
         return true;
+    }
+
+    @Override
+    public List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto) {
+        List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+        /* 获取这段日期内的空闲时间 */
+        List<FreeDateDTO> freeTime = this.getFreeTimeByDateSlot2(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId(), "TWD");
+        freeTime.forEach(x -> {
+            List<TimeAndPrice> table = sysIndexService.periodSplittingA(x.getTimes());
+            List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());
+            Boolean todayIsOk = this.judgeToday(table, item);
+            LocalDate today = x.getDate();
+            Integer week = today.getDayOfWeek().getValue();
+            List<TimeSlot> timeSlots = dto.getTimeSlots();
+            Boolean canBeOnDuty = todayIsOk;
+            BigDecimal todayPrice = new BigDecimal(0);
+            if (canBeOnDuty) todayPrice = this.todayPrice(table, item);
+            WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, week, timeSlots, canBeOnDuty, todayPrice);
+            workDetailsPOJOS.add(wdp);
+        });
+        return workDetailsPOJOS;
+    }
+
+    @Override
+    public Boolean judgeToday(List<TimeAndPrice> table, List<LocalTime> item) {
+        AtomicReference<Boolean> todayIsOk = new AtomicReference<>(true);
+        item.forEach(a -> {
+            AtomicReference<Boolean> bool1 = new AtomicReference<>(false); //时段是否包含
+            table.forEach(b -> {
+                if (a.equals(b.getTime())) {
+                    bool1.set(true);
+                }
+            });
+            if (!bool1.get()) todayIsOk.set(false); //如果这个时段不行，那么今天就不行
+        });
+        return todayIsOk.get();
     }
 
     /*時間段合理性判斷   假設都不為空*/
@@ -714,7 +790,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
         return resCollections;
     }
-
     /*時間段合理性判斷：周   假設都不為空*/
     public List<String> rationalityJudgmentD(SetEmployeesCalendar2DTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集
@@ -766,7 +841,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         });
         return resCollections;
     }
-
     /*時間段合理性判斷：周   假設都不為空*/
     public List<String> rationalityJudgmentE(UpdateEmployeesCalendarDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集
@@ -818,7 +892,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return resCollections;
     }
 
-
     private String authenticationProcessing(Integer employeesId){
         String roleType = TokenUtils.getRoleType();
         if(roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN)){
@@ -838,7 +911,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             return CommonConstants.AUTHENTICATION_FAILED;
         }
     }
-
 
     public List<FreeDateDTO> getCalendarByDateSlot2(DateSlot dateSlot, Integer employeesId, String toCode) {
 
@@ -924,6 +996,34 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
 
         return freeDateDTOS;
+    }
+
+    private BigDecimal priceAfterDiscount(List<WorkDetailsPOJO> workDetails){
+
+        return new BigDecimal(0);
+    }
+
+    private BigDecimal todayPrice(List<TimeAndPrice> table, List<LocalTime> item){
+        BigDecimal todayPrice = new BigDecimal(0);
+        for (LocalTime x : item) {
+            for (TimeAndPrice y : table) {
+                if (y.getTime().equals(x)){
+                    Float hourlyWage = y.getJobAndPriceList().get(0).getPrice();//已转换成TWD的时薪
+                    BigDecimal semihWage = new BigDecimal(hourlyWage).divide(new BigDecimal(2));
+                    todayPrice = todayPrice.add(semihWage);
+                    break;
+                }
+            }
+        }
+        return todayPrice;
+    }
+
+    private BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails){
+        BigDecimal totalPrice = new BigDecimal(0);
+        for (WorkDetailsPOJO x : workDetails) {
+            totalPrice = totalPrice.add(x.getTodayPrice());
+        }
+        return totalPrice;
     }
 
 }

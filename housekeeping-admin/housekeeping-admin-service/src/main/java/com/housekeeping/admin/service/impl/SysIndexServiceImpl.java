@@ -813,7 +813,7 @@ public class SysIndexServiceImpl
      * 18:00:00 代表18:00:00 - 18:30:00 的时间段
      *
      */
-    private List<TimeAndPrice> periodSplittingA(List<TimeSlotDTO> slots){
+    public List<TimeAndPrice> periodSplittingA(List<TimeSlotDTO> slots){
         List<TimeAndPrice> res = new ArrayList<>();
         slots.forEach(slot -> {
             LocalTime time = slot.getTimeSlotStart();
@@ -828,7 +828,7 @@ public class SysIndexServiceImpl
         return res;
     }
 
-    private List<LocalTime> periodSplittingB(List<TimeSlot> slots){
+    public List<LocalTime> periodSplittingB(List<TimeSlot> slots){
         List<LocalTime> res = new ArrayList<>();
         slots.forEach(slot -> {
             LocalTime time = slot.getTimeSlotStart();

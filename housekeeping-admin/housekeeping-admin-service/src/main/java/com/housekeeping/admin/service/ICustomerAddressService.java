@@ -23,9 +23,9 @@ public interface ICustomerAddressService extends IService<CustomerAddress> {
 
     R getAll(Page page, Integer customerId);
 
-    /* 判断保洁员的默认地址是否存在 */
-    Boolean judgeExistenceDefaultCA(Integer employeesId);
+    /* 判断客户的默认地址是否存在 */
+    Boolean judgeExistenceDefaultCA(Integer customerId);
 
-    /* 获取保洁员的默认地址 */
-    CustomerAddress getDefaultCAByEmployeesId(Integer employeesId);
+    /* 获取客户的默认地址 */
+    CustomerAddress getDefaultCAByEmployeesId(Integer customerId);
 }
