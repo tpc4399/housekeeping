@@ -338,7 +338,6 @@ public class EmployeesContractServiceImpl
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
 
-
         /* 订单来源 */
         odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
 
@@ -387,9 +386,9 @@ public class EmployeesContractServiceImpl
         odp.setWorkDetails(wds);
 
         /* 原价格计算 */
-        BigDecimal pdb = employeesCalendarService.totalPrice(wds);
-        odp.setPriceBeforeDiscount(pdb);
-        odp.setPriceAfterDiscount(pdb);
+//        BigDecimal pdb = employeesCalendarService.totalPrice(wds);
+        odp.setPriceBeforeDiscount(ec.getTotalPrice());
+        odp.setPriceAfterDiscount(ec.getTotalPrice());
 
         /* 订单状态 */
         odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态

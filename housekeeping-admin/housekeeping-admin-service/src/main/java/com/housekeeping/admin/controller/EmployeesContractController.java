@@ -79,13 +79,6 @@ public class EmployeesContractController {
         }
     }
 
-    @Access(RolesEnum.USER_CUSTOMER)
-    @ApiOperation("【客户】预约包工服务")
-    @PostMapping("/makeAnAppointment")
-    public R makeAnAppointment(){
-        return R.ok();
-    }
-
     @Access({RolesEnum.USER_EMPLOYEES})
     @ApiOperation("【保洁员】添加一个包工服务，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/add2_1", headers = "content-type=multipart/form-data")
