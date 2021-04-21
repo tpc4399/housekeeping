@@ -18,6 +18,7 @@ import java.util.List;
 public class MakeAnAppointmentDTO {
 
     private Integer employeesId;
+    private Integer addressId; //地址id
     private LocalDate start;
     private LocalDate end;
     private List<Integer> weeks;

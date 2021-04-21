@@ -2,11 +2,13 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
+import com.housekeeping.admin.dto.AppointmentContractDTO;
 import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.entity.EmployeesContract;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,4 +51,7 @@ public interface IEmployeesContractService extends IService<EmployeesContract> {
              Integer[] actives);
 
     R cusGetById(Integer id);
+
+    /* 包工服务预约 */
+    R appointmentContract(AppointmentContractDTO dto);
 }

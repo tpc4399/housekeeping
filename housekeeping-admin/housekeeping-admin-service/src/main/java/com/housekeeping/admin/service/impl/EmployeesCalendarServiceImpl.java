@@ -539,6 +539,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
 
+        /* 订单来源 */
+        odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CALENDAR);
+
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number);
@@ -553,8 +556,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
-        CustomerAddress ca = customerAddressService.getDefaultCAByEmployeesId(cd.getId());
-        if (CommonUtils.isEmpty(ca)) return R.failed(null, "您沒設置默認地址");
+        CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
         odp.setCustomerId(ed.getId());
         odp.setName2(cd.getName());
         odp.setPhPrefix2(ca.getPhonePrefix());
@@ -1019,7 +1021,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return todayPrice;
     }
 
-    private BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails){
+    public BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails){
         BigDecimal totalPrice = new BigDecimal(0);
         for (WorkDetailsPOJO x : workDetails) {
             totalPrice = totalPrice.add(x.getTodayPrice());

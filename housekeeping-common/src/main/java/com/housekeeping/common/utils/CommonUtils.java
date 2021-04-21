@@ -353,6 +353,16 @@ public class CommonUtils {
 		return new String(sb).trim();
 	}
 
+	/* 工作内容string 切割成List */
+	public static List<Integer> stringToList(String jobId){
+		List<Integer> list = new ArrayList<>();
+		String[] strings = jobId.split(" ");
+		for (int i = 0; i < strings.length; i++) {
+			list.add(Integer.valueOf(strings[i]));
+		}
+		return list;
+	}
+
 	public static void main(String[] args) throws UnknownHostException {
 
 		long section0 = System.currentTimeMillis();

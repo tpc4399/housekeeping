@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class CustomerDetails extends Model<CustomerDetails> {
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;                /* 主键 */
+    private Integer id;             /* 主键 */
     private Integer userId;         /* 用户_id */
     private String number;          /* 编号 */
     private String name;            /* 名字 */

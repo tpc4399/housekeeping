@@ -37,6 +37,13 @@ public class ConfirmOrderPOJO {
     private LocalDateTime updateDateTime;       //订单最后修改时间
     private LocalDateTime payDeadline;          //订单付款截止时间
 
+    /**
+     * 2 --> 未付款        待付款状态  To be paid
+     * 5 --> 已付款        进行状态    have in hand
+     * 8 --> 已做完工作     待确认状态  To be confirmed
+     * 15 -->             待评价状态  To be evaluated
+     * 20 --> 已评价       已完成状态  Completed
+     */
     private Integer orderState;                 //订单状态
 
     public ConfirmOrderPOJO(OrderDetailsPOJO pojo){

@@ -4,12 +4,14 @@ import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AddEmployeesContractDTO;
+import com.housekeeping.admin.dto.AppointmentContractDTO;
 import com.housekeeping.admin.dto.DateSlot;
-import com.housekeeping.admin.entity.EmployeesContract;
-import com.housekeeping.admin.entity.EmployeesContractDetails;
-import com.housekeeping.admin.entity.SysIndex;
-import com.housekeeping.admin.entity.SysIndexContent;
+import com.housekeeping.admin.dto.MakeAnAppointmentDTO;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesContractMapper;
+import com.housekeeping.admin.pojo.ConfirmOrderPOJO;
+import com.housekeeping.admin.pojo.OrderDetailsPOJO;
+import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.ContractJobVo;
 import com.housekeeping.admin.vo.EmployeesContractJobVo;
@@ -18,6 +20,7 @@ import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,6 +60,18 @@ public class EmployeesContractServiceImpl
     private ISysIndexService sysIndexService;
     @Resource
     private ISysJobContendService sysJobContendService;
+    @Resource
+    private IOrderIdService orderIdService;
+    @Resource
+    private ICustomerAddressService customerAddressService;
+    @Resource
+    private ICustomerDetailsService customerDetailsService;
+    @Resource
+    private RedisTemplate redisTemplate;
+    @Resource
+    private IEmployeesCalendarService employeesCalendarService;
+    @Resource
+    private IOrderDetailsService orderDetailsService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -316,6 +331,87 @@ public class EmployeesContractServiceImpl
         map.put("jobs",employeesContractJobVos);
 
         return R.ok(map);
+    }
+
+    @Override
+    public R appointmentContract(AppointmentContractDTO dto) {
+        LocalDateTime now = LocalDateTime.now();
+        OrderDetailsPOJO odp = new OrderDetailsPOJO();
+
+
+        /* 订单来源 */
+        odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
+
+        /* 订单编号 */
+        Long number = orderIdService.generateId();
+        odp.setNumber(number);
+        /* 订单甲方 保洁员 */
+        EmployeesContract ec = this.getById(dto.getContractId());
+        Integer employeesId = ec.getEmployeesId();
+        Boolean exist = employeesDetailsService.judgmentOfExistence(employeesId);
+        if (!exist) return R.failed(null, "保潔員不存在");
+        EmployeesDetails ed = employeesDetailsService.getById(employeesId);
+        odp.setEmployeesId(ed.getId());
+        odp.setName1(ed.getName());
+        odp.setPhPrefix1(ed.getPhonePrefix());
+        odp.setPhone1(ed.getPhone());
+
+        /* 订单乙方 客户 */
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
+        odp.setCustomerId(ed.getId());
+        odp.setName2(cd.getName());
+        odp.setPhPrefix2(ca.getPhonePrefix());
+        odp.setPhone2(ca.getPhone());
+
+        /* 订单工作内容 */
+        String jobIds = ec.getJobs();
+        odp.setJobIds(jobIds);
+
+        /* 地址 */
+        odp.setAddress(ca.getAddress());
+        odp.setLat(new Float(ca.getLat()));
+        odp.setLng(new Float(ca.getLng()));
+
+
+        /* 工作时间安排 */
+        LocalDate start = dto.getStartDate();
+        LocalDate end = dto.getStartDate().plusDays(ec.getDateLength()-1);
+        List<Integer> weeks = Arrays.asList(1,2,3,4,5,6,7);
+        List<Integer> jobIdsList = CommonUtils.stringToList(jobIds);
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        TimeSlot timeSlot = new TimeSlot(dto.getStartTime(), ec.getTimeLength());
+        timeSlots.add(timeSlot);
+        MakeAnAppointmentDTO mapDTO = new MakeAnAppointmentDTO(employeesId, null, start, end, weeks, jobIdsList, timeSlots);
+        List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO);
+        odp.setWorkDetails(wds);
+
+        /* 原价格计算 */
+        BigDecimal pdb = employeesCalendarService.totalPrice(wds);
+        odp.setPriceBeforeDiscount(pdb);
+        odp.setPriceAfterDiscount(pdb);
+
+        /* 订单状态 */
+        odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态
+
+        /* 订单生成时间 */
+        odp.setStartDateTime(now);
+        odp.setUpdateDateTime(now);
+
+        /* 订单截止付款时间 保留时间 */
+        Integer hourly = orderDetailsService.orderRetentionTime(employeesId);
+        LocalDateTime payDeadline = now.plusHours(hourly);
+        odp.setPayDeadline(payDeadline);
+
+        String key = "OrderToBePaid:employeesId"+employeesId+":" + number;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map = CommonUtils.objectToMap(odp);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        redisTemplate.opsForHash().putAll(key, map);
+        return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }
 
     List<String> rationalityJudgment(AddEmployeesContractDTO dto){

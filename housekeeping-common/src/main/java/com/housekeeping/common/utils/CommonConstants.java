@@ -107,6 +107,9 @@ public interface CommonConstants {
 	Integer ORDER_STATE_TO_BE_EVALUATED = new Integer(15);
 	/** 订单状态变量 已完成状态 */
 	Integer ORDER_STATE_COMPLETED = new Integer(20);
-
+	/** 订单来源——钟点工 */
+	Integer ORDER_ORIGIN_CALENDAR = new Integer(0);
+	/** 订单来源——包工 */
+	Integer ORDER_ORIGIN_CONTRACT = new Integer(1);
 
 }

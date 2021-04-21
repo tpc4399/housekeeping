@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -62,4 +63,7 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 判断今日能否做 */
     Boolean judgeToday(List<TimeAndPrice> table, List<LocalTime> item);
+
+    /* 计算订单总价格 */
+    BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails);
 }

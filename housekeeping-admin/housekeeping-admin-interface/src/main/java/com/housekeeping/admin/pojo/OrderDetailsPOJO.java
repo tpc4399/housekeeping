@@ -48,6 +48,7 @@ public class OrderDetailsPOJO {
      * 20 --> 已评价       已完成状态  Completed
      */
     private Integer orderState;                 //订单状态
+    private Integer orderOrigin;                //订单来源 0钟点工 1包工
 
     private LocalDateTime payDateTime;          //付款时间
     private LocalDateTime completionDateTime;   //完成时间

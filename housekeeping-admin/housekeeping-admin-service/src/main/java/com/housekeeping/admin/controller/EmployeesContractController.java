@@ -1,8 +1,6 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.AddEmployeesContractDTO;
-import com.housekeeping.admin.dto.GetCalendarByDateSlotDTO;
-import com.housekeeping.admin.dto.TimeSlotDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesContractService;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.annotation.Access;
@@ -147,6 +145,13 @@ public class EmployeesContractController {
     public R del(@PathVariable Integer id){
         employeesContractService.removeById(id);
         return R.ok(null, "删除成功");
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】预约包工服务")
+    @PostMapping("/appointmentContract")
+    public R appointmentContract(@RequestBody AppointmentContractDTO dto){
+        return employeesContractService.appointmentContract(dto);
     }
 
 }
