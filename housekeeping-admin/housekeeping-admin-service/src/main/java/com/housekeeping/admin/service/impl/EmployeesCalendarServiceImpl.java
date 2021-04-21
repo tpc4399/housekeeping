@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
+import com.housekeeping.admin.pojo.ConfirmOrderPOJO;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
@@ -585,7 +586,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         odp.setStartDateTime(now);
         odp.setUpdateDateTime(now);
 
-        /* 订单截止付款时间 */
+        /* 订单截止付款时间 保留时间 */
         Integer hourly = orderDetailsService.orderRetentionTime(dto.getEmployeesId());
         LocalDateTime payDeadline = now.plusHours(hourly);
         odp.setPayDeadline(payDeadline);
@@ -598,7 +599,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             e.printStackTrace();
         }
         redisTemplate.opsForHash().putAll(key, map);
-        return R.ok(null, "预约成功");
+        return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }
 
     @Override
