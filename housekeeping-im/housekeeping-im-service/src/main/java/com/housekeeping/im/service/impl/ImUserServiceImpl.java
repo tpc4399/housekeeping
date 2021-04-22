@@ -72,6 +72,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
 
     @Override
     public R createGroup(String toId) {
+
         String currentUserId = TokenUtils.getCurrentUserId().toString();
         ImChatGroup imChatGroup = new ImChatGroup();
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
@@ -83,20 +84,27 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         Integer empId = baseMapper.getEmpId(Integer.parseInt(toId));
         Set<String> ids = new HashSet<>();
+
+        //群聊添加客户
         ids.add(currentUserId);
-        ids.add(userId.toString());
-        List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(toId));
-        if(CollectionUtils.isEmpty(groups)){
-            ids.add(empId.toString());
-        }else {
-            ids.add(empId.toString());
+
+        //群聊加入保洁员
+        ids.add(empId.toString());
+
+        //群聊添加公司账户
+        /*ids.add(userId.toString());*/
+
+        //群聊加入经理
+        /*List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(toId));
+        if(!CollectionUtils.isEmpty(groups)){
             for (int i = 0; i < groups.size(); i++) {
                 List<Integer> manIds = baseMapper.getMansByGroupId(groups.get(i));
                 for (int j = 0; j < manIds.size(); j++) {
                     ids.add(baseMapper.getUserId(manIds.get(j)).toString());
                 }
             }
-        }
+        }*/
+
         for (String id : ids) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
