@@ -558,7 +558,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
         CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
         odp.setCustomerId(ed.getId());
-        odp.setName2(cd.getName());
+        odp.setName2(ca.getName());
         odp.setPhPrefix2(ca.getPhonePrefix());
         odp.setPhone2(ca.getPhone());
 
