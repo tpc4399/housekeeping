@@ -32,7 +32,8 @@ public class OrderDetailsController {
     @Access(RolesEnum.USER_CUSTOMER)
     @PutMapping(value = "/pay", headers = "content-type=multipart/form-data")
     public R pay(@RequestParam("number") Integer number,
-                 @RequestParam("photo") MultipartFile[] photo){
+                 @RequestParam("photo") MultipartFile photo,
+                 @RequestParam("evaluate") Integer evaluate){
         return R.ok();
     }
 
