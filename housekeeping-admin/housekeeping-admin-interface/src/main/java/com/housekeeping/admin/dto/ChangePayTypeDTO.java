@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 public class ChangePayTypeDTO {
 
-    private String payType;     //支付方式
     private Long number;        //订单id
 
 }

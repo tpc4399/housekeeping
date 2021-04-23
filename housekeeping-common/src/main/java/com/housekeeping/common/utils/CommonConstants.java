@@ -44,6 +44,8 @@ public interface CommonConstants {
 	String HK_LOGIN_IN_QR_ABSTRACT_PATH_PREFIX_PROV = "HKFile/QrCode";
 	/** 正式環境的存儲包工五张照片的絕對路徑 */
 	String HK_CONTRACT_PHOTOS_ABSTRACT_PATH_PREFIX_PROV = "HKFile/ContractPhotos/";
+	/** 正式環境的存儲订单照片的多张图片路径 */
+	String HK_ORDER_PHOTOS_ABSTRACT_PATH_PREFIX_PROV = "HKFile/Order/number=";
 
 	/** 神秘代码的零件 */
 	String[] emn = new String[]{

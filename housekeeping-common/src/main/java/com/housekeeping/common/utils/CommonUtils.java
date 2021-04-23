@@ -3,19 +3,12 @@ package com.housekeeping.common.utils;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.SysOrderPlanDTO;
 import com.housekeeping.admin.vo.RecommendedEmployeesVo;
-import com.housekeeping.admin.vo.RulesMonthlyVo;
 import com.housekeeping.common.entity.PeriodOfTime;
-import net.sf.json.JSONObject;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.gavaghan.geodesy.Ellipsoid;
 import org.gavaghan.geodesy.GeodeticCalculator;
 import org.gavaghan.geodesy.GeodeticCurve;
 import org.gavaghan.geodesy.GlobalCoordinates;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
