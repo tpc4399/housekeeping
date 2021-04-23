@@ -576,6 +576,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         List<WorkDetailsPOJO> wds = this.makeAnAppointmentHandle(dto);
         odp.setWorkDetails(wds);
 
+        /* 可工作天数计算 */
+        Integer days = this.days(wds);
+        odp.setDays(days);
+
+        /* 每日工作时长计算 */
+        Float h = this.hOfDay(dto);
+        odp.setHOfDay(h);
+
         /* 原价格计算 */
         BigDecimal pdb = this.totalPrice(wds);
         odp.setPriceBeforeDiscount(pdb);
@@ -657,6 +665,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 获取这段日期内的空闲时间 */
         List<FreeDateDTO> freeTime = this.getFreeTimeByDateSlot2(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId(), "TWD");
         freeTime.forEach(x -> {
+            Integer todayWeek = x.getDate().getDayOfWeek().getValue();
+            if (!dto.getWeeks().contains(todayWeek)) return;     //如果周数没有这天，那么就跳过吧
             List<TimeAndPrice> table = sysIndexService.periodSplittingA(x.getTimes());
             List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());
             Boolean todayIsOk = this.judgeToday(table, item);
@@ -1027,6 +1037,21 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             totalPrice = totalPrice.add(x.getTodayPrice());
         }
         return totalPrice;
+    }
+
+    @Override
+    public Integer days(List<WorkDetailsPOJO> workDetails) {
+        Long days = workDetails.stream().filter(WorkDetailsPOJO::getCanBeOnDuty).count();
+        return new Integer(Math.toIntExact(days));
+    }
+
+    @Override
+    public Float hOfDay(MakeAnAppointmentDTO dto) {
+        AtomicReference<Float> h  = new AtomicReference<>(new Float(0));
+        dto.getTimeSlots().forEach(timeSlot -> {
+            h.set(h.get() + timeSlot.getTimeSlotLength());
+        });
+        return h.get();
     }
 
 }

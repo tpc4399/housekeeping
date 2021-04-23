@@ -385,8 +385,15 @@ public class EmployeesContractServiceImpl
         List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO);
         odp.setWorkDetails(wds);
 
+        /* 可工作天数计算 */
+        Integer days = employeesCalendarService.days(wds);
+        odp.setDays(days);
+
+        /* 每日工作时长计算 */
+        Float h = ec.getTimeLength();
+        odp.setHOfDay(h);
+
         /* 原价格计算 */
-//        BigDecimal pdb = employeesCalendarService.totalPrice(wds);
         odp.setPriceBeforeDiscount(ec.getTotalPrice());
         odp.setPriceAfterDiscount(ec.getTotalPrice());
 

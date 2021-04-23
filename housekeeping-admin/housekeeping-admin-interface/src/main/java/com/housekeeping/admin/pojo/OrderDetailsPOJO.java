@@ -32,6 +32,8 @@ public class OrderDetailsPOJO {
     private Float lat;                          //纬度
 
     private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
+    private Integer days;                       //天数
+    private Float hOfDay;                       //每天的小时数
     private BigDecimal priceBeforeDiscount;     //优惠前的价格(台币元)
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
     private List<Integer> discounts;            //参与到的优惠

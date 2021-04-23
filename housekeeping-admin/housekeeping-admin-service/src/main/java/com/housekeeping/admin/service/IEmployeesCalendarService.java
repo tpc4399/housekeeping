@@ -66,4 +66,12 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 计算订单总价格 */
     BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails);
+
+    /* 计算可工作的天数 */
+    Integer days(List<WorkDetailsPOJO> workDetails);
+
+    /* 计算每天工作小时数 */
+    Float hOfDay(MakeAnAppointmentDTO dto);
+
+
 }

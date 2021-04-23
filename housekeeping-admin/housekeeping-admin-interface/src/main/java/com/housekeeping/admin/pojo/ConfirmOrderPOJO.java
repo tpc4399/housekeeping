@@ -30,6 +30,8 @@ public class ConfirmOrderPOJO {
     private Float lat;                          //纬度
 
     private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
+    private Integer days;                       //天数
+    private Float hOfDay;                       //每天的小时数
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
     private String payType;                     //支付方式
     private List<OrderPhotoPOJO> photos;        //订单的照片一级评论
@@ -58,6 +60,8 @@ public class ConfirmOrderPOJO {
         this.lng = pojo.getLng();
         this.lat = pojo.getLat();
         this.workDetails = pojo.getWorkDetails();
+        this.days = pojo.getDays();
+        this.hOfDay = pojo.getHOfDay();
         this.priceAfterDiscount = pojo.getPriceAfterDiscount();
         this.payType = pojo.getPayType();
         this.photos = pojo.getPhotos();
