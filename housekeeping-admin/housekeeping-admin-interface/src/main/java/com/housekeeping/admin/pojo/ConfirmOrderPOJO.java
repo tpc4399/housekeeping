@@ -32,6 +32,7 @@ public class ConfirmOrderPOJO {
     private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
     private String payType;                     //支付方式
+    private List<OrderPhotoPOJO> photos;        //订单的照片一级评论
     private String remarks;                     //备注
     private LocalDateTime startDateTime;        //订单生成时间
     private LocalDateTime updateDateTime;       //订单最后修改时间
@@ -59,6 +60,7 @@ public class ConfirmOrderPOJO {
         this.workDetails = pojo.getWorkDetails();
         this.priceAfterDiscount = pojo.getPriceAfterDiscount();
         this.payType = pojo.getPayType();
+        this.photos = pojo.getPhotos();
         this.remarks = pojo.getRemarks();
         this.startDateTime = pojo.getStartDateTime();
         this.updateDateTime = pojo.getUpdateDateTime();
