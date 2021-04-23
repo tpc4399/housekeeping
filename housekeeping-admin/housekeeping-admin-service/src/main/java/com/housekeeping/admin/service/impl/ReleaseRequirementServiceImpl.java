@@ -71,6 +71,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                 null,
                 customerId,
                 dto.getLiveAtHome(),
+                dto.getServerPlaceType(),
+                dto.getNote(),
                 jobIdsStr.get(),
                 dto.getHousingArea(),
                 dto.getEstimatedSalary(),

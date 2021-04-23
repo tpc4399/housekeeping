@@ -27,6 +27,8 @@ public class DemandOrder extends Model<DemandOrder> {
     private Integer id;                         /* 主键id */
     private Integer customerId;                 /* 需求单来源：客户_Id */
     private Boolean liveAtHome;                 /* 是否需要住宿 */
+    private Integer serverPlaceType;            /* 服务场所类型  0住宿与交际 1洗浴与美容 2文化娱乐 3体育与游乐 4文化交流 5购物 6就诊与交通 7其它*/
+    private String note;                        /* 备注 */
     private String jobIds;                      /* 被选中的工作内容标签 */
     private String housingArea;                 /* 房屋面积 */
     private BigDecimal estimatedSalary;         /* 预计薪资 */
