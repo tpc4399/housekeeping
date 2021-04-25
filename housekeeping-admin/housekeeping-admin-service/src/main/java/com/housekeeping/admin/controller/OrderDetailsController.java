@@ -30,7 +30,21 @@ public class OrderDetailsController {
     @Access(RolesEnum.USER_CUSTOMER)
     @PostMapping("/requestToChangeAddress")
     public R requestToChangeAddress(RequestToChangeAddressDTO dto){
-        return R.ok();
+        return orderDetailsService.requestToChangeAddress(dto);
+    }
+
+    @ApiOperation("【保洁员】确认订单——同意修改地址")
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @GetMapping("/agree/{id}")
+    public R agree(@PathVariable Integer id){
+        return orderDetailsService.requestToChangeAddressHandle(id, true);
+    }
+
+    @ApiOperation("【保洁员】确认订单——拒绝修改地址")
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @GetMapping("/refuse/{id}")
+    public R refuse(@PathVariable Integer id){
+        return orderDetailsService.requestToChangeAddressHandle(id, false);
     }
 
     @ApiOperation("【客户】确认订单界面——支付操作需要调用")

@@ -318,6 +318,8 @@ public class CommonUtils {
 					value = localDateTime;
 				}else if (field.getType().equals(Float.class)){
 					value = new Float((Double) map.get(field.getName()));
+				}else if (field.getType().equals(List.class)){
+					if (field.getName().equals("")) value = new ArrayList<>();
 				}else {
 					value = map.get(field.getName());
 				}

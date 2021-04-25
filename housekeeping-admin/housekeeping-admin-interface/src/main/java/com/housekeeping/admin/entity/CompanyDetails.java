@@ -58,6 +58,8 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private Boolean isNew;              /* 是否是新用户 默认1新用户 0不是新用户*/
     private Integer tokens;         /* 公司代币数 */
     private LocalDateTime expireDate;         /* 公司缴费过期时间 */
+    private String InvoiceName;      /* 发票抬头 */
+    private String InvoiceNumber;    /* 统一编号 */
     private Integer orderRetentionTime;     /* 订单保留时长 小时 */
     private Integer lastReviserId;    /* 最后修改人 */
 

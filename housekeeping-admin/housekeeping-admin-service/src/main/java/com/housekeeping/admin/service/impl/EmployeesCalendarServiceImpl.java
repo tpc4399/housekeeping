@@ -545,6 +545,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number);
+
+        /* 消费项目 */
+        odp.setConsumptionItems("钟点工服务");
+
         /* 订单甲方 保洁员 */
         Boolean exist = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());
         if (!exist) return R.failed(null, "保潔員不存在");
@@ -554,11 +558,17 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         odp.setPhPrefix1(ed.getPhonePrefix());
         odp.setPhone1(ed.getPhone());
 
+        /* 甲方所属公司 */
+        CompanyDetails cod = companyDetailsService.getById(ed.getCompanyId());
+        odp.setCompanyId(cod.getId());
+        odp.setInvoiceName(cod.getInvoiceName());
+        odp.setInvoiceNumber(cod.getInvoiceNumber());
+
         /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
         CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
         odp.setCustomerId(ed.getId());
-        odp.setName2(ca.getName());
+        odp.setName2(cd.getName());
         odp.setPhPrefix2(ca.getPhonePrefix());
         odp.setPhone2(ca.getPhone());
 
@@ -600,6 +610,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         Integer hourly = orderDetailsService.orderRetentionTime(dto.getEmployeesId());
         LocalDateTime payDeadline = now.plusHours(hourly);
         odp.setPayDeadline(payDeadline);
+        odp.setH(hourly);
 
         String key = "OrderToBePaid:employeesId"+dto.getEmployeesId()+":" + number;
         Map<String, Object> map = new HashMap<>();

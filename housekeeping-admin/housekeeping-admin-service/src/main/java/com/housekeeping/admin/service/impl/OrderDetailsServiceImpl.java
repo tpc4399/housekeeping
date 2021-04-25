@@ -2,10 +2,16 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
+import com.housekeeping.admin.entity.CompanyDetails;
+import com.housekeeping.admin.entity.CustomerAddress;
+import com.housekeeping.admin.entity.NotificationOfRequestForChangeOfAddress;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
+import com.housekeeping.admin.service.ICustomerAddressService;
+import com.housekeeping.admin.service.INotificationOfRequestForChangeOfAddressService;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
@@ -38,10 +44,102 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private String urlPrefix;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private ICustomerAddressService customerAddressService;
+    @Resource
+    private INotificationOfRequestForChangeOfAddressService notificationOfRequestForChangeOfAddressService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
         return baseMapper.orderRetentionTime(employeesId);
+    }
+
+    @Override
+    public R requestToChangeAddress(RequestToChangeAddressDTO dto) {
+        CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
+        NotificationOfRequestForChangeOfAddress na = new NotificationOfRequestForChangeOfAddress(
+                null,
+                dto.getNumber(),
+                ca.getName(),
+                ca.getPhone(),
+                ca.getPhonePrefix(),
+                ca.getAddress(),
+                new Float(ca.getLat()),
+                new Float(ca.getLng()),
+                LocalDateTime.now(),
+                null);
+        synchronized (this){
+            notificationOfRequestForChangeOfAddressService.save(na);
+            na = (NotificationOfRequestForChangeOfAddress) CommonUtils
+                    .getMaxId("notification_of_request_for_change_of_address", notificationOfRequestForChangeOfAddressService);
+        }
+
+        //TODO 将内容发送到聊天框
+
+        //TODO 将内容更新到保洁员的通知列表
+
+
+        return R.ok(null, "申請成功");
+    }
+
+    @Override
+    public R requestToChangeAddressHandle(Integer id, Boolean result) {
+        notificationOfRequestForChangeOfAddressService.requestToChangeAddressHandle(id, result);
+        if (result){
+            NotificationOfRequestForChangeOfAddress na = notificationOfRequestForChangeOfAddressService.getById(id);
+            Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + na.getNumber());
+            String[] keysArr = (String[]) keys.toArray();
+            String key = keysArr[0];
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            OrderDetailsPOJO odp = null;
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            odp.setName2(na.getName());
+            odp.setPhone2(na.getPhone());
+            odp.setPhPrefix2(na.getPhPrefix());
+            odp.setAddress(na.getAddress());
+            odp.setLat(na.getLat());
+            odp.setLng(na.getLng());
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime payDeadLine = now.plusHours(odp.getH());
+            odp.setUpdateDateTime(now);
+            odp.setPayDeadline(payDeadLine);
+            Map<String, Object> map2 = new HashMap<>();
+            try {
+                map2 = CommonUtils.objectToMap(odp);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            redisTemplate.opsForHash().putAll(key, map2);
+        }
+        return R.ok(null, "操作成功");
+    }
+
+    @Override
+    public R updateOrder(Integer number, Integer employeesId) {
+        LocalDateTime now = LocalDateTime.now();
+        String key = "OrderToBePaid:employeesId" + employeesId + ":" + number;
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+        OrderDetailsPOJO odp = null;
+        try {
+            odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LocalDateTime payDeadLine = now.plusHours(odp.getH());
+        odp.setUpdateDateTime(now);
+        odp.setPayDeadline(payDeadLine);
+        Map<String, Object> map2 = new HashMap<>();
+        try {
+            map2 = CommonUtils.objectToMap(odp);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        redisTemplate.opsForHash().putAll(key, map2);
+        return R.ok(null, "更新成功");
     }
 
     @Override

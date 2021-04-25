@@ -18,6 +18,11 @@ import java.util.List;
 public class ConfirmOrderPOJO {
 
     private Long number;                        //订单编号
+    private String consumptionItems;            //消费项目
+
+    private Integer companyId;                  //甲方保洁员所属公司
+    private String invoiceName;                 //公司发票抬头
+    private String invoiceNumber;               //公司统一编号
 
     private Integer customerId;                 //订单乙方 客户 (一个)
     private String name2;                       //乙方姓名
@@ -30,7 +35,7 @@ public class ConfirmOrderPOJO {
     private Float lat;                          //纬度
 
     private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
-    private Integer days;                       //天数
+    private Integer days;                       //可工作的天数
     private Float hOfDay;                       //每天的小时数
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
     private String payType;                     //支付方式
@@ -38,6 +43,7 @@ public class ConfirmOrderPOJO {
     private String remarks;                     //备注
     private LocalDateTime startDateTime;        //订单生成时间
     private LocalDateTime updateDateTime;       //订单最后修改时间
+    private Integer h;                          //订单保留时间
     private LocalDateTime payDeadline;          //订单付款截止时间
 
     /**
@@ -51,6 +57,10 @@ public class ConfirmOrderPOJO {
 
     public ConfirmOrderPOJO(OrderDetailsPOJO pojo){
         this.number = pojo.getNumber();
+        this.consumptionItems = pojo.getConsumptionItems();
+        this.companyId = pojo.getCompanyId();
+        this.invoiceName = pojo.getInvoiceName();
+        this.invoiceNumber = pojo.getInvoiceNumber();
         this.customerId = pojo.getCustomerId();
         this.name2 = pojo.getName2();
         this.phPrefix2 = pojo.getPhPrefix1();
@@ -68,6 +78,7 @@ public class ConfirmOrderPOJO {
         this.remarks = pojo.getRemarks();
         this.startDateTime = pojo.getStartDateTime();
         this.updateDateTime = pojo.getUpdateDateTime();
+        this.h = pojo.getH();
         this.payDeadline = pojo.getPayDeadline();
         this.orderState = pojo.getOrderState();
     }

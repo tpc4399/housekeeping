@@ -72,6 +72,8 @@ public class EmployeesContractServiceImpl
     private IEmployeesCalendarService employeesCalendarService;
     @Resource
     private IOrderDetailsService orderDetailsService;
+    @Resource
+    private ICompanyDetailsService companyDetailsService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -341,9 +343,13 @@ public class EmployeesContractServiceImpl
         /* 订单来源 */
         odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
 
+        /* 消费项目 */
+        odp.setConsumptionItems("包工服务");
+
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number);
+
         /* 订单甲方 保洁员 */
         EmployeesContract ec = this.getById(dto.getContractId());
         Integer employeesId = ec.getEmployeesId();
@@ -354,6 +360,12 @@ public class EmployeesContractServiceImpl
         odp.setName1(ed.getName());
         odp.setPhPrefix1(ed.getPhonePrefix());
         odp.setPhone1(ed.getPhone());
+
+        /* 甲方所属公司 */
+        CompanyDetails cod = companyDetailsService.getById(ed.getCompanyId());
+        odp.setCompanyId(cod.getId());
+        odp.setInvoiceName(cod.getInvoiceName());
+        odp.setInvoiceNumber(cod.getInvoiceNumber());
 
         /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
@@ -408,6 +420,7 @@ public class EmployeesContractServiceImpl
         Integer hourly = orderDetailsService.orderRetentionTime(employeesId);
         LocalDateTime payDeadline = now.plusHours(hourly);
         odp.setPayDeadline(payDeadline);
+        odp.setH(hourly);
 
         String key = "OrderToBePaid:employeesId"+employeesId+":" + number;
         Map<String, Object> map = new HashMap<>();

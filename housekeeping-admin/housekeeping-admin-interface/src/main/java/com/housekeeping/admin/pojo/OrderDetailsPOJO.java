@@ -15,11 +15,15 @@ import java.util.List;
 public class OrderDetailsPOJO {
 
     private Long number;                        //订单编号
+    private String consumptionItems;            //消费项目
 
     private Integer employeesId;                //订单甲方 保洁员 (一个)
     private String name1;                       //甲方姓名
     private String phPrefix1;                   //甲方手机号前缀
     private String phone1;                      //甲方手机号
+    private Integer companyId;                  //甲方所属公司
+    private String invoiceName;                 //公司发票抬头
+    private String invoiceNumber;               //公司统一编号
 
     private Integer customerId;                 //订单乙方 客户 (一个)
     private String name2;                       //乙方姓名
@@ -42,6 +46,7 @@ public class OrderDetailsPOJO {
     private String remarks;                     //备注
     private LocalDateTime startDateTime;        //订单生成时间
     private LocalDateTime updateDateTime;       //订单最后修改时间
+    private Integer h;                          //订单保留时间
     private LocalDateTime payDeadline;          //订单付款截止时间
     /**
      * 2 --> 未付款        待付款状态  To be paid
