@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.annotation.Access;
@@ -58,6 +59,13 @@ public class OrderDetailsController {
                  @RequestParam("remarks") String remarks) throws Exception {
         orderDetailsService.pay(number, employeesId, photos, evaluates, payType, remarks);
         return R.ok(null, "上传成功");
+    }
+
+    @ApiOperation("【客户】支付成功后的回调接口")
+    @Access(RolesEnum.USER_CUSTOMER)
+    @PostMapping("/paymentCallback")
+    public R paymentCallback(PaymentCallbackDTO dto){
+        return R.ok();
     }
 
 }

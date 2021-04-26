@@ -59,6 +59,8 @@ public class OrderDetailsPOJO {
     private Integer orderOrigin;                //订单来源 0钟点工 1包工
 
     private LocalDateTime payDateTime;          //付款时间
+
+
     private LocalDateTime completionDateTime;   //完成时间
     private LocalDateTime fixDateTime;          //确认时间
     private LocalDateTime evaluationDateTime;   //评价时间

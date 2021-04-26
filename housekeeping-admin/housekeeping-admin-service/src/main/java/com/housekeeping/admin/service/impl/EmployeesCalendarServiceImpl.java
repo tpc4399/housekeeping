@@ -1047,7 +1047,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         for (WorkDetailsPOJO x : workDetails) {
             totalPrice = totalPrice.add(x.getTodayPrice());
         }
-        return totalPrice;
+
+        return totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 
     @Override
