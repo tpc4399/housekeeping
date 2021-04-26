@@ -547,7 +547,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         odp.setNumber(number);
 
         /* 消费项目 */
-        odp.setConsumptionItems("钟点工服务");
+        odp.setConsumptionItems("1");
 
         /* 订单甲方 保洁员 */
         Boolean exist = employeesDetailsService.judgmentOfExistence(dto.getEmployeesId());

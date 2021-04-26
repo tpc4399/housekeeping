@@ -65,7 +65,7 @@ public class OrderDetailsController {
     @Access(RolesEnum.USER_CUSTOMER)
     @PostMapping("/paymentCallback")
     public R paymentCallback(PaymentCallbackDTO dto){
-        return R.ok();
+        return orderDetailsService.paymentCallback(dto);
     }
 
 }

@@ -2,7 +2,9 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
+import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.NotificationOfRequestForChangeOfAddress;
@@ -189,5 +191,51 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         redisTemplate.opsForHash().putAll(key, map2);
 
         return R.ok(null, "修改成功");
+    }
+
+    @Override
+    public R paymentCallback(PaymentCallbackDTO dto) {
+
+        return null;
+    }
+
+    @Override
+    public Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto) {
+        /**
+         * A =	商家驗證參數 (共四碼,不足四碼前面補零)
+         * 目前的商家驗證參數：1974
+         * 例如商家驗證參數為1234 則 A = 1234
+         *
+         * B =	收款金額 (取八碼,不足八碼前面補零)
+         * 例如金額為 532 元 則 B = 00000532
+         *
+         * C =	Smseid參數 (回送  Roturl 時 的 Smseid 參數的後四碼，如不為數字則以 9 替代 )
+         * 例如Smseid為 12_24_123  ，後四碼 為 "_123"  則 C = 9123
+         *
+         * D =
+         *
+         * A & B & C
+         * 以上列範例為例 ： D = 1234000005329123
+         *
+         * E =
+         *
+         * 取 D 的偶數位字數(由前面算起)相加後乘以 3
+         * 以 D 為例 1234000005329123
+         * 取 D 的偶數位字數(藍色字體)：( 2+4+0+0+5+2+1+3 ) X 3 = 51
+         * F =
+         *
+         * 取 D 的奇數位字數(由前面算起)相加後乘以 9
+         * 以 D 為例 1234000005329123
+         * 取 D 的奇數位字數(紅色字體)：( 1+3+0+0+0+3+9+2 ) X 9 = 162
+         *
+         *
+         * SmilePay驗證碼 ： E +  F = 51 + 162 = 213
+         *
+         *
+         * 將資料回送 Roturl 時之 Mid_smilepay 即為 213
+         * */
+
+
+        return null;
     }
 }

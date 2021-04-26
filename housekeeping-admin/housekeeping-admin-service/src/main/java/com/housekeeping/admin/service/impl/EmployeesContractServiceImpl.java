@@ -345,12 +345,12 @@ public class EmployeesContractServiceImpl
         /* 订单来源 */
         odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
 
-        /* 消费项目 */
-        odp.setConsumptionItems("包工服务");
-
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number);
+
+        /* 消费项目 */
+        odp.setConsumptionItems("2");
 
         /* 订单甲方 保洁员 */
         EmployeesContract ec = this.getById(dto.getContractId());

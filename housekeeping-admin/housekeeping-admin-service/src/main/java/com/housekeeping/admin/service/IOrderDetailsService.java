@@ -1,7 +1,9 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
+import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,5 +35,9 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
           String[] evaluates,
           String payType,
           String remarks) throws Exception;
+
+    R paymentCallback(PaymentCallbackDTO dto);
+
+    Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);
 
 }
