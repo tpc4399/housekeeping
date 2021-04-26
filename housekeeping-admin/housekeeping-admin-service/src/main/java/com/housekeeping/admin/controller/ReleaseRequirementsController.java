@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.service.IReleaseRequirementService;
 import com.housekeeping.common.annotation.Access;
@@ -32,10 +33,25 @@ public class ReleaseRequirementsController {
     }
 
     @Access({RolesEnum.USER_COMPANY})
-    @GetMapping
+    @GetMapping("/getAllRequirementsByCompany")
     @ApiOperation("【公司端】获取所有需求")
-    public R page(IPage page){
-        return releaseRequirementService.page(page);
+    public R page(Page page){
+        return releaseRequirementService.getAllRequirementsByCompany(page);
+    }
+
+    @Access({RolesEnum.USER_CUSTOMER})
+    @GetMapping("/getAllRequirements")
+    @ApiOperation("【家庭端】获取所有已发布的需求")
+    public R getAllReleaseRequirements(@RequestParam Integer cusId,
+                                       Page page){
+        return releaseRequirementService.getAllRequirement(cusId,page);
+    }
+
+    @Access({RolesEnum.USER_CUSTOMER})
+    @DeleteMapping
+    @ApiOperation("【家庭端】删除已发布的需求")
+    public R removedCusId(@RequestParam Integer id){
+        return releaseRequirementService.removedCusId(id);
     }
 
 }

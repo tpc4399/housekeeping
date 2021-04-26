@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * 需求单订单
@@ -33,7 +34,10 @@ public class DemandOrder extends Model<DemandOrder> {
     private String housingArea;                 /* 房屋面积 */
     private BigDecimal estimatedSalary;         /* 预计薪资 */
     private String code;                        /* 薪资货币代码 */
-
+    private LocalDate startDate;                /* 开始日期 */
+    private LocalDate endDate;                  /* 结束日期 */
+    private String week;                        /* 重复星期 */
+    private Integer status;                     /* 状态 */
     /* 定期服务时间安排见details */
 
 }

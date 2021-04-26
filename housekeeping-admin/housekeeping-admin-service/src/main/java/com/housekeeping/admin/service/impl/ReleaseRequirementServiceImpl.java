@@ -2,16 +2,16 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.entity.*;
+import com.housekeeping.admin.mapper.DemandOrderMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.DemandOrderDTO;
 import com.housekeeping.admin.vo.RulesWeekVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.SortListUtil;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,6 +40,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private IDemandOrderDetailsService demandOrderDetailsService;
     @Resource
     private ICustomerDetailsService customerDetailsService;
+    @Resource
+    private DemandOrderMapper demandOrderMapper;
 
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
@@ -76,7 +78,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                 jobIdsStr.get(),
                 dto.getHousingArea(),
                 dto.getEstimatedSalary(),
-                dto.getCode()
+                dto.getCode(),
+                dto.getRulesWeekVo().getStart(),
+                dto.getRulesWeekVo().getEnd(),
+                dto.getRulesWeekVo().getWeek(),
+                0
         );
         Integer demandOrderId = 0;
         synchronized (this){
@@ -105,6 +111,92 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     public R page(IPage page) {
         return R.ok(demandOrderService.page(page), "獲取成功");
     }
+
+    @Override
+    public R getAllRequirement(Integer cusId, Page page) {
+        QueryWrapper qw = new QueryWrapper<DemandOrder>();
+        qw.eq("customer_id",cusId);
+        List<DemandOrder> list3 = demandOrderService.list(qw);
+        ArrayList<DemandOrderDTO> list = new ArrayList<>();
+        for (int i = 0; i < list3.size(); i++) {
+            DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+            demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
+            demandOrderDTO.setCode(list3.get(i).getCode());
+            demandOrderDTO.setEndDate(list3.get(i).getEndDate());
+            demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
+            demandOrderDTO.setHousingArea(list3.get(i).getHousingArea());
+            demandOrderDTO.setId(list3.get(i).getId());
+            demandOrderDTO.setJobIds(list3.get(i).getJobIds());
+            demandOrderDTO.setLiveAtHome(list3.get(i).getLiveAtHome());
+            demandOrderDTO.setNote(list3.get(i).getNote());
+            demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
+            demandOrderDTO.setStartDate(list3.get(i).getStartDate());
+            demandOrderDTO.setWeek(list3.get(i).getWeek());
+            demandOrderDTO.setStatus(list3.get(i).getStatus());
+            list.add(demandOrderDTO);
+        }
+        for (int i = 0; i < list.size(); i++) {
+            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
+            Integer demandId = list.get(i).getId();
+            List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
+            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
+                TimeSlot timeSlot = new TimeSlot();
+                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
+                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
+                timeSlots1.add(timeSlot);
+            }
+            list.get(i).setTimeSlots(timeSlots1);
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
+        return R.ok(pages);
+    }
+
+    @Override
+    public R getAllRequirementsByCompany(Page page) {
+        List<DemandOrder> list3 = demandOrderService.list();
+        ArrayList<DemandOrderDTO> list = new ArrayList<>();
+        for (int i = 0; i < list3.size(); i++) {
+            DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+            demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
+            demandOrderDTO.setCode(list3.get(i).getCode());
+            demandOrderDTO.setEndDate(list3.get(i).getEndDate());
+            demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
+            demandOrderDTO.setHousingArea(list3.get(i).getHousingArea());
+            demandOrderDTO.setId(list3.get(i).getId());
+            demandOrderDTO.setJobIds(list3.get(i).getJobIds());
+            demandOrderDTO.setLiveAtHome(list3.get(i).getLiveAtHome());
+            demandOrderDTO.setNote(list3.get(i).getNote());
+            demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
+            demandOrderDTO.setStartDate(list3.get(i).getStartDate());
+            demandOrderDTO.setWeek(list3.get(i).getWeek());
+            demandOrderDTO.setStatus(list3.get(i).getStatus());
+            list.add(demandOrderDTO);
+        }
+        for (int i = 0; i < list.size(); i++) {
+            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
+            Integer demandId = list.get(i).getId();
+            List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
+            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
+                TimeSlot timeSlot = new TimeSlot();
+                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
+                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
+                timeSlots1.add(timeSlot);
+            }
+            list.get(i).setTimeSlots(timeSlots1);
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
+        return R.ok(pages);
+    }
+
+    @Override
+    public R removedCusId(Integer id) {
+        demandOrderService.removeById(id);
+        QueryWrapper<DemandOrderDetails> qw = new QueryWrapper<>();
+        qw.eq("demand_order_id",id);
+        demandOrderDetailsService.remove(qw);
+        return R.ok("刪除成功!");
+    }
+
 
     List<String> rationalityJudgmentWeek(ReleaseRequirementBDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集

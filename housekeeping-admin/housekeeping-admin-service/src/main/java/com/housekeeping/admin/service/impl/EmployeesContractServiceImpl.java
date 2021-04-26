@@ -297,8 +297,10 @@ public class EmployeesContractServiceImpl
         for (int i = 0; i < jobIds.length; i++) {
             QueryWrapper<SysIndexContent> qw = new QueryWrapper<>();
             qw.eq("content_id",jobIds[i]);
-            SysIndexContent one = sysIndexContentService.getOne(qw);
-            index.add(one.getIndexId());
+            List<SysIndexContent> one = sysIndexContentService.list(qw);
+            for (int i1 = 0; i1 < one.size(); i1++) {
+                index.add(one.get(i1).getIndexId());
+            }
         }
 
         List<SysIndex> sysIndexList = sysIndexService.list();
