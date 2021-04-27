@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 /**
  * @Author su
  * @Date 2021/4/19 9:46
@@ -36,7 +38,7 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
           String payType,
           String remarks) throws Exception;
 
-    String paymentCallback(PaymentCallbackDTO dto);
+    String paymentCallback(PaymentCallbackDTO dto) throws IOException;
 
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);
 

@@ -53,4 +53,6 @@ public class PaymentCallbackDTO {
     private String verifyNumber;/* 交易認證電話 */
     private String midSmilePay; /* SmilePay 驗證碼(驗證是否由SmilePay送出的資料) */
 
+
+
 }

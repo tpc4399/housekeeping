@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.PaymentCallbackDTO;
@@ -23,10 +24,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -195,9 +196,28 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public String paymentCallback(PaymentCallbackDTO dto) {
+    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
         SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
         if (this.smilePayVerificationCode(dto1)) System.out.println("验证成功，确实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
+        else System.out.println("验证失败，不能证实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
+        System.out.println();
+
+        //1:使用File类创建一个要操作的文件路径
+        File file = new File(File.separator + "demo" + File.separator + dto.getDataId()+".json");
+        if(!file.getParentFile().exists()){ //如果文件的目录不存在
+            file.getParentFile().mkdirs(); //创建目录
+        }
+
+        //2: 实例化OutputString 对象
+        OutputStream output = new FileOutputStream(file);
+
+        //3: 准备好实现内容的输出
+        String msg = JSON.toJSONString(dto);
+        //将字符串变为字节数组
+        byte data[] = msg.getBytes();
+        output.write(data);
+        //4: 资源操作的最后必须关闭
+        output.close();
         return "OK";
     }
 
