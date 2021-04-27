@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * @Author su
@@ -63,7 +64,7 @@ public class OrderDetailsController {
 
     @ApiOperation("【用于三方支付】支付成功后的回调接口")
     @PostMapping("/paymentCallback")
-    public String paymentCallback(PaymentCallbackDTO dto){
+    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
         return orderDetailsService.paymentCallback(dto);
     }
 
