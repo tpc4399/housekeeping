@@ -117,6 +117,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+            redisTemplate.delete(key);
             redisTemplate.opsForHash().putAll(key, map2);
         }
         return R.ok(null, "操作成功");
@@ -142,6 +143,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        redisTemplate.delete(key);
         redisTemplate.opsForHash().putAll(key, map2);
         return R.ok(null, "更新成功");
     }
@@ -190,6 +192,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        redisTemplate.delete(key);
         redisTemplate.opsForHash().putAll(key, map2);
 
         return R.ok(null, "修改成功");
