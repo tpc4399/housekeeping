@@ -200,7 +200,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
         if (this.smilePayVerificationCode(dto1)) System.out.println("验证成功，确实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
         else System.out.println("验证失败，不能证实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
-        System.out.println();
 
         //1:使用File类创建一个要操作的文件路径
         File file = new File(File.separator + "demo" + File.separator + dto.getDataId()+".json");
