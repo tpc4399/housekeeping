@@ -61,10 +61,9 @@ public class OrderDetailsController {
         return R.ok(null, "上传成功");
     }
 
-    @ApiOperation("【客户】支付成功后的回调接口")
-    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【用于三方支付】支付成功后的回调接口")
     @PostMapping("/paymentCallback")
-    public R paymentCallback(PaymentCallbackDTO dto){
+    public String paymentCallback(PaymentCallbackDTO dto){
         return orderDetailsService.paymentCallback(dto);
     }
 

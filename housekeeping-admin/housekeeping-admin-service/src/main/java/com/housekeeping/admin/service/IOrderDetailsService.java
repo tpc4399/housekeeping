@@ -36,7 +36,7 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
           String payType,
           String remarks) throws Exception;
 
-    R paymentCallback(PaymentCallbackDTO dto);
+    String paymentCallback(PaymentCallbackDTO dto);
 
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);
 

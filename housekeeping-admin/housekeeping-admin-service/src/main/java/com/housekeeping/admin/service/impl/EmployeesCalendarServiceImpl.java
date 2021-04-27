@@ -1039,7 +1039,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 }
             }
         }
-        return todayPrice;
+        return todayPrice.setScale(0, BigDecimal.ROUND_HALF_UP);
     }
 
     public BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails){
@@ -1048,7 +1048,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             totalPrice = totalPrice.add(x.getTodayPrice());
         }
 
-        return totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
+        return totalPrice;
     }
 
     @Override

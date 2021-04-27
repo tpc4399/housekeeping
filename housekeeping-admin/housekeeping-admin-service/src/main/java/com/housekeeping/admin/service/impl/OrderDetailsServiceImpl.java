@@ -18,6 +18,7 @@ import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -194,9 +195,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public R paymentCallback(PaymentCallbackDTO dto) {
-
-        return null;
+    public String paymentCallback(PaymentCallbackDTO dto) {
+        SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
+        if (this.smilePayVerificationCode(dto1)) System.out.println("验证成功，确实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
+        return "OK";
     }
 
     @Override
@@ -235,7 +237,35 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
          * 將資料回送 Roturl 時之 Mid_smilepay 即為 213
          * */
 
+        String A = dto.getA();
+        String B = dto.getB();
+        Integer zeroLength = 8 - B.length();
+        for (int i = 0; i < zeroLength; i++) {
+            B = "0"+B;
+        }
+        String C = dto.getC();
+        C = C.substring(C.length()-4, C.length());
+        for (int i = 0; i < C.length(); i++) {
+            char x = C.charAt(i);
+            if (x < 48 || x > 57) C = C.replace(x+"", "9");
+        }
+        String D = A+B+C;
 
-        return null;
+
+        int eSum = 0;
+        for (int i = 1; i < D.length(); i+=2) {
+            eSum += Integer.valueOf(D.substring(i, i+1));
+        }
+        Integer E = eSum * 3;
+
+        int fSum = 0;
+        for (int i = 0; i < D.length(); i+=2) {
+            fSum += Integer.valueOf(D.substring(i, i+1));
+        }
+        Integer F = fSum * 9;
+        Integer value = E + F;
+
+        return value.toString().equals(dto.getCode());
     }
+
 }
