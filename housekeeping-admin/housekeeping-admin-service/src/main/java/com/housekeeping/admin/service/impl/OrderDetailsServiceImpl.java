@@ -101,24 +101,18 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            odp.setName2(na.getName());
-            odp.setPhone2(na.getPhone());
-            odp.setPhPrefix2(na.getPhPrefix());
-            odp.setAddress(na.getAddress());
-            odp.setLat(na.getLat());
-            odp.setLng(na.getLng());
+
+            redisTemplate.opsForHash().put(key, "name2", na.getName());
+            redisTemplate.opsForHash().put(key, "phone2", na.getPhone());
+            redisTemplate.opsForHash().put(key, "phPrefix2", na.getPhPrefix());
+            redisTemplate.opsForHash().put(key, "address", na.getAddress());
+            redisTemplate.opsForHash().put(key, "lat", na.getLat());
+            redisTemplate.opsForHash().put(key, "lng", na.getLng());
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime payDeadLine = now.plusHours(odp.getH());
-            odp.setUpdateDateTime(now);
-            odp.setPayDeadline(payDeadLine);
-            Map<String, Object> map2 = new HashMap<>();
-            try {
-                map2 = CommonUtils.objectToMap(odp);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            redisTemplate.delete(key);
-            redisTemplate.opsForHash().putAll(key, map2);
+            redisTemplate.opsForHash().put(key, "updateDateTime", now);
+            redisTemplate.opsForHash().put(key, "payDeadline", payDeadLine);
+
         }
         return R.ok(null, "操作成功");
     }
@@ -127,24 +121,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R updateOrder(Integer number, Integer employeesId) {
         LocalDateTime now = LocalDateTime.now();
         String key = "OrderToBePaid:employeesId" + employeesId + ":" + number;
-        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
         OrderDetailsPOJO odp = null;
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
         try {
             odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
         LocalDateTime payDeadLine = now.plusHours(odp.getH());
-        odp.setUpdateDateTime(now);
-        odp.setPayDeadline(payDeadLine);
-        Map<String, Object> map2 = new HashMap<>();
-        try {
-            map2 = CommonUtils.objectToMap(odp);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        redisTemplate.delete(key);
-        redisTemplate.opsForHash().putAll(key, map2);
+        redisTemplate.opsForHash().put(key, "updateDateTime", now);
+        redisTemplate.opsForHash().put(key, "payDeadline", payDeadLine);
+
         return R.ok(null, "更新成功");
     }
 
@@ -176,24 +163,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         });
 
         String key = "OrderToBePaid:employeesId" + employeesId + ":" + number;
-        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
-        OrderDetailsPOJO odp = null;
-        try {
-            odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        odp.setPhotos(pojoList);
-        odp.setPayType(payType);
-        odp.setRemarks(remarks);
-        Map<String, Object> map2 = new HashMap<>();
-        try {
-            map2 = CommonUtils.objectToMap(odp);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        redisTemplate.delete(key);
-        redisTemplate.opsForHash().putAll(key, map2);
+        redisTemplate.opsForHash().put(key, "payType", payType);
+        redisTemplate.opsForHash().put(key, "photos", pojoList);
+        redisTemplate.opsForHash().put(key, "remarks", remarks);
 
         return R.ok(null, "修改成功");
     }
