@@ -64,7 +64,7 @@ public class OrderDetailsController {
 
     @ApiOperation("【用于三方支付】支付成功后的回调接口")
     @PostMapping("/paymentCallback")
-    public String paymentCallback(@RequestBody PaymentCallbackDTO dto) throws IOException {
+    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
         return orderDetailsService.paymentCallback(dto);
     }
 
