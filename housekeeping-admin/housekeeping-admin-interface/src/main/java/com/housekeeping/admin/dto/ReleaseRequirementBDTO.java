@@ -13,8 +13,8 @@ import java.util.List;
  */
 @Data
 public class ReleaseRequirementBDTO {
-    private Integer addressId;   /* 地址 */
-    private String parentId;            /* 一级分类id */
+    private Integer addressId;              /* 地址 */
+    private String parentId;                /* 一级分类id */
     private List<Integer> jobs;             /* 被选中的工作内容标签 */
     private Integer serverPlaceType;        /* 服务场所类型  0住宿与交际 1洗浴与美容 2文化娱乐 3体育与游乐 4文化交流 5购物 6就诊与交通 7其它*/
     private String note;                    /* 备注 */

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class DemandEmployeesVo {
 
-    private DemandOrder demandOrder;
+    private DemandOrder demandOrder;                                    /* 报价单*/
 
-    private List<EmployeesDetails> employeesDetails;
+    private List<EmployeesDetailsDemandVo> employeesDetailsDemandVos;   /* 报价信息 */
 }

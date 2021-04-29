@@ -73,6 +73,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
+                dto.getAddressId(),
                 dto.getLiveAtHome(),
                 dto.getServerPlaceType(),
                 dto.getNote(),
@@ -231,6 +232,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         DemandOrder demandOrder = new DemandOrder(
                 dto.getId(),
                 customerId,
+                dto.getAddressId(),
                 dto.getLiveAtHome(),
                 dto.getServerPlaceType(),
                 dto.getNote(),

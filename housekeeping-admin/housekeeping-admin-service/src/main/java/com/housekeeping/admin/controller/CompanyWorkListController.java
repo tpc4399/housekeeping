@@ -75,6 +75,13 @@ public class CompanyWorkListController {
         return companyWorkListService.selectSuitableEmployees(employeesId, demandOrderId,price);
     }
 
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改报价单价格")
+    @GetMapping("/changePrice")
+    public R changePrice(@RequestParam String quotationId,@RequestParam Integer price){
+        return companyWorkListService.changePrice(quotationId,price);
+    }
+
 
     @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【客户】确定报价，将其添加到待付款订单")

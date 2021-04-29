@@ -12,6 +12,7 @@ import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.DemandEmployeesVo;
+import com.housekeeping.admin.vo.EmployeesDetailsDemandVo;
 import com.housekeeping.admin.vo.QuotationVo;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.CommonConstants;
@@ -20,12 +21,14 @@ import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import com.sun.org.apache.regexp.internal.RE;
 import org.omg.CORBA.portable.Delegate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Author su
@@ -58,6 +61,12 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private DemandOrderMapper demandOrderMapper;
     @Resource
     private IOrderIdService orderIdService;
+    @Resource
+    private ICustomerAddressService customerAddressService;
+    @Resource
+    private RedisTemplate redisTemplate;
+    @Resource
+    private IOrderDetailsService orderDetailsService;
     /*@Override
     public R beInterested(Integer demandOrderId) {
         Integer userId = TokenUtils.getCurrentUserId();
@@ -175,7 +184,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     public R getInterestedByManager() {
         Integer userId = TokenUtils.getCurrentUserId();
         List<Integer> demandIds = demandEmployeesMapper.getAllDemandIds(userId);
-        ArrayList<DemandEmployeesVo> demandEmployeesVos = new ArrayList<>();
+        List<DemandEmployeesVo> demandEmployeesVos = new ArrayList<>();
         if(CommonUtils.isNotEmpty(demandIds)){
             for (int i = 0; i < demandIds.size(); i++) {
                 DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
@@ -184,11 +193,56 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 qw.eq("demand_order_id",demandIds.get(i));
                 qw.eq("user_id",userId);
                 List<DemandEmployees> list = demandEmployeesService.list(qw);
-                List<EmployeesDetails> employeesDetails = new ArrayList<>();
+                List<EmployeesDetailsDemandVo> employeesDetails = new ArrayList<>();
                 for (int i1 = 0; i1 < list.size(); i1++) {
-                    employeesDetails.add(employeesDetailsService.getById(list.get(i).getEmployeesId()));
+                    EmployeesDetails byId = employeesDetailsService.getById(list.get(i).getEmployeesId());
+                    EmployeesDetailsDemandVo employeesDetailsDemandVo = new EmployeesDetailsDemandVo();
+                    employeesDetailsDemandVo.setStatus(list.get(i).getStatus());
+                    employeesDetailsDemandVo.setAccountLine(byId.getAccountLine());
+                    employeesDetailsDemandVo.setAddress1(byId.getAddress1());
+                    employeesDetailsDemandVo.setAddress2(byId.getAddress2());
+                    employeesDetailsDemandVo.setAddress3(byId.getAddress3());
+                    employeesDetailsDemandVo.setAddress4(byId.getAddress4());
+                    List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
+                    employeesDetailsDemandVo.setWorkDetailsPOJOList(serviceTimeByEmployees);
+                    BigDecimal price = this.getPrice(serviceTimeByEmployees, list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
+                    if(CommonUtils.isEmpty(list.get(i).getPrice())){
+                        employeesDetailsDemandVo.setPrice(price);
+                    }else {
+                        employeesDetailsDemandVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
+                    }
+                    employeesDetailsDemandVo.setBlacklistFlag(byId.getBlacklistFlag());
+                    employeesDetailsDemandVo.setCompanyId(byId.getCompanyId());
+                    employeesDetailsDemandVo.setCreateTime(byId.getCreateTime());
+                    employeesDetailsDemandVo.setDateOfBirth(byId.getDateOfBirth());
+                    employeesDetailsDemandVo.setDescribes(byId.getDescribes());
+                    employeesDetailsDemandVo.setEducationBackground(byId.getEducationBackground());
+                    employeesDetailsDemandVo.setEmail(byId.getEmail());
+                    employeesDetailsDemandVo.setEngName(byId.getEngName());
+                    employeesDetailsDemandVo.setWorkYear(byId.getWorkYear());
+                    employeesDetailsDemandVo.setWorkingArea(byId.getWorkingArea());
+                    employeesDetailsDemandVo.setUserId(byId.getUserId());
+                    employeesDetailsDemandVo.setUpdateTime(byId.getUpdateTime());
+                    employeesDetailsDemandVo.setTags(byId.getTags());
+                    employeesDetailsDemandVo.setStarRating(byId.getStarRating());
+                    employeesDetailsDemandVo.setSex(byId.getSex());
+                    employeesDetailsDemandVo.setScopeOfOrder(byId.getScopeOfOrder());
+                    employeesDetailsDemandVo.setRecordOfFormalSchooling(byId.getRecordOfFormalSchooling());
+                    employeesDetailsDemandVo.setPresetJobIds(byId.getPresetJobIds());
+                    employeesDetailsDemandVo.setPhoneUrl(byId.getPhoneUrl());
+                    employeesDetailsDemandVo.setPhonePrefix(byId.getPhonePrefix());
+                    employeesDetailsDemandVo.setNumberOfOrders(byId.getNumberOfOrders());
+                    employeesDetailsDemandVo.setName(byId.getName());
+                    employeesDetailsDemandVo.setLng(byId.getLng());
+                    employeesDetailsDemandVo.setLat(byId.getLat());
+                    employeesDetailsDemandVo.setLastReviserId(byId.getLastReviserId());
+                    employeesDetailsDemandVo.setIdCard(byId.getIdCard());
+                    employeesDetailsDemandVo.setHeadUrl(byId.getHeadUrl());
+                    employeesDetailsDemandVo.setId(byId.getId());
+                    employeesDetailsDemandVo.setDemandEmployeesId(list.get(i).getId());
+                    employeesDetails.add(employeesDetailsDemandVo);
                 }
-                demandEmployeesVo.setEmployeesDetails(employeesDetails);
+                demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
                 demandEmployeesVos.add(demandEmployeesVo);
             }
         }
@@ -221,13 +275,59 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
             DemandOrder byId = demandOrderService.getById(integer);
             demandEmployeesVo.setDemandOrder(byId);
-            List<EmployeesDetails> employeesDetails = new ArrayList<>();
+            List<EmployeesDetailsDemandVo> employeesDetails = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if(list.get(i).getDemandOrderId().equals(integer)){
-                    employeesDetails.add(employeesDetailsService.getById(list.get(i).getEmployeesId()));
+
+                    EmployeesDetails employees = employeesDetailsService.getById(list.get(i).getEmployeesId());
+                    EmployeesDetailsDemandVo employeesDetailsDemandVo = new EmployeesDetailsDemandVo();
+                    employeesDetailsDemandVo.setStatus(list.get(i).getStatus());
+                    employeesDetailsDemandVo.setAccountLine(employees.getAccountLine());
+                    employeesDetailsDemandVo.setAddress1(employees.getAddress1());
+                    employeesDetailsDemandVo.setAddress2(employees.getAddress2());
+                    employeesDetailsDemandVo.setAddress3(employees.getAddress3());
+                    employeesDetailsDemandVo.setAddress4(employees.getAddress4());
+                    List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
+                    employeesDetailsDemandVo.setWorkDetailsPOJOList(serviceTimeByEmployees);
+                    BigDecimal price = this.getPrice(serviceTimeByEmployees, list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
+                    if(CommonUtils.isEmpty(list.get(i).getPrice())){
+                        employeesDetailsDemandVo.setPrice(price);
+                    }else {
+                        employeesDetailsDemandVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
+                    }
+                    employeesDetailsDemandVo.setBlacklistFlag(employees.getBlacklistFlag());
+                    employeesDetailsDemandVo.setCompanyId(employees.getCompanyId());
+                    employeesDetailsDemandVo.setCreateTime(employees.getCreateTime());
+                    employeesDetailsDemandVo.setDateOfBirth(employees.getDateOfBirth());
+                    employeesDetailsDemandVo.setDescribes(employees.getDescribes());
+                    employeesDetailsDemandVo.setEducationBackground(employees.getEducationBackground());
+                    employeesDetailsDemandVo.setEmail(employees.getEmail());
+                    employeesDetailsDemandVo.setEngName(employees.getEngName());
+                    employeesDetailsDemandVo.setWorkYear(employees.getWorkYear());
+                    employeesDetailsDemandVo.setWorkingArea(employees.getWorkingArea());
+                    employeesDetailsDemandVo.setUserId(employees.getUserId());
+                    employeesDetailsDemandVo.setUpdateTime(employees.getUpdateTime());
+                    employeesDetailsDemandVo.setTags(employees.getTags());
+                    employeesDetailsDemandVo.setStarRating(employees.getStarRating());
+                    employeesDetailsDemandVo.setSex(employees.getSex());
+                    employeesDetailsDemandVo.setScopeOfOrder(employees.getScopeOfOrder());
+                    employeesDetailsDemandVo.setRecordOfFormalSchooling(employees.getRecordOfFormalSchooling());
+                    employeesDetailsDemandVo.setPresetJobIds(employees.getPresetJobIds());
+                    employeesDetailsDemandVo.setPhoneUrl(employees.getPhoneUrl());
+                    employeesDetailsDemandVo.setPhonePrefix(employees.getPhonePrefix());
+                    employeesDetailsDemandVo.setNumberOfOrders(employees.getNumberOfOrders());
+                    employeesDetailsDemandVo.setName(employees.getName());
+                    employeesDetailsDemandVo.setLng(employees.getLng());
+                    employeesDetailsDemandVo.setLat(employees.getLat());
+                    employeesDetailsDemandVo.setLastReviserId(employees.getLastReviserId());
+                    employeesDetailsDemandVo.setIdCard(employees.getIdCard());
+                    employeesDetailsDemandVo.setHeadUrl(employees.getHeadUrl());
+                    employeesDetailsDemandVo.setId(employees.getId());
+                    employeesDetailsDemandVo.setDemandEmployeesId(list.get(i).getId());
+                    employeesDetails.add(employeesDetailsDemandVo);
                 }
             }
-            demandEmployeesVo.setEmployeesDetails(employeesDetails);
+            demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
             demandEmployeesVos.add(demandEmployeesVo);
         }
         return R.ok(demandEmployeesVos);
@@ -280,6 +380,14 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         return bigDecimal;
     }
 
+    public Float hOfDay(List<TimeSlot> timeSlots) {
+        AtomicReference<Float> h  = new AtomicReference<>(new Float(0));
+        timeSlots.forEach(timeSlot -> {
+            h.set(h.get() + timeSlot.getTimeSlotLength());
+        });
+        return h.get();
+    }
+
     @Override
     public R confirmDemand(Integer quotationId) {
 
@@ -287,6 +395,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         DemandEmployees byId = demandEmployeesService.getById(quotationId);
         //需求单
         DemandOrder demandOrder = demandOrderService.getById(byId.getDemandOrderId());
+        if(demandOrder.getStatus().equals(1)){
+            return R.failed("该订单已接，请勿重复确认!");
+        }
 
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
@@ -316,10 +427,78 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         odp.setInvoiceName(cod.getInvoiceName());
         odp.setInvoiceNumber(cod.getInvoiceNumber());
 
+        /* 订单乙方 客户 */
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        CustomerAddress ca = customerAddressService.getById(demandOrder.getAddressId());
+        odp.setCustomerId(cd.getId());
+        odp.setName2(cd.getName());
+        odp.setPhPrefix2(ca.getPhonePrefix());
+        odp.setPhone2(ca.getPhone());
 
-        return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
+        /* 订单工作内容 */
+        String jobIds = demandOrder.getJobIds();
+        odp.setJobIds(jobIds);
+
+        /* 地址 */
+        odp.setAddress(ca.getAddress());
+        odp.setLat(new Float(ca.getLat()));
+        odp.setLng(new Float(ca.getLng()));
 
 
+        /* 工作时间安排 */
+        List<WorkDetailsPOJO> wds = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
+        odp.setWorkDetails(wds);
+
+        /* 可工作天数计算 */
+        Integer days = employeesCalendarService.days(wds);
+        odp.setDays(days);
+
+        List<TimeSlot> times = demandOrderMapper.getTimes(byId.getDemandOrderId());
+        /* 每日工作时长计算 */
+        Float h = this.hOfDay(times);
+        odp.setHOfDay(h);
+
+        /* 原价格计算 */
+        BigDecimal pdb = this.getPrice(wds,byId.getDemandOrderId(), byId.getEmployeesId());
+        odp.setPriceBeforeDiscount(pdb);
+        odp.setPriceAfterDiscount(pdb);
+
+        /* 订单状态 */
+        odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态
+
+        /* 订单生成时间 */
+        odp.setStartDateTime(now);
+        odp.setUpdateDateTime(now);
+
+        /* 订单截止付款时间 保留时间 */
+        Integer hourly = orderDetailsService.orderRetentionTime(byId.getEmployeesId());
+        LocalDateTime payDeadline = now.plusHours(hourly);
+        odp.setPayDeadline(payDeadline);
+        odp.setH(hourly);
+
+        String key = "OrderToBePaid:employeesId"+byId.getEmployeesId()+":" + number;
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map = CommonUtils.objectToMap(odp);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        redisTemplate.opsForHash().putAll(key, map);
+
+        demandOrder.setStatus(1);
+        demandOrderService.updateById(demandOrder);
+
+        return R.ok(new ConfirmOrderPOJO(odp), "确认报价成功");
+
+
+    }
+
+    @Override
+    public R changePrice(String quotationId, Integer price) {
+        DemandEmployees byId = demandEmployeesService.getById(quotationId);
+        byId.setPrice(price);
+        demandEmployeesService.updateById(byId);
+        return R.ok("修改成功");
     }
 
 

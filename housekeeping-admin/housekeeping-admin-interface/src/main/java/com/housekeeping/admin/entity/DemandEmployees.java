@@ -19,7 +19,7 @@ public class DemandEmployees extends Model<DemandEmployees> {
     private Integer userId;                 /* 添加保洁员到需求单的用户id */
     private Integer employeesId;            /* 被添加到需求单的员工id */
     private Integer demandOrderId;          /* 需求单id */
-    private Integer status;                 /* 客户支付状态（0未支付 1已支付） */
+    private Integer status;                 /* 客户确认状态（0未确认 1已确认） */
     private Integer readStatus;             /* 已读未读状态 （0未读 1已读）*/
     private Integer price;                  /* 价格 */
     private LocalDateTime createTime;       /* 创建时间 */
