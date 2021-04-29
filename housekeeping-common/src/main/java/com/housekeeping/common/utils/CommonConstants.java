@@ -113,6 +113,8 @@ public interface CommonConstants {
 	Integer ORDER_ORIGIN_CALENDAR = new Integer(0);
 	/** 订单来源——包工 */
 	Integer ORDER_ORIGIN_CONTRACT = new Integer(1);
+	/** 订单来源——需求单 */
+	Integer ORDER_ORIGIN_DEMAND = new Integer(2);
 	/** 三方支付：商家验证参数 */
 	String PAY_RVG2C = "1974";
 

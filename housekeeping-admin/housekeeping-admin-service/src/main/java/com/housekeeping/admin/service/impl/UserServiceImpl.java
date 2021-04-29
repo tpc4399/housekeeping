@@ -196,12 +196,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
                         //把地址存為經緯度
                         CustomerAddress customerAddress = new CustomerAddress();
-                        customerAddress.setCustomerId(maxUserId);
+
+                        QueryWrapper queryWrapper = new QueryWrapper();
+                        queryWrapper.eq("user_id", maxUserId);
+                        CustomerDetails newCustomerDetails = customerDetailsService.getOne(queryWrapper);
+
+                        customerAddress.setCustomerId(newCustomerDetails.getId());
                         customerAddress.setIsDefault(true);
                         customerAddress.setName("註冊地址");
                         customerAddress.setAddress(dto.getAddress());
                         customerAddress.setLng(dto.getLng());
                         customerAddress.setLat(dto.getLat());
+                        customerAddress.setPhone(dto.getPhone());
                         customerAddressService.save(customerAddress);
                     } else {
                         return R.failed("兩次密碼不一致");

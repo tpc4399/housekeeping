@@ -30,43 +30,58 @@ public class CompanyWorkListController {
 
     private final ICompanyWorkListService companyWorkListService;
 
-    @Access(RolesEnum.USER_COMPANY)
+    /*@Access(RolesEnum.USER_COMPANY)
     @ApiOperation("【公司】第一步：感興趣操作接口")
     @GetMapping("/beInterested/{demandOrderId}")
     public R beInterested(@PathVariable Integer demandOrderId){
-        /* 添加需求订单到感兴趣列表 */
+        *//* 添加需求订单到感兴趣列表 *//*
         return companyWorkListService.beInterested(demandOrderId);
-    }
+    }*/
 
     @Access(RolesEnum.USER_COMPANY)
-    @ApiOperation("【公司】第二步：获取合适的保洁员")
-    @GetMapping("/suitableEmployees/{demandOrderId}")
-    public R suitableEmployees(@PathVariable Integer demandOrderId){
-        /* 生成每个员工的临时订单，返回筛选后的员工ids */
-        return companyWorkListService.suitableEmployees(demandOrderId);
+    @ApiOperation("【公司】查看已参与的需求单")
+    @GetMapping("/getInterestedByCompany")
+    public R getInterestedByCompany(){
+        return companyWorkListService.getInterestedByCompany();
     }
 
-    @Access(RolesEnum.USER_COMPANY)
-    @ApiOperation("【公司】第三步：选择合适的保洁员")
-    @GetMapping("/selectSuitableEmployees")
-    public R selectSuitableEmployees(String employeesId, Integer demandOrderId){
-        /* 存储该保洁员的的临时订单 */
-        return companyWorkListService.selectSuitableEmployees(employeesId, demandOrderId);
-    }
-
-    @Access(RolesEnum.USER_COMPANY)
-    @ApiOperation("【公司】第四步：针对这个需求订单发起聊天")
-    @GetMapping("/initiateChat/{demandOrderId}")
-    public R initiateChat(@PathVariable String demandOrderId){
-        /* 发起聊天 */
-        return companyWorkListService.initiateChat(demandOrderId);
+    @Access(RolesEnum.USER_MANAGER)
+    @ApiOperation("【经理】查看已参与的需求单")
+    @GetMapping("/getInterestedByManager")
+    public R getInterestedByManager(){
+        return companyWorkListService.getInterestedByManager();
     }
 
     @Access(RolesEnum.USER_CUSTOMER)
-    @ApiOperation("【客户】请求发送临时订单")
-    @GetMapping("/requestToSendTemporaryOrder")
-    public R requestToSendTemporaryOrder(Integer demandOrderId, Integer companyId){
-        return companyWorkListService.requestToSendTemporaryOrder(demandOrderId, companyId);
+    @ApiOperation("【客户】查看感兴趣的报价单列表")
+    @GetMapping("/getAllInterestedEmployees")
+    public R getAllInterestedEmployees(@RequestParam Integer demandOrderId){
+        return companyWorkListService.getAllInterestedEmployees(demandOrderId);
     }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】第一步：获取保洁员(type 0公司 1经理)")
+    @GetMapping("/suitableEmployees")
+    public R suitableEmployees(@RequestParam Integer userId,@RequestParam Integer typeId){
+        /* 根据客户需求,返回筛选后的员工ids */
+        return companyWorkListService.suitableEmployees(userId,typeId);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】第二步：选择合适的保洁员")
+    @GetMapping("/selectSuitableEmployees")
+    public R selectSuitableEmployees(@RequestParam String employeesId,@RequestParam Integer demandOrderId,Integer price){
+        /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
+        return companyWorkListService.selectSuitableEmployees(employeesId, demandOrderId,price);
+    }
+
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】确定报价，将其添加到待付款订单")
+    @GetMapping("/confirmDemand")
+    public R confirmDemand(@RequestParam Integer quotationId){
+        return companyWorkListService.confirmDemand(quotationId);
+    }
+
 
 }

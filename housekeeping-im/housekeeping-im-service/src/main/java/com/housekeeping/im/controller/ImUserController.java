@@ -75,10 +75,10 @@ public class ImUserController {
     }
 
     @GetMapping("/addGroupByCus")
-    @ApiOperation("公司或经理对客户发起群聊(需要匹配到的员工id)")
-    public R createGroupByCus(@RequestParam String toId,
+    @ApiOperation("公司或经理通过报价单对客户发起群聊(需要匹配到的员工id)")
+    public R createGroupByCus(@RequestParam String demandId,
                               @RequestParam String empId){
-        return imUserService.createGroupByCus(toId,empId);
+        return imUserService.createGroupByCus(demandId,empId);
     }
 
 }

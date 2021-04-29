@@ -24,4 +24,6 @@ public interface ManagerDetailsMapper extends BaseMapper<ManagerDetails> {
     List<Integer> getManIdsByCompId(Integer id);
 
     List<ManagerVo> getAllManagerByAdmin(@Param("query")PageOfManagerDTO pageOfEmployeesDTO);
+
+    List<Integer> getAllUserIdByCompanyId(Integer companyId);
 }

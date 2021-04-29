@@ -195,19 +195,22 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     }
 
     @Override
-    public R createGroupByCus(String toId, String empId) {
+    public R createGroupByCus(String demandId, String empId) {
+
         String currentUserId = TokenUtils.getCurrentUserId().toString();
         ImChatGroup imChatGroup = new ImChatGroup();
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
         imChatGroup.setCreateDate(LocalDateTime.now());
-        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
+        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(empId));
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
 
+        Integer cusId = baseMapper.getCusIdByDemand(demandId);
+        Integer userId = baseMapper.getUSerIdByEmpId(empId);
         ArrayList<String> strings = new ArrayList<>();
         strings.add(currentUserId);
-        strings.add(toId);
-        strings.add(empId);
+        strings.add(cusId.toString());
+        strings.add(userId.toString());
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         for (int i = 0; i < strings.size(); i++) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();

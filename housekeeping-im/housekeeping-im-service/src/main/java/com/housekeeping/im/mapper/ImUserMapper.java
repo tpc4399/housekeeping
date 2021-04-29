@@ -50,4 +50,8 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     String managerHeadUrl(Integer userId);
 
     String customerHeadUrl(Integer userId);
+
+    Integer getCusIdByDemand(String demandId);
+
+    Integer getUSerIdByEmpId(String empId);
 }
