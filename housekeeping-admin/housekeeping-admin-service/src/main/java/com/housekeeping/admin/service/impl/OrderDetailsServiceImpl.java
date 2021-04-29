@@ -6,16 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.CustomerAddress;
-import com.housekeeping.admin.entity.NotificationOfRequestForChangeOfAddress;
-import com.housekeeping.admin.entity.OrderDetails;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
-import com.housekeeping.admin.service.ICustomerAddressService;
-import com.housekeeping.admin.service.INotificationOfRequestForChangeOfAddressService;
-import com.housekeeping.admin.service.IOrderDetailsService;
+import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -32,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -52,6 +48,12 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ICustomerAddressService customerAddressService;
     @Resource
     private INotificationOfRequestForChangeOfAddressService notificationOfRequestForChangeOfAddressService;
+    @Resource
+    private IOrderDetailsService orderDetailsService;
+    @Resource
+    private IOrderPhotosService orderPhotosService;
+    @Resource
+    private IWorkDetailsService workDetailsService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -172,26 +174,26 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
-        SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
-        if (this.smilePayVerificationCode(dto1)) System.out.println("验证成功，确实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
-        else System.out.println("验证失败，不能证实是Smile发送来的支付成功信息，订单编号是"+dto.getDataId());
-
-        //1:使用File类创建一个要操作的文件路径
-        File file = new File(File.separator + "demo" + File.separator + dto.getDataId()+".json");
-        if(!file.getParentFile().exists()){ //如果文件的目录不存在
-            file.getParentFile().mkdirs(); //创建目录
-        }
-
-        //2: 实例化OutputString 对象
-        OutputStream output = new FileOutputStream(file);
-
-        //3: 准备好实现内容的输出
-        String msg = JSON.toJSONString(dto);
-        //将字符串变为字节数组
-        byte data[] = msg.getBytes();
-        output.write(data);
-        //4: 资源操作的最后必须关闭
-        output.close();
+        System.out.println(LocalDateTime.now() + "  " + dto.toString());
+//        SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
+//        System.out.println("订单编号是"+dto.getDataId());
+//
+//        //1:使用File类创建一个要操作的文件路径
+//        File file = new File(File.separator + "demo" + File.separator + dto.getDataId()+".json");
+//        if(!file.getParentFile().exists()){ //如果文件的目录不存在
+//            file.getParentFile().mkdirs(); //创建目录
+//        }
+//
+//        //2: 实例化OutputString 对象
+//        OutputStream output = new FileOutputStream(file);
+//
+//        //3: 准备好实现内容的输出
+//        String msg = JSON.toJSONString(dto);
+//        //将字符串变为字节数组
+//        byte data[] = msg.getBytes();
+//        output.write(data);
+//        //4: 资源操作的最后必须关闭
+//        output.close();
         return "OK";
     }
 
@@ -260,6 +262,42 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         Integer value = E + F;
 
         return value.toString().equals(dto.getCode());
+    }
+
+    @Override
+    public Long toBePaid(Long number, Integer employeesId) {
+        String key = "OrderToBePaid:employeesId" + employeesId + ":" + number;
+        OrderDetailsPOJO odp = null;
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+        try {
+            odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        OrderDetails od = new OrderDetails(odp);
+        List<OrderPhotos> ops = orderPhotos(odp);
+        List<WorkDetails> wds = workDetails(odp);
+        orderDetailsService.save(od);
+        if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
+        if (CommonUtils.isNotEmpty(wds)) workDetailsService.saveBatch(wds);
+        return number;
+    }
+
+    private List<OrderPhotos> orderPhotos(OrderDetailsPOJO pojo){
+        if (CommonUtils.isEmpty(pojo.getPhotos())) return new ArrayList<>();
+        List<OrderPhotos> ops = pojo.getPhotos().stream().map(x -> {
+            return new OrderPhotos(null, pojo.getNumber(), x.getPhotoUrl(), x.getEvaluate());
+        }).collect(Collectors.toList());
+        return ops;
+    }
+
+    private List<WorkDetails> workDetails(OrderDetailsPOJO pojo){
+        if (CommonUtils.isEmpty(pojo.getWorkDetails())) return new ArrayList<>();
+        List<WorkDetails> wds = pojo.getWorkDetails().stream().map(x -> {
+            if (x.getCanBeOnDuty()) return new WorkDetails(null, pojo.getNumber(), x.getDate(), x.getWeek(), null);
+            return null;
+        }).collect(Collectors.toList());
+        return wds;
     }
 
 }

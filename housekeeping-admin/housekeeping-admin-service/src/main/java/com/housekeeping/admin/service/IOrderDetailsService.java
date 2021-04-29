@@ -40,6 +40,10 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
 
     String paymentCallback(PaymentCallbackDTO dto) throws IOException;
 
+    /* 参数验证 */
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);
+
+    /* 订单保存到mysql，作永久存储,用于订单状态变为"已支付"状态调用 */
+    Long toBePaid(Long number, Integer employeesId);
 
 }

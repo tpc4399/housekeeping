@@ -53,6 +53,33 @@ public class PaymentCallbackDTO {
     private String verifyNumber;/* 交易認證電話 */
     private String midSmilePay; /* SmilePay 驗證碼(驗證是否由SmilePay送出的資料) */
 
-
-
+    @Override
+    public String toString() {
+        return "PaymentCallbackDTO{" +
+                "classIf='" + classIf + '\'' +
+                ", classIfSub='" + classIfSub + '\'' +
+                ", odSob='" + odSob + '\'' +
+                ", dataId='" + dataId + '\'' +
+                ", processDate='" + processDate + '\'' +
+                ", processTime='" + processTime + '\'' +
+                ", responseId='" + responseId + '\'' +
+                ", authCode='" + authCode + '\'' +
+                ", lastPan='" + lastPan + '\'' +
+                ", paymentNo='" + paymentNo + '\'' +
+                ", purchase='" + purchase + '\'' +
+                ", amount='" + amount + '\'' +
+                ", errReason='" + errReason + '\'' +
+                ", name='" + name + '\'' +
+                ", tel='" + tel + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", email='" + email + '\'' +
+                ", invoiceNum='" + invoiceNum + '\'' +
+                ", remark='" + remark + '\'' +
+                ", smileId='" + smileId + '\'' +
+                ", foreign='" + foreign + '\'' +
+                ", verifyNumber='" + verifyNumber + '\'' +
+                ", midSmilePay='" + midSmilePay + '\'' +
+                '}';
+    }
 }

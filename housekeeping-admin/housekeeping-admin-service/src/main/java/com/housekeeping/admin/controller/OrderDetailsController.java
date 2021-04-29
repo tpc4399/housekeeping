@@ -64,8 +64,15 @@ public class OrderDetailsController {
 
     @ApiOperation("【用于三方支付】支付成功后的回调接口")
     @PostMapping("/paymentCallback")
-    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
+    public String paymentCallback(@RequestBody PaymentCallbackDTO dto) throws IOException {
         return orderDetailsService.paymentCallback(dto);
+    }
+
+    @ApiOperation("【测试】")
+    @GetMapping("/test")
+    public Long toBePaid(Long number, Integer employeesId){
+        orderDetailsService.toBePaid(number, employeesId);
+        return number;
     }
 
 }

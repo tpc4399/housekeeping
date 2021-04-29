@@ -40,7 +40,6 @@ public class OrderDetailsPOJO {
     private Float hOfDay;                       //每天的小时数
     private BigDecimal priceBeforeDiscount;     //优惠前的价格(台币元)
     private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
-    private List<Integer> discounts;            //参与到的优惠
     private String payType;                     //支付方式
     private List<OrderPhotoPOJO> photos;        //订单的照片一级评论
     private String remarks;                     //备注
@@ -59,8 +58,6 @@ public class OrderDetailsPOJO {
     private Integer orderOrigin;                //订单来源 0钟点工 1包工
 
     private LocalDateTime payDateTime;          //付款时间
-
-
     private LocalDateTime completionDateTime;   //完成时间
     private LocalDateTime fixDateTime;          //确认时间
     private LocalDateTime evaluationDateTime;   //评价时间

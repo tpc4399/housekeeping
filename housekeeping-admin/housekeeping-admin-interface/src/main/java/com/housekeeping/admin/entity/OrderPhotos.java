@@ -7,23 +7,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 /**
  * @Author su
- * @Date 2021/4/20 15:40
+ * @Date 2021/4/28 16:04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("work_details")
+@TableName("order_photos")
 @AllArgsConstructor
 @NoArgsConstructor
-public class WorkDetails extends Model<WorkDetails> {
+public class OrderPhotos extends Model<OrderPhotos> {
 
-    private Integer id;         /* 主键 */
-    private Long number;        /* 订单编号 */
-    private LocalDate date;     /* 日期 */
-    private Integer week;       /* 星期几 */
-    private String timeSlots;   /* 时段 */
+    private Integer id;
+    private Long number;      /* 订单编号 */
+    private String photoUrl;  //照片url
+    private String evaluate;  //照片评论
 
 }
