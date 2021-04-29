@@ -72,7 +72,7 @@ public class OrderDetails extends Model<OrderDetails> {
     private LocalDateTime evaluationDateTime;   //评价时间
 
     public OrderDetails(OrderDetailsPOJO pojo) {
-        this.number = pojo.getNumber();
+        this.number = Long.valueOf(pojo.getNumber());
         this.consumptionItems = pojo.getConsumptionItems();
         this.employeesId = pojo.getEmployeesId();
         this.name1 = pojo.getName1();

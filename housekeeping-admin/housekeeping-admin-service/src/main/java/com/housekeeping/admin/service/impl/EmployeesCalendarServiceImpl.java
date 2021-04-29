@@ -544,7 +544,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         /* 订单编号 */
         Long number = orderIdService.generateId();
-        odp.setNumber(number);
+        odp.setNumber(number.toString());
 
         /* 消费项目 */
         odp.setConsumptionItems("1");

@@ -286,7 +286,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private List<OrderPhotos> orderPhotos(OrderDetailsPOJO pojo){
         if (CommonUtils.isEmpty(pojo.getPhotos())) return new ArrayList<>();
         List<OrderPhotos> ops = pojo.getPhotos().stream().map(x -> {
-            return new OrderPhotos(null, pojo.getNumber(), x.getPhotoUrl(), x.getEvaluate());
+            return new OrderPhotos(null, Long.valueOf(pojo.getNumber()), x.getPhotoUrl(), x.getEvaluate());
         }).collect(Collectors.toList());
         return ops;
     }
@@ -294,7 +294,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private List<WorkDetails> workDetails(OrderDetailsPOJO pojo){
         if (CommonUtils.isEmpty(pojo.getWorkDetails())) return new ArrayList<>();
         List<WorkDetails> wds = pojo.getWorkDetails().stream().map(x -> {
-            if (x.getCanBeOnDuty()) return new WorkDetails(null, pojo.getNumber(), x.getDate(), x.getWeek(), null);
+            if (x.getCanBeOnDuty()) return new WorkDetails(null, Long.valueOf(pojo.getNumber()), x.getDate(), x.getWeek(), null);
             return null;
         }).collect(Collectors.toList());
         return wds;

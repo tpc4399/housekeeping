@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ConfirmOrderPOJO {
 
-    private Long number;                        //订单编号
+    private String number;                        //订单编号
     private String consumptionItems;            //消费项目
 
     private Integer companyId;                  //甲方保洁员所属公司
