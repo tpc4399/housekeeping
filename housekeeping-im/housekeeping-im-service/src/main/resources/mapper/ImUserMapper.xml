@@ -95,4 +95,22 @@
         WHERE
         user_id = #{userId}
     </select>
+
+    <select id="getCusIdByDemand" resultType="java.lang.Integer">
+        SELECT
+        customer_id
+        FROM
+        demand_order
+        WHERE
+        id = #{demandId}
+    </select>
+
+    <select id="getUSerIdByEmpId" resultType="java.lang.Integer">
+        SELECT
+        user_id
+        FROM
+        employees_details
+        WHERE
+        id = #{empId}
+    </select>
 </mapper>

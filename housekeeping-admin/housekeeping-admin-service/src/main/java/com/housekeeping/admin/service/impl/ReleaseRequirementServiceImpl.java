@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
+import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.DemandOrderMapper;
 import com.housekeeping.admin.service.*;
@@ -72,9 +73,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
+                dto.getAddressId(),
                 dto.getLiveAtHome(),
                 dto.getServerPlaceType(),
                 dto.getNote(),
+                dto.getParentId(),
                 jobIdsStr.get(),
                 dto.getHousingArea(),
                 dto.getEstimatedSalary(),
@@ -117,6 +120,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         QueryWrapper qw = new QueryWrapper<DemandOrder>();
         qw.eq("customer_id",cusId);
         List<DemandOrder> list3 = demandOrderService.list(qw);
+        if(CommonUtils.isEmpty(list3)){
+            return R.ok(null);
+        }
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
@@ -126,6 +132,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
             demandOrderDTO.setHousingArea(list3.get(i).getHousingArea());
             demandOrderDTO.setId(list3.get(i).getId());
+            demandOrderDTO.setParentId(list3.get(i).getParentId());
             demandOrderDTO.setJobIds(list3.get(i).getJobIds());
             demandOrderDTO.setLiveAtHome(list3.get(i).getLiveAtHome());
             demandOrderDTO.setNote(list3.get(i).getNote());
@@ -195,6 +202,74 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         qw.eq("demand_order_id",id);
         demandOrderDetailsService.remove(qw);
         return R.ok("刪除成功!");
+    }
+
+    @Override
+    public R updateCus(ReleaseRequirementUDTO dto) throws InterruptedException {
+        Integer userId = TokenUtils.getCurrentUserId();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        CustomerDetails existCustomer = customerDetailsService.getOne(qw);
+        Integer customerId = existCustomer.getId();
+
+        //TODO 服务时间合理性判断
+        List<String> resCollections = rationalityJudgmentWeek(dto);//不合理性结果收集
+        if (resCollections.size() != 0){
+            return R.failed(resCollections, "服務時間不合理");
+        }
+
+        //TODO 选中的工作内容标签
+        List<Integer> jobIds = dto.getJobs();
+
+        //TODO 服务时间二象化展开
+        Map<LocalDate, List<PeriodOfTime>> listMap =  timeExpansion(dto.getRulesWeekVo());
+
+        //TODO 生成订单+订单详情表记录存储
+        AtomicReference<String> jobIdsStr = new AtomicReference<>("");
+        jobIds.forEach(x -> {
+            jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
+        });
+        DemandOrder demandOrder = new DemandOrder(
+                dto.getId(),
+                customerId,
+                dto.getAddressId(),
+                dto.getLiveAtHome(),
+                dto.getServerPlaceType(),
+                dto.getNote(),
+                dto.getParentId(),
+                jobIdsStr.get(),
+                dto.getHousingArea(),
+                dto.getEstimatedSalary(),
+                dto.getCode(),
+                dto.getRulesWeekVo().getStart(),
+                dto.getRulesWeekVo().getEnd(),
+                dto.getRulesWeekVo().getWeek(),
+                dto.getStatus()
+        );
+        synchronized (this){
+            demandOrderService.updateById(demandOrder);
+        }
+        List<DemandOrderDetails> demandOrderDetails = new ArrayList<>();
+        Integer finalDemandOrderId = dto.getId();
+
+        QueryWrapper<DemandOrderDetails> qw3 = new QueryWrapper<>();
+        qw3.eq("demand_order_id",finalDemandOrderId);
+        demandOrderDetailsService.remove(qw3);
+
+        listMap.forEach((x, y) -> {
+            y.forEach(z -> {
+                DemandOrderDetails details = new DemandOrderDetails(
+                        null,
+                        finalDemandOrderId,
+                        x,
+                        z.getTimeSlotStart(),
+                        z.getTimeSlotLength()
+                );
+                demandOrderDetails.add(details);
+            });
+        });
+        demandOrderDetailsService.saveBatch(demandOrderDetails);
+        return R.ok("修改成功");
     }
 
 

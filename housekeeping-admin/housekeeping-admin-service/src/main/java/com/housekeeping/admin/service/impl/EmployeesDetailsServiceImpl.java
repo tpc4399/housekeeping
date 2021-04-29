@@ -13,6 +13,7 @@ import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.EmployeesDetailsWorkVo;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.EmployeesVo;
 import com.housekeeping.common.utils.*;
@@ -31,10 +32,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -616,6 +614,46 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         qw.eq("user_id", userId);
         EmployeesDetails employeesDetails = employeesDetailsService.getOne(qw);
         return employeesDetails.getId();
+    }
+
+    @Override
+    public R cusPage5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO) {
+        QueryWrapper<EmployeesDetails> queryWrapper = new QueryWrapper<>();
+
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getId())){
+            queryWrapper.eq("id", pageOfEmployeesDetailsDTO.getId());
+        }
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getName())){
+            queryWrapper.like("name", pageOfEmployeesDetailsDTO.getName());
+        }
+
+        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getAccountLine())){
+            queryWrapper.like("account_line", pageOfEmployeesDetailsDTO.getAccountLine());
+        }
+
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        queryWrapper.eq("company_id", companyId);
+
+        List<EmployeesDetails> employeesDetails = this.list(queryWrapper);
+
+        List<EmployeesDetailsWorkVo> employeesDetailsWorkVos = new ArrayList<>();
+        for (int i = 0; i < employeesDetails.size(); i++) {
+
+            EmployeesDetailsWorkVo employeesDetailsWorkVo = new EmployeesDetailsWorkVo();
+
+            employeesDetailsWorkVo.setEmployeesDetails(employeesDetails.get(i));
+
+            QueryWrapper<EmployeesWorkExperience> qw2 = new QueryWrapper<>();
+            qw2.eq("employees_id",employeesDetails.get(i).getId());
+            List<EmployeesWorkExperience> list = employeesWorkExperienceService.list(qw2);
+            employeesDetailsWorkVo.setEmployeesWorkExperiences(list);
+
+            employeesDetailsWorkVos.add(employeesDetailsWorkVo);
+        }
+
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), employeesDetailsWorkVos);
+        return R.ok(pages);
     }
 
 }

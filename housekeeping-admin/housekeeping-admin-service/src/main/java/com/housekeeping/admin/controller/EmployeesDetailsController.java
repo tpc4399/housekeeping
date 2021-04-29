@@ -164,5 +164,13 @@ public class EmployeesDetailsController {
         return employeesDetailsService.getAllEmployeesByAdmin(page, pageOfEmployeesDTO);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】查詢该公司所有員工(返回工作年限)")
+    @LogFlag(description = "查詢員工")
+    @GetMapping("/page5")
+    public R page5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO){
+        return employeesDetailsService.cusPage5(page, pageOfEmployeesDetailsDTO);
+    }
+
 
 }

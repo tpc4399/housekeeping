@@ -1,13 +1,11 @@
 package com.housekeeping.admin.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
-import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
@@ -63,4 +61,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     /* 根据保洁员userId快速获取employeesId (经常用到) */
     Integer getEmployeesIdByUserId(Integer userId);
+
+    R cusPage5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO);
 }

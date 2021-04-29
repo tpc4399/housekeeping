@@ -318,6 +318,11 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return R.ok(pages);
     }
 
+    @Override
+    public List<Integer> getAllUserIdByCompanyId(Integer companyId) {
+        return baseMapper.getAllUserIdByCompanyId(companyId);
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return
