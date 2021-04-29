@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.PaymentCallbackDTO;
+import com.housekeeping.admin.dto.PaymentCallbackParams;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.annotation.Access;
@@ -64,7 +65,8 @@ public class OrderDetailsController {
 
     @ApiOperation("【用于三方支付】支付成功后的回调接口")
     @PostMapping("/paymentCallback")
-    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
+    public String paymentCallback(PaymentCallbackParams params) throws IOException {
+        PaymentCallbackDTO dto = new PaymentCallbackDTO(params);
         return orderDetailsService.paymentCallback(dto);
     }
 
@@ -74,5 +76,4 @@ public class OrderDetailsController {
         orderDetailsService.toBePaid(number, employeesId);
         return number;
     }
-
 }

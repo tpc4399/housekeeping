@@ -26,6 +26,7 @@
         <module>housekeeping-interfaces</module>
         <module>housekeeping-im</module>
         <module>housekeeping-order</module>
+        <module>housekeeping-ecpay</module>
     </modules>
 
     <properties>

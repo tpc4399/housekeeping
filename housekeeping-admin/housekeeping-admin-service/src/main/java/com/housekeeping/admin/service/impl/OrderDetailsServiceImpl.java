@@ -174,7 +174,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
-        System.out.println(LocalDateTime.now() + "  " + dto.toString());
+        System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + dto.toString());
 //        SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
 //        System.out.println("订单编号是"+dto.getDataId());
 //

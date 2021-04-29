@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="housekeeping-auth-service" />
         <module name="housekeeping-interfaces" />
+        <module name="housekeeping-ecpay" />
         <module name="housekeeping-common" />
         <module name="housekeeping-order-interface" />
         <module name="housekeeping-gateway" />
@@ -32,6 +33,7 @@
       <module name="housekeeping-auth-interface" options="-parameters" />
       <module name="housekeeping-auth-service" options="-parameters" />
       <module name="housekeeping-common" options="-parameters" />
+      <module name="housekeeping-ecpay" options="-parameters" />
       <module name="housekeeping-gateway" options="-parameters" />
       <module name="housekeeping-im" options="-parameters" />
       <module name="housekeeping-im-interface" options="-parameters" />

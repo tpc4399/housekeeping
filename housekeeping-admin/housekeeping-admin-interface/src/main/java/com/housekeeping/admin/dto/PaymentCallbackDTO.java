@@ -1,12 +1,16 @@
 package com.housekeeping.admin.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author su
  * @Date 2021/4/26 10:24
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentCallbackDTO {
 
     private String classIf;     /* 付費方式
@@ -81,5 +85,32 @@ public class PaymentCallbackDTO {
                 ", verifyNumber='" + verifyNumber + '\'' +
                 ", midSmilePay='" + midSmilePay + '\'' +
                 '}';
+    }
+
+    public PaymentCallbackDTO(PaymentCallbackParams params) {
+        this.classIf = params.getClassif();
+        this.classIfSub = params.getClassif_sub();
+        this.odSob = params.getOd_sob();
+        this.dataId = params.getData_id();
+        this.processDate = params.getProcess_date();
+        this.processTime = params.getProcess_time();
+        this.responseId = params.getResponse_id();
+        this.authCode = params.getAuth_code();
+        this.lastPan = params.getLastPan();
+        this.paymentNo = params.getPayment_no();
+        this.purchase = params.getPurchamt();
+        this.amount = params.getAmount();
+        this.errReason = params.getErrdesc();
+        this.name = params.getPur_name();
+        this.tel = params.getTel_number();
+        this.phone = params.getMobile_number();
+        this.address = params.getAddress();
+        this.email = params.getEmail();
+        this.invoiceNum = params.getInvoice_num();
+        this.remark = params.getRemark();
+        this.smileId = params.getSmseid();
+        this.foreign = params.getForeign();
+        this.verifyNumber = params.getVerify_number();
+        this.midSmilePay = params.getMid_smilepay();
     }
 }
