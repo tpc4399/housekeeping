@@ -36,7 +36,7 @@ public class GroupDetailsController {
     public R saveGroup(@RequestBody GroupDetailsDTO groupDetailsDTO){
         return groupDetailsService.saveGroup(groupDetailsDTO);
     }
-    @Access({RolesEnum.USER_COMPANY})
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @PostMapping(value = "/addGroup2", headers = "content-type=multipart/form-data")
     @ApiOperation("【公司】【经理】新接口!新增分組")
     public R addGroup2(@RequestParam("headPortrait") MultipartFile headPortrait,
