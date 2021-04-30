@@ -34,4 +34,6 @@ public class QueryIndexDTO {
                                          7    接单次数优先              单次优先
                                     */
 
+    private List<Boolean> certified;  /* 0：已认证企业  1：个体户  */
+
 }

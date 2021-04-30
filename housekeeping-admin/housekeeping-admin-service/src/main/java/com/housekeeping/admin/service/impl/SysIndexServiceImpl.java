@@ -254,7 +254,7 @@ public class SysIndexServiceImpl
         List<IndexQueryResultEmployees> matchingEmployeesDetails = Collections.synchronizedList(new ArrayList<>());
 
         /** employeesSearchPool 员工搜索池 */
-        Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool();
+        Map<Integer, List<Integer>> employeesSearchPool = this.getEmployeesSearchPool(dto.getCertified());
 
         /** score 匹配方案的各项权重，分值 */
         Map<String, String> weight = sysConfigService.getScopeConfig(priorityType);
@@ -1088,12 +1088,37 @@ public class SysIndexServiceImpl
         return promoteEmployeeIds;
     }
 
-    Map<Integer, List<Integer>> getEmployeesSearchPool(){
+    Map<Integer, List<Integer>> getEmployeesSearchPool(List<Boolean> certified){
         Map<Integer, List<Integer>> employeesSearchPool = new HashMap<>();
         QueryWrapper qw1 = new QueryWrapper();
         qw1.select("employees_id").groupBy("employees_id");
         List<Integer> employeeIdsFromCalendar = employeesCalendarService.listObjs(qw1);
         List<Integer> employeeIdsFromContract = employeesContractService.listObjs(qw1);
+
+        employeeIdsFromCalendar.stream().filter(x -> {
+            if (certified.get(0) && certified.get(1)) return true;
+            EmployeesDetails ed = employeesDetailsService.getById(x);
+            CompanyDetails cd = companyDetailsService.getById(ed.getCompanyId());
+            Boolean isValidate = cd.getIsValidate();
+            if (certified.get(0) == false && isValidate == true) return false; //过滤掉已认证的保洁员
+            if (certified.get(1) == false && isValidate == false) return false; //过滤掉未认证的保洁员
+
+            //正常走不到这儿来
+            return true;
+        });
+
+        employeeIdsFromContract.stream().filter(x -> {
+            if (certified.get(0) && certified.get(1)) return true;
+            EmployeesDetails ed = employeesDetailsService.getById(x);
+            CompanyDetails cd = companyDetailsService.getById(ed.getCompanyId());
+            Boolean isValidate = cd.getIsValidate();
+            if (certified.get(0) == false && isValidate == true) return false; //过滤掉已认证的保洁员
+            if (certified.get(1) == false && isValidate == false) return false; //过滤掉未认证的保洁员
+
+            //正常走不到这儿来
+            return true;
+        });
+
         List<Integer> list1 = new ArrayList<>(employeeIdsFromCalendar);    //能做钟点工的保洁员
         List<Integer> list2 = new ArrayList<>(employeeIdsFromContract);    //能做包工的保洁员
         List<Integer> list3 = this.getUnion(list1, list2);                 //能做任一工种的保洁员
