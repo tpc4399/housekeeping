@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -540,6 +541,14 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (CommonUtils.isNotEmpty(groupIds1)) return true;
 
         return false;
+    }
+
+    @Override
+    public Boolean judgeEmployeesInCompany(Integer employeesId, Integer companyId) {
+        EmployeesDetails ed = this.baseMapper.selectById(employeesId);
+        if (CommonUtils.isEmpty(ed)) return false;
+        if (!ed.getCompanyId().equals(companyId)) return false;
+        return true;
     }
 
     @Override

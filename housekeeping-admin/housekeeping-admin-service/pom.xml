@@ -87,7 +87,12 @@
             <artifactId>google-maps-services</artifactId>
             <version>0.9.4</version>
         </dependency>
-
+        <!-- 三方支付集成 -->
+        <dependency>
+            <groupId>com.housekeeping.parent</groupId>
+            <artifactId>housekeeping-ecpay</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

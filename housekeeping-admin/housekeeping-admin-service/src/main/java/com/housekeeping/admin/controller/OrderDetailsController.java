@@ -7,6 +7,8 @@ import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
+import ecpay.payment.integration.AllInOne;
+import ecpay.payment.integration.domain.InvoiceObj;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,8 @@ public class OrderDetailsController {
 
     @Resource
     private IOrderDetailsService orderDetailsService;
+    @Resource
+    private AllInOne allInOne;
 
     @ApiOperation("【客户】确认订单——请求修改服务地址(需要保洁员同意才能修改成功)")
     @Access(RolesEnum.USER_CUSTOMER)
@@ -76,4 +80,12 @@ public class OrderDetailsController {
         orderDetailsService.toBePaid(number, employeesId);
         return number;
     }
+
+    @ApiOperation("【客户】信用卡支付调用接口")
+    @GetMapping("/cardPay")
+    public R cardPay(){
+        allInOne.aioCheckOut(new Object(), new InvoiceObj());
+        return R.ok();
+    }
+
 }

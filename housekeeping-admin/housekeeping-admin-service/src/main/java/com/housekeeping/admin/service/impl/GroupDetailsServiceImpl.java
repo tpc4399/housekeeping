@@ -8,10 +8,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.GroupDetailsDTO;
 import com.housekeeping.admin.dto.GroupDetailsUpdateDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.GroupDetails;
-import com.housekeeping.admin.entity.ManagerDetails;
+import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.GroupDetailsMapper;
+import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
@@ -19,6 +18,7 @@ import com.housekeeping.admin.vo.EmployeesVo;
 import com.housekeeping.admin.vo.GroupDetailsVo;
 import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,9 +44,11 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     @Resource
     private GroupManagerServiceImpl groupManagerService;
     @Resource
-    private GroupEmployeesServiceImpl groupEmployeesServiceImpl;
+    private GroupEmployeesServiceImpl groupEmployeesService;
     @Resource
     private ManagerDetailsService managerDetailsService;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
     @Resource
     private OSSClient ossClient;
 
@@ -173,7 +175,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
                 groupVO.setGroupName(list.get(i).getGroupName());
                 groupVO.setHeadUrl(list.get(i).getHeadUrl());
                 groupVO.setManNum(groupManagerService.count(list.get(i).getId()));
-                groupVO.setEmpNum(groupEmployeesServiceImpl.count(list.get(i).getId()));
+                groupVO.setEmpNum(groupEmployeesService.count(list.get(i).getId()));
                 List<Integer> manIds = groupManagerService.getManIdsByGroupId(list.get(i).getId());
                 StringBuilder sb = new StringBuilder();
                 if(CollectionUtils.isEmpty(manIds)){
@@ -257,6 +259,92 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupDetailsVos);
         return R.ok(pages);
+    }
+
+    @Override
+    public R addGroup2(MultipartFile headPortrait, String name, Integer[] managerIds, Integer[] employeesIds) {
+        Integer companyId = 0;
+        Integer userId = TokenUtils.getCurrentUserId();
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)) {
+            if (managerIds.length == 0) return R.failed(null, "公司端新增組必須增加至少一個管理者");
+            companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            companyId = managerDetailsService.getCompanyIdByManagerId(userId);
+        }
+
+        /* 判斷經理存在性 */
+        for (int i = 0; i < managerIds.length; i++) {
+            Integer managerId = managerIds[i];
+            Boolean exist = managerDetailsService.judgeManagerInCompany(managerId, companyId);
+            if (!exist) return R.failed(null,"新增經理只能是本公司的經理");
+        }
+        /* 員工存在性判斷 */
+        for (int i = 0; i < employeesIds.length; i++) {
+            Integer employeesId = employeesIds[i];
+            Boolean exist = employeesDetailsService.judgeEmployeesInCompany(employeesId, companyId);
+            if (!exist) return R.failed(null,"新增經理只能是本公司的經理");
+        }
+
+        /* 組名存在性判斷 */
+        if (this.judgeGroupNameInCompany(name, companyId)) return R.failed(null, "該組名已經存在");
+
+        /* 開始組頭像oss存儲 */
+        String logoUrl = this.logoSave(headPortrait);
+
+        /* 開始數據庫存儲 */
+        LocalDateTime now = LocalDateTime.now();
+        GroupDetails gd = new GroupDetails(null, companyId, logoUrl, name, now, now, userId);
+        Integer groupId = 0;
+        synchronized (this){
+            this.save(gd);
+            groupId = ((GroupDetails) CommonUtils.getMaxId("group_details", this)).getId();
+        }
+        List<GroupManager> gms = new ArrayList<>();
+        List<GroupEmployees> ges = new ArrayList<>();
+        for (int i = 0; i < managerIds.length; i++) {
+            GroupManager gm = new GroupManager(null, groupId, managerIds[i]);
+            gms.add(gm);
+        }
+        groupManagerService.saveBatch(gms);
+        for (int i = 0; i < employeesIds.length; i++) {
+            GroupEmployees ge = new GroupEmployees(null, groupId, employeesIds[i]);
+            ges.add(ge);
+        }
+        groupEmployeesService.saveBatch(ges);
+        return R.ok(null, "成功添加組");
+    }
+
+    @Override
+    public Boolean judgeGroupNameInCompany(String name, Integer companyId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("name", name);
+        qw.eq("company_id", companyId);
+        List<GroupDetails> gds = this.baseMapper.selectList(qw);
+        if (!gds.isEmpty()) return true;
+        return false;
+    }
+
+    @Override
+    public String logoSave(MultipartFile logo) {
+        String res = "";
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_GROUP_URL_ABSTRACT_PATH_PREFIX_PROV; //     HKFile/GroupLogoImg
+        String type = logo.getOriginalFilename().split("\\.")[1];
+        String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
+
+        try {
+            ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(logo.getBytes()));
+            res = urlPrefix + fileAbstractPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error upload";
+        }
+
+        return res;
     }
 
     public List<GroupVO> search(String name, List<GroupVO> list){

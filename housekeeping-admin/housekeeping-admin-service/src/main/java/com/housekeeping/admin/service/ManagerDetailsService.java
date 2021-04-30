@@ -7,6 +7,7 @@ import com.housekeeping.admin.dto.PageOfManagerDTO;
 import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.common.utils.R;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -34,4 +35,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO);
 
     List<Integer> getAllUserIdByCompanyId(Integer companyId);
+
+    Boolean judgeManagerInCompany(Integer managerId, Integer companyId);
 }

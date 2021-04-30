@@ -323,6 +323,14 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return baseMapper.getAllUserIdByCompanyId(companyId);
     }
 
+    @Override
+    public Boolean judgeManagerInCompany(Integer managerId, Integer companyId) {
+        ManagerDetails md = baseMapper.selectById(managerId);
+        if (CommonUtils.isEmpty(md)) return false;
+        if (!md.getCompanyId().equals(companyId)) return false;
+        return true;
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return

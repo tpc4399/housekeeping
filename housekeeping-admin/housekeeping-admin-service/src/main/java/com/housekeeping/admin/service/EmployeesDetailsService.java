@@ -43,6 +43,9 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     /* 根据employeesId判断员工是否管辖于经理,存在true，不存在false   (本组检索) */
     Boolean judgmentOfExistenceHaveJurisdictionOverManager(Integer employeesId);
 
+    /* 判斷員工存在性 */
+    Boolean judgeEmployeesInCompany(Integer employeesId, Integer companyId);
+
     /* 设置预设工作内容 */
     void setPresetJobIds(String presetJobIds, Integer employeesId);
 
