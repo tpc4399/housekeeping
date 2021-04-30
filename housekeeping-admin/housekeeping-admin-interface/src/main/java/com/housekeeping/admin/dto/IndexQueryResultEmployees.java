@@ -22,4 +22,5 @@ public class IndexQueryResultEmployees {
     private Integer recommendedValue;                   /* 推荐值 */
     private Double recommendedScope;                    /* 推荐分数 */
     private BigDecimal price;                           /* 价格 */
+    private Boolean certified;                          /* 是否已認證 */
 }

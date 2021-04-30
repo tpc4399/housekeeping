@@ -307,8 +307,9 @@ public class SysIndexServiceImpl
 
         //1
         matchingCompanyIdsAndEmployeesDetails.forEach((x, y) -> {
+            CompanyDetails cd = companyDetailsService.getById(x);
             IndexQueryResultCompany indexQueryResultCompany = new IndexQueryResultCompany();
-            indexQueryResultCompany.setCompanyDetail(companyDetailsService.getById(x));
+            indexQueryResultCompany.setCompanyDetail(cd);
             indexQueryResultCompany.setMatchingEmployeesDetails(y);
             AtomicReference<Double> recommendScope = new AtomicReference<>(new Double(0.0));
             y.forEach(z -> {
@@ -322,6 +323,7 @@ public class SysIndexServiceImpl
                 recommendScope.set(recommendScope.get() + new Double(weight.get(ApplicationConfigConstants.extensionCompanyScopeDouble)));
             }
             indexQueryResultCompany.setRecommendedScope(recommendScope.get());
+            indexQueryResultCompany.setCertified(cd.getIsValidate());
             recommendedCompany.add(indexQueryResultCompany);
         });
         sort1.SortByDouble(recommendedCompany, "getRecommendedScope", "desc");//需要根据推荐分降序排序
@@ -1103,7 +1105,11 @@ public class SysIndexServiceImpl
 
     public void existEmployeesHandle(EmployeesHandleVo vo,
                                      Map<Integer, List<IndexQueryResultEmployees>> matchingCompanyIdsAndEmployeesDetails,
-                                     List<IndexQueryResultEmployees> matchingEmployeesDetails, String toCode, Map<String, String> weight, BigDecimal lowPrice, BigDecimal highPrice){
+                                     List<IndexQueryResultEmployees> matchingEmployeesDetails,
+                                     String toCode,
+                                     Map<String, String> weight,
+                                     BigDecimal lowPrice,
+                                     BigDecimal highPrice){
         /** indexQueryResultEmployees 保洁员返回信息 */
         IndexQueryResultEmployees indexQueryResultEmployees = new IndexQueryResultEmployees();
 
@@ -1228,6 +1234,11 @@ public class SysIndexServiceImpl
 
         /** companyId: 所属公司准备 */
         Integer companyId = existEmployee.getCompanyId();
+
+        /** certified:員工認證準備 */
+        CompanyDetails cd = companyDetailsService.getById(companyId);
+        Boolean certified = cd.getIsValidate();
+        indexQueryResultEmployees.setCertified(certified);
 
         /** 都走到这一步了，这个员工就相当于能被搜索到了,那直接添加到结果集,等下做数据返回 */
         List<IndexQueryResultEmployees> indexQueryResultEmployeesList = matchingCompanyIdsAndEmployeesDetails.getOrDefault(companyId, new ArrayList<>());

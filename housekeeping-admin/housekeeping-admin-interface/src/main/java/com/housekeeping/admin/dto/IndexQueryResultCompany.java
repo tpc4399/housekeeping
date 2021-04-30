@@ -15,7 +15,8 @@ public class IndexQueryResultCompany {
 
     private CompanyDetails companyDetail;                               //公司详情
     private List<IndexQueryResultEmployees> matchingEmployeesDetails;   //公司下面匹配的员工详情
-    private Integer recommendedValue;                                   //推荐值
+    private Integer recommendedValue;                                   //推荐值 棄用
     private Double recommendedScope;                                    //推荐分数
+    private Boolean certified;                                          /* 公司是否已認證 */
 
 }
