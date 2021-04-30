@@ -71,7 +71,8 @@ public class OrderDetailsController {
     @PostMapping("/paymentCallback")
     public String paymentCallback(PaymentCallbackParams params) throws IOException {
         PaymentCallbackDTO dto = new PaymentCallbackDTO(params);
-        return orderDetailsService.paymentCallback(dto);
+        orderDetailsService.paymentCallback(dto);
+        return "OK";
     }
 
     @ApiOperation("【测试】")

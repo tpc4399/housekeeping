@@ -6,6 +6,7 @@ import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.common.utils.R;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +39,8 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
           String payType,
           String remarks) throws Exception;
 
-    String paymentCallback(PaymentCallbackDTO dto) throws IOException;
+    /* 支付回调处理 */
+    void paymentCallback(PaymentCallbackDTO dto);
 
     /* 参数验证 */
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);

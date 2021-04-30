@@ -17,6 +17,7 @@ import com.housekeeping.common.utils.R;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.spring.web.json.Json;
@@ -172,29 +173,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return R.ok(null, "修改成功");
     }
 
+    @Async
     @Override
-    public String paymentCallback(PaymentCallbackDTO dto) throws IOException {
+    public void paymentCallback(PaymentCallbackDTO dto){
         System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + dto.toString());
-//        SmilePayVerificationCodeDTO dto1 = new SmilePayVerificationCodeDTO(CommonConstants.PAY_RVG2C, dto.getAmount(), dto.getSmileId(), dto.getMidSmilePay());
-//        System.out.println("订单编号是"+dto.getDataId());
-//
-//        //1:使用File类创建一个要操作的文件路径
-//        File file = new File(File.separator + "demo" + File.separator + dto.getDataId()+".json");
-//        if(!file.getParentFile().exists()){ //如果文件的目录不存在
-//            file.getParentFile().mkdirs(); //创建目录
-//        }
-//
-//        //2: 实例化OutputString 对象
-//        OutputStream output = new FileOutputStream(file);
-//
-//        //3: 准备好实现内容的输出
-//        String msg = JSON.toJSONString(dto);
-//        //将字符串变为字节数组
-//        byte data[] = msg.getBytes();
-//        output.write(data);
-//        //4: 资源操作的最后必须关闭
-//        output.close();
-        return "OK";
+
     }
 
     @Override
