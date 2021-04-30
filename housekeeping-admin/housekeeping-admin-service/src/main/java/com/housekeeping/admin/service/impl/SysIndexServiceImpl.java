@@ -220,6 +220,8 @@ public class SysIndexServiceImpl
                 .getBean(QueryIndexDTO::getAddressDetails).get();
         Integer priorityType = OptionalBean.ofNullable(dto)
                 .getBean(QueryIndexDTO::getPriorityType).get();
+        List<Boolean> certified = OptionalBean.ofNullable(dto)
+                .getBean(QueryIndexDTO::getCertified).get();
         String toCode = "TWD";
 
         List<String> resFailed = new ArrayList<>();
@@ -232,6 +234,11 @@ public class SysIndexServiceImpl
         if (CommonUtils.isEmpty(lowPrice)) resFailed.add("元素_lowPrice為空");
         if (CommonUtils.isEmpty(highPrice)) resFailed.add("元素_highPrice為空");
         if (CommonUtils.isEmpty(addressDetailsDTO)) resFailed.add("元素_addressDetailsDTO為空");
+        if (CommonUtils.isEmpty(certified)) {
+            certified = new ArrayList<>();
+            certified.add(true);
+            certified.add(true);
+        }
 
         if (!resFailed.isEmpty()){
             return R.failed(resFailed, "存在空值");
