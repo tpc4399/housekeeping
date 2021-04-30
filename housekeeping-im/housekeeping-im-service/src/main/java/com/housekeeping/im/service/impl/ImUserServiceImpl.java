@@ -164,8 +164,42 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         user.setPassword(null);
         objectMap.put("me", user);
 
-        //用户的群组信息
-        objectMap.put("groups", imUserService.getChatGroups(userId.toString()));
+        List<ImChatGroup> imChatGroups = new ArrayList<>();
+
+        //员工的群组信息
+        if(byId.getDeptId().equals(5)){
+            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+            imChatGroups.addAll(chatGroups);
+        }
+
+        //经理的群组信息
+        if(byId.getDeptId().equals(4)){
+
+            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+
+            Integer managerId = baseMapper.getMangerId(Integer.parseInt(userId));
+            List<Integer> empIds = baseMapper.getAllEmp(managerId);
+            List<String> userIds = new ArrayList<>();
+            for (int i = 0; i < empIds.size(); i++) {
+                userIds.add(baseMapper.getUSerIdByEmpId(empIds.get(i).toString()).toString());
+            }
+            for (int i = 0; i < userIds.size(); i++) {
+                List<ImChatGroup> chatGroups1 = imUserService.getChatGroups(userIds.get(i).toString());
+                imChatGroups.addAll(chatGroups1);
+            }
+            imChatGroups.addAll(chatGroups);
+        }
+
+        //公司的群组信息
+        if(byId.getDeptId().equals(2)){
+            Integer companyId = baseMapper.getCompanyIdByUser(Integer.parseInt(userId));
+            QueryWrapper<ImChatGroup> qw = new QueryWrapper<>();
+            qw.eq("company_id",companyId);
+            List<ImChatGroup> list = imChatGroupService.list(qw);
+            imChatGroups.addAll(list);
+        }
+
+        objectMap.put("groups", imChatGroups);
         return R.ok(objectMap);
     }
 
@@ -206,11 +240,13 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroupService.save(imChatGroup);
 
         Integer cusId = baseMapper.getCusIdByDemand(demandId);
+
         Integer userId = baseMapper.getUSerIdByEmpId(empId);
+
         ArrayList<String> strings = new ArrayList<>();
         strings.add(currentUserId);
         strings.add(cusId.toString());
-        strings.add(userId.toString());
+        strings.add(empId);
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         for (int i = 0; i < strings.size(); i++) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
