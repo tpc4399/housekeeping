@@ -172,5 +172,11 @@ public class EmployeesDetailsController {
         return employeesDetailsService.cusPage5(page, pageOfEmployeesDetailsDTO);
     }
 
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【經理】【员工】根据员工id查看分组")
+    @GetMapping("/getGroupByEmpId")
+    public R getGroupByEmpId(Integer employeesId){
+        return employeesDetailsService.getGroupByEmpId(employeesId);
+    }
 
 }

@@ -54,4 +54,10 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     Integer getCusIdByDemand(String demandId);
 
     Integer getUSerIdByEmpId(String empId);
+
+    Integer getCompanyIdByUser(int userId);
+
+    Integer getMangerId(int parseInt);
+
+    List<Integer> getAllEmp(Integer managerId);
 }

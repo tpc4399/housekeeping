@@ -66,6 +66,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private EmployeesDetailsService employeesDetailsService;
     @Resource
+    private IGroupDetailsService groupDetailsService;
+    @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -654,6 +656,18 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), employeesDetailsWorkVos);
         return R.ok(pages);
+    }
+
+    @Override
+    public R getGroupByEmpId(Integer employeesId) {
+        QueryWrapper<GroupEmployees> qw = new QueryWrapper<>();
+        qw.eq("employees_id",employeesId);
+        List<GroupEmployees> list = groupEmployeesService.list(qw);
+        List<GroupDetails> collect = list.stream().map(x -> {
+            GroupDetails byId = groupDetailsService.getById(x.getGroupId());
+            return byId;
+        }).collect(Collectors.toList());
+        return R.ok(collect);
     }
 
 }

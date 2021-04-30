@@ -63,4 +63,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     Integer getEmployeesIdByUserId(Integer userId);
 
     R cusPage5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO);
+
+    R getGroupByEmpId(Integer employeesId);
 }

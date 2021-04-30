@@ -113,4 +113,31 @@
         WHERE
         id = #{empId}
     </select>
+
+    <select id="getCompanyIdByUser" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        company_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="getMangerId" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        manager_details
+        WHERE user_id = #{parseInt}
+    </select>
+
+    <select id="getAllEmp" resultType="java.lang.Integer">
+        SELECT
+        distinct
+        employees_id
+        FROM
+        group_employees
+        WHERE
+        group_id in (SELECT DISTINCT group_id FROM group_manager AS gm WHERE gm.manager_id = #{managerId})
+    </select>
 </mapper>
