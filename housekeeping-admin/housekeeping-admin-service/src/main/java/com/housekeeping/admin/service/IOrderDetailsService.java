@@ -5,6 +5,7 @@ import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
+import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.common.utils.R;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author su
@@ -47,5 +49,29 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
 
     /* 订单保存到mysql，作永久存储,用于订单状态变为"已支付"状态调用 */
     Long toBePaid(Long number, Integer employeesId);
+
+    /* 订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+    R query(Integer type);
+
+    /* 查询保洁员的待付款订单 */
+    List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId);
+    /* 查询保洁员的待服务订单 */
+    List<OrderDetailsPOJO> order2ByEmployees(Integer employeesId);
+    /* 查询保洁员的进行中订单 */
+    List<OrderDetailsPOJO> order3ByEmployees(Integer employeesId);
+    /* 查询保洁员的待评价订单 */
+    List<OrderDetailsPOJO> order4ByEmployees(Integer employeesId);
+    /* 查询保洁员的已完成订单 */
+    List<OrderDetailsPOJO> order5ByEmployees(Integer employeesId);
+    /* 查询客户的待付款订单 */
+    List<OrderDetailsPOJO> order1ByCustomer(Integer customerId);
+    /* 查询客户的待服务订单 */
+    List<OrderDetailsPOJO> order2ByCustomer(Integer customerId);
+    /* 查询客户的进行中订单 */
+    List<OrderDetailsPOJO> order3ByCustomer(Integer customerId);
+    /* 查询客户的待评价订单 */
+    List<OrderDetailsPOJO> order4ByCustomer(Integer customerId);
+    /* 查询客户的已完成订单 */
+    List<OrderDetailsPOJO> order5ByCustomer(Integer customerId);
 
 }

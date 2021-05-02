@@ -7,10 +7,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.EmployeesDetailsDTO;
-import com.housekeeping.admin.dto.EmployeesJobsDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
@@ -146,8 +143,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                  */
                 employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
                 /**
-                 * 可工作内容设置
+                 * 可工作内容设置,工作内容不为空就可以
                  */
+                if (CommonUtils.isNotEmpty(employeesDetailsDTO.getJobIds()))
+                    employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), maxEmployeesId));
 //                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
             } catch (Exception e){
                 TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);

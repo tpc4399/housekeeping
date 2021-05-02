@@ -54,7 +54,7 @@ public class OrderDetailsController {
         return orderDetailsService.requestToChangeAddressHandle(id, false);
     }
 
-    @ApiOperation("【客户】确认订单界面——支付操作需要调用")
+    @ApiOperation("【客户】确认订单界面——支付操作需要调用,订单状态———— 未支付->处理中")
     @Access(RolesEnum.USER_CUSTOMER)
     @PutMapping(value = "/pay", headers = "content-type=multipart/form-data")
     public R pay(@RequestParam("number") Long number,
@@ -67,12 +67,55 @@ public class OrderDetailsController {
         return R.ok(null, "上传成功");
     }
 
-    @ApiOperation("【用于三方支付】支付成功后的回调接口")
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("【保洁员】【客户】取消订单")
+    @GetMapping("/payment1")
+    public R payment1(){
+        return R.ok();
+    }
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("【保洁员】订单状态———— 处理中->未支付")
+    @GetMapping("/payment2")
+    public R payment2(){
+        return R.ok();
+    }
+
+    @ApiOperation("【用于三方支付】支付成功后的回调接口,订单状态———— 处理中->已支付")
     @PostMapping("/paymentCallback")
     public String paymentCallback(PaymentCallbackParams params) throws IOException {
         PaymentCallbackDTO dto = new PaymentCallbackDTO(params);
         orderDetailsService.paymentCallback(dto);
         return "OK";
+    }
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("【保洁员】订单状态———— 进行中->待评价")
+    @GetMapping("/payment3")
+    public R payment3(){
+        return R.ok();
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】评价订单———— 进行中->待评价")
+    @GetMapping("/payment4")
+    public R payment4(){
+        return R.ok();
+    }
+
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("【保洁员】订单误判———— 已取消订单->已支付")
+    @GetMapping("/payment5")
+    public R payment5(){
+        return R.ok();
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
+    @GetMapping("/query")
+    public R query(Integer type){
+        return orderDetailsService.query(type);
     }
 
     @ApiOperation("【测试】")
@@ -82,6 +125,7 @@ public class OrderDetailsController {
         return number;
     }
 
+    @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【客户】信用卡支付调用接口")
     @GetMapping("/cardPay")
     public R cardPay(){

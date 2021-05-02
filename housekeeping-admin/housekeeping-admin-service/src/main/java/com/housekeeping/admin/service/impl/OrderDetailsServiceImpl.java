@@ -173,7 +173,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return R.ok(null, "修改成功");
     }
 
-    @Async
     @Override
     public void paymentCallback(PaymentCallbackDTO dto){
         System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + dto.toString());
@@ -264,6 +263,63 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
         if (CommonUtils.isNotEmpty(wds)) workDetailsService.saveBatch(wds);
         return number;
+    }
+
+    @Override
+    public R query(Integer type) {
+        /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order2ByEmployees(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order3ByEmployees(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order4ByEmployees(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order5ByEmployees(Integer employeesId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order1ByCustomer(Integer customerId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order2ByCustomer(Integer customerId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order3ByCustomer(Integer customerId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order4ByCustomer(Integer customerId) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order5ByCustomer(Integer customerId) {
+        return null;
     }
 
     private List<OrderPhotos> orderPhotos(OrderDetailsPOJO pojo){

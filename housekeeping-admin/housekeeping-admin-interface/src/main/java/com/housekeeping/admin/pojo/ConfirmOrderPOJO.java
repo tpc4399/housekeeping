@@ -20,6 +20,10 @@ public class ConfirmOrderPOJO {
     private String number;                        //订单编号
     private String consumptionItems;            //消费项目
 
+    private Integer employeesId;                //订单甲方 保洁员 (一个)
+    private String name1;                       //甲方姓名
+    private String phPrefix1;                   //甲方手机号前缀
+    private String phone1;                      //甲方手机号
     private Integer companyId;                  //甲方保洁员所属公司
     private String invoiceName;                 //公司发票抬头
     private String invoiceNumber;               //公司统一编号
@@ -58,6 +62,10 @@ public class ConfirmOrderPOJO {
     public ConfirmOrderPOJO(OrderDetailsPOJO pojo){
         this.number = pojo.getNumber();
         this.consumptionItems = pojo.getConsumptionItems();
+        this.employeesId = pojo.getEmployeesId();
+        this.name1 = pojo.getName1();
+        this.phPrefix1 = pojo.getPhPrefix1();
+        this.phone1 = pojo.getPhone1();
         this.companyId = pojo.getCompanyId();
         this.invoiceName = pojo.getInvoiceName();
         this.invoiceNumber = pojo.getInvoiceNumber();
