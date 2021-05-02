@@ -148,7 +148,7 @@ public class EmployeesCalendarController {
     @ApiOperation("根据id获取排班信息")
     @GetMapping("/getById")
     public R getById(@RequestParam Integer id){
-        return R.ok(employeesCalendarService.getById(id));
+        return employeesCalendarService.getByCalendarId(id);
     }
 
 }

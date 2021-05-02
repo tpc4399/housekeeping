@@ -91,9 +91,8 @@ public class EmployeesContractController {
                   @RequestParam("description") String description,
                   @RequestParam("actives") Integer[] actives){
 
-        employeesContractService.add2(null, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
+        return employeesContractService.add2(null, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
 
-        return R.ok();
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
@@ -109,9 +108,7 @@ public class EmployeesContractController {
                   @RequestParam("description") String description,
                   @RequestParam("actives") Integer[] actives){
 
-        employeesContractService.add2(employeesId, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
-
-        return R.ok();
+        return employeesContractService.add2(employeesId, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
@@ -127,9 +124,9 @@ public class EmployeesContractController {
                     @RequestParam("description") String description,
                     @RequestParam("actives") Integer[] actives){
 
-        employeesContractService.update(id, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
 
-        return R.ok();
+
+        return employeesContractService.update(id, name, image, dateLength, timeLength, totalPrice, jobs, description, actives);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})

@@ -11,6 +11,7 @@ import com.housekeeping.common.utils.R;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -54,6 +55,9 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 根据保洁员employeesId获取保洁员的排班 */
     R getSchedulingByEmployeesId(Integer employeesId);
+
+    /* 根据calendarId获取排班信息 */
+    R getByCalendarId(Integer id);
 
     /* 判断employeesId的时间表存在性 */
     Boolean judgmentOfExistenceByEmployeesId(Integer employeesId);

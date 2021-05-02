@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
+import com.housekeeping.admin.pojo.CalendarPOJO;
 import com.housekeeping.admin.pojo.ConfirmOrderPOJO;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
@@ -637,10 +638,25 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         List<EmployeesCalendar> re = employeesCalendarService.list(qw);
 
         /* 時間表存在性判斷 */
-        if (re.isEmpty()) return R.failed(null, "該保潔員未設置時間表");
+        if (re.isEmpty()) return R.failed(null, "該用戶未設置時間表");
+        List<CalendarPOJO> cps = re.stream().map(x -> {
+            CalendarPOJO pojo = new CalendarPOJO(x);
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("calendar_id", x.getId());
+            List<EmployeesCalendarDetails> ecds = employeesCalendarDetailsService.list(qw2);
+            if(ecds.isEmpty()){
+                pojo.setPrice(new Float(26));
+                pojo.setCode("TWD");
+            }else {
+                EmployeesCalendarDetails ecd = ecds.get(0);
+                pojo.setPrice(ecd.getPrice());
+                pojo.setCode(ecd.getCode());
+            }
+            return pojo;
+        }).collect(Collectors.toList());
 
         /* 返回信息 */
-        return R.ok(re, "獲取成功");
+        return R.ok(cps, "獲取成功");
     }
 
     @Override
@@ -656,9 +672,48 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         /* 時間表存在性判斷 */
         if (re.isEmpty()) return R.failed(null, "該保潔員未設置時間表");
+        List<CalendarPOJO> cps = re.stream().map(x -> {
+            CalendarPOJO pojo = new CalendarPOJO(x);
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("calendar_id", x.getId());
+            List<EmployeesCalendarDetails> ecds = employeesCalendarDetailsService.list(qw2);
+            if(ecds.isEmpty()){
+                pojo.setPrice(new Float(26));
+                pojo.setCode("TWD");
+            }else {
+                EmployeesCalendarDetails ecd = ecds.get(0);
+                pojo.setPrice(ecd.getPrice());
+                pojo.setCode(ecd.getCode());
+            }
+            return pojo;
+        }).collect(Collectors.toList());
 
         /* 返回信息 */
-        return R.ok(re, "獲取成功");
+        return R.ok(cps, "獲取成功");
+    }
+
+    @Override
+    public R getByCalendarId(Integer id) {
+        /* 數據從數據庫獲取 */
+        EmployeesCalendar ec = employeesCalendarService.getById(id);
+
+        /* 時間表存在性判斷 */
+        if (CommonUtils.isEmpty(ec)) return R.failed(null, "該時間表不存在");
+        CalendarPOJO pojo = new CalendarPOJO(ec);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("calendar_id", ec.getId());
+        List<EmployeesCalendarDetails> ecds = employeesCalendarDetailsService.list(qw);
+        if(ecds.isEmpty()){
+            pojo.setPrice(new Float(26));
+            pojo.setCode("TWD");
+        }else {
+            EmployeesCalendarDetails ecd = ecds.get(0);
+            pojo.setPrice(ecd.getPrice());
+            pojo.setCode(ecd.getCode());
+        }
+
+        /* 返回信息 */
+        return R.ok(pojo, "獲取成功");
     }
 
     @Override

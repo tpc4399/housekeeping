@@ -124,6 +124,19 @@ public class EmployeesDetailsController {
         return R.ok("頭像保存成功");
     }
 
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【經理】上传保潔員的头像")
+    @PostMapping("/uploadHead2")
+    public R uploadHead(@RequestParam("file") MultipartFile file,
+                        @RequestParam("employeesId") Integer employeesId) throws IOException {
+        Integer reviserId = employeesDetailsService.getById(employeesId).getId();
+        //服务器存储head
+        String fileName = employeesDetailsService.uploadHead(file, reviserId);
+        //数据库存储headUrl
+        employeesDetailsService.updateHeadUrlByUserId(fileName, reviserId);
+        return R.ok("頭像保存成功");
+    }
+
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @ApiOperation("【all】有无排班记录决定能否做钟点， 有无发布包工服务决定能否做包工")
     @GetMapping("/canSheMakeAnWork")

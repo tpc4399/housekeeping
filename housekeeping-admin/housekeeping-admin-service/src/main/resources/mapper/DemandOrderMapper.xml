@@ -12,6 +12,6 @@
         FROM
         demand_order_details
         WHERE
-        demand_order_id = 2
+        demand_order_id = #{demandId}
     </select>
 </mapper>

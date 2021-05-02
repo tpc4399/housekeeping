@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
+import com.housekeeping.admin.entity.CustomerDetails;
+import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IReleaseRequirementService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReleaseRequirementsController {
 
     private final IReleaseRequirementService releaseRequirementService;
+    private final ICustomerDetailsService customerDetailsService;
 
     @Access({RolesEnum.USER_COMPANY})
     @GetMapping("/getAllRequirementsByCompany")
@@ -43,9 +47,9 @@ public class ReleaseRequirementsController {
     @Access({RolesEnum.USER_CUSTOMER})
     @GetMapping("/getAllRequirements")
     @ApiOperation("【家庭端】获取所有已发布的需求")
-    public R getAllReleaseRequirements(@RequestParam Integer cusId,
-                                       Page page){
-        return releaseRequirementService.getAllRequirement(cusId,page);
+    public R getAllReleaseRequirements(Page page){
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        return releaseRequirementService.getAllRequirement(cd.getId(), page);
     }
 
     @Access({RolesEnum.USER_CUSTOMER})

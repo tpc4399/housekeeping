@@ -127,6 +127,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
+            demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
             demandOrderDTO.setEndDate(list3.get(i).getEndDate());
             demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
@@ -165,6 +166,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
+            demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
             demandOrderDTO.setEndDate(list3.get(i).getEndDate());
             demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());

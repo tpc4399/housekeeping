@@ -96,6 +96,19 @@ public class ManagerDetailsController {
         return R.ok("頭像保存成功");
     }
 
+    @Access({RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】上传經理头像")
+    @PostMapping("/uploadHead2")
+    public R uploadHead(@RequestParam("file") MultipartFile file,
+                        @RequestParam("managerId") Integer managerId) throws IOException {
+        Integer reviserId = managerDetailsService.getById(managerId).getId();
+        //服务器存储head
+        String fileName = managerDetailsService.uploadHead(file, reviserId);
+        //数据库存储headUrl
+        managerDetailsService.updateHeadUrlByUserId(fileName, reviserId);
+        return R.ok("頭像保存成功");
+    }
+
 
     @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】根据公司的userId列出公司下面所有的经理")
