@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
@@ -47,8 +48,8 @@ public class CustomerDetailsController {
     @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】获取客户列表")
     @GetMapping("/getCustomerList")
-    public R getCustomerList(Integer cid,String name){
-        return customerDetailsService.getCustomerList(cid,name);
+    public R getCustomerList(Page page, Integer cid, String name){
+        return customerDetailsService.getCustomerList(page,cid,name);
     }
 
 }

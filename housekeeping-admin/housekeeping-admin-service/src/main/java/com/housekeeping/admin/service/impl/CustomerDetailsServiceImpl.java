@@ -2,9 +2,9 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CustomerUpdateDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.CustomerAddress;
 import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.User;
@@ -12,13 +12,8 @@ import com.housekeeping.admin.mapper.CustomerDetailsMapper;
 import com.housekeeping.admin.service.ICustomerAddressService;
 import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
-import com.housekeeping.admin.vo.GroupVO;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -116,7 +111,7 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
     }
 
     @Override
-    public R getCustomerList(Integer cid, String name) {
+    public R getCustomerList(Page page,Integer cid, String name) {
         Integer userId = TokenUtils.getCurrentUserId();
         Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
         List<Integer> ids = baseMapper.getIdbyByCompanyId(companyId);
@@ -148,13 +143,16 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
             }
             if(CommonUtils.isNotEmpty(cid)){
                 List<CustomerDetails> users = search2(cid, userIds3);
-                return R.ok(users);
+                Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), users);
+                return R.ok(pages);
             }
             if(CommonUtils.isNotEmpty(name)){
                 List<CustomerDetails> search = search(name, userIds3);
-                return R.ok(search);
+                Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
+                return R.ok(pages);
             }else {
-                return R.ok(userIds3);
+                Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), userIds3);
+                return R.ok(pages);
             }
         }
     }
