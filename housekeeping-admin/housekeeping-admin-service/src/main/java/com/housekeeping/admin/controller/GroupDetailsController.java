@@ -83,8 +83,8 @@ public class GroupDetailsController {
     @ApiOperation("【all】分组返回数据")
     @LogFlag(description = "分组返回数据")
     @GetMapping("/getGroupData")
-    public R getGroupData(Integer companyId, Integer id,String groupName){
-        return groupDetailsService.getGroupData(companyId, id ,groupName);
+    public R getGroupData(Page page,Integer companyId, Integer id,String groupName){
+        return groupDetailsService.getGroupData(page,companyId, id ,groupName);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})

@@ -161,7 +161,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     }
 
     @Override
-    public R getGroupData(Integer companyId, Integer id,String groupName) {
+    public R getGroupData(Page page,Integer companyId, Integer id,String groupName) {
         QueryWrapper<GroupDetails> qw = new QueryWrapper<>();
         qw.eq("company_id",companyId);
         List<GroupDetails> list = this.list(qw);
@@ -197,9 +197,11 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
             }
             if(StringUtils.isNotEmpty(groupName)){
             List<GroupVO> search = search(groupName, groupVOS);
-            return R.ok(search);
+                Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
+                return R.ok(pages);
         }
-        return R.ok(groupVOS);
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupVOS);
+        return R.ok(pages);
     }
 
     @Override
