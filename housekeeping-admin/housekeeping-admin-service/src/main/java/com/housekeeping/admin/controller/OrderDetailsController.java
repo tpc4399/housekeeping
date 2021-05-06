@@ -69,17 +69,19 @@ public class OrderDetailsController {
 
 
     @Access(RolesEnum.USER_EMPLOYEES)
-    @ApiOperation("【保洁员】【客户】取消订单")
+    @ApiOperation("【保洁员】【客户】订单作废")
     @GetMapping("/payment1")
-    public R payment1(){
-        return R.ok();
+    public R payment1(String number){
+        //调用“订单作废”服务
+        return orderDetailsService.inputSql(number, false);
     }
 
     @Access(RolesEnum.USER_EMPLOYEES)
     @ApiOperation("【保洁员】订单状态———— 处理中->未支付")
     @GetMapping("/payment2")
-    public R payment2(){
-        return R.ok();
+    public R payment2(String number){
+        //调“回转为未支付状态”的服务
+        return orderDetailsService.payment2(number);
     }
 
     @ApiOperation("【用于三方支付】支付成功后的回调接口,订单状态———— 处理中->已支付")
@@ -93,19 +95,19 @@ public class OrderDetailsController {
     @Access(RolesEnum.USER_EMPLOYEES)
     @ApiOperation("【保洁员】订单状态———— 进行中->待评价")
     @GetMapping("/payment3")
-    public R payment3(){
-        return R.ok();
+    public R payment3(String number){
+        return orderDetailsService.payment3(number);
     }
 
     @Access(RolesEnum.USER_CUSTOMER)
-    @ApiOperation("【客户】评价订单———— 进行中->待评价")
+    @ApiOperation("【客户】评价订单———— 待评价->已完成  待做")
     @GetMapping("/payment4")
     public R payment4(){
         return R.ok();
     }
 
     @Access(RolesEnum.USER_EMPLOYEES)
-    @ApiOperation("【保洁员】订单误判———— 已取消订单->已支付")
+    @ApiOperation("【保洁员】订单误判———— 已取消订单->待服务 待做")
     @GetMapping("/payment5")
     public R payment5(){
         return R.ok();
@@ -113,15 +115,22 @@ public class OrderDetailsController {
 
     @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【客户】订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
-    @GetMapping("/query")
-    public R query(Integer type){
-        return orderDetailsService.query(type);
+    @GetMapping("/queryByCus")
+    public R queryByCus(Integer type){
+        return orderDetailsService.queryByCus(type);
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【保洁员】订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
+    @GetMapping("/queryByEmp")
+    public R queryByEmp(Integer type){
+        return orderDetailsService.queryByEmp(type);
     }
 
     @ApiOperation("【测试】")
     @GetMapping("/test")
-    public Long toBePaid(Long number, Integer employeesId){
-        orderDetailsService.toBePaid(number, employeesId);
+    public String toBePaid(String number){
+        orderDetailsService.inputSql(number, true);
         return number;
     }
 

@@ -2,6 +2,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.PaymentCallbackDTO;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
@@ -10,10 +11,12 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
+import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.common.utils.TokenUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -55,6 +58,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private IOrderPhotosService orderPhotosService;
     @Resource
     private IWorkDetailsService workDetailsService;
+    @Resource
+    private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private ICustomerDetailsService customerDetailsService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -247,8 +254,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public Long toBePaid(Long number, Integer employeesId) {
-        String key = "OrderToBePaid:employeesId" + employeesId + ":" + number;
+    public R inputSql(String number, Boolean status) {
+        /* odp 获取订单信息 */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        Object[] keysArr = (Object[]) keys.toArray();
+        String key = keysArr[0].toString();
         OrderDetailsPOJO odp = null;
         Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
         try {
@@ -256,30 +266,118 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        /* 验证是否是自己能操作的订单，保洁员和客户只能作废属于自己的订单 */
+        if (!this.orderVerification(odp)) return R.failed(null, "訂單不存在（這可能不是你的訂單）");
+
         OrderDetails od = new OrderDetails(odp);
+        if (status) od.setOrderState(CommonConstants.ORDER_STATE_TO_BE_SERVED);//订单已支付，待服务
+        else od.setOrderState(CommonConstants.ORDER_STATE_VOID);//取消订单
+
         List<OrderPhotos> ops = orderPhotos(odp);
-        List<WorkDetails> wds = workDetails(odp);
+        List<WorkDetails> wds = workDetails((List<WorkDetailsPOJO>) map.get("workDetails"), number);
         orderDetailsService.save(od);
         if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
         if (CommonUtils.isNotEmpty(wds)) workDetailsService.saveBatch(wds);
-        return number;
+        return R.ok(number, "操作成功");
     }
 
     @Override
-    public R query(Integer type) {
+    public R queryByCus(Integer type) {
         /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        Integer customerId = cd.getId();
+        Map<String, List> resMap = new HashMap<>();
+        if (type.equals(0)){
+            resMap.put("1", this.order1ByCustomer(customerId));
+            resMap.put("2", this.order2ByCustomer(customerId));
+            resMap.put("3", this.order3ByCustomer(customerId));
+            resMap.put("4", this.order4ByCustomer(customerId));
+            resMap.put("5", this.order5ByCustomer(customerId));
+        }else if (type.equals(1)){
+            resMap.put("1", this.order1ByCustomer(customerId));
+        }else if (type.equals(2)){
+            resMap.put("2", this.order2ByCustomer(customerId));
+        }else if (type.equals(3)){
+            resMap.put("3", this.order3ByCustomer(customerId));
+        }else if (type.equals(4)){
+            resMap.put("4", this.order4ByCustomer(customerId));
+        }else if (type.equals(5)){
+            resMap.put("5", this.order5ByCustomer(customerId));
+        }
+        return R.ok(resMap, "获取成功");
+    }
 
-        return null;
+    /**
+     * 0 --> 订单作废中     订单不进行保留 Order void
+     * 2 --> 未付款        待付款状态  To be paid
+     * 3 --> 付款处理中     已付款但是还没收到付款的 Payment processing
+     * 4 --> 已付款        待服务      To be served
+     * 5 --> 已付款        进行状态    have in hand
+     * 8 --> 已做完工作     待确认状态  To be confirmed
+     * 15 -->             待评价状态  To be evaluated
+     * 20 --> 已评价       已完成状态  Completed
+     */
+    @Override
+    public R queryByEmp(Integer type) {
+        /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+        Integer employeesId = employeesDetailsService.getEmployeesIdByUserId(TokenUtils.getCurrentUserId());
+        Map<String, List> resMap = new HashMap<>();
+        if (type.equals(0)){
+            resMap.put("1", this.order1ByEmployees(employeesId));
+            resMap.put("2", this.order2ByEmployees(employeesId));
+            resMap.put("3", this.order3ByEmployees(employeesId));
+            resMap.put("4", this.order4ByEmployees(employeesId));
+            resMap.put("5", this.order5ByEmployees(employeesId));
+        }else if (type.equals(1)){
+            resMap.put("1", this.order1ByEmployees(employeesId));
+        }else if (type.equals(2)){
+            resMap.put("2", this.order2ByEmployees(employeesId));
+        }else if (type.equals(3)){
+            resMap.put("3", this.order3ByEmployees(employeesId));
+        }else if (type.equals(4)){
+            resMap.put("4", this.order4ByEmployees(employeesId));
+        }else if (type.equals(5)){
+            resMap.put("5", this.order5ByEmployees(employeesId));
+        }
+        return R.ok(resMap, "获取成功");
     }
 
     @Override
     public List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        /* odp 获取订单信息 */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId"+employeesId+":*");
+        String[] keysArr = (String[]) keys.toArray();
+        for (int i = 0; i < keysArr.length; i++) {
+            String key = keysArr[i];
+            OrderDetailsPOJO odp = null;
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            pojoList.add(odp);
+        }
+        //TODO 排序
+
+        return pojoList;
     }
 
     @Override
     public List<OrderDetailsPOJO> order2ByEmployees(Integer employeesId) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", employeesId);
+        qw.eq("order_status", CommonConstants.ORDER_STATE_TO_BE_SERVED);
+        List<OrderDetails> ods = orderDetailsService.list(qw);
+        ods.stream().map(od -> {
+            OrderDetailsPOJO odp = new OrderDetailsPOJO();
+
+            return odp;
+        }).collect(Collectors.toList());
+        return pojoList;
     }
 
     @Override
@@ -299,12 +397,31 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public List<OrderDetailsPOJO> order1ByCustomer(Integer customerId) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        /* odp 获取订单信息 */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*");
+        String[] keysArr = (String[]) keys.toArray();
+        for (int i = 0; i < keysArr.length; i++) {
+            String key = keysArr[i];
+            OrderDetailsPOJO odp = null;
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (customerId.equals(odp.getCustomerId())) pojoList.add(odp);//属于客户的，才能被返回
+        }
+        //TODO 排序
+
+        return pojoList;
     }
 
     @Override
     public List<OrderDetailsPOJO> order2ByCustomer(Integer customerId) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+
+        return pojoList;
     }
 
     @Override
@@ -322,6 +439,85 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return null;
     }
 
+    @Override
+    public R payment1() {
+        return null;
+    }
+
+    @Override
+    public R payment2(String number) {
+        /* odp 获取订单信息 */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        String[] keysArr = (String[]) keys.toArray();
+        String key = keysArr[0];
+        OrderDetailsPOJO odp = null;
+        Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+        try {
+            odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /* 验证是否是自己能操作的订单，保洁员和客户只能作废属于自己的订单 */
+        if (!this.orderVerification(odp)) return R.failed(null, "訂單不存在（這可能不是你的訂單）");
+        /* 检测当前订单状态是否正确 */
+        if (!odp.getOrderState().equals(CommonConstants.ORDER_STATE_PAYMENT_PROCESSING)) return R.failed(null, "订单状态不是处理中");
+
+        redisTemplate.opsForHash().put(key, "orderStatus", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+
+        return R.ok(null, "已将订单状态由支付处理中变更为未支付状态");
+    }
+
+    @Override
+    public R payment3(String number) {
+        OrderDetails od = this.getById(number);
+        if (CommonUtils.isEmpty(od)) return R.failed(null, "订单不存在");
+        /* 获取调用者信息 */
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer employeesId = employeesDetailsService.getEmployeesIdByUserId(userId);
+        /* 检查订单是不是你的 */
+        if (!employeesId.equals(od.getEmployeesId())) return R.failed(null, "这不是你的订单");
+        /* 检查订单初试状态 */
+        if (!od.getOrderState().equals(CommonConstants.ORDER_STATE_HAVE_IN_HAND)) return R.failed(null, "订单不是进行中的状态，无法变更为待评价状态");
+        /* 开始修改数据 修改订单状态和完成时间 */
+        LocalDateTime now = LocalDateTime.now();
+        baseMapper.statusAndTime(Long.valueOf(number), CommonConstants.ORDER_STATE_TO_BE_EVALUATED, now);
+        return R.ok(null, "成功将进行中订单转变为待评价状态");
+    }
+
+    @Override
+    public R payment4() {
+        return null;
+    }
+
+    @Override
+    public R payment5() {
+        return null;
+    }
+
+    @Override
+    public Boolean orderVerification(OrderDetailsPOJO odp) {
+        /* 获取调用者信息 */
+        Integer userId = TokenUtils.getCurrentUserId();
+        String role = TokenUtils.getRoleType();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        if (role.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            EmployeesDetails ed = employeesDetailsService.getOne(qw);
+            Integer employeesId = ed.getId();
+            if (employeesId.equals(odp.getEmployeesId())) return true;
+            return false;
+        }
+        if (role.equals(CommonConstants.REQUEST_ORIGIN_CUSTOMER)){
+            CustomerDetails cd = customerDetailsService.getOne(qw);
+            Integer customerId = cd.getId();
+            if (customerId.equals(odp.getCustomerId())) return true;
+            return false;
+        }
+        //走到这儿说明调用者出了问题
+        return false;
+    }
+
     private List<OrderPhotos> orderPhotos(OrderDetailsPOJO pojo){
         if (CommonUtils.isEmpty(pojo.getPhotos())) return new ArrayList<>();
         List<OrderPhotos> ops = pojo.getPhotos().stream().map(x -> {
@@ -330,10 +526,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return ops;
     }
 
-    private List<WorkDetails> workDetails(OrderDetailsPOJO pojo){
-        if (CommonUtils.isEmpty(pojo.getWorkDetails())) return new ArrayList<>();
-        List<WorkDetails> wds = pojo.getWorkDetails().stream().map(x -> {
-            if (x.getCanBeOnDuty()) return new WorkDetails(null, Long.valueOf(pojo.getNumber()), x.getDate(), x.getWeek(), null);
+    private List<WorkDetails> workDetails(List<WorkDetailsPOJO> workDetails, String number){
+        if (CommonUtils.isEmpty(workDetails)) return new ArrayList<>();
+        List<WorkDetails> wds = workDetails.stream().map(x -> {
+            if (x.getCanBeOnDuty()) {
+                StringBuilder sb = new StringBuilder();
+                x.getTimeSlots().forEach(timeSlot -> {
+                    String s = timeSlot.getTimeSlotStart()+"+"+timeSlot.getTimeSlotLength().toString()+" ";
+                    sb.append(s);
+                });
+                return new WorkDetails(null, Long.valueOf(number), x.getDate(), x.getWeek(), sb.toString().trim());
+            }
             return null;
         }).collect(Collectors.toList());
         return wds;
