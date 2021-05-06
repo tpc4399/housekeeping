@@ -47,11 +47,18 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     /* 参数验证 */
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);
 
-    /* 订单保存到mysql，作永久存储,用于订单状态变为"已支付"状态调用 */
-    Long toBePaid(Long number, Integer employeesId);
+    /* 订单保存到mysql，作永久存储,用于订单状态变为"已支付"状态调用
+    * true 变为已支付的订单 --> 待服务
+    * false 变为已取消的订单 --> 已取消
+    * 該方法只是单纯地改状态，并不涉及其它字段的修改
+    * */
+    R inputSql(String number, Boolean status);
 
     /* 订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
-    R query(Integer type);
+    R queryByCus(Integer type);
+
+    /* 订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+    R queryByEmp(Integer type);
 
     /* 查询保洁员的待付款订单 */
     List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId);
@@ -73,5 +80,17 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     List<OrderDetailsPOJO> order4ByCustomer(Integer customerId);
     /* 查询客户的已完成订单 */
     List<OrderDetailsPOJO> order5ByCustomer(Integer customerId);
+    /* 【保洁员】【客户】取消订单,将订单放入取消的订单列表 */
+    R payment1();
+    /* 【保洁员】订单状态———— 处理中->未支付 */
+    R payment2(String number);
+    /* 【保洁员】订单状态———— 进行中->待评价 */
+    R payment3(String number);
+    /* 【客户】评价订单———— 进行中->待评价 */
+    R payment4();
+    /* 【保洁员】订单误判———— 已取消订单->已支付 */
+    R payment5();
+    /* 【保洁员】【客户】根据订单编号，查看是否属于调用者 */
+    Boolean orderVerification(OrderDetailsPOJO odp);
 
 }

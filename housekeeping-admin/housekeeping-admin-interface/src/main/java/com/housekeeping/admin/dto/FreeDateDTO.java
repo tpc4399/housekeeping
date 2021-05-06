@@ -11,4 +11,6 @@ public class FreeDateDTO {
     private LocalDate date;
 
     private List<TimeSlotDTO> times;
+
+    private Boolean hasTime;
 }

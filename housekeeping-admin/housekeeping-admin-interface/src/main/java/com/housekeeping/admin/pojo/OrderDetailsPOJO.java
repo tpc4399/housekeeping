@@ -51,6 +51,7 @@ public class OrderDetailsPOJO {
      * 0 --> 订单作废中     订单不进行保留 Order void
      * 2 --> 未付款        待付款状态  To be paid
      * 3 --> 付款处理中     已付款但是还没收到付款的 Payment processing
+     * 4 --> 已付款        待服务      To be served
      * 5 --> 已付款        进行状态    have in hand
      * 8 --> 已做完工作     待确认状态  To be confirmed
      * 15 -->             待评价状态  To be evaluated
