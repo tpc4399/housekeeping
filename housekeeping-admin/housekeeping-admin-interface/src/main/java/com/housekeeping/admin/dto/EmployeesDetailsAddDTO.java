@@ -1,19 +1,16 @@
 package com.housekeeping.admin.dto;
 
-import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 
 /**
  * @Author su
- * @create 2020/11/22 22:20
+ * @create 2021/5/7 16:45
  */
-@Data
-public class EmployeesDetailsDTO {
+public class EmployeesDetailsAddDTO {
 
-    private Integer id;    /* 主鍵id */
-    private String number;    /* 員工編號 */
     private String name;    /* 員工姓名 */
     private Boolean sex;    /* 性別 */
     private LocalDate dateOfBirth;    /* 員工生日 */
@@ -32,6 +29,5 @@ public class EmployeesDetailsDTO {
     private String workYear;     /* 工作年限 */
     private List<EmployeesWorkExperienceDTO> workExperiencesDTO; /* 工作经验 */
     private List<Integer> jobIds;   /* 工作内容 */
-    private String headerUrl;       /* 头像 */
-
+    private MultipartFile image;    /* 头像 */
 }

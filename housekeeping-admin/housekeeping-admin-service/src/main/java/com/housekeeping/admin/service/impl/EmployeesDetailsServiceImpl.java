@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -125,6 +126,11 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             employeesDetails.setCreateTime(LocalDateTime.now());
             employeesDetails.setCompanyId(one.getId());
             employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+
+            /** 头像 */
+            employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
+            /** 头像 */
+
             Integer maxEmployeesId = 0;
             Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
             try {
@@ -676,6 +682,125 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             return byId;
         }).collect(Collectors.toList());
         return R.ok(collect);
+    }
+
+    @Override
+    public String setHeader(MultipartFile image) {
+        String res = "";
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_EMPLOYEES_HEAD_ABSTRACT_PATH_PREFIX_PROV;
+        String type = image.getOriginalFilename().split("\\.")[1];
+        String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
+
+        try {
+            ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(image.getBytes()));
+            res = urlPrefix + fileAbstractPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error upload";
+        }
+
+        return res;
+    }
+
+    @Override
+    public R addEmp(String name,
+                    Boolean sex,
+                    LocalDate dateOfBirth,
+                    String idCard,
+                    String address1,
+                    String address2,
+                    String address3,
+                    String address4,
+                    Float lng,
+                    Float lat,
+                    String educationBackground,
+                    String phonePrefix,
+                    String phone,
+                    String accountLine,
+                    String describes,
+                    String workYear,
+                    List<EmployeesWorkExperienceDTO> workExperiencesDTO,
+                    List<Integer> jobIds,
+                    MultipartFile image) {
+        //先保存User
+        User user = new User();
+        String ss = String.valueOf(System.currentTimeMillis());
+        user.setName(name);
+        user.setNumber("c"+ss);
+        user.setDeptId(5);
+        user.setLastReviserId(TokenUtils.getCurrentUserId());
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+        Integer maxUserId = 0;
+        synchronized (this) {
+            userService.save(user);
+            maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
+        }
+
+        EmployeesDetails employeesDetails = new EmployeesDetails();
+        QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
+        wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
+        CompanyDetails one = companyDetailsService.getOne(wrComp);
+        employeesDetails.setUserId(maxUserId);
+        employeesDetails.setNumber(null);
+        employeesDetails.setName(name);
+        employeesDetails.setSex(sex);
+        employeesDetails.setDateOfBirth(dateOfBirth);
+        employeesDetails.setIdCard(idCard);
+        employeesDetails.setAddress1(address1);
+        employeesDetails.setAddress2(address2);
+        employeesDetails.setAddress3(address3);
+        employeesDetails.setAddress4(address4);
+
+        /** 2021/1/14 su 新增存放地址經緯度 **/
+        employeesDetails.setLng(lng.toString());
+        employeesDetails.setLat(lat.toString());
+        /** 2021/1/14 su 新增存放地址經緯度 **/
+
+        employeesDetails.setEducationBackground(educationBackground);
+        employeesDetails.setPhonePrefix(phonePrefix);
+        employeesDetails.setPhone(phone);
+        employeesDetails.setAccountLine(accountLine);
+        employeesDetails.setDescribes(describes);
+        employeesDetails.setWorkYear(workYear);
+        employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
+        employeesDetails.setBlacklistFlag(false);
+
+        employeesDetails.setUpdateTime(LocalDateTime.now());
+        employeesDetails.setCreateTime(LocalDateTime.now());
+        employeesDetails.setCompanyId(one.getId());
+        employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        Integer maxEmployeesId = 0;
+        Object savePoint = TransactionAspectSupport.currentTransactionStatus().createSavepoint();
+        try {
+            synchronized (this){
+                this.save(employeesDetails);
+                maxEmployeesId = ((EmployeesDetails) CommonUtils.getMaxId("employees_details", this)).getId();
+            }
+            /**
+             * 順便建個員工推廣的表記錄
+             */
+            EmployeesPromotion employeesPromotion = new EmployeesPromotion();
+            employeesPromotion.setEmployeesId(maxEmployeesId);
+            employeesPromotionService.save(employeesPromotion);
+            /**
+             * 工作经验保存
+             */
+            employeesWorkExperienceService.saveEmployeesWorkExperience(workExperiencesDTO, maxEmployeesId);
+            /**
+             * 可工作内容设置,工作内容不为空就可以
+             */
+            if (CommonUtils.isNotEmpty(jobIds))
+                employeesCalendarService.setJobs(new SetEmployeesJobsDTO(jobIds, maxEmployeesId));
+//                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
+        } catch (Exception e){
+            TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
+            return R.failed("添加失敗");
+        }
+        return R.ok(null, "添加成功");
     }
 
 }

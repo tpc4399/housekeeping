@@ -92,6 +92,9 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setCreateTime(LocalDateTime.now());
                 managerDetails.setCompanyId(one.getId());
                 managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+
+                managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
+
                 synchronized (this){
                     this.save(managerDetails);
                     maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();

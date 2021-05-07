@@ -19,5 +19,6 @@ public class ManagerDetailsDTO {
     private String describes;    /* 描述 */
     private Boolean sex;    /* 性別 */
     private String educationBackground; /* 学历 */
+    private String headerUrl;   /* 头像地址 */
 
 }

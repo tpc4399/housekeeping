@@ -33,7 +33,7 @@ public interface CommonConstants {
 	/** 正式環境的存儲公司五张图片的絕對路徑 */
 	String HK_COMPANY_IMG_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyFiveImg/userId=";
 	/** 正式環境的存儲员工头像的絕對路徑 */
-	String HK_EMPLOYEES_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/EmployeesHead/userId=";
+	String HK_EMPLOYEES_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/EmployeesHead";
 	/** 正式環境的存儲经理头像的絕對路徑 */
 	String HK_MANAGER_HEAD_ABSTRACT_PATH_PREFIX_PROV = "HKFile/ManagerHead/userId=";
 	/** 正式環境的存儲客户头像的絕對路徑 */

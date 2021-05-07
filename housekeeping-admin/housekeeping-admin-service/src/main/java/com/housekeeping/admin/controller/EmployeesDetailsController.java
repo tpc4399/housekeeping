@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
@@ -23,9 +24,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Api(value="員工controller",tags={"【员工详情】接口"})
@@ -42,6 +47,37 @@ public class EmployeesDetailsController {
     private final IEmployeesPromotionService employeesPromotionService;
     private final IEmployeesContractService employeesContractService;
     private final IUserService userService;
+
+    @Access({RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】新增員工,新接口，头像信息一起传")
+    @LogFlag(description = "新增員工")
+    @PostMapping("/add")
+    public R add(@RequestParam("name") String name,
+                 @RequestParam("sex") Boolean sex,
+                 @RequestParam("dateOfBirth") LocalDate dateOfBirth,
+                 @RequestParam("idCard") String idCard,
+                 @RequestParam("address1") String address1,
+                 @RequestParam("address2") String address2,
+                 @RequestParam("address3") String address3,
+                 @RequestParam("address4") String address4,
+                 @RequestParam("lng") Float lng,
+                 @RequestParam("lat") Float lat,
+                 @RequestParam("educationBackground") String educationBackground,
+                 @RequestParam("phonePrefix") String phonePrefix,
+                 @RequestParam("phone") String phone,
+                 @RequestParam("accountLine") String accountLine,
+                 @RequestParam("describes") String describes,
+                 @RequestParam("workYear") String workYear,
+                 @RequestParam("workExperiencesDTO") List<EmployeesWorkExperienceDTO> workExperiencesDTO,
+                 @RequestParam("jobIds") List<Integer> jobIds,
+                 @RequestParam("image") MultipartFile image){
+
+        /* 存储头像 */
+        String headerUrls = employeesDetailsService.setHeader(image);
+        /* 存储员工实体 */
+
+        return R.ok();
+    }
 
     @Access({RolesEnum.USER_COMPANY})
     @ApiOperation("【公司】新增員工")

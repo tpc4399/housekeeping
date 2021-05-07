@@ -3,16 +3,19 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.EmployeesDetailsDTO;
+import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
@@ -68,4 +71,25 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R cusPage5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO);
 
     R getGroupByEmpId(Integer employeesId);
+
+    String setHeader(MultipartFile image);
+    R addEmp(String name,
+             Boolean sex,
+             LocalDate dateOfBirth,
+             String idCard,
+             String address1,
+             String address2,
+             String address3,
+             String address4,
+             Float lng,
+             Float lat,
+             String educationBackground,
+             String phonePrefix,
+             String phone,
+             String accountLine,
+             String describes,
+             String workYear,
+             List<EmployeesWorkExperienceDTO> workExperiencesDTO,
+             List<Integer> jobIds,
+             MultipartFile image);
 }
