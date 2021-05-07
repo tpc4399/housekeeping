@@ -99,17 +99,17 @@ public interface CommonConstants {
 	/** redis存储待使用订单编号集合的key */
 	String ORDER_ID_SET = "orderIdSet";
 
-	/** 订单作废中 */
+	/** 订单状态变量 作废,取消 */
 	Integer ORDER_STATE_VOID = new Integer(0);
 	/** 订单状态变量 待付款状态 */
 	Integer ORDER_STATE_TO_BE_PAID = new Integer(2);
-	/** 订单处理中 */
+	/** 订单状态变量 处理中 */
 	Integer ORDER_STATE_PAYMENT_PROCESSING = new Integer(3);
-	/** 订单状态 待服务状态 */
+	/** 订单状态变量 待服务状态 */
 	Integer ORDER_STATE_TO_BE_SERVED = new Integer(4);
 	/** 订单状态变量 进行状态 */
 	Integer ORDER_STATE_HAVE_IN_HAND = new Integer(5);
-	/** 订单状态变量 待确认状态 */
+	/** 订单状态变量 已完成，保洁员已完成了工作状态 */
 	Integer ORDER_STATE_TO_BE_CONFIRMED = new Integer(8);
 	/** 订单状态变量 待评价状态 */
 	Integer ORDER_STATE_TO_BE_EVALUATED = new Integer(15);

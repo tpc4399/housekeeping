@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -484,6 +485,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             e.printStackTrace();
         }
         redisTemplate.opsForHash().putAll(key, map);
+        redisTemplate.expire(key, hourly, TimeUnit.HOURS);
 
         demandOrder.setStatus(1);
         demandOrderService.updateById(demandOrder);

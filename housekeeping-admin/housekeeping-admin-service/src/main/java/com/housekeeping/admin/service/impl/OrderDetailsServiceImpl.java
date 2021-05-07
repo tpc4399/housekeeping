@@ -13,6 +13,7 @@ import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -28,6 +29,7 @@ import springfox.documentation.spring.web.json.Json;
 import javax.annotation.Resource;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -274,7 +276,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (status) od.setOrderState(CommonConstants.ORDER_STATE_TO_BE_SERVED);//订单已支付，待服务
         else od.setOrderState(CommonConstants.ORDER_STATE_VOID);//取消订单
 
-        List<OrderPhotos> ops = orderPhotos(odp);
+        List<OrderPhotos> ops = orderPhotos((List<OrderPhotoPOJO>) map.get("photos"), number);
         List<WorkDetails> wds = workDetails((List<WorkDetailsPOJO>) map.get("workDetails"), number);
         orderDetailsService.save(od);
         if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
@@ -348,9 +350,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         /* odp 获取订单信息 */
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId"+employeesId+":*");
-        String[] keysArr = (String[]) keys.toArray();
+        Object[] keysArr = keys.toArray();
         for (int i = 0; i < keysArr.length; i++) {
-            String key = keysArr[i];
+            String key = keysArr[i].toString();
             OrderDetailsPOJO odp = null;
             Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
             try {
@@ -358,6 +360,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            List<OrderPhotoPOJO> orderPhotosPOJOs = (List<OrderPhotoPOJO>) map.get("photos");
+            List<WorkDetailsPOJO> workDetailsPOJOs = (List<WorkDetailsPOJO>) map.get("workDetails");
+            odp.setPhotos(orderPhotosPOJOs);
+            odp.setWorkDetails(workDetailsPOJOs);
             pojoList.add(odp);
         }
         //TODO 排序
@@ -400,9 +406,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         /* odp 获取订单信息 */
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*");
-        String[] keysArr = (String[]) keys.toArray();
+        Object[] keysArr = keys.toArray();
         for (int i = 0; i < keysArr.length; i++) {
-            String key = keysArr[i];
+            String key = keysArr[i].toString();
             OrderDetailsPOJO odp = null;
             Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
             try {
@@ -410,7 +416,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            if (customerId.equals(odp.getCustomerId())) pojoList.add(odp);//属于客户的，才能被返回
+            if (customerId.equals(odp.getCustomerId())) {
+                List<OrderPhotoPOJO> orderPhotosPOJOs = (List<OrderPhotoPOJO>) map.get("photos");
+                List<WorkDetailsPOJO> workDetailsPOJOs = (List<WorkDetailsPOJO>) map.get("workDetails");
+                odp.setPhotos(orderPhotosPOJOs);
+                odp.setWorkDetails(workDetailsPOJOs);
+                pojoList.add(odp);//属于客户的，才能被返回
+            }
         }
         //TODO 排序
 
@@ -518,14 +530,27 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return false;
     }
 
-    private List<OrderPhotos> orderPhotos(OrderDetailsPOJO pojo){
-        if (CommonUtils.isEmpty(pojo.getPhotos())) return new ArrayList<>();
-        List<OrderPhotos> ops = pojo.getPhotos().stream().map(x -> {
-            return new OrderPhotos(null, Long.valueOf(pojo.getNumber()), x.getPhotoUrl(), x.getEvaluate());
+    @Override
+    public OrderDetailsPOJO odp(String number) {
+        OrderDetails od = orderDetailsService.getById(Long.valueOf(number));
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        List<WorkDetails> wds = workDetailsService.list(qw);
+        List<OrderPhotos> ops = orderPhotosService.list(qw);
+        OrderDetailsPOJO odp = odp(od, wds, ops);
+        return odp;
+    }
+
+    /* 转换到数据库存储 */
+    private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
+        if (CommonUtils.isEmpty(photos)) return new ArrayList<>();
+        List<OrderPhotos> ops = photos.stream().map(x -> {
+            return new OrderPhotos(null, Long.valueOf(number), x.getPhotoUrl(), x.getEvaluate());
         }).collect(Collectors.toList());
         return ops;
     }
 
+    /* 转换到数据库存储 */
     private List<WorkDetails> workDetails(List<WorkDetailsPOJO> workDetails, String number){
         if (CommonUtils.isEmpty(workDetails)) return new ArrayList<>();
         List<WorkDetails> wds = workDetails.stream().map(x -> {
@@ -535,11 +560,57 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                     String s = timeSlot.getTimeSlotStart()+"+"+timeSlot.getTimeSlotLength().toString()+" ";
                     sb.append(s);
                 });
-                return new WorkDetails(null, Long.valueOf(number), x.getDate(), x.getWeek(), sb.toString().trim());
+                return new WorkDetails(null, Long.valueOf(number), x.getDate(), x.getWeek(), sb.toString().trim(), x.getCanBeOnDuty(), x.getTodayPrice());
             }
             return null;
         }).collect(Collectors.toList());
         return wds;
+    }
+
+    /*转到pojo实际的应用*/
+    private List<WorkDetailsPOJO> workDetailsPOJOs(List<WorkDetails> wds){
+        List<WorkDetailsPOJO> workDetailsPOJOs = wds.stream().map(wd -> {
+            String[] times = wd.getTimeSlots().split(" ");
+            List<TimeSlot> timeSlots = new ArrayList<>();
+            for (int i = 0; i < times.length; i++) {
+                TimeSlot ts = ts(times[i]);
+                timeSlots.add(ts);
+            }
+            return new WorkDetailsPOJO(wd.getDate(), wd.getWeek(), timeSlots, wd.getCanBeOnDuty(), wd.getTodayPrice());
+        }).collect(Collectors.toList());
+        return workDetailsPOJOs;
+    }
+
+    private List<OrderPhotoPOJO> orderPhotosPOJOs(List<OrderPhotos> ops){
+        List<OrderPhotoPOJO> orderPhotosPOJOs = ops.stream().map(wd -> {
+            return new OrderPhotoPOJO(wd.getPhotoUrl(), wd.getEvaluate());
+        }).collect(Collectors.toList());
+        return orderPhotosPOJOs;
+    }
+
+    private OrderDetailsPOJO odp(OrderDetails od, List<WorkDetails> wds, List<OrderPhotos> ops){
+        OrderDetailsPOJO odp = new OrderDetailsPOJO(od);
+        List<WorkDetailsPOJO> workDetailsPOJOs = workDetailsPOJOs(wds);
+        List<OrderPhotoPOJO> orderPhotosPOJOs = orderPhotosPOJOs(ops);
+        odp.setWorkDetails(workDetailsPOJOs);
+        odp.setPhotos(orderPhotosPOJOs);
+        return odp;
+    }
+
+    private TimeSlot ts(String s){
+        String[] strings = s.split("\\+");
+        String s1 = strings[0];
+        String s2 = strings[1];
+        LocalTime time = LocalTime.of(Integer.valueOf(s1.substring(0,2)), Integer.valueOf(s1.substring(3,5)));
+        Float length = Float.valueOf(s2);
+        TimeSlot ts = new TimeSlot(time, length);
+        return ts;
+    }
+
+    @Test
+    public void k(){
+        String s = "09:00+3.5";
+        System.out.println(ts(s));
     }
 
 }

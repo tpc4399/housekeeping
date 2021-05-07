@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -432,6 +433,7 @@ public class EmployeesContractServiceImpl
             e.printStackTrace();
         }
         redisTemplate.opsForHash().putAll(key, map);
+        redisTemplate.expire(key, hourly, TimeUnit.HOURS);
         return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }
 

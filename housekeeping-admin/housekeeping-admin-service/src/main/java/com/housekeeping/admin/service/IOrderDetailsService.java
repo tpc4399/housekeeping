@@ -92,5 +92,8 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R payment5();
     /* 【保洁员】【客户】根据订单编号，查看是否属于调用者 */
     Boolean orderVerification(OrderDetailsPOJO odp);
+    /* 根据订单编号获取订单的全部 */
+    OrderDetailsPOJO odp(String number);
+
 
 }

@@ -1,6 +1,9 @@
 package com.housekeeping.admin.pojo;
 
+import com.housekeeping.admin.entity.OrderDetails;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,6 +15,8 @@ import java.util.List;
  * @Date 2021/4/15 9:37
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderDetailsPOJO {
 
     private String number;                      //订单编号
@@ -65,4 +70,39 @@ public class OrderDetailsPOJO {
     private LocalDateTime fixDateTime;          //确认时间
     private LocalDateTime evaluationDateTime;   //评价时间
 
+    public OrderDetailsPOJO(OrderDetails od) {
+        this.number = od.getNumber().toString();
+        this.consumptionItems = od.getConsumptionItems();
+        this.employeesId = od.getEmployeesId();
+        this.name1 = od.getName1();
+        this.phPrefix1 = od.getPhPrefix1();
+        this.phone1 = od.getPhone1();
+        this.companyId = od.getCompanyId();
+        this.invoiceName = od.getInvoiceName();
+        this.invoiceNumber = od.getInvoiceNumber();
+        this.customerId = od.getCustomerId();
+        this.name2 = od.getName2();
+        this.phPrefix2 = od.getPhPrefix2();
+        this.phone2 = od.getPhone2();
+        this.jobIds = od.getJobIds();
+        this.address = od.getAddress();
+        this.lng = od.getLng();
+        this.lat = od.getLat();
+        this.days = od.getDays();
+        this.hOfDay = od.getHOfDay();
+        this.priceBeforeDiscount = od.getPriceBeforeDiscount();
+        this.priceAfterDiscount = od.getPriceAfterDiscount();
+        this.payType = od.getPayType();
+        this.remarks = od.getRemarks();
+        this.startDateTime = od.getStartDateTime();
+        this.updateDateTime = od.getUpdateDateTime();
+        this.h = od.getH();
+        this.payDeadline = od.getPayDeadline();
+        this.orderState = od.getOrderState();
+        this.orderOrigin = od.getOrderOrigin();
+        this.payDateTime = od.getPayDateTime();
+        this.completionDateTime = od.getCompletionDateTime();
+        this.fixDateTime = od.getFixDateTime();
+        this.evaluationDateTime = od.getEvaluationDateTime();
+    }
 }

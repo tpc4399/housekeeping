@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -621,6 +622,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             e.printStackTrace();
         }
         redisTemplate.opsForHash().putAll(key, map);
+        redisTemplate.expire(key, hourly, TimeUnit.HOURS);
+
         return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }
 
@@ -1062,20 +1065,17 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 //日期模板生效
                 freeDateDTO.setDate(date);
                 freeDateDTO.setTimes(map1.get(date));
-                freeDateDTO.setHasTime(true);
             }else if (!map2.isEmpty()){
                 //周模板生效
                 freeDateDTO.setDate(date);
                 freeDateDTO.setTimes(map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>()));
-                freeDateDTO.setHasTime(true);
             }else if (!map3.isEmpty()){
                 freeDateDTO.setDate(date);
                 freeDateDTO.setTimes(map3.get(""));
                 //通用模板生效
-                freeDateDTO.setHasTime(true);
-            }else {
-                freeDateDTO.setHasTime(false);
             }
+            if (freeDateDTO.getTimes().isEmpty()) freeDateDTO.setHasTime(false);
+            else freeDateDTO.setHasTime(true);
             freeDateDTOS.add(freeDateDTO);
         }
 

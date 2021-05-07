@@ -25,4 +25,12 @@ public class TimeSlot {
         if (l > rw) this.timeSlotLength = rw - h;
         else this.timeSlotLength = timeSlotLength;
     }
+
+    @Override
+    public String toString() {
+        return "TimeSlot{" +
+                "timeSlotStart=" + timeSlotStart +
+                ", timeSlotLength=" + timeSlotLength +
+                '}';
+    }
 }
