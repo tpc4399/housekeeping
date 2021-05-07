@@ -11,7 +11,6 @@ import com.housekeeping.admin.service.ICustomerDetailsService;
 import com.housekeeping.admin.service.IUserService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
-import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

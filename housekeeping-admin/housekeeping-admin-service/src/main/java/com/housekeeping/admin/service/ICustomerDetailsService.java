@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.CustomerUpdateDTO;
 import com.housekeeping.admin.entity.CustomerDetails;
@@ -20,7 +21,7 @@ public interface ICustomerDetailsService extends IService<CustomerDetails> {
 
     R updateHeadUrlByUserId(String headUrl, Integer id);
 
-    R getCustomerList(Integer cid, String name);
+    R getCustomerList(Page page,Integer cid, String name);
 
     R updateCus(CustomerUpdateDTO customerUpdateDTO);
 
