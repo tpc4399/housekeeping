@@ -128,7 +128,6 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
                     userIds.add(users.get(j));
                 }
             }
-            QueryWrapper<User> qw = new QueryWrapper<>();
             for (Integer id : userIds) {
                 User one = userService.getUserByIdAndDept(id,3);
                 if(CommonUtils.isNotEmpty(one)){
@@ -143,11 +142,17 @@ public class CustomerDetailsServiceImpl extends ServiceImpl<CustomerDetailsMappe
             }
             if(CommonUtils.isNotEmpty(cid)){
                 List<CustomerDetails> users = search2(cid, userIds3);
+                if(CommonUtils.isEmpty(users)){
+                    return R.ok(null);
+                }
                 Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), users);
                 return R.ok(pages);
             }
             if(CommonUtils.isNotEmpty(name)){
                 List<CustomerDetails> search = search(name, userIds3);
+                if(CommonUtils.isEmpty(search)){
+                    return R.ok(null);
+                }
                 Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
                 return R.ok(pages);
             }else {

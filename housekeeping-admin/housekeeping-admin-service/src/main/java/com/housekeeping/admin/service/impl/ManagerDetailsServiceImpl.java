@@ -128,6 +128,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         managerDetails.setEducationBackground(managerDetailsDTO.getEducationBackground());
         managerDetails.setCreateTime(LocalDateTime.now());
         managerDetails.setUpdateTime(LocalDateTime.now());
+        managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
         if(this.updateById(managerDetails)){
             return R.ok("修改成功");
         }else {

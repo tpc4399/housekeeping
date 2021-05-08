@@ -190,6 +190,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+
+        employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
         this.updateById(employeesDetails);
         /**
          * 工作经验修改
