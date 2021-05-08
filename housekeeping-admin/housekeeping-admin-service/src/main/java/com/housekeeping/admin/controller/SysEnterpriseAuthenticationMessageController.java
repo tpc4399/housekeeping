@@ -72,4 +72,13 @@ public class SysEnterpriseAuthenticationMessageController {
         return sysEnterpriseAuthenticationMessageService.doAudit(id, isThrough);
     }
 
+    @Access(RolesEnum.USER_CUSTOMER)
+    @GetMapping("/sendSms")
+    @ApiOperation("【客户】发送手机验证码")
+    public R sendSms(@RequestParam String phone,
+                     @RequestParam String prefixPhone){
+        return sysEnterpriseAuthenticationMessageService.sendSms(prefixPhone,phone);
+    }
+
+
 }

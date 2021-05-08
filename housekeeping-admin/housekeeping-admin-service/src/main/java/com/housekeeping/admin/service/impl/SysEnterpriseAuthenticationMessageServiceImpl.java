@@ -9,9 +9,10 @@ import com.housekeeping.admin.entity.SysEnterpriseAuthenticationMessage;
 import com.housekeeping.admin.mapper.SysEnterpriseAuthenticationMessageMapper;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.ISysEnterpriseAuthenticationMessageService;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.sms.SendMessage;
+import com.housekeeping.common.utils.*;
+import org.apache.ibatis.ognl.OgnlRuntime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,6 +29,8 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
 
     @Resource
     private ICompanyDetailsService companyDetailsService;
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public R isValidate() {
@@ -67,6 +70,12 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
         if ((Boolean) this.isValidate().getData()){
             return R.failed("貴公司已經認證");
         }
+        if(CommonUtils.isNotEmpty(authMessageDTO.getCode())){
+            if (!authMessageDTO.getCode().equals(redisUtils.get(CommonConstants.CHECK_KEY_BY_PHONE + "_" + authMessageDTO.getPhonePrefix() + "_" +  authMessageDTO.getPhone()))) {
+                return R.failed("驗證碼錯誤");
+            }
+        }
+
         SysEnterpriseAuthenticationMessage authMessage = new SysEnterpriseAuthenticationMessage();
         Integer userId = TokenUtils.getCurrentUserId();
         Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
@@ -174,5 +183,20 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
             return R.failed(authMessage.getAuditStatus() + "認證信息狀態異常");
         }
     }
+
+    @Override
+    public R sendSms(String prefixPhone, String phone) {
+        //生成随机验证码
+        String code = CommonUtils.getRandomSixCode();
+        String key = CommonConstants.CHECK_KEY_BY_PHONE + "_" + prefixPhone + "_" +  phone;
+        //存入redis
+        redisUtils.set(key, code);
+        redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
+        //发送短信
+        String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
+        SendMessage.sendMessage(prefixPhone, phone, params);
+        return R.ok("成功發送短信");
+    }
+
 
 }
