@@ -96,7 +96,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 if(managerDetailsDTO.getHeaderUrl()!=null&&!managerDetailsDTO.getHeaderUrl().equals("")){
                     managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
                 }else {
-                    managerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508104224.png");
+                    managerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508110600.png");
                 }
 
                 synchronized (this){

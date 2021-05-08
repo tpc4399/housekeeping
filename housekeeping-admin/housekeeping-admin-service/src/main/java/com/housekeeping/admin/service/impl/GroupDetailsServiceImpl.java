@@ -80,7 +80,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         groupDetails.setCreateTime(LocalDateTime.now());
         groupDetails.setUpdateTime(LocalDateTime.now());
         groupDetails.setLastReviserId(userId);
-        groupDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508105009.png");
+        groupDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508111402.png");
         return R.ok(baseMapper.insert(groupDetails), "成功添加分組");
     }
 
@@ -293,7 +293,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         /* 開始組頭像oss存儲 */
         String logoUrl;
         if(CommonUtils.isEmpty(headPortrait)){
-            logoUrl = "https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508105009.png";
+            logoUrl = "https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508111402.png";
         }else {
             logoUrl = this.logoSave(headPortrait);
         }
