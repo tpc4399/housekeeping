@@ -21,10 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -64,6 +61,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ISysIndexService sysIndexService;
     @Resource
     private RedisTemplate redisTemplate;
+    @Resource
+    private ISysJobContendService sysJobContendService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -521,13 +520,21 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Override
     public R getSkillTags(Integer employeesId) {
+        String jobStr = employeesDetailsService.getById(employeesId).getPresetJobIds();
+        if(CommonUtils.isEmpty(jobStr)) return R.ok(new ArrayList<>(), "該保潔員沒有設置可工作內容");
+        String[] jobs = jobStr.split(" ");
+        List<Integer> jobIds = new ArrayList<>();
+        for (int i = 0; i < jobs.length; i++) {
+            jobIds.add(Integer.valueOf(jobs[i]));
+        }
+        List<SysJobContend> sysJobContends = sysJobContendService.listByIds(jobIds);
         /***
          * select c.id, c.contend
          *         from employees_calendar as a, employees_calendar_details as b, sys_job_contend as c
          *         where a.id = b.calendar_id and b.job_id = c.id and employees_id = #{employeesId}
          *         group by job_id;
          */
-        return R.ok(baseMapper.getSkillTags(employeesId),"獲取成功");
+        return R.ok(sysJobContends,"獲取成功");
     }
 
     @Override

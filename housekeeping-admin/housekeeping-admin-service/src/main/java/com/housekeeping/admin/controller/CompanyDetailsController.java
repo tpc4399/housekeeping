@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
+import com.housekeeping.admin.dto.CompanyDetailsUpdateDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.common.annotation.Access;
@@ -49,6 +50,15 @@ public class CompanyDetailsController {
     @PostMapping("/update")
     public R updateCompany(@RequestBody CompanyDetailsDTO companyDetailsDTO){
         companyDetailsService.updateById(companyDetailsDTO, TokenUtils.getCurrentUserId());
+        return R.ok("修改成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】【管理员】修改公司信息，新接口")
+    @LogFlag(description = "修改公司信息")
+    @PostMapping("/update2")
+    public R updateCompany2(@RequestBody CompanyDetailsUpdateDTO dto){
+        companyDetailsService.updateById(dto, TokenUtils.getCurrentUserId());
         return R.ok("修改成功");
     }
 

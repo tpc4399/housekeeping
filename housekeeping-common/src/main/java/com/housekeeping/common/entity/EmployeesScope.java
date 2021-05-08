@@ -41,7 +41,14 @@ public class EmployeesScope {
         Double k = ((-1) * new Double(weight.get(ApplicationConfigConstants.distanceScoreDouble))) / this.scopeOfOrder;
         Double x = this.instance;
         Double b = new Double(weight.get(ApplicationConfigConstants.distanceScoreDouble));
-        Double y = k*x + b;
+        Double m = this.scopeOfOrder;
+        Double n = new Double(weight.get(ApplicationConfigConstants.distanceScoreDouble));
+        Double y;
+        if (x < this.scopeOfOrder)
+            y = k*x + b;
+        else {
+            y = m * n / x - n;
+        }
         return y;
     }
 
@@ -182,8 +189,8 @@ public class EmployeesScope {
     public Double getScopeTotal(){
         Double scope1 = this.getScope1(); //距离分数
         Double scope2 = this.getScope2(); //地区分数
-        Double scope3 = this.getScope3(); //价格分数
         Double scope4 = this.getScope4(); //出勤率分数
+        Double scope3 = this.getScope3(); //价格分数
         Double scope5 = this.getScope5(); //评价分数
         Double scope6 = this.getScope6(); //推广分数
         Double scope7 = this.getScope7(); //接单次数分数

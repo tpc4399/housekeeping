@@ -2,6 +2,7 @@ package com.housekeeping.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
+import com.housekeeping.admin.dto.CompanyDetailsUpdateDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import org.apache.ibatis.annotations.Param;
 import org.omg.CORBA.INTERNAL;
@@ -14,6 +15,8 @@ public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
     void updateById(@Param("companyDetailsDTO") CompanyDetailsDTO companyDetailsDTO,
+                    @Param("lastReviserId") Integer lastReviserId);
+    void updateById2(@Param("dto") CompanyDetailsUpdateDTO dto,
                     @Param("lastReviserId") Integer lastReviserId);
     void authSuccess(@Param("companyId") Integer companyId,
                      @Param("companyName") String companyName);

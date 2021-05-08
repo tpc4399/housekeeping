@@ -851,6 +851,12 @@ public class SysIndexServiceImpl
         return res;
     }
 
+    @Override
+    public R querySimplifiedVersion(QueryIndexDTO dto) {
+
+        return null;
+    }
+
     private Map<LocalDate, List<TimeSlot>> periodMerging(Map<LocalDate, List<LocalTime>> periods){
         Map<LocalDate, List<TimeSlot>> res = new HashMap<>();
 
@@ -992,48 +998,10 @@ public class SysIndexServiceImpl
         employeesContractList.forEach(employeesContract -> {
             /* 筛选工作内容不满足要求的包工服务 */
             String jobStr = employeesContract.getJobs();
-            long num = (long) contendId.stream().filter(id -> jobStr.contains(id.toString())).count();
-            if (num == 0){
-                return;
-            }
-
-            Map<LocalDate, List<TimeSlot>> calendarContractFreeTime = employeesContractService.getFreeTimeByContractId(dateSlot, employeesContract.getId());
-            long daysTotal = end.toEpochDay() - start.toEpochDay();
-            float wage = daysTotal * employeesContract.getDayWage();
-            Attendance attendance = new Attendance(employeesContract.getId(), new Float(0), new BigDecimal(0));
-            Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
-            ExecutorService ex = Executors.newCachedThreadPool();
-            for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
-                LocalDate finalDate = date;
-                ex.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        judgeTheDay2(calendarContractFreeTime, finalDate, requireTime, attendance, noAttendanceDetails);//判断date日期的出勤情况
-                    }
-                });
-            }
-            ex.shutdown();
-            try {
-                ex.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Float attendanceValue = attendance.getEnableTotalHourly() / totalTimeRequired;
-            if (attendanceValue >= CommonConstants.CONTRACT_COMPATIBILITY){
-                //达到出勤率标准
-                BigDecimal totalWage;
-                if (employeesContract.getCode().equals(toCode)){
-                    totalWage = new BigDecimal(wage);
-                }else {
-                    totalWage = currencyService.exchangeRateToBigDecimalAfterOptimization(employeesContract.getCode(), toCode, new BigDecimal(wage));
-                }
-                attendance.setTotalPrice(totalWage);
-                //添加到结果域
-                ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, attendance.getTotalPrice(), attendanceValue, this.periodMerging(noAttendanceDetails));
-                service2.add(contractAndPriceDetails);
-            }else {
-                //未达到标准
-            }
+            long num = contendId.stream().filter(id -> jobStr.contains(id.toString())).count();
+            if (num == 0) return; //工作内容一条都不满足，那抱歉了不这个包公不太合适
+            ContractAndPriceDetails contractAndPriceDetails = new ContractAndPriceDetails(employeesContract, employeesContract.getTotalPrice(), null, null);
+            service2.add(contractAndPriceDetails);
         });
         return service2;
     }
@@ -1198,7 +1166,7 @@ public class SysIndexServiceImpl
         EmployeesScope employeesScope = new EmployeesScope(scopeOfOrder, instance, areaIsOk, extensionIsOk, null, null, lowPrice, highPrice, score, weight, existEmployee.getNumberOfOrders());
 
         /**
-         * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok
+         * 员工筛选 type=1   1、只有钟点工匹配ok  2、只有包工匹配ok  3、钟点工和包工都匹配ok  4、报工和钟点工都不匹配
          */
         if (vo.getType() == 1){
             List<JobAndPriceDetails> service1 = this.getService1(vo.getContendId(), vo.getStart(), vo.getEnd(), calendar, requireTime, totalTimeRequired);

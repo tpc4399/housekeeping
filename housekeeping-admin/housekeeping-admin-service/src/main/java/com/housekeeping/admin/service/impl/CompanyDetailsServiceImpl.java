@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
+import com.housekeeping.admin.dto.CompanyDetailsUpdateDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.CompanyDetailsMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
@@ -122,6 +123,11 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     @Override
     public void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId) {
         baseMapper.updateById(companyDetailsDTO, lastReviserId);
+    }
+
+    @Override
+    public void updateById(CompanyDetailsUpdateDTO dto, Integer lastReviserId) {
+        baseMapper.updateById2(dto, lastReviserId);
     }
 
     @Override

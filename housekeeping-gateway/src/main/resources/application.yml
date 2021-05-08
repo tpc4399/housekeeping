@@ -73,8 +73,8 @@ housekeeping:
       - /api/admin/employeesContract/getFreeTimeByDateSlot
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot2
       - /api/admin/employeesCalendar/tags
+      - /api/admin/employeesCalendar/tags2
       - /api/admin/sysJobContend/getAll
-      - /api/admin/sysJobContend/getAll2
       - /api/admin/index/tree
       - /api/admin/index/defaultRecommendation
       - /api/admin/employeesDetails/getAllEmpByCompanyId

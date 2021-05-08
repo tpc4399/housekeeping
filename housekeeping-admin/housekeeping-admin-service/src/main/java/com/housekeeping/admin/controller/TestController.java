@@ -22,9 +22,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -156,6 +157,32 @@ public class TestController {
     @GetMapping("/judgment")
     public R test9(Integer employeesId){
         return R.ok(employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(employeesId), "员工存在性检索");
+    }
+
+    @ApiOperation("数据导入")
+    @GetMapping("/noToken/import")
+    public R test10() throws IOException {
+        List<String> list = new ArrayList<>();
+        File file = new File("F:\\test.txt");
+        InputStreamReader read = null;// 考虑到编码格式
+        try {
+            read = new InputStreamReader(new FileInputStream(file), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String lineTxt = null;
+        while ((lineTxt = bufferedReader.readLine()) != null) {
+            String[] strings = lineTxt.split("\\/");
+            String add = URLDecoder.decode(strings[5], "UTF-8" );
+            String s = add+"  "+strings[6];
+            System.out.println(s);
+            list.add(lineTxt);
+        }
+        read.close();
+        return R.ok(null, "导入成功");
     }
 
 }

@@ -58,6 +58,12 @@ public class SysIndexController {
         return sysIndexService.query(dto);
     }
 
+    @ApiOperation("主页搜索,新接口")
+    @PostMapping("/query2")
+    public R querySimplifiedVersion(@RequestBody QueryIndexDTO dto) throws InterruptedException {
+        return sysIndexService.query(dto);
+    }
+
     @GetMapping("/tree")
     @ApiOperation("获取六大类包括类下的工作内容")
     public R tree(){

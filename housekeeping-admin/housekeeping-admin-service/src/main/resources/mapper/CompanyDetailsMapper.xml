@@ -62,4 +62,22 @@
     <update id="promotion">
          UPDATE company_details set tokens = #{ctokens} - #{tokens} WHERE id = #{companyId}
     </update>
+    <update id="updateById2">
+        UPDATE company_details
+        SET last_reviser_id = #{lastReviserId},
+            address1 = #{dto.address1},
+            address2 = #{dto.address2},
+            address3 = #{dto.address3},
+            address4 = #{dto.address4},
+            service_hotline = #{dto.serviceHotline},
+            email = #{dto.email},
+            web_pages = #{dto.webPages},
+            account_line = #{dto.accountLine},
+            connection_facebook = #{dto.connectionFacebook},
+            connection_instagram = #{dto.connectionInstagram},
+            describes = #{dto.describes},
+            method_payment = #{dto.methodPayment},
+            photos = #{dto.fivePhotoUrls}
+        WHERE id = #{companyDetailsDTO.id}
+    </update>
 </mapper>

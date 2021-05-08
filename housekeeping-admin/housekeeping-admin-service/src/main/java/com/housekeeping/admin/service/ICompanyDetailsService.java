@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsPageDTO;
+import com.housekeeping.admin.dto.CompanyDetailsUpdateDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.common.utils.R;
 import org.apache.ibatis.annotations.Param;
@@ -21,6 +22,7 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
     void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
+    void updateById(CompanyDetailsUpdateDTO companyDetailsDTO, Integer lastReviserId);
     Integer getCompanyIdByUserId(Integer userId);
     R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailspageDTO);
     void authSuccess(Integer companyId, String companyName);
