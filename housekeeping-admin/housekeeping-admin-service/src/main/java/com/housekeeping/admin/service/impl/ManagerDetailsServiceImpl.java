@@ -93,7 +93,11 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setCompanyId(one.getId());
                 managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
 
-                managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
+                if(managerDetailsDTO.getHeaderUrl()!=null&&!managerDetailsDTO.getHeaderUrl().equals("")){
+                    managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
+                }else {
+                    managerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508104224.png");
+                }
 
                 synchronized (this){
                     this.save(managerDetails);

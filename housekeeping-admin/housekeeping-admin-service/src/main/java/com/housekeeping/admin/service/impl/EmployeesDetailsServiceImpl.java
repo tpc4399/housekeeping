@@ -128,7 +128,11 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
 
             /** 头像 */
-            employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
+            if(employeesDetailsDTO.getHeaderUrl()!=null&&!employeesDetailsDTO.getHeaderUrl().equals("")){
+                employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
+            }else {
+                employeesDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508103930.png");
+            }
             /** 头像 */
 
             Integer maxEmployeesId = 0;

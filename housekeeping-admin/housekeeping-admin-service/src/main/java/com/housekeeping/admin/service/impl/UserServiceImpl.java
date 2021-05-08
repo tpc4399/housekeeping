@@ -139,6 +139,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         companyDetails.setCreateTime(LocalDateTime.now());
                         companyDetails.setUpdateTime(LocalDateTime.now());
+                        companyDetails.setLogoUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508104224.png");
                         companyDetailsService.save(companyDetails);
                         /*
                         公司推廣
