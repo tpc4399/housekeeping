@@ -10,6 +10,7 @@ import lombok.Data;
 public class CompanyDetailsUpdateDTO {
 
     private Integer id;    /* 主键 */
+    private String noCertifiedCompany;        /* 未认证公司名 */
     private String address1;/* 省 */
     private String address2;/* 市 */
     private String address3;/* 區 */
