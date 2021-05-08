@@ -204,7 +204,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         /**
          * 可工作内容设置
          */
-//        employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId());
+        employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId()));
         return R.ok("修改成功");
 
 
