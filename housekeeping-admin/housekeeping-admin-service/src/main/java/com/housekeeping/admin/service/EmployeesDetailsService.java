@@ -92,4 +92,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
              List<EmployeesWorkExperienceDTO> workExperiencesDTO,
              List<Integer> jobIds,
              MultipartFile image);
+
+    R getEmployeesByIds(List<Integer> ids);
 }

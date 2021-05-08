@@ -121,13 +121,29 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     }
 
     @Override
-    public void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId) {
+    public R updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId) {
         baseMapper.updateById(companyDetailsDTO, lastReviserId);
+        return R.ok();
     }
 
     @Override
-    public void updateById(CompanyDetailsUpdateDTO dto, Integer lastReviserId) {
+    public R updateById(CompanyDetailsUpdateDTO dto, Integer lastReviserId) {
+        CompanyDetails byId = this.getById(dto.getId());
+        Boolean isValidate = byId.getIsValidate();
+        if(isValidate){
+            if(!dto.getNoCertifiedCompany().equals(byId.getNoCertifiedCompany())){
+                return R.failed("已認證公司名不允許修改");
+            }
+        }
+
+        QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
+        qw.eq("no_certified_company",dto.getNoCertifiedCompany());
+        CompanyDetails one = this.getOne(qw);
+        if(CommonUtils.isNotEmpty(one)&&!dto.getId().equals(one.getId())){
+            return R.failed("該公司名重複");
+        }
         baseMapper.updateById2(dto, lastReviserId);
+        return R.ok();
     }
 
     @Override

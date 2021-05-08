@@ -66,11 +66,7 @@
     <update id="updateById2">
         UPDATE company_details
         SET last_reviser_id = #{lastReviserId},
-        <where>
-            <if test="companyDetailsDTO.noCertifiedCompany != null and companyDetailsDTO.noCertifiedCompany != ''" >
-                no_certified_company = #{companyDetailsDTO.noCertifiedCompany},
-            </if>
-        </where>
+            no_certified_company = #{dto.noCertifiedCompany},
             address1 = #{dto.address1},
             address2 = #{dto.address2},
             address3 = #{dto.address3},
@@ -84,6 +80,6 @@
             describes = #{dto.describes},
             method_payment = #{dto.methodPayment},
             photos = #{dto.fivePhotoUrls}
-        WHERE id = #{companyDetailsDTO.id}
+        WHERE id = #{dto.id}
     </update>
 </mapper>

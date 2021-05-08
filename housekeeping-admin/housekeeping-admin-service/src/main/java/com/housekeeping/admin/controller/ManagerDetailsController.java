@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 @Api(value="經理controller",tags={"【经理详情】接口"})
 @RestController
@@ -130,4 +131,13 @@ public class ManagerDetailsController {
     public R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO){
         return managerDetailsService.getAllManagerByAdmin(page,pageOfEmployeesDTO);
     }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【經理、公司】根據多個id查詢經理")
+    @LogFlag(description = "查詢經理")
+    @PutMapping("/getManagersByIds")
+    public R getManagersByIds(@RequestBody List<Integer> ids){
+        return managerDetailsService.getManagersByIds(ids);
+    }
+
 }
