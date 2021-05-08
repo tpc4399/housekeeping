@@ -42,9 +42,8 @@ public class EmployeesWorkExperienceServiceImpl extends ServiceImpl<EmployeesWor
 
     @Override
     public void updateEmployeesWorkExperience(List<EmployeesWorkExperienceDTO> employeesWorkExperienceDTOS, Integer employeesId) {
-        //删掉原先的
-        this.deleteByEmployeesId(employeesId);
-        //存放新的
+
+        //修改
         employeesWorkExperienceDTOS.forEach(x -> {
             EmployeesWorkExperience employeesWorkExperience = new EmployeesWorkExperience();
             employeesWorkExperience.setId(x.getId());
