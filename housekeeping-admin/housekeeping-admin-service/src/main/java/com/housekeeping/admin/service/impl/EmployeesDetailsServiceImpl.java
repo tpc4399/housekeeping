@@ -128,7 +128,11 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
 
             /** 头像 */
-            employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
+            if(employeesDetailsDTO.getHeaderUrl()!=null&&!employeesDetailsDTO.getHeaderUrl().equals("")){
+                employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
+            }else {
+                employeesDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508103930.png");
+            }
             /** 头像 */
 
             Integer maxEmployeesId = 0;
@@ -190,15 +194,17 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+
+        employeesDetails.setHeadUrl(employeesDetailsDTO.getHeaderUrl());
         this.updateById(employeesDetails);
         /**
          * 工作经验修改
          */
-        employeesWorkExperienceService.updateEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
+        employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
         /**
          * 可工作内容设置
          */
-//        employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId());
+        employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId()));
         return R.ok("修改成功");
 
 

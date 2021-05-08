@@ -3,16 +3,11 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.CompanyPromotionDTO;
 import com.housekeeping.admin.dto.EmployeesPromotionDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.CompanyPromotion;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.EmployeesPromotion;
-import com.housekeeping.admin.mapper.CompanyPromotionMapper;
 import com.housekeeping.admin.mapper.EmployeesPromotionMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
-import com.housekeeping.admin.service.ICompanyPromotionService;
 import com.housekeeping.admin.service.IEmployeesPromotionService;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;

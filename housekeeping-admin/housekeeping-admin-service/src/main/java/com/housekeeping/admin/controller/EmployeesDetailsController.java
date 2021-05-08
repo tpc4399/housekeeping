@@ -75,7 +75,6 @@ public class EmployeesDetailsController {
         /* 存储头像 */
         String headerUrls = employeesDetailsService.setHeader(image);
         /* 存储员工实体 */
-
         return R.ok();
     }
 

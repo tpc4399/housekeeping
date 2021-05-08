@@ -93,7 +93,11 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setCompanyId(one.getId());
                 managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
 
-                managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
+                if(managerDetailsDTO.getHeaderUrl()!=null&&!managerDetailsDTO.getHeaderUrl().equals("")){
+                    managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
+                }else {
+                    managerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508110600.png");
+                }
 
                 synchronized (this){
                     this.save(managerDetails);
@@ -128,6 +132,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         managerDetails.setEducationBackground(managerDetailsDTO.getEducationBackground());
         managerDetails.setCreateTime(LocalDateTime.now());
         managerDetails.setUpdateTime(LocalDateTime.now());
+        managerDetails.setHeadUrl(managerDetailsDTO.getHeaderUrl());
         if(this.updateById(managerDetails)){
             return R.ok("修改成功");
         }else {

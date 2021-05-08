@@ -14,12 +14,9 @@ import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
 import com.housekeeping.admin.service.IGroupDetailsService;
 import com.housekeeping.admin.service.ManagerDetailsService;
-import com.housekeeping.admin.vo.EmployeesVo;
 import com.housekeeping.admin.vo.GroupDetailsVo;
 import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,6 +80,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         groupDetails.setCreateTime(LocalDateTime.now());
         groupDetails.setUpdateTime(LocalDateTime.now());
         groupDetails.setLastReviserId(userId);
+        groupDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508111402.png");
         return R.ok(baseMapper.insert(groupDetails), "成功添加分組");
     }
 
@@ -293,7 +291,12 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         if (this.judgeGroupNameInCompany(name, companyId)) return R.failed(null, "該組名已經存在");
 
         /* 開始組頭像oss存儲 */
-        String logoUrl = this.logoSave(headPortrait);
+        String logoUrl;
+        if(CommonUtils.isEmpty(headPortrait)){
+            logoUrl = "https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508111402.png";
+        }else {
+            logoUrl = this.logoSave(headPortrait);
+        }
 
         /* 開始數據庫存儲 */
         LocalDateTime now = LocalDateTime.now();

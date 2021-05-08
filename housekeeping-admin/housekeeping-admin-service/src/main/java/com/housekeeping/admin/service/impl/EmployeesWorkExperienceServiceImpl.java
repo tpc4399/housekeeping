@@ -3,14 +3,11 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
-import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.EmployeesWorkExperience;
 import com.housekeeping.admin.mapper.EmployeesWorkExperienceMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.IEmployeesWorkExperienceService;
-import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -45,9 +42,8 @@ public class EmployeesWorkExperienceServiceImpl extends ServiceImpl<EmployeesWor
 
     @Override
     public void updateEmployeesWorkExperience(List<EmployeesWorkExperienceDTO> employeesWorkExperienceDTOS, Integer employeesId) {
-        //删掉原先的
-        this.deleteByEmployeesId(employeesId);
-        //存放新的
+
+        //修改
         employeesWorkExperienceDTOS.forEach(x -> {
             EmployeesWorkExperience employeesWorkExperience = new EmployeesWorkExperience();
             employeesWorkExperience.setId(x.getId());
