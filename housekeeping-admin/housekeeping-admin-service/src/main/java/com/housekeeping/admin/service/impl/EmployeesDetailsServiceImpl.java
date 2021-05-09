@@ -809,4 +809,13 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         return R.ok(null, "添加成功");
     }
 
+    @Override
+    public R getEmployeesByIds(List<Integer> ids) {
+        List<EmployeesDetails> collect = ids.stream().map(x -> {
+            EmployeesDetails byId = employeesDetailsService.getById(x);
+            return byId;
+        }).collect(Collectors.toList());
+        return R.ok(collect);
+    }
+
 }

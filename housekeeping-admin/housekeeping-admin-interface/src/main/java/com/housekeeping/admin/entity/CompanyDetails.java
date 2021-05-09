@@ -29,6 +29,7 @@ public class CompanyDetails extends Model<Log> implements Serializable {
     private Integer id;    /* 主键 */
     private String number;    /* 公司编号 */
     private Integer userId;    /* 所屬用戶 */
+    private String noCertifiedCompany;        /* 未认证公司名 */
     private String companyName;    /* 公司全名 */
     private Integer companySizeId;    /* 公司规模_id */
     private String companyProfile;    /* 公司简介 */

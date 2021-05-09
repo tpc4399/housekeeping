@@ -227,4 +227,11 @@ public class EmployeesDetailsController {
         return employeesDetailsService.getGroupByEmpId(employeesId);
     }
 
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【經理、公司】根據多個id查詢員工")
+    @LogFlag(description = "查詢員工")
+    @PutMapping("/getEmployeesByIds")
+    public R getEmployeesByIds(@RequestBody List<Integer> ids){
+        return employeesDetailsService.getEmployeesByIds(ids);
+    }
 }

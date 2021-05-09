@@ -21,8 +21,8 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     R updateFiveImgUrlByUserId(String imgUrl, Integer id);
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
-    void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
-    void updateById2(CompanyDetailsUpdateDTO dto, Integer lastReviserId);
+    R updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
+    R updateById(CompanyDetailsUpdateDTO companyDetailsDTO, Integer lastReviserId);
     Integer getCompanyIdByUserId(Integer userId);
     R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailspageDTO);
     void authSuccess(Integer companyId, String companyName);

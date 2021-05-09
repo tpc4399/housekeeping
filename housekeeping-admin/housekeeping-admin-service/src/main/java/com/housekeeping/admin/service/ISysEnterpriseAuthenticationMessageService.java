@@ -18,4 +18,6 @@ public interface ISysEnterpriseAuthenticationMessageService extends IService<Sys
     R undo();
     R query(Page page);
     R doAudit(Integer id, Boolean isThrough);
+
+    R sendSms(String prefixPhone, String phone);
 }

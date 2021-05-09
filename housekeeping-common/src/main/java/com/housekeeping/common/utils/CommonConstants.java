@@ -13,6 +13,8 @@ import java.util.Map;
  */
 public interface CommonConstants {
 	/** redis的key前綴 */
+	String CHECK_KEY_BY_PHONE = "HK_CHECK__KEY_BY_PHONE";
+	/** redis的key前綴 */
 	String NEWPHONE_KEY_BY_PHONE = "HK_NEWPHONE_KEY_BY_PHONE";
 	/** redis的key前綴 */
 	String CHANGE_KEY_BY_PHONE = "HK_CHANGE_KEY_BY_PHONE";

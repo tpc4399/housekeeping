@@ -16,6 +16,7 @@
     <update id="updateById">
         UPDATE company_details
         SET last_reviser_id = #{lastReviserId},
+            no_certified_company = #{companyDetailsDTO.noCertifiedCompany},
             address1 = #{companyDetailsDTO.address1},
             address2 = #{companyDetailsDTO.address2},
             address3 = #{companyDetailsDTO.address3},
@@ -47,7 +48,7 @@
 
     <update id="authSuccess">
         UPDATE company_details
-        SET is_validate = true, company_name = #{companyName}
+        SET is_validate = true, company_name = #{companyName},no_certified_company = #{companyName}
         WHERE id = #{companyId}
     </update>
 
@@ -65,6 +66,7 @@
     <update id="updateById2">
         UPDATE company_details
         SET last_reviser_id = #{lastReviserId},
+            no_certified_company = #{dto.noCertifiedCompany},
             address1 = #{dto.address1},
             address2 = #{dto.address2},
             address3 = #{dto.address3},

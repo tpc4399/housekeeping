@@ -204,7 +204,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
                         customerAddress.setCustomerId(newCustomerDetails.getId());
                         customerAddress.setIsDefault(true);
-                        customerAddress.setName("註冊地址");
+                        customerAddress.setName(dto.getName());
                         customerAddress.setAddress(dto.getAddress());
                         customerAddress.setLng(dto.getLng());
                         customerAddress.setLat(dto.getLat());

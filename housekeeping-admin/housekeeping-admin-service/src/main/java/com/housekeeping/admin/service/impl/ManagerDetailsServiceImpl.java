@@ -339,6 +339,15 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return true;
     }
 
+    @Override
+    public R getManagersByIds(List<Integer> ids) {
+        List<ManagerDetails> collect = ids.stream().map(x -> {
+            ManagerDetails byId = managerDetailsService.getById(x);
+            return byId;
+        }).collect(Collectors.toList());
+        return R.ok(collect);
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return
