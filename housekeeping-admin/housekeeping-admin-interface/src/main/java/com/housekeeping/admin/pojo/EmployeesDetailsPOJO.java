@@ -24,6 +24,6 @@ public class EmployeesDetailsPOJO {
     private AddressDetailsDTO addressDTO; /* 地址 */
     private BigDecimal hourlyWage;      /* 时薪 */
     private String code;
-    private Float instances;            /* 距离 */
+    private String instances;            /* 距离 */
 
 }

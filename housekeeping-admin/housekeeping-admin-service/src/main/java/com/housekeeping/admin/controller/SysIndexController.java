@@ -60,7 +60,7 @@ public class SysIndexController {
         return sysIndexService.query(dto);
     }
 
-    @ApiOperation("主页搜索,新接口")
+    @ApiOperation("主页搜索,新接口 2021-5-9 18:12")
     @PostMapping("/query2")
     public R querySimplifiedVersion(@RequestBody QueryDTO dto) throws InterruptedException {
         return queryService.query(dto);

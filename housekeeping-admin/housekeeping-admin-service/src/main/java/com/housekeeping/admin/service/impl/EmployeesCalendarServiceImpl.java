@@ -1189,7 +1189,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 //通用模板生效
                 todaySlot = map3.get("");
             }
-            if (CommonUtils.isNotEmpty(todaySlot)){
+            if (todaySlot.size() != 0){
                 tdp.setTimes(todaySlot);
                 tdp.setHasTime(true);
             }else {
