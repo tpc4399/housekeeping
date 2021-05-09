@@ -58,7 +58,7 @@ public class CompanyDetailsController {
     @LogFlag(description = "修改公司信息")
     @PostMapping("/update2")
     public R updateCompany2(@RequestBody CompanyDetailsUpdateDTO dto){
-        companyDetailsService.updateById(dto, TokenUtils.getCurrentUserId());
+        companyDetailsService.updateById2(dto, TokenUtils.getCurrentUserId());
         return R.ok("修改成功");
     }
 

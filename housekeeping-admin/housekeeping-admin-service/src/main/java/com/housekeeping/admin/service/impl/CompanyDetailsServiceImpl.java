@@ -126,7 +126,7 @@ public class CompanyDetailsServiceImpl extends ServiceImpl<CompanyDetailsMapper,
     }
 
     @Override
-    public void updateById(CompanyDetailsUpdateDTO dto, Integer lastReviserId) {
+    public void updateById2(CompanyDetailsUpdateDTO dto, Integer lastReviserId) {
         baseMapper.updateById2(dto, lastReviserId);
     }
 

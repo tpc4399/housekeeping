@@ -29,6 +29,8 @@ public class EmployeesCalendar extends Model<EmployeesCalendar> {
     private String week;    /* 周数 */
     private LocalTime timeSlotStart;    /* 时间段开始 */
     private Float timeSlotLength;    /* 时间段长度(小时) */
+    private BigDecimal hourlyWage;  /* 時薪 */
+    private String code;            /* 貨幣代碼 */
 
     public EmployeesCalendar() {
     }

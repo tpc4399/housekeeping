@@ -10,6 +10,6 @@ import lombok.Data;
 public class GetCalendarByDateSlotDTO {
 
     private DateSlot dateSlot;
-    private Integer id;
+    private Integer id;  //這是employeesId
 
 }

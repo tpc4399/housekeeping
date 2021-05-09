@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesCalendarMapper;
-import com.housekeeping.admin.pojo.CalendarPOJO;
-import com.housekeeping.admin.pojo.ConfirmOrderPOJO;
-import com.housekeeping.admin.pojo.OrderDetailsPOJO;
-import com.housekeeping.admin.pojo.WorkDetailsPOJO;
+import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
@@ -1131,6 +1128,83 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             h.set(h.get() + timeSlot.getTimeSlotLength());
         });
         return h.get();
+    }
+
+    @Override
+    public Map<LocalDate, TodayDetailsPOJO> getCalendar(GetCalendarByDateSlotDTO dto) {
+        /* 先得到三大map */
+        SortListUtil<TimeSlotPOJO> sort = new SortListUtil<>();
+        Map<LocalDate, List<TimeSlotPOJO>> map1 = new HashMap<>();
+        Map<Integer, List<TimeSlotPOJO>> map2 = new HashMap<>();
+        Map<String, List<TimeSlotPOJO>> map3 = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", dto.getId());
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+        if (CommonUtils.isEmpty(employeesCalendarList)){
+            return null;
+        }
+        employeesCalendarList.forEach(ec -> {
+            TimeSlotPOJO pojo = new TimeSlotPOJO();
+            pojo.setTimeSlotStart(ec.getTimeSlotStart());
+            pojo.setTimeSlotLength(ec.getTimeSlotLength());
+            pojo.setHourlyWage(ec.getHourlyWage());
+            pojo.setCode(ec.getCode());
+            if (CommonUtils.isEmpty(ec.getStander())){
+                List<TimeSlotPOJO> pojoList = map3.getOrDefault("", new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map3.put("", pojoList);
+            }else if (ec.getStander() == false){ //日期
+                List<TimeSlotPOJO> pojoList = map1.getOrDefault(ec.getDate(), new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map1.put(ec.getDate(), pojoList);
+            }else if (ec.getStander() == true){ //周
+                String weekString = ec.getWeek();
+                for (int i = 0; i < weekString.length(); i++) {
+                    Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
+                    List<TimeSlotPOJO> pojoList = map2.getOrDefault(weekInteger, new ArrayList<>());
+                    pojoList.add(pojo);
+                    sort.Sort(pojoList, "getTimeSlotStart", null);
+                    map2.put(weekInteger, pojoList);
+                }
+            }
+        });
+        /* 先得到三大map */
+
+        /* 從而演化出時間表 */
+        Map<LocalDate, TodayDetailsPOJO> calendarMap = new HashMap<>();
+        LocalDate start = dto.getDateSlot().getStart();
+        LocalDate end = dto.getDateSlot().getEnd();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+            TodayDetailsPOJO tdp = new TodayDetailsPOJO();
+            List<TimeSlotPOJO> todaySlot = new ArrayList<>();
+            if (map1.containsKey(date)){
+                //日期模板生效
+                todaySlot = map1.get(date);
+            }else if (!map2.isEmpty()){
+                //周模板生效
+                todaySlot = map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>());
+            }else if (!map3.isEmpty()){
+                //通用模板生效
+                todaySlot = map3.get("");
+            }
+            if (CommonUtils.isNotEmpty(todaySlot)){
+                tdp.setTimes(todaySlot);
+                tdp.setHasTime(true);
+            }else {
+                tdp.setTimes(new ArrayList<>());
+                tdp.setHasTime(false);
+            }
+            tdp.setWeek(date.getDayOfWeek().getValue());
+            calendarMap.put(date, tdp);
+        }
+        return calendarMap;
+    }
+
+    @Override
+    public Map<LocalDate, TodayDetailsPOJO> getCalendarFreeTime(GetCalendarByDateSlotDTO dto) {
+        return this.getCalendar(dto);
     }
 
 }

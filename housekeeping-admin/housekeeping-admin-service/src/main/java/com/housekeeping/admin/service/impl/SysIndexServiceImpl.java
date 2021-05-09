@@ -339,7 +339,7 @@ public class SysIndexServiceImpl
         sort2.SortByDouble(recommendedCleaner, "getRecommendedScope", "desc");//需要根据推荐分降序排序
 
         Map<String, Integer> number = sysConfigService.getNumber();
-        Integer a= number.get(ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger);
+        Integer a = number.get(ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger);
         Integer b = number.get(ApplicationConfigConstants.numberOfConsecutiveCompanyInteger);
         Integer sum = a + b;
         Integer count = recommendedCleaner.size() + recommendedCompany.size();
@@ -908,6 +908,7 @@ public class SysIndexServiceImpl
                                          List<LocalTime> requireTime,
                                          Float totalTimeRequired){
         List<JobAndPriceDetails> service1 = new ArrayList<>();
+
         contendId.forEach(jobId -> {
             Attendance attendance = new Attendance(jobId, new Float(0), new BigDecimal(0));
             Map<LocalDate, List<LocalTime>> noAttendanceDetails = new HashMap<>(); //不能出勤的详细时间收集
@@ -961,12 +962,13 @@ public class SysIndexServiceImpl
             //判断这半个小时能否出勤
             todayTime.forEach(today -> {
                 if (today.getTime().equals(time)){
+                    BigDecimal thisSlotPrice = new BigDecimal(today.getJobAndPriceList().get(0).getPrice());
                     today.getJobAndPriceList().forEach(jobAndPriceDTO -> {
                         if (jobAndPriceDTO.getJobId().equals(jobId)){
                             //这个班可以出席
                             canBeOnDuty.set(true);
                             attendance.halfAnHourMore();
-                            BigDecimal halfAnHourWage = new BigDecimal(jobAndPriceDTO.getPrice()).divide(new BigDecimal(2));
+                            BigDecimal halfAnHourWage = thisSlotPrice.divide(new BigDecimal(2));
                             attendance.increaseTheTotalPrice(halfAnHourWage);
                         }
                     });
@@ -1276,15 +1278,16 @@ public class SysIndexServiceImpl
      * @return
      */
     private BigDecimal getLowPrice(BigDecimal low, BigDecimal high, BigDecimal min, BigDecimal exist){
-        if (exist.compareTo(high) == -1 || exist.compareTo(low) == 1){
-            if (exist.compareTo(min) == -1){
-                return exist;
-            }else {
-                return min;
-            }
-        }else {
-            return low;
-        }
+//        if (exist.compareTo(high) == -1 || exist.compareTo(low) == 1){
+//            if (exist.compareTo(min) == -1){
+//                return exist;
+//            }else {
+//                return min;
+//            }
+//        }else {
+//            return low;
+//        }
+        return exist.compareTo(min) == -1 ? exist : min;
     }
 
     @Test

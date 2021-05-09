@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
+import com.housekeeping.admin.service.IQueryService;
 import com.housekeeping.admin.service.ISysIndexService;
 import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class SysIndexController {
 
     private final ISysIndexService sysIndexService;
+    private final IQueryService queryService;
 
     @GetMapping
     @ApiOperation("获取所有分类")
@@ -60,8 +62,8 @@ public class SysIndexController {
 
     @ApiOperation("主页搜索,新接口")
     @PostMapping("/query2")
-    public R querySimplifiedVersion(@RequestBody QueryIndexDTO dto) throws InterruptedException {
-        return sysIndexService.query(dto);
+    public R querySimplifiedVersion(@RequestBody QueryDTO dto) throws InterruptedException {
+        return queryService.query(dto);
     }
 
     @GetMapping("/tree")

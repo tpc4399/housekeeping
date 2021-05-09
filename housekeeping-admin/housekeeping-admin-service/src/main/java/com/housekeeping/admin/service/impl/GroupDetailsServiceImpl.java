@@ -324,7 +324,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     @Override
     public Boolean judgeGroupNameInCompany(String name, Integer companyId) {
         QueryWrapper qw = new QueryWrapper();
-        qw.eq("name", name);
+        qw.eq("group_name", name);
         qw.eq("company_id", companyId);
         List<GroupDetails> gds = this.baseMapper.selectList(qw);
         if (!gds.isEmpty()) return true;

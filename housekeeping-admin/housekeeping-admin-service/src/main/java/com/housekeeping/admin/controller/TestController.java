@@ -2,6 +2,7 @@ package com.housekeeping.admin.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.housekeeping.admin.dto.DateSlot;
+import com.housekeeping.admin.dto.GetCalendarByDateSlotDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.*;
@@ -123,8 +124,14 @@ public class TestController {
 
     @GetMapping("/noToken/test7")
     @ApiOperation("测试7")
-    public R test7(){
-        return R.ok();
+    public R test7(Integer employeesId){
+        GetCalendarByDateSlotDTO dto = new GetCalendarByDateSlotDTO();
+        DateSlot ds = new DateSlot();
+        ds.setStart(LocalDate.of(2020,5,1));
+        ds.setEnd(LocalDate.of(2020,6,1));
+        dto.setDateSlot(ds);
+        dto.setId(employeesId);
+        return R.ok(employeesCalendarService.getCalendar(dto));
     }
 
     @ApiOperation("redis数据导入")

@@ -151,4 +151,16 @@ public class EmployeesCalendarController {
         return employeesCalendarService.getByCalendarId(id);
     }
 
+    @ApiOperation("獲取員工時間表接口，新接口2021-5-9 10:20創建")
+    @PostMapping("/getCalendar")
+    public R getCalendar(@RequestBody GetCalendarByDateSlotDTO dto){
+        return R.ok();
+    }
+
+    @ApiOperation("獲取員工時間表空閒時間，新接口2021-5-9 10:20創建")
+    @PostMapping("/getCalendarFreeTime")
+    public R getCalendarFreeTime(@RequestBody GetCalendarByDateSlotDTO dto){
+        return R.ok();
+    }
+
 }

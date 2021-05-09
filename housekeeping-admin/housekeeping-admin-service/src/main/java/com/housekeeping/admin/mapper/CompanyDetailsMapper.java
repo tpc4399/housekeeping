@@ -5,7 +5,6 @@ import com.housekeeping.admin.dto.CompanyDetailsDTO;
 import com.housekeeping.admin.dto.CompanyDetailsUpdateDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import org.apache.ibatis.annotations.Param;
-import org.omg.CORBA.INTERNAL;
 
 public interface CompanyDetailsMapper extends BaseMapper<CompanyDetails> {
     void updateLogoUrlById(@Param("logoUrl") String logoUrl,

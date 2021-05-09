@@ -22,7 +22,7 @@ public interface ICompanyDetailsService extends IService<CompanyDetails> {
     String getLogoUrlByUserId(Integer userId);
     String getPhotosByUserId(Integer userId);
     void updateById(CompanyDetailsDTO companyDetailsDTO, Integer lastReviserId);
-    void updateById(CompanyDetailsUpdateDTO companyDetailsDTO, Integer lastReviserId);
+    void updateById2(CompanyDetailsUpdateDTO dto, Integer lastReviserId);
     Integer getCompanyIdByUserId(Integer userId);
     R pageOfCompanyByAdmin(IPage<CompanyDetails> page, CompanyDetailsPageDTO companyDetailspageDTO);
     void authSuccess(Integer companyId, String companyName);

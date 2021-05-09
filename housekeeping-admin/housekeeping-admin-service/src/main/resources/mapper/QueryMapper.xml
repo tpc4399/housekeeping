@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.QueryMapper">
+
+    <select id="allCalendar" resultType="java.lang.Integer">
+        select employees_id
+        from employees_calendar
+        group by employees_id
+        having ''!=(
+            select preset_job_ids
+            from employees_details
+            where id = employees_id
+            )
+    </select>
+    <select id="allContract" resultType="java.lang.Integer">
+        select employees_id
+        from employees_contract
+        group by employees_id
+    </select>
+    <select id="pool" resultType="java.lang.Integer">
+        select employees_id
+        from employees_calendar
+        group by employees_id
+        having ''!=(
+            select preset_job_ids
+            from employees_details
+            where id = employees_id
+            )
+        union all
+        select employees_id
+        from employees_contract
+        group by employees_id;
+    </select>
+</mapper>

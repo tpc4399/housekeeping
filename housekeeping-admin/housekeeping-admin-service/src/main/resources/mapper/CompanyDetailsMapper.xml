@@ -78,6 +78,6 @@
             describes = #{dto.describes},
             method_payment = #{dto.methodPayment},
             photos = #{dto.fivePhotoUrls}
-        WHERE id = #{companyDetailsDTO.id}
+        WHERE id = #{dto.id}
     </update>
 </mapper>
