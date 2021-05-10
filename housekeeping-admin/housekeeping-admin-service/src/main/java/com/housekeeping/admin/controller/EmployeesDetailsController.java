@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -82,7 +83,7 @@ public class EmployeesDetailsController {
     @ApiOperation("【公司】新增員工")
     @LogFlag(description = "新增員工")
     @PostMapping("/saveEmp")
-    public R saveEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+    public R saveEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
@@ -90,7 +91,7 @@ public class EmployeesDetailsController {
     @ApiOperation("【经理】新增員工")
     @LogFlag(description = "经理新增員工")
     @PostMapping("/saveEmpByMan")
-    public R saveEmpByMan(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+    public R saveEmpByMan(@RequestBody EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_MANAGER);
     }
 
@@ -98,7 +99,7 @@ public class EmployeesDetailsController {
     @ApiOperation("【管理员】【公司】【经理】【员工】修改員工信息")
     @LogFlag(description = "修改員工信息")
     @PostMapping("/updateEmp")
-    public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO){
+    public R updateEmp(@RequestBody EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
         return employeesDetailsService.updateEmp(employeesDetailsDTO);
     }
 

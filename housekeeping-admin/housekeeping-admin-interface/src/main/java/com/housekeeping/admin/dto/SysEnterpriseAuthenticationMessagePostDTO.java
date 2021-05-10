@@ -16,6 +16,7 @@ public class SysEnterpriseAuthenticationMessagePostDTO {
     private String phone; /* 电话号码 */
     private String code;    /* 验证码 */
     private String registerAddress; /* 注册地址 */
+    private String enclosure;       /* 附件地址 */
     private Boolean isSend; /* 是否发送申请 true:发送申请 false:保存到草稿 */
 
 }
