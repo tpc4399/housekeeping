@@ -189,14 +189,20 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
                 }
                 groupVOS.add(groupVO);
             }
-            if(CommonUtils.isNotEmpty(id)){
-                List<GroupVO> groupVOS1 = search2(id, groupVOS);
-                return R.ok(groupVOS1);
+        if(CommonUtils.isNotEmpty(id)){
+            List<GroupVO> groupVOS1 = search2(id, groupVOS);
+            if(CommonUtils.isEmpty(groupVOS1)){
+                return R.ok(null);
             }
-            if(StringUtils.isNotEmpty(groupName)){
+            return R.ok(groupVOS1);
+        }
+        if(StringUtils.isNotEmpty(groupName)){
             List<GroupVO> search = search(groupName, groupVOS);
-                Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
-                return R.ok(pages);
+            if(CommonUtils.isEmpty(search)){
+                return R.ok(null);
+            }
+            Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
+            return R.ok(pages);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupVOS);
         return R.ok(pages);
@@ -252,10 +258,8 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     @Override
     public R getAllGroups(Page page, String groupName) {
         List<GroupDetailsVo> groupDetailsVos = baseMapper.getAllGroups(groupName);
-        for (int i = 0; i < groupDetailsVos.size(); i++) {
-            if(CommonUtils.isEmpty(groupDetailsVos.get(i).getCompanyName())){
-                groupDetailsVos.get(i).setCompanyName("未认证公司");
-            }
+        if(CommonUtils.isEmpty(groupDetailsVos)){
+            return R.ok(null);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupDetailsVos);
         return R.ok(pages);

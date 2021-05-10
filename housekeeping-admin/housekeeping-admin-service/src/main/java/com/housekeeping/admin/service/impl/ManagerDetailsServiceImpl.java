@@ -84,6 +84,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setName(managerDetailsDTO.getName());
                 managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
                 managerDetails.setPhone(managerDetailsDTO.getPhone());
+                managerDetails.setPhonePrefix(managerDetails.getPhonePrefix());
                 managerDetails.setAddress(managerDetailsDTO.getAddress());
                 managerDetails.setDescribes(managerDetailsDTO.getDescribes());
                 managerDetails.setSex(managerDetailsDTO.getSex());
@@ -125,6 +126,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         managerDetails.setName(managerDetailsDTO.getName());
         managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
         managerDetails.setPhone(managerDetailsDTO.getPhone());
+        managerDetails.setPhonePrefix(managerDetailsDTO.getPhonePrefix());
         managerDetails.setAddress(managerDetailsDTO.getAddress());
         managerDetails.setDescribes(managerDetailsDTO.getDescribes());
         managerDetails.setSex(managerDetailsDTO.getSex());
@@ -317,11 +319,9 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     @Override
     public R getAllManagerByAdmin(Page page, PageOfManagerDTO pageOfEmployeesDTO) {
         List<ManagerVo> managerVos = baseMapper.getAllManagerByAdmin(pageOfEmployeesDTO);
-        for (int i = 0; i < managerVos.size(); i++) {
-            if(CommonUtils.isEmpty(managerVos.get(i).getCompanyName())){
-                managerVos.get(i).setCompanyName("未认证公司");
-            }
-        }
+       if(CommonUtils.isEmpty(managerVos)){
+           return R.ok(managerVos);
+       }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), managerVos);
         return R.ok(pages);
     }

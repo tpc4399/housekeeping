@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class EmployeesVo extends EmployeesDetails {
 
-    private String companyName;
+    private String noCertifiedCompany;
 
 }

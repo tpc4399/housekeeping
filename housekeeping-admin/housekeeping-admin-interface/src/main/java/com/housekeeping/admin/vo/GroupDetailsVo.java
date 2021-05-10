@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class GroupDetailsVo extends GroupDetails {
 
-    private String companyName;
+    private String noCertifiedCompany;
 }

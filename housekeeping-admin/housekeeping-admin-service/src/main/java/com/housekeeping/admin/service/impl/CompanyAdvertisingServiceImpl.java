@@ -255,19 +255,16 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
 
     @Override
     public R getAllAdverByAdmin(Page page, Integer id, String title, Boolean status) {
-        List<CompanyAdvertisingsVo> companyAdvertisingsVos = baseMapper.getAllAdverByAdmin(id,title);
-        for (int i = 0; i < companyAdvertisingsVos.size(); i++) {
-            if(CommonUtils.isEmpty(companyAdvertisingsVos.get(i).getCompanyName())){
-                companyAdvertisingsVos.get(i).setCompanyName("未认证公司");
-            }
-            if(CommonUtils.isEmpty(companyAdvertisingsVos.get(i).getEndTime())||LocalDateTime.now().isAfter(companyAdvertisingsVos.get(i).getEndTime())){
-                companyAdvertisingsVos.get(i).setPromotion(false);
+        List<CompanyAdvertingVo> companyAdvertisingVos = baseMapper.getAllAdderByAdmin(id,title);
+        for (int i = 0; i < companyAdvertisingVos.size(); i++) {
+            if(CommonUtils.isEmpty(companyAdvertisingVos.get(i).getEndTime())||LocalDateTime.now().isAfter(companyAdvertisingVos.get(i).getEndTime())){
+                companyAdvertisingVos.get(i).setPromotion(false);
             }else {
-                companyAdvertisingsVos.get(i).setPromotion(true);
+                companyAdvertisingVos.get(i).setPromotion(true);
             }
         }
         if(CommonUtils.isNotEmpty(status)){
-            Iterator<CompanyAdvertisingsVo> iterator = companyAdvertisingsVos.iterator();
+            Iterator<CompanyAdvertingVo> iterator = companyAdvertisingVos.iterator();
             if(status){
                 while (iterator.hasNext()) {
                     CompanyAdvertising s = iterator.next();
@@ -284,7 +281,7 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
                 }
             }
         }
-        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), companyAdvertisingsVos);
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), companyAdvertisingVos);
         return R.ok(pages);
     }
 
