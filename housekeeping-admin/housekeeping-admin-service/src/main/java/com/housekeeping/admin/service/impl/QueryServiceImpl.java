@@ -142,9 +142,9 @@ public class QueryServiceImpl implements IQueryService {
         exr2.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
 
         SortListUtil<EmployeesPOJO> sort1 = new SortListUtil<>();
-        sort1.Sort(employeesPOJOS, "getScope", "desc");
+        sort1.SortByFloat(employeesPOJOS, "getScope", "desc");
         SortListUtil<CompanyPOJO> sort2 = new SortListUtil<>();
-        sort2.Sort(companyPOJOS, "getScope", "desc");
+        sort2.SortByFloat(companyPOJOS, "getScope", "desc");
 
         Map<String, Integer> number = sysConfigService.getNumber();
         Integer a = number.get(ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger);
