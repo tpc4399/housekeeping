@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -75,7 +76,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Transactional
     @Override
-    public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) {
+    public R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) throws ParseException {
 
         if(CommonUtils.isNotEmpty(employeesDetailsDTO)){
             //先保存User
@@ -118,7 +119,18 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             employeesDetails.setPhone(employeesDetailsDTO.getPhone());
             employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
             employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
-            employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
+
+            List<EmployeesWorkExperienceDTO> workExperiencesDTO = employeesDetailsDTO.getWorkExperiencesDTO();
+            int month = 0;
+            if(CommonUtils.isNotEmpty(workExperiencesDTO)){
+                for (int i = 0; i < workExperiencesDTO.size(); i++) {
+                    int workYear = CommonUtils.getWorkYear(workExperiencesDTO.get(i).getDateStart(), workExperiencesDTO.get(i).getDateEnd());
+                    month = month + workYear;
+                }
+            }
+            String workYear = CommonUtils.formatWorkYear(month);
+            employeesDetails.setWorkYear(workYear);
+
             employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
             employeesDetails.setBlacklistFlag(false);
 
@@ -167,7 +179,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) {
+    public R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
         EmployeesDetails employeesDetails = new EmployeesDetails();
         employeesDetails.setId(employeesDetailsDTO.getId());
         employeesDetails.setNumber(employeesDetailsDTO.getNumber());
@@ -190,7 +202,17 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setPhone(employeesDetailsDTO.getPhone());
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
         employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
-        employeesDetails.setWorkYear(employeesDetailsDTO.getWorkYear());
+
+        List<EmployeesWorkExperienceDTO> workExperiencesDTO = employeesDetailsDTO.getWorkExperiencesDTO();
+        int month = 0;
+        if(CommonUtils.isNotEmpty(workExperiencesDTO)){
+            for (int i = 0; i < workExperiencesDTO.size(); i++) {
+                int workYear = CommonUtils.getWorkYear(workExperiencesDTO.get(i).getDateStart(), workExperiencesDTO.get(i).getDateEnd());
+                month = month + workYear;
+            }
+        }
+        String workYear = CommonUtils.formatWorkYear(month);
+        employeesDetails.setWorkYear(workYear);
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());

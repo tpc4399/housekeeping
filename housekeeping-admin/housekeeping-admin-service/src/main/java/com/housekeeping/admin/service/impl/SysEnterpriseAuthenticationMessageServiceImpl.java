@@ -96,6 +96,7 @@ public class SysEnterpriseAuthenticationMessageServiceImpl
         authMessage.setPhonePrefix(authMessageDTO.getPhonePrefix());
         authMessage.setPhone(authMessageDTO.getPhone());
         authMessage.setRegisterAddress(authMessageDTO.getRegisterAddress());
+        authMessage.setEnclosure(authMessage.getEnclosure());
         authMessage.setCreateTime(LocalDateTime.now());
         authMessage.setUpdateTime(LocalDateTime.now());
         authMessage.setLastReviserId(userId);

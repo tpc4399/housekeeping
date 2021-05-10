@@ -15,12 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.List;
 
 public interface EmployeesDetailsService extends IService<EmployeesDetails> {
-    R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type);
-    R updateEmp(EmployeesDetailsDTO employeesDetailsDTO);
+    R saveEmp(EmployeesDetailsDTO employeesDetailsDTO,String type) throws ParseException;
+    R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) throws ParseException;
     R cusPage(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO, String type);
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
     R cusPage1(Page page, PageOfEmployeesDTO pageOfEmployeesDTO, String type);

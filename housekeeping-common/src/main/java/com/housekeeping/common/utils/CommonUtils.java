@@ -15,6 +15,8 @@ import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -409,8 +411,39 @@ public class CommonUtils {
 		System.out.println("按照price排序+输出数据的时间："+(section5 - section4)+"ms");
 		System.out.println("按照score排序+输出数据的时间："+(section6 - section5)+"ms");
 
+	}
 
+	public static int getWorkYear(String start,String end) throws ParseException {
+		int result = 0;
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
+		Calendar c1 = Calendar.getInstance();
+		Calendar c2 = Calendar.getInstance();
+
+		c1.setTime(sdf.parse(start));
+		c2.setTime(sdf.parse(end));
+
+		result = c2.get(Calendar.MONTH) - c1.get(Calendar.MONTH);
+		int result2 = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12;
+
+		return result+result2;
+
+	}
+
+	public static String formatWorkYear(int month){
+
+		int year = month/12;
+		int months = month%12;
+		StringBuilder sb = new StringBuilder();
+
+		if(year==0){
+			sb.append(month).append("月");
+			return sb.toString();
+		}else {
+			sb.append(year).append("年").append(months).append("月");
+			return sb.toString();
+		}
 	}
 
 }
