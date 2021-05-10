@@ -257,8 +257,9 @@ public class CommonUtils {
 		GlobalCoordinates target = new GlobalCoordinates(Double.parseDouble(latitude2), Double.parseDouble(longitude2));
 
 		Double meter = getDistanceMeter(source, target, Ellipsoid.Sphere);
+		Double kilometer = meter/1000;
 
-		return meter.toString();
+		return kilometer.toString();
 	}
 	public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid){
 
