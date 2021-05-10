@@ -66,6 +66,7 @@ housekeeping:
       - /api/admin/index
       - /api/admin/index/getById
       - /api/admin/index/query
+      - /api/admin/index/query2
       - /api/admin/employeesWorkExperience
       - /api/admin/employeesCalendar/getCalendarByDateSlot
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot

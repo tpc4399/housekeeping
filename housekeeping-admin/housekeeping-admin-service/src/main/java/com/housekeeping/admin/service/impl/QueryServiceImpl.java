@@ -78,6 +78,7 @@ public class QueryServiceImpl implements IQueryService {
                 qw.eq("employees_id", employeesId);
                 List<EmployeesContract> ecs1 = employeesContractService.list(qw);
                 List<EmployeesCalendar> ecs2 = employeesCalendarService.list(qw);
+                List<SysJobContend> skillTags = (List<SysJobContend>) employeesCalendarService.getSkillTags(employeesId).getData();
 
                 Float variable1 = this.variable1(calendarFreeTime, dto); //钟点工空闲時間匹配率
                 Float variable2 = this.variable2(ed.getPresetJobIds(), dto); //钟点工工作內容匹配率   如果不能匹配，那就是0
@@ -101,6 +102,7 @@ public class QueryServiceImpl implements IQueryService {
                 edp.setHourlyWage(variable5);
                 edp.setCode("TWD");
                 edp.setInstances(variable6);
+                edp.setSkillTags(skillTags);
                 EmployeesPOJO employeesPOJO = new EmployeesPOJO();
                 employeesPOJO.setScope(scope);
                 employeesPOJO.setEmployeesDetailsPOJO(edp);

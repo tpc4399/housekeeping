@@ -1,10 +1,12 @@
 package com.housekeeping.admin.pojo;
 
 import com.housekeeping.admin.dto.AddressDetailsDTO;
+import com.housekeeping.admin.entity.SysJobContend;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * 保洁员的相关信息
@@ -25,5 +27,6 @@ public class EmployeesDetailsPOJO {
     private BigDecimal hourlyWage;      /* 时薪 */
     private String code;
     private String instances;            /* 距离 */
+    private List<SysJobContend> skillTags;/* 技能标签 */
 
 }
