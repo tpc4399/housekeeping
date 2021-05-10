@@ -105,7 +105,7 @@
 		md.create_time,
 		md.update_time,
 		md.last_reviser_id,
-		cd.company_name
+		cd.no_certified_company
 		FROM
 		manager_details md
 		LEFT JOIN

@@ -63,7 +63,7 @@
         gd.create_time,
         gd.update_time,
         gd.last_reviser_id,
-        cd.company_name
+        cd.no_certified_company
         FROM
         group_details gd
         LEFT JOIN

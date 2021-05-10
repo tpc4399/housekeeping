@@ -258,10 +258,8 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     @Override
     public R getAllGroups(Page page, String groupName) {
         List<GroupDetailsVo> groupDetailsVos = baseMapper.getAllGroups(groupName);
-        for (int i = 0; i < groupDetailsVos.size(); i++) {
-            if(CommonUtils.isEmpty(groupDetailsVos.get(i).getCompanyName())){
-                groupDetailsVos.get(i).setCompanyName("未认证公司");
-            }
+        if(CommonUtils.isEmpty(groupDetailsVos)){
+            return R.ok(null);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupDetailsVos);
         return R.ok(pages);

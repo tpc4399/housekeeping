@@ -33,7 +33,7 @@
 		order by rand() limit #{ran}
 	</select>
 
-    <select id="getAllAdverByAdmin" resultType="com.housekeeping.admin.vo.CompanyAdvertisingsVo">
+    <select id="getAllAdderByAdmin" resultType="com.housekeeping.admin.vo.CompanyAdvertingVo">
 		SELECT
 		ca.id,
 		ca.company_id,
@@ -43,7 +43,7 @@
 		ca.photo,
 		ca.promotion,
 		ca.end_time,
-		cd.company_name
+		cd.no_certified_company
 		FROM
 		company_advertising ca
 		LEFT JOIN

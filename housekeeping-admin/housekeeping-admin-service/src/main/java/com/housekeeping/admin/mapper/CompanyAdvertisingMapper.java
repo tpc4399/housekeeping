@@ -2,7 +2,7 @@ package com.housekeeping.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.admin.entity.CompanyAdvertising;
-import com.housekeeping.admin.vo.CompanyAdvertisingsVo;
+import com.housekeeping.admin.vo.CompanyAdvertingVo;
 import com.housekeeping.common.utils.R;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,5 +15,5 @@ public interface CompanyAdvertisingMapper extends BaseMapper<CompanyAdvertising>
 
     R getAllProAd();
 
-    List<CompanyAdvertisingsVo> getAllAdverByAdmin(@Param("id") Integer id, @Param("title") String title);
+    List<CompanyAdvertingVo> getAllAdderByAdmin(@Param("id") Integer id, @Param("title") String title);
 }

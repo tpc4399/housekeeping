@@ -4,7 +4,7 @@ import com.housekeeping.admin.entity.CompanyAdvertising;
 import lombok.Data;
 
 @Data
-public class CompanyAdvertisingsVo extends CompanyAdvertising {
+public class CompanyAdvertingVo extends CompanyAdvertising {
 
-    private String companyName;
+    private String noCertifiedCompany;
 }

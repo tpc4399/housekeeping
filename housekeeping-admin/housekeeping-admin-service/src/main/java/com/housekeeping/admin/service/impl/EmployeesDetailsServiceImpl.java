@@ -612,10 +612,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Override
     public R getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO) {
         List<EmployeesVo> allEmployeesByAdmin = baseMapper.getAllEmployeesByAdmin(page,pageOfEmployeesDTO);
-        for (int i = 0; i < allEmployeesByAdmin.size(); i++) {
-            if(CommonUtils.isEmpty(allEmployeesByAdmin.get(i).getCompanyName())){
-                allEmployeesByAdmin.get(i).setCompanyName("未认证公司");
-            }
+        if(CommonUtils.isEmpty(allEmployeesByAdmin)){
+            return R.ok(null);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), allEmployeesByAdmin);
         return R.ok(pages);

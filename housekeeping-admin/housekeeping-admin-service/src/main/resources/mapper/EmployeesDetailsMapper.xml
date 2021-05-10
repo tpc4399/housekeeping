@@ -124,7 +124,7 @@
 		ed.create_time,
 		ed.update_time,
 		ed.last_reviser_id,
-		cd.company_name
+		cd.no_certified_company
 		FROM
 		employees_details ed
 		LEFT JOIN
