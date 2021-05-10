@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -79,7 +80,7 @@ public class SysIndexServiceImpl
     private IAsyncService asyncService;
     @Resource
     private RedisUtils redisUtils;
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
@@ -90,11 +91,17 @@ public class SysIndexServiceImpl
         sysIndex.setSelectedLogo(sysIndexAddDto.getSelectedLogo());
         sysIndex.setUncheckedLogo(sysIndexAddDto.getUncheckedLogo());
         StringBuilder priceSlot = new StringBuilder("");
-        sysIndexAddDto.getPriceSlotList().forEach(x->{
-            priceSlot.append(x.getLowPrice());
+        List<PriceSlotVo> priceSlotList = sysIndexAddDto.getPriceSlotList();
+        for (int i = 0; i < priceSlotList.size(); i++) {
+            if (i==0) priceSlot.append(priceSlotList.get(i).getLowPrice());
+            else priceSlot.append(priceSlotList.get(i).getLowPrice().subtract(new BigDecimal(1)));
             priceSlot.append(" ");
-        });
-        sysIndex.setPriceSlot(new String(priceSlot).trim().replace(" ", ","));
+        }
+//        sysIndexAddDto.getPriceSlotList().forEach(x->{
+//            priceSlot.append(x.getLowPrice().subtract(new BigDecimal(1)));
+//            priceSlot.append(" ");
+//        });
+        sysIndex.setPriceSlot(new String(priceSlot).trim());
         Integer maxIndexId = 0;
         synchronized (this){
             this.save(sysIndex);
@@ -393,10 +400,14 @@ public class SysIndexServiceImpl
             sysIndexVo.setSelectedLogo(x.getSelectedLogo());
             sysIndexVo.setUncheckedLogo(x.getUncheckedLogo());
             List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
-            String[] arr = x.getPriceSlot().split(",");
+            String[] arr = x.getPriceSlot().split(" ");
             for (int i = 0; i < arr.length - 1; i++) {
                 // i和i+1
                 String lowPrice = arr[i];
+                if (i!=0){
+                    BigDecimal low = new BigDecimal(arr[i]).add(new BigDecimal(1));
+                    lowPrice = low.toString();
+                }
                 String highPrice = arr[i+1];
                 PriceSlotVo priceSlot = new PriceSlotVo(
                         new BigDecimal(lowPrice),
@@ -405,7 +416,7 @@ public class SysIndexServiceImpl
                 priceSlotVoList.add(priceSlot);
             }
             PriceSlotVo priceSlot = new PriceSlotVo(
-                    new BigDecimal(arr[arr.length-1]),
+                    new BigDecimal(arr[arr.length-1]).add(new BigDecimal(1)),
                     null
             );
             priceSlotVoList.add(priceSlot);
