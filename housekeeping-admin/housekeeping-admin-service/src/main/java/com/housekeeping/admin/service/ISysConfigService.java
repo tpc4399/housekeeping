@@ -18,5 +18,7 @@ public interface ISysConfigService extends IService<SysConfig> {
     Map<String, Integer> getNumber();
     /* 获取默认推荐数量 */
     Map<String, Integer> getDefaultRecommendationInteger();
+    /* 获取搜索的权重 */
+    Map<String, String> getQueryWeight(Integer priorityType);
 
 }

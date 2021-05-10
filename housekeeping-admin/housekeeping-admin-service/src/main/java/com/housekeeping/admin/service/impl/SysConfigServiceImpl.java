@@ -9,6 +9,7 @@ import com.housekeeping.common.utils.ApplicationConfigConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,27 @@ public class SysConfigServiceImpl
         Map<String, Integer> map = new HashMap<>();
         res.forEach(x -> {
             map.put(x.getConfigKey(), Integer.valueOf(x.getConfigValue()));
+        });
+        return map;
+    }
+
+    @Override
+    public Map<String, String> getQueryWeight(Integer priorityType) {
+        List<String> keys = new ArrayList<>();
+        keys.add(ApplicationConfigConstants.timeScopeDouble);
+        keys.add(ApplicationConfigConstants.workScopeDouble);
+        keys.add(ApplicationConfigConstants.workScopeDouble);
+        keys.add(ApplicationConfigConstants.priceScopeDouble);
+        keys.add(ApplicationConfigConstants.distanceScoreDouble);
+        keys.add(ApplicationConfigConstants.extensionScopeDouble);
+        keys.add(ApplicationConfigConstants.evaluateScopeDouble);
+
+        QueryWrapper qw = new QueryWrapper();
+        qw.in("config_key", keys);
+        List<SysConfig> res = this.list(qw);
+        Map<String, String> map = new HashMap<>();
+        res.forEach(x -> {
+            map.put(x.getConfigKey(), x.getConfigValue());
         });
         return map;
     }

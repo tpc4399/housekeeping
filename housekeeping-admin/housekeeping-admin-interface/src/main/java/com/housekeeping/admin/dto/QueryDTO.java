@@ -23,15 +23,12 @@ public class QueryDTO {
     private BigDecimal lowHourlyWage;/* 時薪区间 低价 */
     private BigDecimal highHourlyWage;/* 時薪区间 高价 */
     private AddressDetailsDTO addressDetails;   /* 服务地址，经纬度 */
-    private Integer priorityType;   /* 优先类型
-                                         0 | null 无优先选择，默认权重   默认排序优先级
-                                         1    距離權重                 距离近优先
-                                         2    地區權重                 地区合适优先
-                                         3    價格權重                 价格合适优先
-                                         4    出勤率權重               匹配度高优先
-                                         5    評價權重                 评分高优先
-                                         6    員工推廣權重              推广优先
-                                         7    接单次数优先              单次优先
+    private Integer priorityType;   /* 排序类型
+                                         0 | null 默认排序
+                                         1    价格合适排序
+                                         2    距离排序
+                                         3    评价排序
+                                         4    钟点工作内容排序
                                     */
 
     private List<Boolean> certified;  /* 0：已认证企业  1：个体户  */

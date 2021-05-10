@@ -37,20 +37,20 @@ public class ScoreCalculation {
     private BigDecimal lowPrice;
 
     private BigDecimal highPrice;
+    //优先类型
+    private Integer priorityType;
 
-
-    //时薪分  y=(-maxScope)/(x-low-1)   y=maxScope   y=(maxScope)/(x-high+1)
-            //y = max/low         y=maxScope      y=(maxScope)/(x-high+1)
+    //时薪分
     private Float getScope1(){
         Float maxScope = new Float(weight.get(ApplicationConfigConstants.priceScopeDouble));
         Float x = this.variable5.floatValue();
         Float y = new Float(0);
         Float low = lowPrice.floatValue();
         Float high = highPrice.floatValue();
-        if (x>=0 && x<=low) y = maxScope*x / low;
-        if (x>low && x<high) y = maxScope;
-        if (x>high && x<2*high-low)  y = (maxScope*x)/(high-low) + maxScope;
-        if (x>2*high-low) y = new Float(0);
+        Float mid = (low+high)/2;
+        if (x>=0 && x<=mid) y = maxScope*x / mid;
+        if (x>mid && x<=2*mid) y = (-1)*maxScope*x/mid + 2*maxScope;
+        if (x>2*mid) y = new Float(0);
         return y;
     }
 
@@ -70,26 +70,48 @@ public class ScoreCalculation {
         return y;
     }
 
-    //工作分
+    //工作内容匹配分
     private Float getScope4(){
-        Float maxScope = new Float(weight.get(ApplicationConfigConstants.attendanceScopeDouble));
-        Float x = variable1+variable2+variable4;
+        Float maxScope = new Float(weight.get(ApplicationConfigConstants.workScopeDouble));
+        Float x = variable2;
         Float y = maxScope*x;
         return y;
     }
 
+    //时间匹配分
     private Float getScope5(){
+        Float maxScope = new Float(weight.get(ApplicationConfigConstants.timeScopeDouble));
+        Float x = variable1;
+        Float y = maxScope*x;
+        return y;
+    }
+
+    //推广分
+    private Float getScope6(){
         Float maxScope = new Float(weight.get(ApplicationConfigConstants.extensionScopeDouble));
         return variable8?maxScope:new Float(0);
     }
 
     public Float scope(){
-        Float scope1 = getScope1();
-        Float scope2 = getScope2();
-        Float scope3 = getScope3();
-        Float scope4 = getScope4();
-        Float scope5 = getScope5();
-        return scope1+scope2+scope3+scope4+scope5;
+        Float scope1 = new Float(0); //时薪分
+        Float scope2 = new Float(0); //距离分
+        Float scope3 = new Float(0); //评价分
+        Float scope4 = new Float(0); //钟点工工作内容
+        Float scope5 = new Float(0); //时间匹配分
+        Float scope6 = new Float(0); //推广分
+        if (priorityType == 0){
+            scope1 = getScope1();
+            scope2 = getScope2();
+            scope3 = getScope3();
+            scope4 = getScope4();
+            scope5 = getScope5();
+        }
+        if (priorityType == 1) scope1 = getScope1();
+        if (priorityType == 2) scope2 = getScope2();
+        if (priorityType == 3) scope3 = getScope3();
+        if (priorityType == 4) scope4 = getScope4();
+
+        return scope1+scope2+scope3+scope4+scope5+scope6;
     }
 
 }

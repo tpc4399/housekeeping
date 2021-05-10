@@ -49,7 +49,7 @@ public class QueryServiceImpl implements IQueryService {
         List<String> resFailed = paramsEmpty(dto);
         if (resFailed.size() != 0) return R.failed(resFailed, "存在空值");    //參數判空
 
-        Map<String, String> weight = sysConfigService.getScopeConfig(dto.getPriorityType());  //權重
+        Map<String, String> weight = sysConfigService.getQueryWeight(dto.getPriorityType());  //權重
         List<Integer> searchPool = this.searchPool(dto.getCertified());                       //搜索池
         List<IndexResultPOJO> resultPOJOS = Collections.synchronizedList(new ArrayList<>());    //结果池
         List<EmployeesPOJO> employeesPOJOS = Collections.synchronizedList(new ArrayList<>());  //员工结果与分數
@@ -63,7 +63,6 @@ public class QueryServiceImpl implements IQueryService {
             int finalI = i;
             exr1.submit(() -> {
                 Integer employeesId = searchPool.get(finalI);
-                Map<String, String> weight2 = weight;
                 EmployeesDetails ed = employeesDetailsService.getById(employeesId);
 
                 GetCalendarByDateSlotDTO gc = new GetCalendarByDateSlotDTO();
@@ -87,7 +86,7 @@ public class QueryServiceImpl implements IQueryService {
                 String variable6 = this.variable6(ed, dto); //距離
                 Float variable7 = this.variable7(ed); //評價星級
                 Boolean variable8 = this.variable8(employeesId); //推广
-                Float scope = new ScoreCalculation(variable1, variable2, variable4, variable5, variable6, variable7, variable8, weight, dto.getLowHourlyWage(), dto.getHighHourlyWage()).scope();
+                Float scope = new ScoreCalculation(variable1, variable2, variable4, variable5, variable6, variable7, variable8, weight, dto.getLowHourlyWage(), dto.getHighHourlyWage(), dto.getPriorityType()).scope();
 
                 //构造对象
                 EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO();
@@ -308,7 +307,7 @@ public class QueryServiceImpl implements IQueryService {
         List<Integer> enableJobIds = CommonUtils.stringToList(jobs);
         List<Integer> needJobIds = dto.getJobs();
         enableJobIds.retainAll(needJobIds);
-        Float variable2 = new Float(needJobIds.size()) / new Float(needJobIds.size());
+        Float variable2 = new Float(enableJobIds.size()) / new Float(needJobIds.size());
         return variable2;
     }
 

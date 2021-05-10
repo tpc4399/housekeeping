@@ -25,8 +25,12 @@ public interface ApplicationConfigConstants {
     String areaScopeDouble = "areaScopeDouble";
     /** 價格權重 */
     String priceScopeDouble = "priceScopeDouble";
-    /** 出勤率權重 */
+    /** 工作内容權重 */
     String attendanceScopeDouble = "attendanceScopeDouble";
+    /** 时间權重 */
+    String timeScopeDouble = "timeScopeDouble";
+    /** 工作内容權重 */
+    String workScopeDouble = "workScopeDouble";
     /** 評價權重 */
     String evaluateScopeDouble = "evaluateScopeDouble";
     /** 員工推廣權重 */
