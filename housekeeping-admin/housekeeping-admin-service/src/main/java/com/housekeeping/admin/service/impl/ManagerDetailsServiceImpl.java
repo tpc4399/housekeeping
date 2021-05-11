@@ -84,7 +84,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
                 managerDetails.setName(managerDetailsDTO.getName());
                 managerDetails.setDateOfBirth(managerDetailsDTO.getDateOfBirth());
                 managerDetails.setPhone(managerDetailsDTO.getPhone());
-                managerDetails.setPhonePrefix(managerDetails.getPhonePrefix());
+                managerDetails.setPhonePrefix(managerDetailsDTO.getPhonePrefix());
                 managerDetails.setAddress(managerDetailsDTO.getAddress());
                 managerDetails.setDescribes(managerDetailsDTO.getDescribes());
                 managerDetails.setSex(managerDetailsDTO.getSex());
