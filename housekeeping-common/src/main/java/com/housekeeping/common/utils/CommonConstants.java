@@ -48,6 +48,8 @@ public interface CommonConstants {
 	String HK_CONTRACT_PHOTOS_ABSTRACT_PATH_PREFIX_PROV = "HKFile/ContractPhotos/";
 	/** 正式環境的存儲订单照片的多张图片路径 */
 	String HK_ORDER_PHOTOS_ABSTRACT_PATH_PREFIX_PROV = "HKFile/Order/number=";
+	/** 客户自定义文件名的文件上传路径 */
+	String HK_FILE_FREE_ABSTRACT_PATH_PREFIX_PROV = "HKFile/freeFile/";
 
 	/** 神秘代码的零件 */
 	String[] emn = new String[]{

@@ -28,7 +28,7 @@
             from employees_details
             where id = employees_id
             )
-        union all
+        union
         select employees_id
         from employees_contract
         group by employees_id;
