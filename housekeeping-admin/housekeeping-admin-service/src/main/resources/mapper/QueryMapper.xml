@@ -19,8 +19,18 @@
         from employees_contract
         group by employees_id
     </select>
-    <select id="pool" resultType="java.lang.Integer">
-        select employees_id
+    <select id="authOk" resultType="java.lang.Integer">
+        select e.id
+        from company_details c right join employees_details e on e.company_id = c.id
+        where c.is_validate = true;
+    </select>
+    <select id="authNo" resultType="java.lang.Integer">
+        select e.id
+        from company_details c right join employees_details e on e.company_id = c.id
+        where c.is_validate = false;
+    </select>
+    <select id="enableWork" resultType="java.lang.Integer">
+                select employees_id
         from employees_calendar
         group by employees_id
         having ''!=(

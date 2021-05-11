@@ -240,19 +240,20 @@ public class QueryServiceImpl implements IQueryService {
         //鐘點，設置了時間表 設置了工作內容才能被搜索到
         //包工，只要有，就能被搜索到
 
-        List<Integer> searchPool = queryMapper.pool();
-
-        searchPool.stream().filter(x -> {
-            if (certified.get(0) && certified.get(1)) return true;
-            EmployeesDetails ed = employeesDetailsService.getById(x);
-            CompanyDetails cd = companyDetailsService.getById(ed.getCompanyId());
-            Boolean isValidate = cd.getIsValidate();
-            if (certified.get(0) == false && isValidate == true) return false; //过滤掉已认证的保洁员
-            if (certified.get(1) == false && isValidate == false) return false; //过滤掉未认证的保洁员
-            //正常走不到这儿来
-
-            return true;
-        });
+        List<Integer> searchPool = queryMapper.enableWork();//能干事的
+        if (certified.get(0) && certified.equals(1)){
+            //true true 已认证未认证都需要
+        }
+        if (!certified.get(0) && certified.equals(1)){
+            //false true 未认证的才要
+            List<Integer> authOk = queryMapper.authOk();
+            searchPool.retainAll(authOk);
+        }
+        if (certified.get(0) && !certified.equals(1)){
+            //true false 已认证公司才要
+            List<Integer> authNo = queryMapper.authNo();
+            searchPool.retainAll(authNo);
+        }
 
         return searchPool;
     }

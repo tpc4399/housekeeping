@@ -15,6 +15,12 @@ public interface QueryMapper {
     List<Integer> allContract();
 
     /* 獲取能幹包工，或者能幹鐘點的職員id */
-    List<Integer> pool();
+    List<Integer> enableWork();
+
+    /* 已认证的保洁员 */
+    List<Integer> authOk();
+
+    /* 未认证的保洁员 */
+    List<Integer> authNo();
 
 }
