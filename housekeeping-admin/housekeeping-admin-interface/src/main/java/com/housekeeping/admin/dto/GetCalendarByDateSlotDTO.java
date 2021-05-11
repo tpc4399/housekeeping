@@ -12,4 +12,11 @@ public class GetCalendarByDateSlotDTO {
     private DateSlot dateSlot;
     private Integer id;  //這是employeesId
 
+    public GetCalendarByDateSlotDTO(DateSlot dateSlot, Integer id) {
+        this.dateSlot = dateSlot;
+        this.id = id;
+    }
+
+    public GetCalendarByDateSlotDTO() {
+    }
 }

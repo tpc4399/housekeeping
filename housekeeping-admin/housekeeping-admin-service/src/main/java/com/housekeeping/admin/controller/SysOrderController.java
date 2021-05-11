@@ -1,5 +1,7 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,5 +23,14 @@ public class SysOrderController {
     public R paymentSuccessCallbackInterface(){
         return R.ok();
     }
+
+    /*@Access({RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【保洁员】保潔員到家，工作開始")
+    @PutMapping("workStart")
+    public R workStart(@RequestParam String phone){
+
+    }*/
+
+
 
 }

@@ -535,9 +535,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
-    public List<FreeDateDTO> getFreeTimeByDateSlot2(DateSlot dateSlot, Integer empId, String code) {
+    public List<FreeDateTimeDTO> getFreeTimeByDateSlot2(GetCalendarByDateSlotDTO dto) {
         /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
-        return this.getCalendarByDateSlot2(dateSlot, empId, code);
+        return this.getCalendarByDateSlot2(dto);
     }
 
     @Override
@@ -736,11 +736,11 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     public List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto) {
         List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
         /* 获取这段日期内的空闲时间 */
-        List<FreeDateDTO> freeTime = this.getFreeTimeByDateSlot2(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId(), "TWD");
+        List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
         freeTime.forEach(x -> {
             Integer todayWeek = x.getDate().getDayOfWeek().getValue();
             if (!dto.getWeeks().contains(todayWeek)) return;     //如果周数没有这天，那么就跳过吧
-            List<TimeAndPrice> table = sysIndexService.periodSplittingA(x.getTimes());
+            List<TimeAndPrice> table = sysIndexService.periodSplittingA(null/*x.getTimes()*/);
             List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());
             Boolean todayIsOk = this.judgeToday(table, item);
             LocalDate today = x.getDate();
@@ -998,92 +998,79 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
     }
 
-    public List<FreeDateDTO> getCalendarByDateSlot2(DateSlot dateSlot, Integer employeesId, String toCode) {
+    public List<FreeDateTimeDTO> getCalendarByDateSlot2(GetCalendarByDateSlotDTO dto) {
 
         /* 先得到三大map */
-        SortListUtil<TimeSlotDTO> sort = new SortListUtil<TimeSlotDTO>();
-        Map<LocalDate, List<TimeSlotDTO>> map1 = new HashMap<>();
-        Map<Integer, List<TimeSlotDTO>> map2 = new HashMap<>();
-        Map<String, List<TimeSlotDTO>> map3 = new HashMap<>();
+        SortListUtil<TimeSlotPOJO> sort = new SortListUtil<>();
+        Map<LocalDate, List<TimeSlotPOJO>> map1 = new HashMap<>();
+        Map<Integer, List<TimeSlotPOJO>> map2 = new HashMap<>();
+        Map<String, List<TimeSlotPOJO>> map3 = new HashMap<>();
         QueryWrapper qw = new QueryWrapper();
-        qw.eq("employees_id", employeesId);
+        qw.eq("employees_id", dto.getId());
         List<EmployeesCalendar> employeesCalendarList = this.list(qw);
         if (CommonUtils.isEmpty(employeesCalendarList)){
             return null;
         }
-        employeesCalendarList.forEach(employeesCalendar -> {
-            QueryWrapper qw1 = new QueryWrapper();
-            qw1.eq("calendar_id", employeesCalendar.getId());
-            List<EmployeesCalendarDetails> employeesCalendarDetailsList = employeesCalendarDetailsService.list(qw1);
-            List<JobAndPriceDTO> jobAndPriceDTOList = employeesCalendarDetailsList.stream().map(employeesCalendarDetails -> {
-                JobAndPriceDTO jobAndPriceDTO = new JobAndPriceDTO();
-                jobAndPriceDTO.setJobId(employeesCalendarDetails.getJobId());
-                if (toCode.equals("")){
-                    jobAndPriceDTO.setPrice(employeesCalendarDetails.getPrice());
-                    jobAndPriceDTO.setCode(employeesCalendarDetails.getCode());
-                }else {
-                    BigDecimal price;
-                    if (employeesCalendarDetails.getCode().equals(toCode)){
-                        price = new BigDecimal(employeesCalendarDetails.getPrice());
-                    }else {
-                        price = currencyService.exchangeRateToBigDecimalAfterOptimization(employeesCalendarDetails.getCode(), toCode, new BigDecimal(employeesCalendarDetails.getPrice()));
-                    }
-                    jobAndPriceDTO.setPrice(new Float(price.toString()));
-                    jobAndPriceDTO.setCode(toCode);
-                }
-                return jobAndPriceDTO;
-            }).collect(Collectors.toList());
-            TimeSlotDTO timeSlotDTO = new TimeSlotDTO();
-            timeSlotDTO.setTimeSlotStart(employeesCalendar.getTimeSlotStart());
-            timeSlotDTO.setTimeSlotLength(employeesCalendar.getTimeSlotLength());
-            timeSlotDTO.setJobAndPriceList(jobAndPriceDTOList);
-            if (CommonUtils.isEmpty(employeesCalendar.getStander())){
-                List<TimeSlotDTO> timeSlotDTOS = map3.getOrDefault("", new ArrayList<>());
-                timeSlotDTOS.add(timeSlotDTO);
-                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
-                map3.put("", timeSlotDTOS);
-            }else if (employeesCalendar.getStander() == false){ //日期
-                List<TimeSlotDTO> timeSlotDTOS = map1.getOrDefault(employeesCalendar.getDate(), new ArrayList<>());
-                timeSlotDTOS.add(timeSlotDTO);
-                sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
-                map1.put(employeesCalendar.getDate(), timeSlotDTOS);
-            }else if (employeesCalendar.getStander() == true){ //周
-                String weekString = employeesCalendar.getWeek();
+
+        employeesCalendarList.forEach(ec -> {
+            TimeSlotPOJO pojo = new TimeSlotPOJO();
+            pojo.setTimeSlotStart(ec.getTimeSlotStart());
+            pojo.setTimeSlotLength(ec.getTimeSlotLength());
+            pojo.setHourlyWage(ec.getHourlyWage());
+            pojo.setCode(ec.getCode());
+            if (CommonUtils.isEmpty(ec.getStander())){
+                List<TimeSlotPOJO> pojoList = map3.getOrDefault("", new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map3.put("", pojoList);
+            }else if (ec.getStander() == false){ //日期
+                List<TimeSlotPOJO> pojoList = map1.getOrDefault(ec.getDate(), new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map1.put(ec.getDate(), pojoList);
+            }else if (ec.getStander() == true){ //周
+                String weekString = ec.getWeek();
                 for (int i = 0; i < weekString.length(); i++) {
                     Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
-                    List<TimeSlotDTO> timeSlotDTOS = map2.getOrDefault(weekInteger, new ArrayList<>());
-                    timeSlotDTOS.add(timeSlotDTO);
-                    sort.Sort(timeSlotDTOS, "getTimeSlotStart", null);
-                    map2.put(weekInteger, timeSlotDTOS);
+                    List<TimeSlotPOJO> pojoList = map2.getOrDefault(weekInteger, new ArrayList<>());
+                    pojoList.add(pojo);
+                    sort.Sort(pojoList, "getTimeSlotStart", null);
+                    map2.put(weekInteger, pojoList);
                 }
             }
         });
+        /* 先得到三大map */
 
-        List<FreeDateDTO> freeDateDTOS = new ArrayList<>();
+        List<FreeDateTimeDTO> freeDateTimeDTOS = new ArrayList<>();
 
-        LocalDate start = dateSlot.getStart();
-        LocalDate end = dateSlot.getEnd();
+        LocalDate start = dto.getDateSlot().getStart();
+        LocalDate end = dto.getDateSlot().getEnd();
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
-            FreeDateDTO freeDateDTO = new FreeDateDTO();
+            FreeDateTimeDTO freeDateTimeDTO = new FreeDateTimeDTO();
+            List<TimeSlotPOJO> todaySlot = new ArrayList<>();
             if (map1.containsKey(date)){
                 //日期模板生效
-                freeDateDTO.setDate(date);
-                freeDateDTO.setTimes(map1.get(date));
+                todaySlot = map1.get(date);
             }else if (!map2.isEmpty()){
                 //周模板生效
-                freeDateDTO.setDate(date);
-                freeDateDTO.setTimes(map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>()));
+                todaySlot = map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>());
             }else if (!map3.isEmpty()){
-                freeDateDTO.setDate(date);
-                freeDateDTO.setTimes(map3.get(""));
                 //通用模板生效
+                todaySlot = map3.get("");
             }
-            if (freeDateDTO.getTimes().isEmpty()) freeDateDTO.setHasTime(false);
-            else freeDateDTO.setHasTime(true);
-            freeDateDTOS.add(freeDateDTO);
+            if (todaySlot.size() != 0){
+                freeDateTimeDTO.setDate(date);
+                freeDateTimeDTO.setTimes(todaySlot);
+                freeDateTimeDTO.setHasTime(true);
+            }else {
+                freeDateTimeDTO.setDate(date);
+                freeDateTimeDTO.setTimes(new ArrayList<>());
+                freeDateTimeDTO.setHasTime(false);
+            }
+            freeDateTimeDTO.setWeek(date.getDayOfWeek().getValue());
+            freeDateTimeDTOS.add(freeDateTimeDTO);
         }
-
-        return freeDateDTOS;
+        return freeDateTimeDTOS;
     }
 
     private BigDecimal priceAfterDiscount(List<WorkDetailsPOJO> workDetails){
@@ -1143,6 +1130,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         if (CommonUtils.isEmpty(employeesCalendarList)){
             return null;
         }
+
         employeesCalendarList.forEach(ec -> {
             TimeSlotPOJO pojo = new TimeSlotPOJO();
             pojo.setTimeSlotStart(ec.getTimeSlotStart());
