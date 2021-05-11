@@ -26,7 +26,9 @@ public class EmployeesDetailsPOJO {
     private AddressDetailsDTO addressDTO; /* 地址 */
     private BigDecimal hourlyWage;      /* 时薪 */
     private String code;
-    private String instances;            /* 距离 */
+    private String instances;           /* 距离 */
     private List<SysJobContend> skillTags;/* 技能标签 */
+    private Boolean certified;          /* 是否已认证 */
+
 
 }
