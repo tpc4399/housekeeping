@@ -49,8 +49,7 @@ public class ScoreCalculation {
         Float high = highPrice.floatValue();
         Float mid = (low+high)/2;
         if (x>=0 && x<=mid) y = maxScope*x / mid;
-        if (x>mid && x<=2*mid) y = (-1)*maxScope*x/mid + 2*maxScope;
-        if (x>2*mid) y = new Float(0);
+        if (x>mid) y = (-1)*maxScope*x/mid + 2*maxScope;
         return y;
     }
 
