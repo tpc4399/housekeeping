@@ -15,6 +15,7 @@ import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.admin.vo.EmployeesDetailsWorkVo;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.EmployeesVo;
+import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONObject;
@@ -856,6 +857,28 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             return byId;
         }).collect(Collectors.toList());
         return R.ok(collect);
+    }
+
+    @Override
+    public R workStart(String phonePrefix,String phone) {
+        QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",TokenUtils.getCurrentUserId());
+        EmployeesDetails one = this.getOne(qw);
+        //发送短信
+        String[] params = new String[]{one.getName()};
+        SendMessage.sendWorkStartMessage(phonePrefix, phone, params);
+        return R.ok("成功發送短信");
+    }
+
+    @Override
+    public R workEnd(String phonePrefix,String phone) {
+        QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
+        qw.eq("user_id",TokenUtils.getCurrentUserId());
+        EmployeesDetails one = this.getOne(qw);
+        //发送短信
+        String[] params = new String[]{one.getName()};
+        SendMessage.sendWorkEndMessage(phonePrefix, phone, params);
+        return R.ok("成功發送短信");
     }
 
 }

@@ -17,6 +17,7 @@ import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.logs.annotation.LogFlag;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.regexp.internal.RE;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -234,5 +235,21 @@ public class EmployeesDetailsController {
     @PutMapping("/getEmployeesByIds")
     public R getEmployeesByIds(@RequestBody List<Integer> ids){
         return employeesDetailsService.getEmployeesByIds(ids);
+    }
+
+    @Access({RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【保洁员】保潔員到家，工作開始")
+    @PutMapping("workStart")
+    public R workStart(@RequestParam String phonePrefix,
+                       @RequestParam String phone){
+        return employeesDetailsService.workStart(phonePrefix,phone);
+    }
+
+    @Access({RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【保洁员】保潔員离家，工作结束")
+    @PutMapping("workEnd")
+    public R workEnd(@RequestParam String phonePrefix,
+                    @RequestParam String phone){
+        return employeesDetailsService.workEnd(phonePrefix,phone);
     }
 }

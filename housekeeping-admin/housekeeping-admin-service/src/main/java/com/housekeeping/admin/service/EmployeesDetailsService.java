@@ -95,4 +95,8 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
              MultipartFile image);
 
     R getEmployeesByIds(List<Integer> ids);
+
+    R workStart(String phonePrefix,String phone);
+
+    R workEnd(String phonePrefix,String phone);
 }
