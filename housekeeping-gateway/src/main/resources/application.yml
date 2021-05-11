@@ -89,6 +89,7 @@ housekeeping:
       - /api/admin/orderDetails/paymentCallback
       - /api/admin/employeesCalendar/getCalendar
       - /api/admin/employeesCalendar/getCalendarFreeTime
+      - /api/im/api/uploadWithName
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
