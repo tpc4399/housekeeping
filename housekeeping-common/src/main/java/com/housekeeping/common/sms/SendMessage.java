@@ -124,7 +124,7 @@ public class SendMessage{
     }
 
     public static void main(String[] args) {
-        String[] arr = {"建明"};
-        sendWorkEndMessage("86","13528438232",arr);
+        String[] arr = {"建明同学"};
+        sendWorkStartMessage("86","13329949979",arr);
     }
 }

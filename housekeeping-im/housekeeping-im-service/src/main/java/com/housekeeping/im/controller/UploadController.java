@@ -75,8 +75,8 @@ public class UploadController {
         String filename = "";
         if (name == null || name.equals("")) filename = file.getOriginalFilename().split("\\.")[0];
         else filename = name;
-        String type = file.getOriginalFilename().split("\\.")[1];
-        String fileAbstractPath = catalogue + "/" + nowString+"/"+filename+"."+ type;
+
+        String fileAbstractPath = catalogue + "/" + nowString+"/"+filename;
 
         try {
             ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
