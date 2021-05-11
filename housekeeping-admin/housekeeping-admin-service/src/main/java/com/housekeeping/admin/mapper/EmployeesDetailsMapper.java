@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.PageOfEmployeesDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.admin.vo.EmployeesDetailsVO;
 import com.housekeeping.admin.vo.EmployeesVo;
 import org.apache.ibatis.annotations.Param;
@@ -31,4 +32,6 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
 
     void setPresetJobIds(@Param("presetJobIds") String presetJobIds,
                          @Param("employeesId") Integer employeesId);
+
+    EmployeesDetailsSkillVo getCusById(Integer empId);
 }

@@ -11,6 +11,7 @@ import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.admin.vo.EmployeesDetailsWorkVo;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.EmployeesVo;
@@ -67,6 +68,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     private EmployeesDetailsService employeesDetailsService;
     @Resource
     private IGroupDetailsService groupDetailsService;
+    @Resource
+    private ISysJobContendService sysJobContendService;
     @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
@@ -627,7 +630,24 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Override
     public R getDetailById(Integer empId) {
-        EmployeesDetails byId = this.getById(empId);
+        EmployeesDetailsSkillVo byId = baseMapper.getCusById(empId);
+        if(CommonUtils.isEmpty(byId)){
+            return R.failed("沒有此員工");
+        }
+        if(CommonUtils.isEmpty(byId.getPresetJobIds())||byId.getPresetJobIds().equals("")){
+            byId.setSkills(null);
+        }else {
+            String presetJobIds = byId.getPresetJobIds();
+            List<Skill> skills = new ArrayList<>();
+            List<String> strings = Arrays.asList(presetJobIds.split(" "));
+            for (int i = 0; i < strings.size(); i++) {
+                Skill skill = new Skill();
+                skill.setJobId(Integer.parseInt(strings.get(i)));
+                skill.setContent(sysJobContendService.getById(Integer.parseInt(strings.get(i))).getContend());
+                skills.add(skill);
+            }
+            byId.setSkills(skills);
+        }
         return R.ok(byId);
     }
 

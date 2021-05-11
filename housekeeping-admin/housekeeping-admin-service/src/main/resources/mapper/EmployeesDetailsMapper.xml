@@ -39,50 +39,13 @@
 		<result property="createTime" column="create_time"/>
 		<result property="updateTime" column="update_time"/>
 		<result property="lastReviserId" column="last_reviser_id"/>
-		<result property="companyName" column="company_name"/>
+		<result property="noCertifiedCompany" column="no_certified_company"/>
 	</resultMap>
 
 	<select id="getScaleById" resultType="java.lang.String">
 		select scale from company_scale where id = #{id}
 	</select>
 
-	<select id="cusPage" resultType="com.baomidou.mybatisplus.core.metadata.IPage">
-		SELECT
-		ed.id,
-		ed.number,
-		ed.name,
-		ed.date_of_birth,
-		ed.phone,
-		ed.email,
-		ed.company_id,
-		ed.id_card,
-		ed.location,
-		ed.address,
-		ed.work_year,
-		ed.education_background,
-		ed.account_line,
-		ed.describes,
-		ed.scope_of_order,
-		ed.number_of_orders,
-		ed.hourly_wage,
-		ed.phone_url,
-		ed.sex,
-		ed.tags,
-		ed.blacklist_flag,
-		ed.create_time,
-		ed.update_time,
-		ed.last_reviser_id,
-		s.`name` as username,
-		cd.company_name
-		FROM
-		employees_details as ed
-		LEFT JOIN sys_user as s ON ed.last_reviser_id = s.id
-		LEFT JOIN company_details as cd ON ed.company_id = cd.id
-		WHERE ed.company_id = #{companyId}
-		<if test=" id != null and  id != ''">
-			and ed.id =  #{id}
-		</if>
-	</select>
 
 	<select id="getAllIdsByCompanyId" resultType="java.lang.Integer">
 		SELECT id FROM employees_details WHERE company_id  = #{companyId}
@@ -147,8 +110,16 @@
 		</where>
 	</select>
 
+    <select id="getCusById" resultType="com.housekeeping.admin.vo.EmployeesDetailsSkillVo">
+		SELECT
+		*
+		FROM
+		employees_details
+		WHERE id = #{empId}
+	</select>
 
-	<update id="updateHeadUrlById">
+
+    <update id="updateHeadUrlById">
 		UPDATE employees_details
 		SET head_url = #{headUrl}
 		WHERE user_id = #{userId}
