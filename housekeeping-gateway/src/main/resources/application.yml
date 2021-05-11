@@ -63,10 +63,6 @@ housekeeping:
       - /api/admin/customer/verfifyCustomerCode
       - /api/admin/admin/verfifyAdminCode
       - /api/admin/test/redisInto
-      - /api/admin/index
-      - /api/admin/index/getById
-      - /api/admin/index/query
-      - /api/admin/index/query2
       - /api/admin/employeesWorkExperience
       - /api/admin/employeesCalendar/getCalendarByDateSlot
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot
@@ -75,8 +71,6 @@ housekeeping:
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot2
       - /api/admin/employeesCalendar/tags
       - /api/admin/sysJobContend/getAll
-      - /api/admin/index/tree
-      - /api/admin/index/defaultRecommendation
       - /api/admin/employeesDetails/getAllEmpByCompanyId
       - /api/admin/employeesDetails/getDetailById
       - /api/admin/test/noToken/*
@@ -89,7 +83,7 @@ housekeeping:
       - /api/admin/orderDetails/paymentCallback
       - /api/admin/employeesCalendar/getCalendar
       - /api/admin/employeesCalendar/getCalendarFreeTime
-      - /api/im/api/uploadWithName
+      - /api/admin/index/*
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长
