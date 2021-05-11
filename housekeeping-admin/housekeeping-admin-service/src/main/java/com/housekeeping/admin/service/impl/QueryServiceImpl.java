@@ -241,12 +241,15 @@ public class QueryServiceImpl implements IQueryService {
         //包工，只要有，就能被搜索到
 
         List<Integer> searchPool = queryMapper.enableWork();//能干事的
-        if (!certified.get(0) && certified.equals(1)){
+        Boolean certified0 = certified.get(0);
+        Boolean certified1 = certified.get(1);
+
+        if (certified0 == false && certified1 == true){
             //false true 未认证的才要
             List<Integer> authNo = queryMapper.authNo();
             searchPool.retainAll(authNo);
         }
-        if (certified.get(0) && !certified.equals(1)){
+        if (certified0 == true && certified1 ==false){
             //true false 已认证公司才要
             List<Integer> authOk = queryMapper.authOk();
             searchPool.retainAll(authOk);
