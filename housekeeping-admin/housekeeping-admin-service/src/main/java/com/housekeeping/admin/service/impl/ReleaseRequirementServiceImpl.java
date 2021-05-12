@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.DemandDto;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
 import com.housekeeping.admin.entity.*;
@@ -192,8 +193,26 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     }
 
     @Override
-    public R getAllRequirementsByCompany(Page page) {
-        List<DemandOrder> list3 = demandOrderService.list();
+    public R getAllRequirementsByCompany(DemandDto demandDto,Page page) {
+        QueryWrapper<DemandOrder> qw = new QueryWrapper<>();
+        if(CommonUtils.isNotEmpty(demandDto.getJobIds())){
+            String jobs = demandDto.getJobIds().replaceAll(",", " ");
+            qw.like("job_ids",jobs);
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getWorkTypeIds())){
+            String jobs = demandDto.getWorkTypeIds().replaceAll(",", " ");
+            qw.like("job_ids",jobs);
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getPlace())){
+            qw.like("job_ids",demandDto.getPlace());
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getStartDate())){
+            qw.ge("start_date",demandDto.getStartDate());
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getLowPrice())&&CommonUtils.isNotEmpty(demandDto.getHighPrice())){
+            qw.between("estimated_salary",demandDto.getLowPrice(),demandDto.getHighPrice());
+        }
+        List<DemandOrder> list3 = demandOrderService.list(qw);
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();

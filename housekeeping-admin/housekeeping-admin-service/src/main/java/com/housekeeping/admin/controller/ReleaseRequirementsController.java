@@ -1,6 +1,7 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.DemandDto;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
 import com.housekeeping.admin.entity.CustomerDetails;
@@ -53,8 +54,8 @@ public class ReleaseRequirementsController {
     @Access({RolesEnum.USER_COMPANY})
     @GetMapping("/getAllRequirementsByCompany")
     @ApiOperation("【公司端】获取所有需求")
-    public R page(Page page){
-        return releaseRequirementService.getAllRequirementsByCompany(page);
+    public R page(DemandDto demandDto,Page page){
+        return releaseRequirementService.getAllRequirementsByCompany(demandDto,page);
     }
 
     @Access({RolesEnum.USER_CUSTOMER})
