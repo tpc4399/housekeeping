@@ -23,4 +23,6 @@ public interface IReleaseRequirementService {
     R removedCusId(Integer id);
 
     R updateCus(ReleaseRequirementUDTO dto) throws InterruptedException;
+
+    R getCusById(Integer id);
 }

@@ -178,6 +178,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
+            demandOrderDTO.setParentId(list3.get(i).getParentId());
             demandOrderDTO.setStatus(list3.get(i).getStatus());
             list.add(demandOrderDTO);
         }
@@ -272,6 +273,33 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         });
         demandOrderDetailsService.saveBatch(demandOrderDetails);
         return R.ok("修改成功");
+    }
+
+    @Override
+    public R getCusById(Integer id) {
+        DemandOrder byId = demandOrderService.getById(id);
+        DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+        demandOrderDTO.setCustomerId(byId.getCustomerId());
+        demandOrderDTO.setAddressId(byId.getAddressId());
+        demandOrderDTO.setCode(byId.getCode());
+        demandOrderDTO.setEndDate(byId.getEndDate());
+        demandOrderDTO.setEstimatedSalary(byId.getEstimatedSalary());
+        demandOrderDTO.setHousingArea(byId.getHousingArea());
+        demandOrderDTO.setId(byId.getId());
+        demandOrderDTO.setJobIds(byId.getJobIds());
+        demandOrderDTO.setLiveAtHome(byId.getLiveAtHome());
+        demandOrderDTO.setParentId(byId.getParentId());
+        demandOrderDTO.setNote(byId.getNote());
+        demandOrderDTO.setServerPlaceType(byId.getServerPlaceType());
+        demandOrderDTO.setStartDate(byId.getStartDate());
+        demandOrderDTO.setWeek(byId.getWeek());
+        demandOrderDTO.setParentId(byId.getParentId());
+        demandOrderDTO.setStatus(byId.getStatus());
+
+        List<TimeSlot> timeSlots = demandOrderMapper.getTimes(id);
+        demandOrderDTO.setTimeSlots(timeSlots);
+
+        return R.ok(demandOrderDTO);
     }
 
 

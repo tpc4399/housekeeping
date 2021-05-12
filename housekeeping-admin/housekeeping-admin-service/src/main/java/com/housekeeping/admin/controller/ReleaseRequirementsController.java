@@ -51,6 +51,13 @@ public class ReleaseRequirementsController {
         return releaseRequirementService.getAllRequirement(cd.getId(), page);
     }
 
+    @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY})
+    @GetMapping("/getById")
+    @ApiOperation("【家庭端】【公司端】根据id获取需求")
+    public R getAllReleaseRequirements(Integer id){
+        return releaseRequirementService.getCusById(id);
+    }
+
     @Access({RolesEnum.USER_CUSTOMER})
     @DeleteMapping
     @ApiOperation("【家庭端】删除已发布的需求")
