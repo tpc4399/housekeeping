@@ -47,8 +47,8 @@ public class CustomerAddressController {
         return customerAddressService.getAddressByUserId(userId);
     }
 
-    @Access({RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【客户】根据id查询地址")
+    @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY})
+    @ApiOperation("【客户】【公司】根据id查询地址")
     @GetMapping("/getById")
     public R getById(Integer id){
        return R.ok(customerAddressService.getById(id));
