@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * @Author su
@@ -87,6 +88,7 @@ public class OrderDetailsController {
     @ApiOperation("【用于三方支付】支付成功后的回调接口,订单状态———— 处理中->已支付")
     @PostMapping("/paymentCallback")
     public String paymentCallback(PaymentCallbackParams params) throws IOException {
+        System.out.println("PaymentCallbackParams:" + LocalDateTime.now() + "  " + params.toString());
         PaymentCallback pc = new PaymentCallback(params);
         orderDetailsService.paymentCallback(pc);
         return "OK";

@@ -53,6 +53,7 @@ public class TestController {
     private final RedisTemplate<String, Object> redisTemplate;
     private final IOrderDetailsService orderDetailsService;
 
+
     @PassToken
     @GetMapping("/noToken/test1")
     @ApiOperation("测试1")
@@ -111,7 +112,7 @@ public class TestController {
     }
 
 
-    @RequestMapping(value = "/noToken/test6", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/noToken/test6", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @ApiOperation("长链接测试")
     public String test6() {
         try {
@@ -194,11 +195,35 @@ public class TestController {
         return R.ok(null, "导入成功");
     }
 
-    @ApiOperation("数据导入")
+    @ApiOperation("模拟支付成功回调")
     @GetMapping("/noToken/simulationCallback")
     public R test11(){
         PaymentCallback pc = new PaymentCallback();
-        
+        pc.setClassIf("A");
+        pc.setClassIfSub("7NET");
+        pc.setOdSob("123456");
+        pc.setDataId("45615135135135113553");
+        pc.setProcessDate("2021/05/10");
+        pc.setProcessTime("16:40:00");
+        pc.setResponseId("1");
+        pc.setAuthCode("authCode");
+        pc.setLastPan("0374");
+        pc.setPaymentNo("202235554");
+        pc.setPurchase("554");
+        pc.setAmount("554");
+        pc.setErrReason("nulldddd");
+        pc.setName("name");
+        pc.setTel("15553535388");
+        pc.setPhone("15558886884");
+        pc.setAddress("address515f15a1f53");
+        pc.setEmail("1220251182@qq.com");
+        pc.setInvoiceNum("155d5wa");
+        pc.setRemark("51f5113");
+        pc.setSmileId("15151");
+        pc.setForeign("Y");
+        pc.setVerifyNumber("11313515533");
+        pc.setMidSmilePay("188");
+        orderDetailsService.savePCInfo(pc);
         return R.ok(null, "导入成功");
     }
 
