@@ -1,14 +1,14 @@
 package com.housekeeping.admin.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.PaymentCallbackDTO;
+import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
+import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
@@ -21,10 +21,8 @@ import com.housekeeping.common.utils.TokenUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.io.*;
@@ -64,6 +62,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private EmployeesDetailsService employeesDetailsService;
     @Resource
     private ICustomerDetailsService customerDetailsService;
+    @Resource
+    private PaymentCallbackMapper paymentCallbackMapper;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -183,9 +183,14 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public void paymentCallback(PaymentCallbackDTO dto){
-        System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + dto.toString());
+    public void paymentCallback(PaymentCallback pc){
+        System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + pc.toString());
 
+    }
+
+    @Override
+    public void savePCInfo(PaymentCallback pc) {
+        paymentCallbackMapper.savePCInfo(pc);
     }
 
     @Override

@@ -1,18 +1,14 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.PaymentCallbackDTO;
+import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.common.utils.R;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,7 +38,10 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
           String remarks) throws Exception;
 
     /* 支付回调处理 */
-    void paymentCallback(PaymentCallbackDTO dto);
+    void paymentCallback(PaymentCallback pc);
+
+    /* 存储支付回调信息 */
+    void savePCInfo(PaymentCallback pc);
 
     /* 参数验证 */
     Boolean smilePayVerificationCode(SmilePayVerificationCodeDTO dto);

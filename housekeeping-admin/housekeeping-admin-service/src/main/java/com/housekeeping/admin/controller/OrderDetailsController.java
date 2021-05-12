@@ -1,6 +1,6 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.PaymentCallbackDTO;
+import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.PaymentCallbackParams;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.service.IOrderDetailsService;
@@ -87,8 +87,8 @@ public class OrderDetailsController {
     @ApiOperation("【用于三方支付】支付成功后的回调接口,订单状态———— 处理中->已支付")
     @PostMapping("/paymentCallback")
     public String paymentCallback(PaymentCallbackParams params) throws IOException {
-        PaymentCallbackDTO dto = new PaymentCallbackDTO(params);
-        orderDetailsService.paymentCallback(dto);
+        PaymentCallback pc = new PaymentCallback(params);
+        orderDetailsService.paymentCallback(pc);
         return "OK";
     }
 

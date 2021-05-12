@@ -5,6 +5,7 @@ import com.housekeeping.admin.dto.DateSlot;
 import com.housekeeping.admin.dto.GetCalendarByDateSlotDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.auth.annotation.PassToken;
@@ -50,6 +51,7 @@ public class TestController {
     private final EmployeesDetailsService employeesDetailsService;
     private final ICompanyDetailsService companyDetailsService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final IOrderDetailsService orderDetailsService;
 
     @PassToken
     @GetMapping("/noToken/test1")
@@ -189,6 +191,14 @@ public class TestController {
             list.add(lineTxt);
         }
         read.close();
+        return R.ok(null, "导入成功");
+    }
+
+    @ApiOperation("数据导入")
+    @GetMapping("/noToken/simulationCallback")
+    public R test11(){
+        PaymentCallback pc = new PaymentCallback();
+        
         return R.ok(null, "导入成功");
     }
 

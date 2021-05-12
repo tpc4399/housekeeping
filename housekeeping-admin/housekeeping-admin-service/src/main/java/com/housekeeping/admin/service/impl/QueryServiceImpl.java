@@ -9,9 +9,13 @@ import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.ScoreCalculation;
 import com.housekeeping.common.utils.*;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,7 +109,7 @@ public class QueryServiceImpl implements IQueryService {
                 edp.setHourlyWage(variable5);
                 edp.setCode("TWD");
                 edp.setInstances(variable6);
-                edp.setSkillTags(skillTags);
+                edp.setSkillTags(this.jobsEcho(skillTags, dto.getJobs()));
                 edp.setCertified(certified);
                 EmployeesPOJO employeesPOJO = new EmployeesPOJO();
                 employeesPOJO.setScope(scope);
@@ -240,7 +244,8 @@ public class QueryServiceImpl implements IQueryService {
         //鐘點，設置了時間表 設置了工作內容才能被搜索到
         //包工，只要有，就能被搜索到
 
-        List<Integer> searchPool = queryMapper.enableWork();//能干事的
+//        List<Integer> searchPool = queryMapper.enableWork();//能干事的
+        List<Integer> searchPool = queryMapper.allCalendar(); //能干钟点工的
         Boolean certified0 = certified.get(0);
         Boolean certified1 = certified.get(1);
 
@@ -370,6 +375,46 @@ public class QueryServiceImpl implements IQueryService {
             extensionIsOk = true;
         }
         return extensionIsOk;
+    }
+
+    /** 工作内容回显加工 */
+    private List<SysJobContend> jobsEcho(List<SysJobContend> enableJobs, List<Integer> searchParam){
+        int left = 0;
+        for (int i = 0; i < enableJobs.size(); i++) {
+
+            if (searchParam.contains(enableJobs.get(i).getId())){
+                enableJobs = this.swapInList(enableJobs, left++, i);
+            }
+        }
+        return enableJobs;
+    }
+
+    private List<SysJobContend> swapInList(List<SysJobContend> enableJobs, Integer left, Integer i){
+        //i和left对调位置,然后将left+1
+//        SysJobContend leftValue = enableJobs.get(left);
+//        SysJobContend iValue = enableJobs.get(i);
+//        enableJobs.set(left, iValue);
+//        enableJobs.set(i, leftValue);
+
+        //i插入到left所在位置
+        SysJobContend iValue = enableJobs.remove((int)i);
+        enableJobs.add(left, iValue);
+        return enableJobs;
+    }
+
+    @Test
+    public void test(){
+        List<SysJobContend> enableJobs = new ArrayList<>();
+        enableJobs.add(new SysJobContend(1001, "11126"));
+        enableJobs.add(new SysJobContend(1002, "51f65wa"));
+        enableJobs.add(new SysJobContend(1003, "g145aw65"));
+        enableJobs.add(new SysJobContend(1004, "51gaw"));
+        enableJobs.add(new SysJobContend(1005, "451g56aw"));
+        List<Integer> searchParam = new ArrayList<>();
+        searchParam.add(1005);
+        searchParam.add(1001);
+        List<SysJobContend> jobs = jobsEcho(enableJobs, searchParam);
+        System.out.println("sdasgg");
     }
 
 }

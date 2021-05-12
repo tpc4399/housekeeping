@@ -1,17 +1,19 @@
-package com.housekeeping.admin.dto;
+package com.housekeeping.admin.entity;
 
+import com.housekeeping.admin.dto.PaymentCallbackParams;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * 支付回调
  * @Author su
  * @Date 2021/4/26 10:24
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentCallbackDTO {
+public class PaymentCallback {
 
     private String classIf;     /* 付費方式
                                     A：刷卡
@@ -87,7 +89,7 @@ public class PaymentCallbackDTO {
                 '}';
     }
 
-    public PaymentCallbackDTO(PaymentCallbackParams params) {
+    public PaymentCallback(PaymentCallbackParams params) {
         this.classIf = params.getClassif();
         this.classIfSub = params.getClassif_sub();
         this.odSob = params.getOd_sob();
