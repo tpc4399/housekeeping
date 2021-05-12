@@ -185,7 +185,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     @Override
     public void paymentCallback(PaymentCallback pc){
         System.out.println("PaymentCallback:" + LocalDateTime.now() + "  " + pc.toString());
-
+        this.savePCInfo(pc); //存储回调信息
+        this.inputSql(pc.getDataId(), true); //将处理中订单，转变为待支付订单
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.housekeeping.admin.mapper;
 
 import com.housekeeping.admin.entity.PaymentCallback;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @Author su
@@ -8,6 +9,6 @@ import com.housekeeping.admin.entity.PaymentCallback;
  */
 public interface PaymentCallbackMapper {
 
-    void savePCInfo(PaymentCallback pc);
+    void savePCInfo(@Param("pc") PaymentCallback pc);
 
 }

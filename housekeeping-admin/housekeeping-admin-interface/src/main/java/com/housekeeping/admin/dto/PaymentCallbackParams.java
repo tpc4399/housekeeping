@@ -37,4 +37,33 @@ public class PaymentCallbackParams {
     private String Verify_number;   /* 交易認證電話 */
     private String Mid_smilepay;    /* SmilePay 驗證碼(驗證是否由SmilePay送出的資料) */
 
+    @Override
+    public String toString() {
+        return "PaymentCallbackParams{" +
+                "Classif='" + Classif + '\'' +
+                ", Classif_sub='" + Classif_sub + '\'' +
+                ", Od_sob='" + Od_sob + '\'' +
+                ", Data_id='" + Data_id + '\'' +
+                ", Process_date='" + Process_date + '\'' +
+                ", Process_time='" + Process_time + '\'' +
+                ", Response_id='" + Response_id + '\'' +
+                ", Auth_code='" + Auth_code + '\'' +
+                ", LastPan='" + LastPan + '\'' +
+                ", Payment_no='" + Payment_no + '\'' +
+                ", Purchamt='" + Purchamt + '\'' +
+                ", Amount='" + Amount + '\'' +
+                ", Errdesc='" + Errdesc + '\'' +
+                ", Pur_name='" + Pur_name + '\'' +
+                ", Tel_number='" + Tel_number + '\'' +
+                ", Mobile_number='" + Mobile_number + '\'' +
+                ", Address='" + Address + '\'' +
+                ", email='" + email + '\'' +
+                ", Invoice_num='" + Invoice_num + '\'' +
+                ", Remark='" + Remark + '\'' +
+                ", Smseid='" + Smseid + '\'' +
+                ", Foreign='" + Foreign + '\'' +
+                ", Verify_number='" + Verify_number + '\'' +
+                ", Mid_smilepay='" + Mid_smilepay + '\'' +
+                '}';
+    }
 }
