@@ -29,26 +29,11 @@ public class ReleaseRequirementsController {
     private final IReleaseRequirementService releaseRequirementService;
     private final ICustomerDetailsService customerDetailsService;
 
-    @Access({RolesEnum.USER_COMPANY})
-    @GetMapping("/getAllRequirementsByCompany")
-    @ApiOperation("【公司端】获取所有需求")
-    public R page(Page page){
-        return releaseRequirementService.getAllRequirementsByCompany(page);
-    }
-
     @Access({RolesEnum.USER_CUSTOMER})
     @PostMapping
     @ApiOperation("【家庭端】需求发布接口")
     public R releaseRequirements(@RequestBody ReleaseRequirementBDTO dto) throws InterruptedException {
         return releaseRequirementService.releaseRequirements(dto);
-    }
-
-    @Access({RolesEnum.USER_CUSTOMER})
-    @GetMapping("/getAllRequirements")
-    @ApiOperation("【家庭端】获取所有已发布的需求")
-    public R getAllReleaseRequirements(Page page){
-        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
-        return releaseRequirementService.getAllRequirement(cd.getId(), page);
     }
 
     @Access({RolesEnum.USER_CUSTOMER})
@@ -65,4 +50,25 @@ public class ReleaseRequirementsController {
         return releaseRequirementService.updateCus(dto);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
+    @GetMapping("/getAllRequirementsByCompany")
+    @ApiOperation("【公司端】获取所有需求")
+    public R page(Page page){
+        return releaseRequirementService.getAllRequirementsByCompany(page);
+    }
+
+    @Access({RolesEnum.USER_CUSTOMER})
+    @GetMapping("/getAllRequirements")
+    @ApiOperation("【家庭端】获取所有已发布的需求")
+    public R getAllReleaseRequirements(Page page){
+        CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
+        return releaseRequirementService.getAllRequirement(cd.getId(), page);
+    }
+
+    @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY})
+    @GetMapping("/getById")
+    @ApiOperation("【家庭端】【公司端】根据id获取需求")
+    public R getAllReleaseRequirements(Integer id){
+        return releaseRequirementService.getCusById(id);
+    }
 }
