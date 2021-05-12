@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +40,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private ICustomerDetailsService customerDetailsService;
     @Resource
     private DemandOrderMapper demandOrderMapper;
+    @Resource
+    private ICustomerAddressService customerAddressService;
+    @Resource
+    private ISysIndexService sysIndexService;
 
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
@@ -126,6 +127,37 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+            //需求单工作内容
+            String jobs = list3.get(i).getJobIds();
+            List<Skill> skills = new ArrayList<>();
+            List<String> strings = Arrays.asList(jobs.split(" "));
+            for (int x = 0; x < strings.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysJobContendService.getById(id).getContend());
+                skills.add(skill);
+            }
+            demandOrderDTO.setWorkContent(skills);
+
+            //需求单工作类型
+            String type = list3.get(i).getParentId();
+            List<Skill> types = new ArrayList<>();
+            List<String> strings1 = Arrays.asList(type.split(" "));
+            for (int x = 0; x < strings1.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings1.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysIndexService.getById(id).getName());
+                types.add(skill);
+            }
+            demandOrderDTO.setWorkType(types);
+
+            //需求单地址
+            CustomerAddress byId = customerAddressService.getById(list3.get(i).getAddressId());
+            demandOrderDTO.setCustomerAddress(byId);
+
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
             demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
@@ -165,6 +197,37 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+            //需求单工作内容
+            String jobs = list3.get(i).getJobIds();
+            List<Skill> skills = new ArrayList<>();
+            List<String> strings = Arrays.asList(jobs.split(" "));
+            for (int x = 0; x < strings.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysJobContendService.getById(id).getContend());
+                skills.add(skill);
+            }
+            demandOrderDTO.setWorkContent(skills);
+
+            //需求单工作类型
+            String type = list3.get(i).getParentId();
+            List<Skill> types = new ArrayList<>();
+            List<String> strings1 = Arrays.asList(type.split(" "));
+            for (int x = 0; x < strings1.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings1.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysIndexService.getById(id).getName());
+                types.add(skill);
+            }
+            demandOrderDTO.setWorkType(types);
+
+            //需求单地址
+            CustomerAddress byId = customerAddressService.getById(list3.get(i).getAddressId());
+            demandOrderDTO.setCustomerAddress(byId);
+
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
             demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
@@ -279,6 +342,37 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     public R getCusById(Integer id) {
         DemandOrder byId = demandOrderService.getById(id);
         DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+        //需求单工作内容
+        String jobs = byId.getJobIds();
+        List<Skill> skills = new ArrayList<>();
+        List<String> strings = Arrays.asList(jobs.split(" "));
+        for (int x = 0; x < strings.size(); x++) {
+            Skill skill = new Skill();
+            int contentId = Integer.parseInt(strings.get(x));
+            skill.setJobId(contentId);
+            skill.setContent(sysJobContendService.getById(contentId).getContend());
+            skills.add(skill);
+        }
+        demandOrderDTO.setWorkContent(skills);
+
+        //需求单工作类型
+        String type = byId.getParentId();
+        List<Skill> types = new ArrayList<>();
+        List<String> strings1 = Arrays.asList(type.split(" "));
+        for (int x = 0; x < strings1.size(); x++) {
+            Skill skill = new Skill();
+            int typeId = Integer.parseInt(strings1.get(x));
+            skill.setJobId(typeId);
+            skill.setContent(sysIndexService.getById(typeId).getName());
+            types.add(skill);
+        }
+        demandOrderDTO.setWorkType(types);
+
+        //需求单地址
+        CustomerAddress customerAddress = customerAddressService.getById(byId.getAddressId());
+        demandOrderDTO.setCustomerAddress(customerAddress);
+
         demandOrderDTO.setCustomerId(byId.getCustomerId());
         demandOrderDTO.setAddressId(byId.getAddressId());
         demandOrderDTO.setCode(byId.getCode());
