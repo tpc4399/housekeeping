@@ -738,25 +738,41 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 获取这段日期内的空闲时间 */
         List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
         freeTime.forEach(x -> {
-            Integer todayWeek = x.getDate().getDayOfWeek().getValue();
+            /* 今日数据准备 */
+            LocalDate today = x.getDate(); //今日日期
+            Integer todayWeek = today.getDayOfWeek().getValue();
             if (!dto.getWeeks().contains(todayWeek)) return;     //如果周数没有这天，那么就跳过吧
-            List<TimeAndPrice> table = sysIndexService.periodSplittingA(null/*x.getTimes()*/);
-            List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());
-            Boolean todayIsOk = this.judgeToday(table, item);
-            LocalDate today = x.getDate();
-            Integer week = today.getDayOfWeek().getValue();
+            List<LocalTimeAndPricePOJO> enableTimeToday = this.enableTimeToday(x.getTimes());//切割的时间表与价格
+            List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());//切割的需求时间段
+            Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
             List<TimeSlot> timeSlots = dto.getTimeSlots();
             Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
-            if (canBeOnDuty) todayPrice = this.todayPrice(table, item);
-            WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, week, timeSlots, canBeOnDuty, todayPrice);
+            if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
+            /* 今日数据返回 */
+            WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);
             workDetailsPOJOS.add(wdp);
         });
         return workDetailsPOJOS;
     }
 
+    /* 获取今日切割后的能做工作的时间与价格 */
+    private List<LocalTimeAndPricePOJO> enableTimeToday(List<TimeSlotPOJO> times){
+        List<LocalTimeAndPricePOJO> enableTimeToday = new ArrayList<>();
+        times.forEach(time -> {
+            LocalTime start = time.getTimeSlotStart();
+            Float length = time.getTimeSlotLength();
+            Float total = length / 0.5f;
+            for (Float i = 0f; i < total; i++) {
+                enableTimeToday.add(new LocalTimeAndPricePOJO(start, time.getHourlyWage(), time.getCode()));
+                start = start.plusMinutes(30);
+            }
+        });
+        return enableTimeToday;
+    }
+
     @Override
-    public Boolean judgeToday(List<TimeAndPrice> table, List<LocalTime> item) {
+    public Boolean judgeToday(List<LocalTimeAndPricePOJO> table, List<LocalTime> item) {
         AtomicReference<Boolean> todayIsOk = new AtomicReference<>(true);
         item.forEach(a -> {
             AtomicReference<Boolean> bool1 = new AtomicReference<>(false); //时段是否包含
@@ -1078,13 +1094,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return new BigDecimal(0);
     }
 
-    private BigDecimal todayPrice(List<TimeAndPrice> table, List<LocalTime> item){
+    private BigDecimal todayPrice(List<LocalTimeAndPricePOJO> table, List<LocalTime> item){
         BigDecimal todayPrice = new BigDecimal(0);
         for (LocalTime x : item) {
-            for (TimeAndPrice y : table) {
+            for (LocalTimeAndPricePOJO y : table) {
                 if (y.getTime().equals(x)){
-                    Float hourlyWage = y.getJobAndPriceList().get(0).getPrice();//已转换成TWD的时薪
-                    BigDecimal semihWage = new BigDecimal(hourlyWage).divide(new BigDecimal(2));
+                    BigDecimal hourlyWage = y.getHourlyWage();//已转换成TWD的时薪
+                    BigDecimal semihWage = hourlyWage.divide(new BigDecimal(2)).setScale(0, BigDecimal.ROUND_DOWN);
                     todayPrice = todayPrice.add(semihWage);
                     break;
                 }

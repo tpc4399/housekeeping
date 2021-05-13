@@ -3,6 +3,7 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesCalendar;
+import com.housekeeping.admin.pojo.LocalTimeAndPricePOJO;
 import com.housekeeping.admin.pojo.TodayDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.common.utils.R;
@@ -60,7 +61,7 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto);
 
     /* 判断今日能否做 */
-    Boolean judgeToday(List<TimeAndPrice> table, List<LocalTime> item);
+    Boolean judgeToday(List<LocalTimeAndPricePOJO> table, List<LocalTime> item);
 
     /* 计算订单总价格 */
     BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails);
