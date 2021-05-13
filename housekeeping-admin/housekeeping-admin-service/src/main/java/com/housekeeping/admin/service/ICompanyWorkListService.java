@@ -41,4 +41,6 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     R confirmDemand(Integer quotationId);
 
     R changePrice(String quotationId, Integer price);
+
+    R cusRemove(Integer id);
 }

@@ -7,6 +7,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -88,6 +89,13 @@ public class CompanyWorkListController {
     @GetMapping("/confirmDemand")
     public R confirmDemand(@RequestParam Integer quotationId){
         return companyWorkListService.confirmDemand(quotationId);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】删除报价单")
+    @DeleteMapping("/remove")
+    public R remove(@RequestParam Integer id){
+        return companyWorkListService.cusRemove(id);
     }
 
 

@@ -45,7 +45,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private ICustomerAddressService customerAddressService;
     @Resource
     private ISysIndexService sysIndexService;
-
+    @Resource
+    private IDemandEmployeesService demandEmployeesService;
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
 
@@ -72,6 +73,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         jobIds.forEach(x -> {
             jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
         });
+
+        if(CommonUtils.isEmpty(dto.getParentId())){
+            return R.failed("请选择工作类型");
+        }
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
@@ -128,6 +133,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+            QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
+            qw3.eq("demand_order_id",list3.get(i).getId());
+            int count = demandEmployeesService.count(qw3);
+            demandOrderDTO.setCount(count);
 
             //需求单工作内容
             String jobs = list3.get(i).getJobIds();
@@ -302,6 +312,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         jobIds.forEach(x -> {
             jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
         });
+
+        if(CommonUtils.isEmpty(dto.getParentId())){
+            return R.failed("请选择工作类型");
+        }
         DemandOrder demandOrder = new DemandOrder(
                 dto.getId(),
                 customerId,
@@ -349,6 +363,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     public R getCusById(Integer id) {
         DemandOrder byId = demandOrderService.getById(id);
         DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+        QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
+        qw3.eq("demand_order_id",byId.getId());
+        int count = demandEmployeesService.count(qw3);
+        demandOrderDTO.setCount(count);
 
         //需求单工作内容
         String jobs = byId.getJobIds();

@@ -487,6 +487,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
 
+        byId.setStatus(1);
+        demandEmployeesService.updateById(byId);
+
         demandOrder.setStatus(1);
         demandOrderService.updateById(demandOrder);
 
@@ -501,6 +504,16 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         byId.setPrice(price);
         demandEmployeesService.updateById(byId);
         return R.ok("修改成功");
+    }
+
+    @Override
+    public R cusRemove(Integer id) {
+        DemandEmployees byId = demandEmployeesService.getById(id);
+        if(byId.getStatus()==1){
+            return R.failed("该报价单已被确认，无法删除！");
+        }
+        demandEmployeesService.removeById(id);
+        return R.ok("删除成功!");
     }
 
 
