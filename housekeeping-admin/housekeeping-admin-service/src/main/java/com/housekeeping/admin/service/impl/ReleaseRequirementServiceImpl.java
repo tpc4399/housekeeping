@@ -47,6 +47,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private ISysIndexService sysIndexService;
     @Resource
     private IDemandEmployeesService demandEmployeesService;
+
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
 
@@ -199,25 +200,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
 
     @Override
     public R getAllRequirementsByCompany(DemandDto demandDto,Page page) {
-        QueryWrapper<DemandOrder> qw = new QueryWrapper<>();
-        if(CommonUtils.isNotEmpty(demandDto.getJobIds())){
-            String jobs = demandDto.getJobIds().replaceAll(",", " ");
-            qw.like("job_ids",jobs);
+
+        List<DemandOrder> list3 = demandOrderMapper.cusPage(demandDto);
+        if(CommonUtils.isEmpty(list3)){
+            return R.ok(null);
         }
-        if(CommonUtils.isNotEmpty(demandDto.getWorkTypeIds())){
-            String jobs = demandDto.getWorkTypeIds().replaceAll(",", " ");
-            qw.like("job_ids",jobs);
-        }
-        if(CommonUtils.isNotEmpty(demandDto.getPlace())){
-            qw.like("job_ids",demandDto.getPlace());
-        }
-        if(CommonUtils.isNotEmpty(demandDto.getStartDate())){
-            qw.ge("start_date",demandDto.getStartDate());
-        }
-        if(CommonUtils.isNotEmpty(demandDto.getLowPrice())&&CommonUtils.isNotEmpty(demandDto.getHighPrice())){
-            qw.between("estimated_salary",demandDto.getLowPrice(),demandDto.getHighPrice());
-        }
-        List<DemandOrder> list3 = demandOrderService.list(qw);
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
