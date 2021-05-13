@@ -177,16 +177,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
-            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
+
             Integer demandId = list.get(i).getId();
             List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
-            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
-                TimeSlot timeSlot = new TimeSlot();
-                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
-                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
-                timeSlots1.add(timeSlot);
-            }
-            list.get(i).setTimeSlots(timeSlots1);
+
+            list.get(i).setTimeSlots(timeSlots);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
         return R.ok(pages);
@@ -265,16 +260,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
-            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
             Integer demandId = list.get(i).getId();
             List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
-            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
-                TimeSlot timeSlot = new TimeSlot();
-                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
-                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
-                timeSlots1.add(timeSlot);
-            }
-            list.get(i).setTimeSlots(timeSlots1);
+            list.get(i).setTimeSlots(timeSlots);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
         return R.ok(pages);
