@@ -281,7 +281,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public R updatePwd(ForgetDTO forgetDTO) {
-        if(!forgetDTO.getDeptId().equals(forgetDTO.getRePassword())){
+        if(!forgetDTO.getPassword().equals(forgetDTO.getRePassword())){
             return R.failed("两次密码不一致");
         }
         User user = this.getUserByPhone(forgetDTO.getPhonePrefix(), forgetDTO.getPhone(), forgetDTO.getDeptId());
