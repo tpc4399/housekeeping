@@ -7,6 +7,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -70,9 +71,9 @@ public class CompanyWorkListController {
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @ApiOperation("【公司】【经理】第二步：选择合适的保洁员")
     @GetMapping("/selectSuitableEmployees")
-    public R selectSuitableEmployees(@RequestParam String employeesId,@RequestParam Integer demandOrderId,Integer price){
+    public R selectSuitableEmployees(@RequestParam Integer employeesId,@RequestParam Integer demandOrderId){
         /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
-        return companyWorkListService.selectSuitableEmployees(employeesId, demandOrderId,price);
+        return companyWorkListService.selectSuitableEmployees(employeesId, demandOrderId);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
@@ -90,5 +91,18 @@ public class CompanyWorkListController {
         return companyWorkListService.confirmDemand(quotationId);
     }
 
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】删除报价单")
+    @DeleteMapping("/remove")
+    public R remove(@RequestParam Integer id){
+        return companyWorkListService.cusRemove(id);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】根据id获取报价单")
+    @GetMapping("/getQuotationById")
+    public R cusGetByid(@RequestParam Integer quotationId){
+        return companyWorkListService.cusGetById(quotationId);
+    }
 
 }

@@ -21,6 +21,8 @@ public class DemandOrderDTO extends DemandOrder {
     private List<Skill> workContent;
 
     private List<Skill> workType;
+
+    private Integer count;
 }
 
 

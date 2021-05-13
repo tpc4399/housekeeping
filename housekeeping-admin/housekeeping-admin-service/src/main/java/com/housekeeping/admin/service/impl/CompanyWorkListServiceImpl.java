@@ -19,8 +19,6 @@ import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
-import com.sun.org.apache.regexp.internal.RE;
-import org.omg.CORBA.portable.Delegate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -128,33 +126,31 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     }
 
     @Override
-    public R selectSuitableEmployees(String employeesId, Integer demandOrderId,Integer price) {
+    public R selectSuitableEmployees(Integer employeesId, Integer demandOrderId) {
         QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
-        qw.eq("employees_id",Integer.parseInt(employeesId));
+        qw.eq("employees_id",employeesId);
         qw.eq("demand_order_id",demandOrderId);
         int count = demandEmployeesService.count(qw);
         if(count>0){
             return R.failed("该员工已参与该需求单，请勿重复添加!");
         }
+
+        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(demandOrderId, employeesId);
+        BigDecimal price = this.getPrice(serviceTimeByEmployees, demandOrderId, employeesId);
+
         DemandEmployees demandEmployees = new DemandEmployees();
-        demandEmployees.setEmployeesId(Integer.parseInt(employeesId));
+        demandEmployees.setEmployeesId(employeesId);
         demandEmployees.setCreateTime(LocalDateTime.now());
         demandEmployees.setDemandOrderId(demandOrderId);
         demandEmployees.setStatus(0);
         demandEmployees.setReadStatus(0);
-        demandEmployees.setPrice(price);
+        demandEmployees.setPrice(price.intValue());
         demandEmployees.setUserId(TokenUtils.getCurrentUserId());
         demandEmployees.setUpdateTime(LocalDateTime.now());
         demandEmployeesService.save(demandEmployees);
         return R.ok("添加保洁员成功");
     }
 
-    @Override
-    public R initiateChat(String demandOrderId) {
-        /* 先检查保洁员、公司、客户全不全，完不完整 */
-
-        return null;
-    }
 
 
     @Override
@@ -344,7 +340,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         makeAnAppointmentDTO.setStart(demandOrder.getStartDate());
         makeAnAppointmentDTO.setEnd(demandOrder.getEndDate());
 
-        List<String> strings = Arrays.asList(demandOrder.getWeek().split(""));
+        List<String> strings = Arrays.asList(demandOrder.getWeek().split(","));
         List<Integer> weeks = new ArrayList<>();
         for (int i = 0; i < strings.size(); i++) {
             weeks.add(Integer.parseInt(strings.get(i)));
@@ -487,6 +483,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
 
+        byId.setStatus(1);
+        demandEmployeesService.updateById(byId);
+
         demandOrder.setStatus(1);
         demandOrderService.updateById(demandOrder);
 
@@ -501,6 +500,37 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         byId.setPrice(price);
         demandEmployeesService.updateById(byId);
         return R.ok("修改成功");
+    }
+
+    @Override
+    public R cusRemove(Integer id) {
+        DemandEmployees byId = demandEmployeesService.getById(id);
+        if(byId.getStatus()==1){
+            return R.failed("该报价单已被确认，无法删除！");
+        }
+        demandEmployeesService.removeById(id);
+        return R.ok("删除成功!");
+    }
+
+    @Override
+    public R cusGetById(Integer quotationId) {
+
+        DemandEmployees byId = demandEmployeesService.getById(quotationId);
+        if(CommonUtils.isEmpty(byId)){
+            return R.failed("该报价单为空");
+        }
+        QuotationVo quotationVo = new QuotationVo();
+        quotationVo.setId(byId.getId());
+        quotationVo.setDemandOrder(demandOrderService.getById(byId.getDemandOrderId()));
+        quotationVo.setEmployeesDetails(employeesDetailsService.getById(byId.getEmployeesId()));
+
+        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
+        quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+
+        BigDecimal price = this.getPrice(serviceTimeByEmployees, byId.getDemandOrderId(), byId.getEmployeesId());
+        quotationVo.setPrice(price);
+
+        return R.ok(quotationVo);
     }
 
 

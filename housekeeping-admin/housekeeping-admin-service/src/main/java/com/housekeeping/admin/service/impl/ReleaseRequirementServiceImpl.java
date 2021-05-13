@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.DemandDto;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
 import com.housekeeping.admin.entity.*;
@@ -44,7 +45,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private ICustomerAddressService customerAddressService;
     @Resource
     private ISysIndexService sysIndexService;
-
+    @Resource
+    private IDemandEmployeesService demandEmployeesService;
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
 
@@ -71,6 +73,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         jobIds.forEach(x -> {
             jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
         });
+
+        if(CommonUtils.isEmpty(dto.getParentId())){
+            return R.failed("请选择工作类型");
+        }
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
@@ -128,6 +134,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
 
+            QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
+            qw3.eq("demand_order_id",list3.get(i).getId());
+            int count = demandEmployeesService.count(qw3);
+            demandOrderDTO.setCount(count);
+
             //需求单工作内容
             String jobs = list3.get(i).getJobIds();
             List<Skill> skills = new ArrayList<>();
@@ -176,24 +187,37 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
-            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
+
             Integer demandId = list.get(i).getId();
             List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
-            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
-                TimeSlot timeSlot = new TimeSlot();
-                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
-                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
-                timeSlots1.add(timeSlot);
-            }
-            list.get(i).setTimeSlots(timeSlots1);
+
+            list.get(i).setTimeSlots(timeSlots);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
         return R.ok(pages);
     }
 
     @Override
-    public R getAllRequirementsByCompany(Page page) {
-        List<DemandOrder> list3 = demandOrderService.list();
+    public R getAllRequirementsByCompany(DemandDto demandDto,Page page) {
+        QueryWrapper<DemandOrder> qw = new QueryWrapper<>();
+        if(CommonUtils.isNotEmpty(demandDto.getJobIds())){
+            String jobs = demandDto.getJobIds().replaceAll(",", " ");
+            qw.like("job_ids",jobs);
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getWorkTypeIds())){
+            String jobs = demandDto.getWorkTypeIds().replaceAll(",", " ");
+            qw.like("job_ids",jobs);
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getPlace())){
+            qw.like("job_ids",demandDto.getPlace());
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getStartDate())){
+            qw.ge("start_date",demandDto.getStartDate());
+        }
+        if(CommonUtils.isNotEmpty(demandDto.getLowPrice())&&CommonUtils.isNotEmpty(demandDto.getHighPrice())){
+            qw.between("estimated_salary",demandDto.getLowPrice(),demandDto.getHighPrice());
+        }
+        List<DemandOrder> list3 = demandOrderService.list(qw);
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
@@ -246,16 +270,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
-            ArrayList<TimeSlot> timeSlots1 = new ArrayList<>();
             Integer demandId = list.get(i).getId();
             List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
-            for (int i1 = 0; i1 < timeSlots.size(); i1++) {
-                TimeSlot timeSlot = new TimeSlot();
-                timeSlot.setTimeSlotStart(timeSlots.get(i1).getTimeSlotStart());
-                timeSlot.setTimeSlotLength(timeSlots.get(i1).getTimeSlotLength());
-                timeSlots1.add(timeSlot);
-            }
-            list.get(i).setTimeSlots(timeSlots1);
+            list.get(i).setTimeSlots(timeSlots);
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
         return R.ok(pages);
@@ -295,6 +312,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         jobIds.forEach(x -> {
             jobIdsStr.set(jobIdsStr.get() + x.toString() + " ");
         });
+
+        if(CommonUtils.isEmpty(dto.getParentId())){
+            return R.failed("请选择工作类型");
+        }
         DemandOrder demandOrder = new DemandOrder(
                 dto.getId(),
                 customerId,
@@ -342,6 +363,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     public R getCusById(Integer id) {
         DemandOrder byId = demandOrderService.getById(id);
         DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+        QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
+        qw3.eq("demand_order_id",byId.getId());
+        int count = demandEmployeesService.count(qw3);
+        demandOrderDTO.setCount(count);
 
         //需求单工作内容
         String jobs = byId.getJobIds();

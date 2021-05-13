@@ -2,6 +2,7 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.housekeeping.admin.dto.DemandDto;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
 import com.housekeeping.common.utils.R;
@@ -18,7 +19,7 @@ public interface IReleaseRequirementService {
 
     R getAllRequirement(Integer cusId, Page page);
 
-    R getAllRequirementsByCompany(Page page);
+    R getAllRequirementsByCompany(DemandDto demandDto,Page page);
 
     R removedCusId(Integer id);
 
