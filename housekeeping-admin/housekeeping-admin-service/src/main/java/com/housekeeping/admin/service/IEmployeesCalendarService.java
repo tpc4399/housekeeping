@@ -7,6 +7,7 @@ import com.housekeeping.admin.pojo.LocalTimeAndPricePOJO;
 import com.housekeeping.admin.pojo.TodayDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -41,6 +42,9 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
 
     /* 获取这段日期的时间表 時間表減去已排任務時間 */
     List<FreeDateTimeDTO> getFreeTimeByDateSlot2(GetCalendarByDateSlotDTO dto);
+
+    /* 获取这个月的空闲时间表,自动补全 */
+    R getFreeTimeByMonth(GetFreeTimeByMonthDTO dto);
 
     /* 预约钟点工 */
     R makeAnAppointment(MakeAnAppointmentDTO dto);
