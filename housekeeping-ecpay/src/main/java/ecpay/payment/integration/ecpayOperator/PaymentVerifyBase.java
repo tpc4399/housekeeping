@@ -13,11 +13,11 @@ import ecpay.payment.integration.errorMsg.ErrorMessage;
 import ecpay.payment.integration.exception.EcpayException;
 
 public class PaymentVerifyBase{
-	protected String confPath = "/ecpay/payment/integration/config/EcpayPayment.xml";
+	protected String confPath = "/EcpayPayment.xml";
 	protected Document doc;
 	public PaymentVerifyBase(){
-		URL fileURL = this.getClass().getResource(confPath);
-		doc = EcpayFunction.xmlParser(fileURL.toString());
+		String paymentConfPath = "./housekeeping-ecpay/src/main/resources/EcpayPayment.xml";
+		doc = EcpayFunction.xmlParser(paymentConfPath);
 		doc.getDocumentElement().normalize();
 	}
 	

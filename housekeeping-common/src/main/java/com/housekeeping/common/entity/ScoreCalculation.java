@@ -57,7 +57,7 @@ public class ScoreCalculation {
     private Float getScope2(){
         Float maxScope = new Float(weight.get(ApplicationConfigConstants.distanceScoreDouble));
         Float x = new Float(this.variable6);
-        Float y = (-1) * maxScope * x/new Float(50000) + maxScope;
+        Float y = (-1) * maxScope * x/new Float(50) + maxScope;
         return y;
     }
 

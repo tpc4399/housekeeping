@@ -95,7 +95,6 @@ public class QueryServiceImpl implements IQueryService {
                 Float variable7 = this.variable7(ed); //評價星級
                 Boolean variable8 = this.variable8(employeesId); //推广
                 Float scope = new ScoreCalculation(variable1, variable2, variable4, variable5, variable6, variable7, variable8, weight, dto.getLowHourlyWage(), dto.getHighHourlyWage(), dto.getPriorityType()).scope();
-                BigDecimal bg = new BigDecimal(scope).setScale(2, BigDecimal.ROUND_DOWN);
 
                 //构造对象
                 EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO();
@@ -113,7 +112,7 @@ public class QueryServiceImpl implements IQueryService {
                 edp.setSkillTags(this.jobsEcho(skillTags, dto.getJobs()));
                 edp.setCertified(certified);
                 EmployeesPOJO employeesPOJO = new EmployeesPOJO();
-                employeesPOJO.setScope(bg.floatValue());
+                employeesPOJO.setScope(scope);
                 employeesPOJO.setEmployeesDetailsPOJO(edp);
                 employeesPOJOS.add(employeesPOJO);
 
@@ -188,7 +187,6 @@ public class QueryServiceImpl implements IQueryService {
                 continue;
             }
         }
-
 
         return R.ok(resultPOJOS, "搜索成功");
     }
