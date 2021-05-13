@@ -209,16 +209,18 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesDetails.setAccountLine(employeesDetailsDTO.getAccountLine());
         employeesDetails.setDescribes(employeesDetailsDTO.getDescribes());
 
-        List<EmployeesWorkExperienceDTO> workExperiencesDTO = employeesDetailsDTO.getWorkExperiencesDTO();
-        int month = 0;
-        if(CommonUtils.isNotEmpty(workExperiencesDTO)){
-            for (int i = 0; i < workExperiencesDTO.size(); i++) {
-                int workYear = CommonUtils.getWorkYear(workExperiencesDTO.get(i).getDateStart(), workExperiencesDTO.get(i).getDateEnd());
-                month = month + workYear;
+        if(CommonUtils.isNotEmpty(employeesDetailsDTO.getWorkExperiencesDTO().get(0).getDateStart())&&CommonUtils.isNotEmpty(employeesDetailsDTO.getWorkExperiencesDTO().get(0).getDateEnd())){
+            List<EmployeesWorkExperienceDTO> workExperiencesDTO = employeesDetailsDTO.getWorkExperiencesDTO();
+            int month = 0;
+            if(CommonUtils.isNotEmpty(workExperiencesDTO)){
+                for (int i = 0; i < workExperiencesDTO.size(); i++) {
+                    int workYear = CommonUtils.getWorkYear(workExperiencesDTO.get(i).getDateStart(), workExperiencesDTO.get(i).getDateEnd());
+                    month = month + workYear;
+                }
             }
+            String workYear = CommonUtils.formatWorkYear(month);
+            employeesDetails.setWorkYear(workYear);
         }
-        String workYear = CommonUtils.formatWorkYear(month);
-        employeesDetails.setWorkYear(workYear);
 
         employeesDetails.setUpdateTime(LocalDateTime.now());
         employeesDetails.setLastReviserId(TokenUtils.getCurrentUserId());
