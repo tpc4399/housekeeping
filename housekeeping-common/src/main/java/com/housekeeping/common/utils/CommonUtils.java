@@ -363,54 +363,7 @@ public class CommonUtils {
 
 	public static void main(String[] args) throws UnknownHostException {
 
-		long section0 = System.currentTimeMillis();
-		//默认升序 desc降序
-		SortListUtil<RecommendedEmployeesVo> sortList = new SortListUtil<RecommendedEmployeesVo>();
-		List<RecommendedEmployeesVo> reList = new ArrayList<>();
-		for (int i = 0; i < 1000000; i++) {
-			RecommendedEmployeesVo re = new RecommendedEmployeesVo(i, new Random().nextInt(10000), new BigDecimal(new Random().nextInt(10000)), new Random().nextFloat());
-			reList.add(re);
-		}
-		long section1 = System.currentTimeMillis();
-		Collections.shuffle(reList);
-		long section2 = System.currentTimeMillis();
-		System.out.println("==========原来的顺序==========");
-//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-//			RecommendedEmployeesVo re = iterator.next();
-//			System.out.println(re);
-//		}
-		long section3 = System.currentTimeMillis();
-		System.out.println("======按照instance排序=======");
-		sortList.Sort(reList, "getInstance", null);
-//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-//			RecommendedEmployeesVo re = iterator.next();
-//			System.out.println(re);
-//		}
-		long section4 = System.currentTimeMillis();
-
-		System.out.println("========按照price排序========");
-		sortList.Sort(reList, "getPrice", null);
-//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-//			RecommendedEmployeesVo re = iterator.next();
-//			System.out.println(re);
-//		}
-		long section5 = System.currentTimeMillis();
-
-		System.out.println("========按照score排序========");
-		sortList.Sort(reList, "getScore", null);
-//		for (Iterator<RecommendedEmployeesVo> iterator = reList.iterator(); iterator.hasNext(); ) {
-//			RecommendedEmployeesVo re = iterator.next();
-//			System.out.println(re);
-//		}
-		long section6 = System.currentTimeMillis();
-
-		System.out.println("总时间："+(section6 - section0)+"ms");
-		System.out.println("生成数据的时间："+(section1 - section0)+"ms");
-		System.out.println("打乱数据的时间："+(section2 - section1)+"ms");
-		System.out.println("输出数据的时间："+(section3 - section2)+"ms");
-		System.out.println("按照instance排序+输出数据的时间："+(section4 - section3)+"ms");
-		System.out.println("按照price排序+输出数据的时间："+(section5 - section4)+"ms");
-		System.out.println("按照score排序+输出数据的时间："+(section6 - section5)+"ms");
+		System.out.println(formatWorkYear(12));
 
 	}
 
@@ -442,7 +395,7 @@ public class CommonUtils {
 			sb.append(month).append("月");
 			return sb.toString();
 		}
-		if(month==0){
+		if(months==0){
 			sb.append(year).append("年");
 			return sb.toString();
 		}else {
