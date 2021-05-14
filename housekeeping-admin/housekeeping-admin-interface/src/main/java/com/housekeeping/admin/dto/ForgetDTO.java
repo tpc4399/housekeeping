@@ -11,8 +11,6 @@ public class ForgetDTO {
 
     private Integer deptId;
 
-    private String code;
-
     private String password;
 
     private String rePassword;
