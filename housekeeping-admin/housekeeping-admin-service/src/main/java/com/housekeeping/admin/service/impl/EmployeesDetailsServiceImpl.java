@@ -114,8 +114,12 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             employeesDetails.setAddress4(employeesDetailsDTO.getAddress4());
 
             /** 2021/1/14 su 新增存放地址經緯度 **/
-            employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
-            employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
+            if(CommonUtils.isNotEmpty(employeesDetailsDTO.getLng())){
+                employeesDetails.setLng(employeesDetailsDTO.getLng().toString());
+            }
+            if(CommonUtils.isNotEmpty(employeesDetailsDTO.getLat())){
+                employeesDetails.setLat(employeesDetailsDTO.getLat().toString());
+            }
             /** 2021/1/14 su 新增存放地址經緯度 **/
 
             employeesDetails.setEducationBackground(employeesDetailsDTO.getEducationBackground());
