@@ -441,6 +441,10 @@ public class CommonUtils {
 		if(year==0){
 			sb.append(month).append("月");
 			return sb.toString();
+		}
+		if(month==0){
+			sb.append(year).append("年");
+			return sb.toString();
 		}else {
 			sb.append(year).append("年").append(months).append("月");
 			return sb.toString();
