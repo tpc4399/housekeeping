@@ -274,23 +274,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         dto.getWeek().forEach(wk->{
             week.append(wk);
         });
-        /* 填入工作内容，优先填入预设置的工作内容，如果为空，那么填入技能标签的工作内容 */
-        List<Integer> jobIds = new ArrayList<>();
-        EmployeesDetails employeesDetails = employeesDetailsService.getById(dto.getEmployeesId());
-        String presetJobIds = employeesDetails.getPresetJobIds();
-        if (CommonUtils.isNotEmpty(presetJobIds)){
-            String[] ids = presetJobIds.split(" ");
-            for (int i = 0; i < ids.length; i++) {
-                jobIds.add(Integer.valueOf(ids[i]));
-            }
-        }else {
-            List<SysJobContend> skillTag = (List<SysJobContend>) employeesCalendarService.getSkillTags(dto.getEmployeesId()).getData();
-            jobIds = skillTag.stream().map(x->{
-                return x.getId();
-            }).collect(Collectors.toList());
-        }
 
-        List<Integer> finalJobIds = jobIds;
+
         dto.getTimeSlotPriceDTOList().forEach(timeSlot -> {
             EmployeesCalendar employeesCalendar =
                     new EmployeesCalendar(
@@ -301,24 +286,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                             timeSlot.getTimeSlotStart(),
                             timeSlot.getTimeSlotLength()
                     );
-            Integer maxCalendarId = 0;
-            synchronized (this){
-                baseMapper.insert(employeesCalendar);
-                maxCalendarId = ((EmployeesCalendar) CommonUtils.getMaxId("employees_calendar", this)).getId();
-            }
-            List<EmployeesCalendarDetails> employeesCalendarDetailsList = new ArrayList<>();
-            Integer finalMaxCalendarId = maxCalendarId;
-            finalJobIds.forEach(jobId -> {
-                EmployeesCalendarDetails employeesCalendarDetails =
-                        new EmployeesCalendarDetails(
-                                finalMaxCalendarId,
-                                jobId,
-                                timeSlot.getPrice(),
-                                timeSlot.getCode()
-                        );
-                employeesCalendarDetailsList.add(employeesCalendarDetails);
-            });
-            employeesCalendarDetailsService.saveBatch(employeesCalendarDetailsList);
+            employeesCalendar.setHourlyWage(new BigDecimal(timeSlot.getPrice()));
+            employeesCalendar.setCode(timeSlot.getCode());
+            baseMapper.insert(employeesCalendar);
         });
 
         return R.ok("設置成功");
@@ -339,18 +309,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         ec.setWeek(week.toString());
         ec.setTimeSlotStart(dto.getTimeSlotStart());
         ec.setTimeSlotLength(dto.getTimeSlotLength());
-
-        QueryWrapper qw = new QueryWrapper();
-        qw.eq("calendar_id", ec.getId());
-        List<EmployeesCalendarDetails> ecd = employeesCalendarDetailsService.list(qw);
-        ecd = ecd.stream().map(x -> {
-            x.setPrice(dto.getPrice());
-            x.setCode(dto.getCode());
-            return x;
-        }).collect(Collectors.toList());
-
         this.updateById(ec);
-        employeesCalendarDetailsService.updateBatchById(ecd);
         return R.ok(null, "修改成功");
     }
 
