@@ -105,7 +105,7 @@ public class QueryServiceImpl implements IQueryService {
                 edp.setNumberOfOrder(ed.getNumberOfOrders());
                 edp.setHeaderUrl(ed.getHeadUrl());
                 edp.setStarRating(ed.getStarRating());
-                edp.setAddressDTO(new AddressDetailsDTO(ed.getAddress1()+ed.getAddress2()+ed.getAddress3()+ed.getAddress4(), new Float(ed.getLng()), new Float(ed.getLat())));
+                edp.setAddressDTO(new AddressDetailsDTO(ed.getAddress2()+ed.getAddress3()+ed.getAddress4(), new Float(ed.getLng()), new Float(ed.getLat())));
                 edp.setHourlyWage(variable5);
                 edp.setCode("TWD");
                 edp.setInstances(variable6);
@@ -139,7 +139,7 @@ public class QueryServiceImpl implements IQueryService {
                 cdp.setLogoUrl(cd.getLogoUrl());
                 cdp.setCertified(cd.getIsValidate());
                 cdp.setCompanyProfile(cd.getCompanyProfile());
-                cdp.setAddress(cd.getAddress1()+cd.getAddress2()+cd.getAddress3()+cd.getAddress4());
+                cdp.setAddress(cd.getAddress2()+cd.getAddress3()+cd.getAddress4());
                 CompanyPOJO cp = new CompanyPOJO();
                 cp.setScope(y);
                 cp.setCompanyDetailsPOJO(cdp);

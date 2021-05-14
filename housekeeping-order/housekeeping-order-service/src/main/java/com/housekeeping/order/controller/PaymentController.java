@@ -39,7 +39,7 @@ public class PaymentController {
         InvoiceObj invoice = new InvoiceObj();
         UUID uid = UUID.randomUUID();
         obj.setMerchantTradeNo(uid.toString().replaceAll("-", "").substring(0, 20));
-        obj.setMerchantTradeDate("2017/01/01 08:05:23");
+        obj.setMerchantTradeDate("2022/01/01 08:05:23");
         obj.setTotalAmount("50");
         obj.setTradeDesc("test Description");
         obj.setItemName("TestItem");
