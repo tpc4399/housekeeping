@@ -38,7 +38,7 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
 
     R getAllGroups(Page page, String groupName);
 
-    R addGroup2(MultipartFile headPortrait,
+    R addGroup2(String headPortrait,
                 String name,
                 Integer[] managerIds,
                 Integer[] employeesIds);
@@ -48,4 +48,6 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
 
     /* 組logo oss存儲 */
     String logoSave(MultipartFile logo);
+
+    R updateGroup2(Integer groupId, String headPortrait, String name, Integer[] managerIds, Integer[] employeesIds);
 }

@@ -39,11 +39,22 @@ public class GroupDetailsController {
     @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @PostMapping(value = "/addGroup2", headers = "content-type=multipart/form-data")
     @ApiOperation("【公司】【经理】新接口!新增分組")
-    public R addGroup2(@RequestParam("headPortrait") MultipartFile headPortrait,
+    public R addGroup2(@RequestParam(value = "headPortrait",required = false) String headPortrait,
                        @RequestParam("name") String name,
                        @RequestParam("managerIds") Integer[] managerIds,
-                       @RequestParam("employeesIds") Integer[] employeesIds){
+                       @RequestParam(value = "employeesIds",required = false) Integer[] employeesIds){
         return groupDetailsService.addGroup2(headPortrait, name, managerIds, employeesIds);
+    }
+
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @PutMapping(value = "/updateGroup2", headers = "content-type=multipart/form-data")
+    @ApiOperation("【公司】【经理】新接口!修改分組")
+    public R updateGroup2(@RequestParam Integer groupId,
+                          @RequestParam(value = "headPortrait",required = false) String headPortrait,
+                          @RequestParam("name") String name,
+                          @RequestParam("managerIds") Integer[] managerIds,
+                          @RequestParam(value = "employeesIds",required = false) Integer[] employeesIds){
+        return groupDetailsService.updateGroup2(groupId,headPortrait, name, managerIds, employeesIds);
     }
 
     @Access({RolesEnum.USER_COMPANY})

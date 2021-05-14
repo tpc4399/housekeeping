@@ -266,7 +266,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     }
 
     @Override
-    public R addGroup2(MultipartFile headPortrait, String name, Integer[] managerIds, Integer[] employeesIds) {
+    public R addGroup2(String headPortrait, String name, Integer[] managerIds, Integer[] employeesIds) {
         Integer companyId = 0;
         Integer userId = TokenUtils.getCurrentUserId();
         String roleType = TokenUtils.getRoleType();
@@ -288,7 +288,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         for (int i = 0; i < employeesIds.length; i++) {
             Integer employeesId = employeesIds[i];
             Boolean exist = employeesDetailsService.judgeEmployeesInCompany(employeesId, companyId);
-            if (!exist) return R.failed(null,"新增經理只能是本公司的經理");
+            if (!exist) return R.failed(null,"新增员工只能是本公司的經理");
         }
 
         /* 組名存在性判斷 */
@@ -299,7 +299,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         if(CommonUtils.isEmpty(headPortrait)){
             logoUrl = "https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508111402.png";
         }else {
-            logoUrl = this.logoSave(headPortrait);
+            logoUrl = headPortrait;
         }
 
         /* 開始數據庫存儲 */
@@ -352,8 +352,77 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
             e.printStackTrace();
             return "error upload";
         }
-
         return res;
+    }
+
+    @Override
+    public R updateGroup2(Integer groupId, String headPortrait, String name, Integer[] managerIds, Integer[] employeesIds) {
+
+
+        Integer companyId = 0;
+        Integer userId = TokenUtils.getCurrentUserId();
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)) {
+            if (managerIds.length == 0) return R.failed(null, "公司端新增組必須增加至少一個管理者");
+            companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            companyId = managerDetailsService.getCompanyIdByManagerId(userId);
+        }
+
+        /* 判斷經理存在性 */
+        for (int i = 0; i < managerIds.length; i++) {
+            Integer managerId = managerIds[i];
+            Boolean exist = managerDetailsService.judgeManagerInCompany(managerId, companyId);
+            if (!exist) return R.failed(null,"新增經理只能是本公司的經理");
+        }
+        /* 員工存在性判斷 */
+        for (int i = 0; i < employeesIds.length; i++) {
+            Integer employeesId = employeesIds[i];
+            Boolean exist = employeesDetailsService.judgeEmployeesInCompany(employeesId, companyId);
+            if (!exist) return R.failed(null,"新增經理只能是本公司的經理");
+        }
+
+        /* 組名存在性判斷 */
+        QueryWrapper<GroupDetails> qw = new QueryWrapper<>();
+        qw.eq("group_name",name);
+        qw.eq("company_id",companyId);
+        GroupDetails one = this.getOne(qw);
+        if(CommonUtils.isNotEmpty(one)&&!one.getId().equals(groupId)){
+            return R.failed(null, "該組名已經存在");
+        }
+
+        /* 開始數據庫存儲 */
+        GroupDetails byId = this.getById(groupId);
+        byId.setHeadUrl(headPortrait);
+        byId.setGroupName(name);
+        byId.setUpdateTime(LocalDateTime.now());
+        byId.setLastReviserId(TokenUtils.getCurrentUserId());
+        this.updateById(byId);
+
+
+        QueryWrapper<GroupManager> qw1 = new QueryWrapper<>();
+        qw1.eq("group_id",groupId);
+        groupManagerService.remove(qw1);
+
+        QueryWrapper<GroupEmployees> qw2 = new QueryWrapper<>();
+        qw2.eq("group_id",groupId);
+        groupEmployeesService.remove(qw2);
+
+        List<GroupManager> gms = new ArrayList<>();
+        List<GroupEmployees> ges = new ArrayList<>();
+        for (int i = 0; i < managerIds.length; i++) {
+            GroupManager gm = new GroupManager(null, groupId, managerIds[i]);
+            gms.add(gm);
+        }
+        groupManagerService.saveBatch(gms);
+        for (int i = 0; i < employeesIds.length; i++) {
+            GroupEmployees ge = new GroupEmployees(null, groupId, employeesIds[i]);
+            ges.add(ge);
+        }
+        groupEmployeesService.saveBatch(ges);
+        return R.ok(null, "成功修改組");
+
     }
 
     public List<GroupVO> search(String name, List<GroupVO> list){
