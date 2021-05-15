@@ -27,7 +27,6 @@ public class DemandOrder extends Model<DemandOrder> {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;                         /* 主键id */
     private Integer customerId;                 /* 需求单来源：客户_Id */
-    private Integer addressId;                  /* 地址 */
     private Boolean liveAtHome;                 /* 是否需要住宿 */
     private Integer serverPlaceType;            /* 服务场所类型  0住宿与交际 1洗浴与美容 2文化娱乐 3体育与游乐 4文化交流 5购物 6就诊与交通 7其它*/
     private String note;                        /* 备注 */
@@ -40,6 +39,12 @@ public class DemandOrder extends Model<DemandOrder> {
     private LocalDate endDate;                  /* 结束日期 */
     private String week;                        /* 重复星期 */
     private Integer status;                     /* 状态(0未接 1已接) */
+    private String customerName;                /* 收货人姓名 */
+    private String address;
+    private String lat;
+    private String lng;
+    private String phonePrefix;
+    private String phone;
     /* 定期服务时间安排见details */
 
 }

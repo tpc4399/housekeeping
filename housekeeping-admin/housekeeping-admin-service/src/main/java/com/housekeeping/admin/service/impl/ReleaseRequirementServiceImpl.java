@@ -78,10 +78,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         if(CommonUtils.isEmpty(dto.getParentId())){
             return R.failed("请选择工作类型");
         }
+        CustomerAddress byId = customerAddressService.getById(dto.getAddressId());
         DemandOrder demandOrder = new DemandOrder(
                 null,
                 customerId,
-                dto.getAddressId(),
                 dto.getLiveAtHome(),
                 dto.getServerPlaceType(),
                 dto.getNote(),
@@ -93,7 +93,13 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                 dto.getRulesWeekVo().getStart(),
                 dto.getRulesWeekVo().getEnd(),
                 dto.getRulesWeekVo().getWeek(),
-                0
+                0,
+                byId.getName(),
+                byId.getAddress(),
+                byId.getLat(),
+                byId.getLng(),
+                byId.getPhonePrefix(),
+                byId.getPhone()
         );
         Integer demandOrderId = 0;
         synchronized (this){
@@ -167,11 +173,14 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setWorkType(types);
 
             //需求单地址
-            CustomerAddress byId = customerAddressService.getById(list3.get(i).getAddressId());
-            demandOrderDTO.setCustomerAddress(byId);
+            demandOrderDTO.setCustomerName(list3.get(i).getCustomerName());
+            demandOrderDTO.setAddress(list3.get(i).getAddress());
+            demandOrderDTO.setLat(list3.get(i).getLat());
+            demandOrderDTO.setLng(list3.get(i).getLng());
+            demandOrderDTO.setPhonePrefix(list3.get(i).getPhonePrefix());
+            demandOrderDTO.setPhone(list3.get(i).getPhone());
 
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
-            demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
             demandOrderDTO.setEndDate(list3.get(i).getEndDate());
             demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
@@ -236,11 +245,14 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setWorkType(types);
 
             //需求单地址
-            CustomerAddress byId = customerAddressService.getById(list3.get(i).getAddressId());
-            demandOrderDTO.setCustomerAddress(byId);
+            demandOrderDTO.setCustomerName(list3.get(i).getCustomerName());
+            demandOrderDTO.setAddress(list3.get(i).getAddress());
+            demandOrderDTO.setLat(list3.get(i).getLat());
+            demandOrderDTO.setLng(list3.get(i).getLng());
+            demandOrderDTO.setPhonePrefix(list3.get(i).getPhonePrefix());
+            demandOrderDTO.setPhone(list3.get(i).getPhone());
 
             demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
-            demandOrderDTO.setAddressId(list3.get(i).getAddressId());
             demandOrderDTO.setCode(list3.get(i).getCode());
             demandOrderDTO.setEndDate(list3.get(i).getEndDate());
             demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
@@ -303,10 +315,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         if(CommonUtils.isEmpty(dto.getParentId())){
             return R.failed("请选择工作类型");
         }
+        CustomerAddress byId = customerAddressService.getById(dto.getId());
         DemandOrder demandOrder = new DemandOrder(
                 dto.getId(),
                 customerId,
-                dto.getAddressId(),
                 dto.getLiveAtHome(),
                 dto.getServerPlaceType(),
                 dto.getNote(),
@@ -318,7 +330,13 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                 dto.getRulesWeekVo().getStart(),
                 dto.getRulesWeekVo().getEnd(),
                 dto.getRulesWeekVo().getWeek(),
-                dto.getStatus()
+                dto.getStatus(),
+                byId.getName(),
+                byId.getAddress(),
+                byId.getLat(),
+                byId.getLng(),
+                byId.getPhonePrefix(),
+                byId.getPhone()
         );
         synchronized (this){
             demandOrderService.updateById(demandOrder);
@@ -383,11 +401,14 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         demandOrderDTO.setWorkType(types);
 
         //需求单地址
-        CustomerAddress customerAddress = customerAddressService.getById(byId.getAddressId());
-        demandOrderDTO.setCustomerAddress(customerAddress);
+        demandOrderDTO.setCustomerName(byId.getCustomerName());
+        demandOrderDTO.setAddress(byId.getAddress());
+        demandOrderDTO.setLat(byId.getLat());
+        demandOrderDTO.setLng(byId.getLng());
+        demandOrderDTO.setPhonePrefix(byId.getPhonePrefix());
+        demandOrderDTO.setPhone(byId.getPhone());
 
         demandOrderDTO.setCustomerId(byId.getCustomerId());
-        demandOrderDTO.setAddressId(byId.getAddressId());
         demandOrderDTO.setCode(byId.getCode());
         demandOrderDTO.setEndDate(byId.getEndDate());
         demandOrderDTO.setEstimatedSalary(byId.getEstimatedSalary());

@@ -158,6 +158,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
         qw.eq("demand_order_id",demandOrderId);
         List<DemandEmployees> list = demandEmployeesService.list(qw);
+        if(CommonUtils.isEmpty(list)){
+            return R.ok(null);
+        }
         List<QuotationVo> QuotationVos = new ArrayList<>();
         if(CommonUtils.isNotEmpty(list)){
             for (int i = 0; i < list.size(); i++) {
@@ -169,8 +172,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
                 quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
 
-                BigDecimal price = this.getPrice(serviceTimeByEmployees, list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                quotationVo.setPrice(price);
+                quotationVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
                 QuotationVos.add(quotationVo);
             }
         }
@@ -426,20 +428,20 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
         /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
-        CustomerAddress ca = customerAddressService.getById(demandOrder.getAddressId());
+
         odp.setCustomerId(cd.getId());
-        odp.setName2(cd.getName());
-        odp.setPhPrefix2(ca.getPhonePrefix());
-        odp.setPhone2(ca.getPhone());
+        odp.setName2(demandOrder.getCustomerName());
+        odp.setPhPrefix2(demandOrder.getPhonePrefix());
+        odp.setPhone2(demandOrder.getPhone());
 
         /* 订单工作内容 */
         String jobIds = demandOrder.getJobIds();
         odp.setJobIds(jobIds);
 
         /* 地址 */
-        odp.setAddress(ca.getAddress());
-        odp.setLat(new Float(ca.getLat()));
-        odp.setLng(new Float(ca.getLng()));
+        odp.setAddress(demandOrder.getAddress());
+        odp.setLat(new Float(demandOrder.getLat()));
+        odp.setLng(new Float(demandOrder.getLng()));
 
 
         /* 工作时间安排 */
@@ -527,8 +529,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
         quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
 
-        BigDecimal price = this.getPrice(serviceTimeByEmployees, byId.getDemandOrderId(), byId.getEmployeesId());
-        quotationVo.setPrice(price);
+        quotationVo.setPrice(BigDecimal.valueOf(byId.getPrice()));
 
         return R.ok(quotationVo);
     }

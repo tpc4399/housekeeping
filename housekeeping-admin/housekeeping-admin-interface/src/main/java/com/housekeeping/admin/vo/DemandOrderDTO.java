@@ -16,8 +16,6 @@ public class DemandOrderDTO extends DemandOrder {
 
     private List<TimeSlot> timeSlots;
 
-    private CustomerAddress customerAddress;
-
     private List<Skill> workContent;
 
     private List<Skill> workType;
