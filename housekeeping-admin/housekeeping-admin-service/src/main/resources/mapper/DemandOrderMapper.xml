@@ -19,7 +19,6 @@
         SELECT
         demand_order.id,
         demand_order.customer_id,
-        demand_order.address_id,
         demand_order.live_at_home,
         demand_order.server_place_type,
         demand_order.note,
@@ -32,13 +31,14 @@
         demand_order.end_date,
         demand_order.`week`,
         demand_order.`status`,
-        customer_address.address
+        demand_order.customer_name,
+        demand_order.address,
+        demand_order.lat,
+        demand_order.lng,
+        demand_order.phone_prefix,
+        demand_order.phone
         FROM
         demand_order
-        LEFT JOIN
-        customer_address
-        ON
-        demand_order.address_id = customer_address.id
         <where>
             <if test="query.jobIds != null and query.jobIds != ''" >
                 demand_order.job_ids like concat('%',#{query.jobIds},'%')
@@ -47,7 +47,7 @@
                 and demand_order.parent_id like concat('%',#{query.workTypeIds},'%')
             </if>
             <if test="query.place != null and query.place != ''" >
-                and customer_address.address like concat('%',#{query.place},'%')
+                and demand_order.address like concat('%',#{query.place},'%')
             </if>
             <if test="query.startDate != null and query.startDate != ''" >
                 and demand_order.start_date >= #{query.startDate}

@@ -122,6 +122,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 employeesDetails.add(employeesDetailsService.getById(empId));
             }
         }
+
         return R.ok(employeesDetails);
     }
 
@@ -369,13 +370,13 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     public BigDecimal getPrice(List<WorkDetailsPOJO> workDetails,Integer demandOrderId, Integer employeesId) {
         BigDecimal bigDecimal = employeesCalendarService.totalPrice(workDetails);
 
-        QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
+        /*QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
         qw.eq("demand_order_id",demandOrderId);
         qw.eq("employees_id",employeesId);
         DemandEmployees one = demandEmployeesService.getOne(qw);
         if(CommonUtils.isNotEmpty(one.getPrice())){
             bigDecimal = BigDecimal.valueOf(one.getPrice());
-        }
+        }*/
         return bigDecimal;
     }
 
