@@ -315,29 +315,56 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         if(CommonUtils.isEmpty(dto.getParentId())){
             return R.failed("请选择工作类型");
         }
-        CustomerAddress byId = customerAddressService.getById(dto.getId());
-        DemandOrder demandOrder = new DemandOrder(
-                dto.getId(),
-                customerId,
-                dto.getLiveAtHome(),
-                dto.getServerPlaceType(),
-                dto.getNote(),
-                dto.getParentId(),
-                jobIdsStr.get(),
-                dto.getHousingArea(),
-                dto.getEstimatedSalary(),
-                dto.getCode(),
-                dto.getRulesWeekVo().getStart(),
-                dto.getRulesWeekVo().getEnd(),
-                dto.getRulesWeekVo().getWeek(),
-                dto.getStatus(),
-                byId.getName(),
-                byId.getAddress(),
-                byId.getLat(),
-                byId.getLng(),
-                byId.getPhonePrefix(),
-                byId.getPhone()
-        );
+        DemandOrder demandOrder1 = demandOrderService.getById(dto.getId());
+        DemandOrder demandOrder = null;
+        if(CommonUtils.isNotEmpty(dto.getAddressId())){
+            CustomerAddress byId = customerAddressService.getById(dto.getAddressId());
+            demandOrder = new DemandOrder(
+                    dto.getId(),
+                    customerId,
+                    dto.getLiveAtHome(),
+                    dto.getServerPlaceType(),
+                    dto.getNote(),
+                    dto.getParentId(),
+                    jobIdsStr.get(),
+                    dto.getHousingArea(),
+                    dto.getEstimatedSalary(),
+                    dto.getCode(),
+                    dto.getRulesWeekVo().getStart(),
+                    dto.getRulesWeekVo().getEnd(),
+                    dto.getRulesWeekVo().getWeek(),
+                    dto.getStatus(),
+                    byId.getName(),
+                    byId.getAddress(),
+                    byId.getLat(),
+                    byId.getLng(),
+                    byId.getPhonePrefix(),
+                    byId.getPhone()
+            );
+        }else {
+            demandOrder = new DemandOrder(
+                    dto.getId(),
+                    customerId,
+                    dto.getLiveAtHome(),
+                    dto.getServerPlaceType(),
+                    dto.getNote(),
+                    dto.getParentId(),
+                    jobIdsStr.get(),
+                    dto.getHousingArea(),
+                    dto.getEstimatedSalary(),
+                    dto.getCode(),
+                    dto.getRulesWeekVo().getStart(),
+                    dto.getRulesWeekVo().getEnd(),
+                    dto.getRulesWeekVo().getWeek(),
+                    dto.getStatus(),
+                    demandOrder1.getCustomerName(),
+                    demandOrder1.getAddress(),
+                    demandOrder1.getLat(),
+                    demandOrder1.getLng(),
+                    demandOrder1.getPhonePrefix(),
+                    demandOrder1.getPhone()
+            );
+        }
         synchronized (this){
             demandOrderService.updateById(demandOrder);
         }

@@ -11,10 +11,7 @@ import com.housekeeping.admin.pojo.ConfirmOrderPOJO;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
-import com.housekeeping.admin.vo.DemandEmployeesVo;
-import com.housekeeping.admin.vo.EmployeesDetailsDemandVo;
-import com.housekeeping.admin.vo.QuotationVo;
-import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.admin.vo.*;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -28,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -80,7 +78,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     }*/
 
     @Override
-    public R suitableEmployees(Integer userId,Integer typeId) {
+    public R suitableEmployees(Integer userId,Integer typeId,Integer  demandOrderId) {
         List<EmployeesDetails> employeesDetails = new ArrayList<>();
         if(typeId==0){
             QueryWrapper<CompanyDetails> qw = new QueryWrapper<>();
@@ -122,8 +120,21 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 employeesDetails.add(employeesDetailsService.getById(empId));
             }
         }
-
-        return R.ok(employeesDetails);
+        List<DemandEmployeesStatusVo> collect = employeesDetails.stream().map(x -> {
+            DemandEmployeesStatusVo demandEmployeesStatusVo = new DemandEmployeesStatusVo();
+            demandEmployeesStatusVo.setEmployeesDetails(x);
+            QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
+            qw.eq("employees_id", x.getId());
+            qw.eq("demand_order_id", demandOrderId);
+            int count = demandEmployeesService.count(qw);
+            if (count > 0) {
+                demandEmployeesStatusVo.setStatus(false);
+            } else {
+                demandEmployeesStatusVo.setStatus(true);
+            }
+            return demandEmployeesStatusVo;
+        }).collect(Collectors.toList());
+        return R.ok(collect);
     }
 
     @Override

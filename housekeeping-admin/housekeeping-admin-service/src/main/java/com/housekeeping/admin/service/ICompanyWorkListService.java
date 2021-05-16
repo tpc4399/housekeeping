@@ -17,7 +17,7 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     R beInterested(Integer demandOrderId);*/
 
     /* 生成每个员工的临时订单，返回筛选后的员工ids */
-    R suitableEmployees(Integer userId,Integer typeId);
+    R suitableEmployees(Integer userId,Integer typeId,Integer  demandOrderId);
     /* 存储该保洁员的的临时订单 */
     R selectSuitableEmployees(Integer employeesId, Integer demandOrderId);
 

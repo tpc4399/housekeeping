@@ -6,6 +6,7 @@ import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
@@ -63,9 +64,11 @@ public class CompanyWorkListController {
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @ApiOperation("【公司】【经理】第一步：获取保洁员(type 0公司 1经理)")
     @GetMapping("/suitableEmployees")
-    public R suitableEmployees(@RequestParam Integer userId,@RequestParam Integer typeId){
+    public R suitableEmployees(@RequestParam Integer userId,
+                               @RequestParam Integer typeId,
+                               Integer  demandOrderId){
         /* 根据客户需求,返回筛选后的员工ids */
-        return companyWorkListService.suitableEmployees(userId,typeId);
+        return companyWorkListService.suitableEmployees(userId,typeId,demandOrderId);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
