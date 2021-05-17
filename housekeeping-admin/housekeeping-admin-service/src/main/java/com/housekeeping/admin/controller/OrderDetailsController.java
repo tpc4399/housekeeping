@@ -131,9 +131,8 @@ public class OrderDetailsController {
 
     @ApiOperation("【测试】")
     @GetMapping("/test")
-    public String toBePaid(String number){
-        orderDetailsService.inputSql(number, true);
-        return number;
+    public R toBePaid(String number){
+        return orderDetailsService.inputSql(number, true);
     }
 
     @Access(RolesEnum.USER_CUSTOMER)

@@ -2,6 +2,7 @@ package com.housekeeping.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.admin.entity.OrderDetails;
+import com.housekeeping.admin.entity.WorkDetails;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;

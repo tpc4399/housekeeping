@@ -14,4 +14,8 @@ import org.springframework.stereotype.Service;
 public class WorkDetailsServiceImpl
         extends ServiceImpl<WorkDetailsMapper, WorkDetails>
         implements IWorkDetailsService {
+    @Override
+    public void add(WorkDetails wd) {
+        baseMapper.add(wd);
+    }
 }
