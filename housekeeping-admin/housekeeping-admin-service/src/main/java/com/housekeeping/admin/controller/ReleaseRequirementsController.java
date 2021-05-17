@@ -53,7 +53,7 @@ public class ReleaseRequirementsController {
 
     @Access({RolesEnum.USER_COMPANY})
     @GetMapping("/getAllRequirementsByCompany")
-    @ApiOperation("【公司端】获取所有需求")
+    @ApiOperation("【公司端】获取所有未接需求")
     public R page(DemandDto demandDto,Page page){
         return releaseRequirementService.getAllRequirementsByCompany(demandDto,page);
     }
