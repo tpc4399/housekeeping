@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -99,7 +100,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                 byId.getLat(),
                 byId.getLng(),
                 byId.getPhonePrefix(),
-                byId.getPhone()
+                byId.getPhone(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
         Integer demandOrderId = 0;
         synchronized (this){
@@ -133,6 +136,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     public R getAllRequirement(Integer cusId, Page page) {
         QueryWrapper qw = new QueryWrapper<DemandOrder>();
         qw.eq("customer_id",cusId);
+        qw.orderByDesc("id");
         List<DemandOrder> list3 = demandOrderService.list(qw);
         if(CommonUtils.isEmpty(list3)){
             return R.ok(null);
@@ -339,7 +343,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                     byId.getLat(),
                     byId.getLng(),
                     byId.getPhonePrefix(),
-                    byId.getPhone()
+                    byId.getPhone(),
+                    demandOrder1.getCreateTime(),
+                    LocalDateTime.now()
             );
         }else {
             demandOrder = new DemandOrder(
@@ -362,7 +368,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
                     demandOrder1.getLat(),
                     demandOrder1.getLng(),
                     demandOrder1.getPhonePrefix(),
-                    demandOrder1.getPhone()
+                    demandOrder1.getPhone(),
+                    demandOrder1.getCreateTime(),
+                    LocalDateTime.now()
             );
         }
         synchronized (this){

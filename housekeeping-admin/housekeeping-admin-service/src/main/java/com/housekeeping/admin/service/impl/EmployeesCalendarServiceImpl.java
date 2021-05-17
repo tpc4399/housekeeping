@@ -1196,4 +1196,30 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return this.getCalendar(dto);
     }
 
+    public List<WorkDetailsPOJO> makeAnAppointmentHandles(MakeAnAppointmentDTO dto) {
+        List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+        /* 获取这段日期内的空闲时间 */
+        List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
+        if(CommonUtils.isEmpty(freeTime)){
+            return workDetailsPOJOS;
+        }
+        freeTime.forEach(x -> {
+            /* 今日数据准备 */
+            LocalDate today = x.getDate(); //今日日期
+            Integer todayWeek = today.getDayOfWeek().getValue();
+            if (!dto.getWeeks().contains(todayWeek)) return;     //如果周数没有这天，那么就跳过吧
+            List<LocalTimeAndPricePOJO> enableTimeToday = this.enableTimeToday(x.getTimes());//切割的时间表与价格
+            List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());//切割的需求时间段
+            Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
+            List<TimeSlot> timeSlots = dto.getTimeSlots();
+            Boolean canBeOnDuty = todayIsOk;
+            BigDecimal todayPrice = new BigDecimal(0);
+            if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
+            /* 今日数据返回 */
+            WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);
+            workDetailsPOJOS.add(wdp);
+        });
+        return workDetailsPOJOS;
+    }
+
 }

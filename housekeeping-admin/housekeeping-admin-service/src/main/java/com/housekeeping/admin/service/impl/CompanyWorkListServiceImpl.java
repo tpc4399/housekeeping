@@ -160,7 +160,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         demandEmployees.setUserId(TokenUtils.getCurrentUserId());
         demandEmployees.setUpdateTime(LocalDateTime.now());
         demandEmployeesService.save(demandEmployees);
-        return R.ok("添加保洁员成功");
+        Integer demandEmployeesId = ((DemandEmployees) CommonUtils.getMaxId("demand_employees", demandEmployeesService)).getId();
+        QuotationVo quotationVo = this.cusGetById(demandEmployeesId);
+        return R.ok(quotationVo);
     }
 
 
@@ -371,7 +373,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandOrderId);
        makeAnAppointmentDTO.setTimeSlots(timeSlots);
 
-        List<WorkDetailsPOJO> workDetailsPOJOS = employeesCalendarService.makeAnAppointmentHandle(makeAnAppointmentDTO);
+        List<WorkDetailsPOJO> workDetailsPOJOS = employeesCalendarService.makeAnAppointmentHandles(makeAnAppointmentDTO);
 
         return workDetailsPOJOS;
 
@@ -527,11 +529,11 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     }
 
     @Override
-    public R cusGetById(Integer quotationId) {
+    public QuotationVo cusGetById(Integer quotationId) {
 
         DemandEmployees byId = demandEmployeesService.getById(quotationId);
         if(CommonUtils.isEmpty(byId)){
-            return R.failed("该报价单为空");
+            return null;
         }
         QuotationVo quotationVo = new QuotationVo();
         quotationVo.setId(byId.getId());
@@ -543,7 +545,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
         quotationVo.setPrice(BigDecimal.valueOf(byId.getPrice()));
 
-        return R.ok(quotationVo);
+        return quotationVo;
     }
 
 

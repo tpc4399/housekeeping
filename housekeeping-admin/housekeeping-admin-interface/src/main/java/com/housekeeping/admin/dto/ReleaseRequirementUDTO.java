@@ -7,5 +7,4 @@ public class ReleaseRequirementUDTO extends ReleaseRequirementBDTO{
 
     private Integer id;
 
-    private Integer status;
 }

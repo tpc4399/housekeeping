@@ -105,7 +105,7 @@ public class CompanyWorkListController {
     @ApiOperation("【公司】【经理】根据id获取报价单")
     @GetMapping("/getQuotationById")
     public R cusGetByid(@RequestParam Integer quotationId){
-        return companyWorkListService.cusGetById(quotationId);
+        return R.ok(companyWorkListService.cusGetById(quotationId));
     }
 
 }
