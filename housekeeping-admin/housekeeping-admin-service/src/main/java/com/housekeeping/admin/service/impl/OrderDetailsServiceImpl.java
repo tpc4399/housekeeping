@@ -377,10 +377,15 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            List<OrderPhotoPOJO> orderPhotosPOJOs = (List<OrderPhotoPOJO>) map.get("photos");
-            List<WorkDetailsPOJO> workDetailsPOJOs = (List<WorkDetailsPOJO>) map.get("workDetails");
-            odp.setPhotos(orderPhotosPOJOs);
-            odp.setWorkDetails(workDetailsPOJOs);
+
+            List<OrderPhotoPOJO> ops = new ArrayList<>();
+            List<WorkDetailsPOJO> wds = new ArrayList<>();
+            Object photoObj = map.get("photos");
+            Object workDetailsObj = map.get("workDetails");
+            if (!photoObj.equals("")) ops = (List<OrderPhotoPOJO>) map.get("photos");;
+            if (!workDetailsObj.equals("")) wds = (List<WorkDetailsPOJO>) map.get("workDetails");
+            odp.setPhotos(ops);
+            odp.setWorkDetails(wds);
             pojoList.add(odp);
         }
         //TODO 排序
@@ -393,7 +398,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_TO_BE_SERVED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_SERVED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -411,7 +416,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -429,7 +434,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -447,7 +452,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", employeesId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_COMPLETED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_COMPLETED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -476,10 +481,14 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 e.printStackTrace();
             }
             if (customerId.equals(odp.getCustomerId())) {
-                List<OrderPhotoPOJO> orderPhotosPOJOs = (List<OrderPhotoPOJO>) map.get("photos");
-                List<WorkDetailsPOJO> workDetailsPOJOs = (List<WorkDetailsPOJO>) map.get("workDetails");
-                odp.setPhotos(orderPhotosPOJOs);
-                odp.setWorkDetails(workDetailsPOJOs);
+                List<OrderPhotoPOJO> ops = new ArrayList<>();
+                List<WorkDetailsPOJO> wds = new ArrayList<>();
+                Object photoObj = map.get("photos");
+                Object workDetailsObj = map.get("workDetails");
+                if (!photoObj.equals("")) ops = (List<OrderPhotoPOJO>) map.get("photos");;
+                if (!workDetailsObj.equals("")) wds = (List<WorkDetailsPOJO>) map.get("workDetails");
+                odp.setPhotos(ops);
+                odp.setWorkDetails(wds);
                 pojoList.add(odp);//属于客户的，才能被返回
             }
         }
@@ -493,7 +502,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("customer_id", customerId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_TO_BE_SERVED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_SERVED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -511,7 +520,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("customer_id", customerId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -529,7 +538,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("customer_id", customerId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
@@ -547,7 +556,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("customer_id", customerId);
-        qw.eq("order_status", CommonConstants.ORDER_STATE_COMPLETED);
+        qw.eq("order_state", CommonConstants.ORDER_STATE_COMPLETED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
         ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
