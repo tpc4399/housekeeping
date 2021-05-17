@@ -678,7 +678,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         }
 
         /* 查數據庫 */
-        OrderDetails od = orderDetailsService.getById(number);
+        OrderDetails od = orderDetailsService.getById(Long.valueOf(number));
         if (CommonUtils.isNotEmpty(od)) return od.getOrderState();
 
         return -1;
