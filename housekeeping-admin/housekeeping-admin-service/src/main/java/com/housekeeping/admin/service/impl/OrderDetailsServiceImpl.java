@@ -10,6 +10,7 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
+import com.housekeeping.admin.pojo.OrderDetailsParent;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
@@ -61,6 +62,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ICustomerDetailsService customerDetailsService;
     @Resource
     private PaymentCallbackMapper paymentCallbackMapper;
+    @Resource
+    private ISysJobContendService sysJobContendService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -324,7 +327,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         }
         SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
         sort.Sort(res,"getStartDateTime","desc");
-        return R.ok(res, "获取成功");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
     }
 
     /**
@@ -361,7 +374,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         }
         SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
         sort.Sort(res,"getStartDateTime","desc");
-        return R.ok(res, "获取成功");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 客户头像二次加工处理 */
+            son.setCustomerHeaderUrl(customerDetailsService.getById(x.getCustomerId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
     }
 
     @Override
