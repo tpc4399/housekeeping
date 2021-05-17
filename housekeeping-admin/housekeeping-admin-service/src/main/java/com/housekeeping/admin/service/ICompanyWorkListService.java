@@ -3,6 +3,7 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.entity.CompanyWorkList;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
+import com.housekeeping.admin.vo.QuotationVo;
 import com.housekeeping.common.utils.R;
 
 import java.math.BigDecimal;
@@ -38,5 +39,5 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
 
     R cusRemove(Integer id);
 
-    R cusGetById(Integer quotationId);
+    QuotationVo cusGetById(Integer quotationId);
 }

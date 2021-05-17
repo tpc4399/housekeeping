@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 需求单订单
@@ -45,6 +47,8 @@ public class DemandOrder extends Model<DemandOrder> {
     private String lng;
     private String phonePrefix;
     private String phone;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
     /* 定期服务时间安排见details */
 
 }
