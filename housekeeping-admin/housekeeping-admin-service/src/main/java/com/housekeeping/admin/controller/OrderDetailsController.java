@@ -143,4 +143,11 @@ public class OrderDetailsController {
         return R.ok();
     }
 
+    @Access(RolesEnum.SYSTEM_ADMIN)
+    @ApiOperation("【管理員】根據訂單number獲取訂單狀態")
+    @GetMapping("/getState")
+    public R getState(String number){
+        return R.ok(orderDetailsService.getState(number), "成功獲取訂單狀態");
+    }
+
 }

@@ -93,6 +93,6 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     Boolean orderVerification(OrderDetailsPOJO odp);
     /* 根据订单编号获取订单的全部 */
     OrderDetailsPOJO odp(String number);
-
-
+    /* 根據訂單編號獲取訂單狀態 */
+    Integer getState(String number);
 }

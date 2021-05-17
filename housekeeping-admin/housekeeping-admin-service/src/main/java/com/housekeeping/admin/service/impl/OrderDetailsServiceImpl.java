@@ -660,6 +660,30 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return odp;
     }
 
+    @Override
+    public Integer getState(String number) {
+        /* 查redis */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        if (!keys.isEmpty()) {
+            Object[] keysArr = (Object[]) keys.toArray();
+            String key = keysArr[0].toString();
+            OrderDetailsPOJO odp = null;
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return odp.getOrderState();
+        }
+
+        /* 查數據庫 */
+        OrderDetails od = orderDetailsService.getById(number);
+        if (CommonUtils.isNotEmpty(od)) return od.getOrderState();
+
+        return -1;
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();
