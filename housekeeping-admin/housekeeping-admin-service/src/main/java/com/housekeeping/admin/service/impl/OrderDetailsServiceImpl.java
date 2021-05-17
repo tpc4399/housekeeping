@@ -265,6 +265,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R inputSql(String number, Boolean status) {
         /* odp 获取订单信息 */
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        if (keys.isEmpty()) return R.failed(null, "訂單編號不存在于redis");
         Object[] keysArr = (Object[]) keys.toArray();
         String key = keysArr[0].toString();
         OrderDetailsPOJO odp = null;
@@ -282,11 +283,21 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (status) od.setOrderState(CommonConstants.ORDER_STATE_TO_BE_SERVED);//订单已支付，待服务
         else od.setOrderState(CommonConstants.ORDER_STATE_VOID);//取消订单
 
-        List<OrderPhotos> ops = orderPhotos((List<OrderPhotoPOJO>) map.get("photos"), number);
-        List<WorkDetails> wds = workDetails((List<WorkDetailsPOJO>) map.get("workDetails"), number);
-        orderDetailsService.save(od);
-        if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
-        if (CommonUtils.isNotEmpty(wds)) workDetailsService.saveBatch(wds);
+        List<OrderPhotos> ops = new ArrayList<>();
+        List<WorkDetails> wds = new ArrayList<>();
+        Object photoObj = map.get("photos");
+        Object workDetailsObj = map.get("workDetails");
+        if (!photoObj.equals("")) ops = orderPhotos((List<OrderPhotoPOJO>) photoObj, number);
+        if (!workDetailsObj.equals("")) wds = workDetails((List<WorkDetailsPOJO>) workDetailsObj, number);
+
+        synchronized (this){
+            orderDetailsService.save(od);
+            if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
+            wds.forEach(wd -> {
+                workDetailsService.add(wd);
+            });
+            redisTemplate.delete(key);
+        }
         return R.ok(number, "操作成功");
     }
 
@@ -624,6 +635,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             if (customerId.equals(odp.getCustomerId())) return true;
             return false;
         }
+        if (role.equals(CommonConstants.REQUEST_ORIGIN_ADMIN)) return true;
         //走到这儿说明调用者出了问题
         return false;
     }

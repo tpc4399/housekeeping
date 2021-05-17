@@ -8,4 +8,7 @@ import com.housekeeping.admin.entity.WorkDetails;
  * @Date 2021/4/28 16:10
  */
 public interface IWorkDetailsService extends IService<WorkDetails> {
+
+    void add(WorkDetails wd);
+
 }
