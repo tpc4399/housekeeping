@@ -323,7 +323,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             res.addAll(this.order5ByCustomer(customerId));
         }
         SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
-        sort.Sort(res,"getStartDateTime","");
+        sort.Sort(res,"getStartDateTime","desc");
         return R.ok(res, "获取成功");
     }
 
@@ -360,7 +360,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             res.addAll(this.order5ByEmployees(employeesId));
         }
         SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
-        sort.Sort(res,"getStartDateTime","");
+        sort.Sort(res,"getStartDateTime","desc");
         return R.ok(res, "获取成功");
     }
 
