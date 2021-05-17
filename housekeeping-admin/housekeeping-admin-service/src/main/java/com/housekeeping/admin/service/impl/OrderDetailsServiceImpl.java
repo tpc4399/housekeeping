@@ -400,11 +400,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("employees_id", employeesId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_SERVED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -418,11 +418,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("employees_id", employeesId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -436,11 +436,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("employees_id", employeesId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -454,11 +454,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("employees_id", employeesId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_COMPLETED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -504,11 +504,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("customer_id", customerId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_SERVED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -522,11 +522,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("customer_id", customerId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -540,11 +540,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("customer_id", customerId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -558,11 +558,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         qw.eq("customer_id", customerId);
         qw.eq("order_state", CommonConstants.ORDER_STATE_COMPLETED);
         List<OrderDetails> ods = orderDetailsService.list(qw);
-        ods.stream().map(od -> {
+        pojoList = ods.stream().map(od -> {
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -702,7 +702,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     private List<OrderPhotoPOJO> orderPhotosPOJOs(List<OrderPhotos> ops){
         List<OrderPhotoPOJO> orderPhotosPOJOs = ops.stream().map(wd -> {
-            return new OrderPhotoPOJO(wd.getPhotoUrl(), wd.getEvaluate());
+            OrderPhotoPOJO opp = new OrderPhotoPOJO(wd.getPhotoUrl(), wd.getEvaluate());
+            return opp;
         }).collect(Collectors.toList());
         return orderPhotosPOJOs;
     }
