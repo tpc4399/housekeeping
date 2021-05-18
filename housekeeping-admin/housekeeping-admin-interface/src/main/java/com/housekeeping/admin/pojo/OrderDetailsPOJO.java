@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDetailsPOJO {
+public class OrderDetailsPOJO extends OrderDetailsParent{
 
     private String number;                      //订单编号
     private String consumptionItems;            //消费项目

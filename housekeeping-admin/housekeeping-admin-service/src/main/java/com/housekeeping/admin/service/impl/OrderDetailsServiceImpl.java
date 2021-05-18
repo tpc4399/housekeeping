@@ -10,14 +10,12 @@ import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
+import com.housekeeping.admin.pojo.OrderDetailsParent;
 import com.housekeeping.admin.pojo.OrderPhotoPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -64,6 +62,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ICustomerDetailsService customerDetailsService;
     @Resource
     private PaymentCallbackMapper paymentCallbackMapper;
+    @Resource
+    private ISysJobContendService sysJobContendService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -306,25 +306,38 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
         Integer customerId = cd.getId();
-        Map<String, List> resMap = new HashMap<>();
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
         if (type.equals(0)){
-            resMap.put("1", this.order1ByCustomer(customerId));
-            resMap.put("2", this.order2ByCustomer(customerId));
-            resMap.put("3", this.order3ByCustomer(customerId));
-            resMap.put("4", this.order4ByCustomer(customerId));
-            resMap.put("5", this.order5ByCustomer(customerId));
+            res.addAll(this.order1ByCustomer(customerId));
+            res.addAll(this.order2ByCustomer(customerId));
+            res.addAll(this.order3ByCustomer(customerId));
+            res.addAll(this.order4ByCustomer(customerId));
+            res.addAll(this.order5ByCustomer(customerId));
         }else if (type.equals(1)){
-            resMap.put("1", this.order1ByCustomer(customerId));
+            res.addAll(this.order1ByCustomer(customerId));
         }else if (type.equals(2)){
-            resMap.put("2", this.order2ByCustomer(customerId));
+            res.addAll(this.order2ByCustomer(customerId));
         }else if (type.equals(3)){
-            resMap.put("3", this.order3ByCustomer(customerId));
+            res.addAll(this.order3ByCustomer(customerId));
         }else if (type.equals(4)){
-            resMap.put("4", this.order4ByCustomer(customerId));
+            res.addAll(this.order4ByCustomer(customerId));
         }else if (type.equals(5)){
-            resMap.put("5", this.order5ByCustomer(customerId));
+            res.addAll(this.order5ByCustomer(customerId));
         }
-        return R.ok(resMap, "获取成功");
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
     }
 
     /**
@@ -341,25 +354,37 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R queryByEmp(Integer type) {
         /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
         Integer employeesId = employeesDetailsService.getEmployeesIdByUserId(TokenUtils.getCurrentUserId());
-        Map<String, List> resMap = new HashMap<>();
+        List<OrderDetailsPOJO> res = new ArrayList<>();
         if (type.equals(0)){
-            resMap.put("1", this.order1ByEmployees(employeesId));
-            resMap.put("2", this.order2ByEmployees(employeesId));
-            resMap.put("3", this.order3ByEmployees(employeesId));
-            resMap.put("4", this.order4ByEmployees(employeesId));
-            resMap.put("5", this.order5ByEmployees(employeesId));
+            res.addAll(this.order1ByEmployees(employeesId));
+            res.addAll(this.order2ByEmployees(employeesId));
+            res.addAll(this.order3ByEmployees(employeesId));
+            res.addAll(this.order4ByEmployees(employeesId));
+            res.addAll(this.order5ByEmployees(employeesId));
         }else if (type.equals(1)){
-            resMap.put("1", this.order1ByEmployees(employeesId));
+            res.addAll(this.order1ByEmployees(employeesId));
         }else if (type.equals(2)){
-            resMap.put("2", this.order2ByEmployees(employeesId));
+            res.addAll(this.order2ByEmployees(employeesId));
         }else if (type.equals(3)){
-            resMap.put("3", this.order3ByEmployees(employeesId));
+            res.addAll(this.order3ByEmployees(employeesId));
         }else if (type.equals(4)){
-            resMap.put("4", this.order4ByEmployees(employeesId));
+            res.addAll(this.order4ByEmployees(employeesId));
         }else if (type.equals(5)){
-            resMap.put("5", this.order5ByEmployees(employeesId));
+            res.addAll(this.order5ByEmployees(employeesId));
         }
-        return R.ok(resMap, "获取成功");
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 客户头像二次加工处理 */
+            son.setCustomerHeaderUrl(customerDetailsService.getById(x.getCustomerId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
     }
 
     @Override
