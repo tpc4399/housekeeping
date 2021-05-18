@@ -713,6 +713,38 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return -1;
     }
 
+    @Override
+    public R getOrder(String number) {
+        /* 查redis */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        if (!keys.isEmpty()) {
+            Object[] keysArr = (Object[]) keys.toArray();
+            String key = keysArr[0].toString();
+            OrderDetailsPOJO odp = null;
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return R.ok(odp);
+        }
+
+        /* 查數據庫 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        OrderDetails od = orderDetailsService.getOne(qw);
+        if (CommonUtils.isNotEmpty(od)) {
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("number", od.getNumber());
+            List<WorkDetails> wds = workDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            OrderDetailsPOJO odp = this.odp(od, wds, ops);
+            return R.ok(odp);
+        }
+        return R.failed(null, "訂單不存在");
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();

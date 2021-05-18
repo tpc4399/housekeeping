@@ -150,4 +150,11 @@ public class OrderDetailsController {
         return R.ok(orderDetailsService.getState(number), "成功獲取訂單狀態");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN,RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER,RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理員】【公司】【保洁员】【客户】【经理】根據訂單number獲取訂單详情")
+    @GetMapping("/getOrder")
+    public R getOrder(String number){
+        return R.ok(orderDetailsService.getOrder(number), "成功獲取訂單详情");
+    }
+
 }

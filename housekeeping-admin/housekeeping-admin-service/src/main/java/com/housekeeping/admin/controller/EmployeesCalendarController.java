@@ -180,7 +180,7 @@ public class EmployeesCalendarController {
     @ApiOperation("【公司】统一设置公司保洁员时间表")
     @PostMapping("/setCalendarAll")
     public R setCalendarAll(@RequestBody SetEmployeesCalendar2DTO dto){
-        return R.ok();
+        return employeesCalendarService.setCalendarAll(dto);
     }
 
 }

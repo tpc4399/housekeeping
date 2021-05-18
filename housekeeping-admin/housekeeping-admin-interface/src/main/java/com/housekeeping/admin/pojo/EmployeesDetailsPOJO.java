@@ -30,5 +30,4 @@ public class EmployeesDetailsPOJO {
     private List<SysJobContend> skillTags;/* 技能标签 */
     private Boolean certified;          /* 是否已认证 */
 
-
 }

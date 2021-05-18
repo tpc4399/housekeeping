@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
+import com.housekeeping.admin.pojo.QueryEmployeesInfo;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.EmployeesHandleVo;
 import com.housekeeping.admin.vo.PriceSlotVo;
@@ -16,15 +17,11 @@ import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
 import com.housekeeping.common.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
-import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -863,15 +860,30 @@ public class SysIndexServiceImpl
     }
 
     @Override
-    public R query(String param) {
+    public R query(QueryParamsDTO dto) {
         QueryWrapper qw1 = new QueryWrapper();
-        qw1.like("name", param);
+        qw1.like("name", dto.getName());
         QueryWrapper qw2 = new QueryWrapper();
-        qw2.like("no_certified_company", param);
+        qw2.like("no_certified_company", dto.getName());
         List<EmployeesDetails> eds = employeesDetailsService.list(qw1);
         List<CompanyDetails> cds = companyDetailsService.list(qw2);
+
+        List<QueryEmployeesInfo> qes = new ArrayList<>();
+        eds.forEach(ed -> {
+            String instance = CommonUtils.getInstanceByPoint(
+                    dto.getAddress().getLat().toString(),
+                    dto.getAddress().getLng().toString(),
+                    ed.getLat(),
+                    ed.getLng());
+            BigDecimal insBig = new BigDecimal(instance).setScale(1, BigDecimal.ROUND_DOWN);
+            List<Integer> jobIds = CommonUtils.stringToList(ed.getPresetJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            QueryEmployeesInfo qei = new QueryEmployeesInfo(ed, jobs, insBig.toString());
+            qes.add(qei);
+        });
+
         Map<String, List> res = new HashMap<>();
-        res.put("eds", eds);
+        res.put("eds", qes);
         res.put("cds", cds);
         return R.ok(res);
     }

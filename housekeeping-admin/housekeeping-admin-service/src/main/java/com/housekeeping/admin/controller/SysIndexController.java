@@ -55,9 +55,9 @@ public class SysIndexController {
     }
 
     @ApiOperation("输入关键词进行搜索")
-    @GetMapping("/query")
-    public R query(String param) {
-        return sysIndexService.query(param);
+    @PostMapping("/query")
+    public R query(QueryParamsDTO dto) {
+        return sysIndexService.query(dto);
     }
 
     @ApiOperation("主页搜索,新接口 2021-5-9 18:12")

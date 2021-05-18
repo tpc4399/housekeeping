@@ -95,4 +95,6 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     OrderDetailsPOJO odp(String number);
     /* 根據訂單編號獲取訂單狀態 */
     Integer getState(String number);
+    /* 根据number获取订单详情 */
+    R getOrder(String number);
 }
