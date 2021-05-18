@@ -168,4 +168,19 @@ public class EmployeesCalendarController {
     public R getFreeTimeByMonth(@RequestBody GetFreeTimeByMonthDTO dto){
         return employeesCalendarService.getFreeTimeByMonth(dto);
     }
+
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("【公司】查询本公司所有员工的时间表")
+    @PostMapping("/getAllInCompany")
+    public R getAllInCompany(){
+        return employeesCalendarService.getAllInCompany();
+    }
+
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("【公司】统一设置公司保洁员时间表")
+    @PostMapping("/setCalendarAll")
+    public R setCalendarAll(@RequestBody SetEmployeesCalendar2DTO dto){
+        return R.ok();
+    }
+
 }
