@@ -16,4 +16,5 @@ public class QuotationVo {
     private DemandOrder demandOrder;
     private List<WorkDetailsPOJO> workDetailsPOJOS;
     private BigDecimal price;
+    private Integer status;
 }

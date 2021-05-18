@@ -61,9 +61,9 @@ public class ReleaseRequirementsController {
     @Access({RolesEnum.USER_CUSTOMER})
     @GetMapping("/getAllRequirements")
     @ApiOperation("【家庭端】获取所有已发布的需求")
-    public R getAllReleaseRequirements(Page page){
+    public R getAllReleaseRequirements(Page page,Integer status){
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
-        return releaseRequirementService.getAllRequirement(cd.getId(), page);
+        return releaseRequirementService.getAllRequirement(cd.getId(),page,status);
     }
 
     @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY})
@@ -72,4 +72,6 @@ public class ReleaseRequirementsController {
     public R getAllReleaseRequirements(Integer id){
         return releaseRequirementService.getCusById(id);
     }
+
+
 }

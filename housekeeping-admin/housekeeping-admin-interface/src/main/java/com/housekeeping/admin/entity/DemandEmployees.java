@@ -24,5 +24,5 @@ public class DemandEmployees extends Model<DemandEmployees> {
     private Integer price;                  /* 价格 */
     private LocalDateTime createTime;       /* 创建时间 */
     private LocalDateTime updateTime;       /* 修改时间 */
-
+    private String orderNumber;             /* 订单编号 */
 }

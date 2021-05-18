@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * @Author su
@@ -48,6 +49,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     private ISysIndexService sysIndexService;
     @Resource
     private IDemandEmployeesService demandEmployeesService;
+    @Resource
+    private ICompanyWorkListService workListService;
 
     @Override
     public R releaseRequirements(ReleaseRequirementBDTO dto) throws InterruptedException {
@@ -133,13 +136,34 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
     }
 
     @Override
-    public R getAllRequirement(Integer cusId, Page page) {
+    public R getAllRequirement(Integer cusId, Page page,Integer status) {
         QueryWrapper qw = new QueryWrapper<DemandOrder>();
         qw.eq("customer_id",cusId);
         qw.orderByDesc("id");
         List<DemandOrder> list3 = demandOrderService.list(qw);
         if(CommonUtils.isEmpty(list3)){
             return R.ok(null);
+        }
+
+        if(status!=null) {
+            if (status.equals(0)) {
+                Iterator<DemandOrder> iterator = list3.iterator();
+                while (iterator.hasNext()) {
+                    DemandOrder next = iterator.next();
+                    if (this.getStatus(next).equals(1)) {
+                        iterator.remove();//使用迭代器的删除方法删除
+                    }
+                }
+            }
+            if (status.equals(1)) {
+                Iterator<DemandOrder> iterator = list3.iterator();
+                while (iterator.hasNext()) {
+                    DemandOrder next = iterator.next();
+                    if (this.getStatus(next).equals(0)) {
+                        iterator.remove();//使用迭代器的删除方法删除
+                    }
+                }
+            }
         }
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
@@ -197,7 +221,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
-            demandOrderDTO.setStatus(list3.get(i).getStatus());
+            demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
@@ -218,6 +242,16 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         if(CommonUtils.isEmpty(list3)){
             return R.ok(null);
         }
+
+        Iterator<DemandOrder> iterator = list3.iterator();
+        while (iterator.hasNext()) {
+            DemandOrder next = iterator.next();
+            Integer status = this.getStatus(next);
+            if (status.equals(1)) {
+                iterator.remove();//使用迭代器的删除方法删除
+            }
+        }
+
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
@@ -269,7 +303,7 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
             demandOrderDTO.setParentId(list3.get(i).getParentId());
-            demandOrderDTO.setStatus(list3.get(i).getStatus());
+            demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }
         for (int i = 0; i < list.size(); i++) {
@@ -457,11 +491,10 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         demandOrderDTO.setStartDate(byId.getStartDate());
         demandOrderDTO.setWeek(byId.getWeek());
         demandOrderDTO.setParentId(byId.getParentId());
-        demandOrderDTO.setStatus(byId.getStatus());
+        demandOrderDTO.setStatus(this.getStatus(byId));
 
         List<TimeSlot> timeSlots = demandOrderMapper.getTimes(id);
         demandOrderDTO.setTimeSlots(timeSlots);
-
         return R.ok(demandOrderDTO);
     }
 
@@ -514,4 +547,21 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         return map;
     }
 
+    public Integer getStatus(DemandOrder demandOrder) {
+        Integer demandStatus = 0;
+        QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
+        qw.eq("demand_order_id", demandOrder.getId());
+        List<DemandEmployees> list = demandEmployeesService.list(qw);
+        if (CommonUtils.isEmpty(list)) {
+            demandStatus = 0;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            Integer status = workListService.getStatus(list.get(i));
+            if (status.equals(1)) {
+                demandStatus = 1;
+            }
+        }
+        return demandStatus;
+    }
 }
