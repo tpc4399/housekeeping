@@ -178,6 +178,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         redisTemplate.opsForHash().put(key, "payType", payType);
         redisTemplate.opsForHash().put(key, "photos", pojoList);
         redisTemplate.opsForHash().put(key, "remarks", remarks);
+        redisTemplate.opsForHash().put(key, "orderState", CommonConstants.ORDER_STATE_PAYMENT_PROCESSING);
+
 
         return R.ok(null, "修改成功");
     }
