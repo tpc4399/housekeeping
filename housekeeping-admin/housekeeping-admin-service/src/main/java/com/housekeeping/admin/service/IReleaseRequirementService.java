@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.dto.DemandDto;
 import com.housekeeping.admin.dto.ReleaseRequirementBDTO;
 import com.housekeeping.admin.dto.ReleaseRequirementUDTO;
+import com.housekeeping.admin.entity.DemandOrder;
 import com.housekeeping.common.utils.R;
 
 /**
@@ -17,7 +18,7 @@ public interface IReleaseRequirementService {
 
     R page(IPage page);
 
-    R getAllRequirement(Integer cusId, Page page);
+    R getAllRequirement(Integer cusId, Page page,Integer status);
 
     R getAllRequirementsByCompany(DemandDto demandDto,Page page);
 
@@ -26,4 +27,6 @@ public interface IReleaseRequirementService {
     R updateCus(ReleaseRequirementUDTO dto) throws InterruptedException;
 
     R getCusById(Integer id);
+
+    public Integer getStatus(DemandOrder demandOrder);
 }

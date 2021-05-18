@@ -2,6 +2,7 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.entity.CompanyWorkList;
+import com.housekeeping.admin.entity.DemandEmployees;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.vo.QuotationVo;
 import com.housekeeping.common.utils.R;
@@ -42,4 +43,6 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     QuotationVo cusGetById(Integer quotationId);
 
     R selectSuitableEmployees(Integer employeesId, Integer demandOrderId);
+
+    public Integer getStatus(DemandEmployees demandEmployees);
 }

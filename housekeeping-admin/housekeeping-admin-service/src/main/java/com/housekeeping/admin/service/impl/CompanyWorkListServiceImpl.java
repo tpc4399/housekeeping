@@ -59,7 +59,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     @Resource
     private IOrderIdService orderIdService;
     @Resource
-    private ICustomerAddressService customerAddressService;
+    private IReleaseRequirementService releaseRequirementService;
     @Resource
     private RedisTemplate redisTemplate;
     @Resource
@@ -195,6 +195,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
 
                 quotationVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
+
+                quotationVo.setStatus(this.getStatus(list.get(i)));
                 QuotationVos.add(quotationVo);
             }
         }
@@ -210,6 +212,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             for (int i = 0; i < demandIds.size(); i++) {
                 DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
                 DemandOrder byId1 = demandOrderService.getById(demandIds.get(i));
+                Integer status = releaseRequirementService.getStatus(byId1);
+                byId1.setStatus(status);
                 demandEmployeesVo.setDemandOrder(byId1);
                 //需求单工作内容
                 String jobs = byId1.getJobIds();
@@ -245,8 +249,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 for (int i1 = 0; i1 < list.size(); i1++) {
                     EmployeesDetailsDemandVo detailsDemandVo = new EmployeesDetailsDemandVo();
                     detailsDemandVo.setId(list.get(i1).getId());
+                    detailsDemandVo.setStatus(this.getStatus(list.get(i1)));
                     detailsDemandVo.setPrice(list.get(i1).getPrice());
-                    detailsDemandVo.setStatus(list.get(i1).getStatus());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
                     detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i).getEmployeesId()));
@@ -283,6 +287,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         for (Integer integer : integers) {
             DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
             DemandOrder byId = demandOrderService.getById(integer);
+            Integer status = releaseRequirementService.getStatus(byId);
+            byId.setStatus(status);
             demandEmployeesVo.setDemandOrder(byId);
             //需求单工作内容
             String jobs = byId.getJobIds();
@@ -315,8 +321,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 if(list.get(i).getDemandOrderId().equals(integer)){
                     EmployeesDetailsDemandVo detailsDemandVo = new EmployeesDetailsDemandVo();
                     detailsDemandVo.setId(list.get(i).getId());
+                    detailsDemandVo.setStatus(this.getStatus(list.get(i)));
                     detailsDemandVo.setPrice(list.get(i).getPrice());
-                    detailsDemandVo.setStatus(list.get(i).getStatus());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i).getEmployeesId()));
                     detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(),list.get(i).getEmployeesId()));
@@ -391,7 +397,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         DemandEmployees byId = demandEmployeesService.getById(quotationId);
         //需求单
         DemandOrder demandOrder = demandOrderService.getById(byId.getDemandOrderId());
-        if(demandOrder.getStatus().equals(1)){
+        if(releaseRequirementService.getStatus(demandOrder).equals(1)){
             return R.failed("该订单已接，请勿重复确认!");
         }
 
@@ -483,6 +489,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
 
         byId.setStatus(1);
+        byId.setOrderNumber(number.toString());
         demandEmployeesService.updateById(byId);
 
         demandOrder.setStatus(1);
@@ -504,7 +511,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     @Override
     public R cusRemove(Integer id) {
         DemandEmployees byId = demandEmployeesService.getById(id);
-        if(byId.getStatus()==1){
+        if(this.getStatus(byId).equals(1)){
             return R.failed("该报价单已被确认，无法删除！");
         }
         demandEmployeesService.removeById(id);
@@ -520,13 +527,18 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         }
         QuotationVo quotationVo = new QuotationVo();
         quotationVo.setId(byId.getId());
-        quotationVo.setDemandOrder(demandOrderService.getById(byId.getDemandOrderId()));
+        DemandOrder byId1 = demandOrderService.getById(byId.getDemandOrderId());
+        byId1.setStatus(releaseRequirementService.getStatus(byId1));
+        quotationVo.setDemandOrder(byId1);
         quotationVo.setEmployeesDetails(employeesDetailsService.getById(byId.getEmployeesId()));
 
         List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
         quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
 
         quotationVo.setPrice(BigDecimal.valueOf(byId.getPrice()));
+
+        Integer status = this.getStatus(byId);
+        quotationVo.setStatus(status);
 
         return quotationVo;
     }
@@ -548,5 +560,12 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         return R.ok(quotationVo);
     }
 
-
+    public Integer getStatus(DemandEmployees demandEmployees){
+        Integer state = orderDetailsService.getState(demandEmployees.getOrderNumber());
+        if(state.equals(-1)||state.equals(0)){
+            return 0;
+        }else {
+            return 1;
+        }
+    }
 }
