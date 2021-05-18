@@ -2,6 +2,7 @@ package com.housekeeping.admin.vo;
 
 import com.housekeeping.admin.entity.DemandOrder;
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.Skill;
 import lombok.Data;
 
 import java.util.List;
@@ -10,6 +11,10 @@ import java.util.List;
 public class DemandEmployeesVo {
 
     private DemandOrder demandOrder;                                    /* 需求单*/
+
+    private List<Skill> workContent;
+
+    private List<Skill> workType;
 
     private List<EmployeesDetailsDemandVo> employeesDetailsDemandVos;   /* 报价信息 */
 }

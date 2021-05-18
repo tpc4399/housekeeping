@@ -64,6 +64,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private RedisTemplate redisTemplate;
     @Resource
     private IOrderDetailsService orderDetailsService;
+    @Resource
+    private ISysJobContendService jobContendService;
+    @Resource
+    private ISysIndexService sysIndexService;
     /*@Override
     public R beInterested(Integer demandOrderId) {
         Integer userId = TokenUtils.getCurrentUserId();
@@ -138,7 +142,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     }
 
     @Override
-    public R selectSuitableEmployees(Integer employeesId, Integer demandOrderId) {
+    public R sendOffer(Integer employeesId, Integer demandOrderId,BigDecimal price) {
         QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
         qw.eq("employees_id",employeesId);
         qw.eq("demand_order_id",demandOrderId);
@@ -147,22 +151,26 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             return R.failed("该员工已参与该需求单，请勿重复添加!");
         }
 
-        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(demandOrderId, employeesId);
-        BigDecimal price = this.getPrice(serviceTimeByEmployees, demandOrderId, employeesId);
+        BigDecimal offerPrice;
 
+        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(demandOrderId, employeesId);
+
+        if(CommonUtils.isNotEmpty(price)){
+            offerPrice = price;
+        }else {
+            offerPrice = this.getPrice(serviceTimeByEmployees, demandOrderId, employeesId);
+        }
         DemandEmployees demandEmployees = new DemandEmployees();
         demandEmployees.setEmployeesId(employeesId);
         demandEmployees.setCreateTime(LocalDateTime.now());
         demandEmployees.setDemandOrderId(demandOrderId);
         demandEmployees.setStatus(0);
         demandEmployees.setReadStatus(0);
-        demandEmployees.setPrice(price.intValue());
+        demandEmployees.setPrice(offerPrice.intValue());
         demandEmployees.setUserId(TokenUtils.getCurrentUserId());
         demandEmployees.setUpdateTime(LocalDateTime.now());
         demandEmployeesService.save(demandEmployees);
-        Integer demandEmployeesId = ((DemandEmployees) CommonUtils.getMaxId("demand_employees", demandEmployeesService)).getId();
-        QuotationVo quotationVo = this.cusGetById(demandEmployeesId);
-        return R.ok(quotationVo);
+        return R.ok("发送成功");
     }
 
 
@@ -201,62 +209,50 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         if(CommonUtils.isNotEmpty(demandIds)){
             for (int i = 0; i < demandIds.size(); i++) {
                 DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
-                demandEmployeesVo.setDemandOrder(demandOrderService.getById(demandIds.get(i)));
+                DemandOrder byId1 = demandOrderService.getById(demandIds.get(i));
+                demandEmployeesVo.setDemandOrder(byId1);
+                //需求单工作内容
+                String jobs = byId1.getJobIds();
+                List<Skill> skills = new ArrayList<>();
+                List<String> strings = Arrays.asList(jobs.split(" "));
+                for (int x = 0; x < strings.size(); x++) {
+                    Skill skill = new Skill();
+                    int id = Integer.parseInt(strings.get(x));
+                    skill.setJobId(id);
+                    skill.setContent(jobContendService.getById(id).getContend());
+                    skills.add(skill);
+                }
+                demandEmployeesVo.setWorkContent(skills);
+
+                //需求单工作类型
+                String type = byId1.getParentId();
+                List<Skill> types = new ArrayList<>();
+                List<String> strings1 = Arrays.asList(type.split(" "));
+                for (int x = 0; x < strings1.size(); x++) {
+                    Skill skill = new Skill();
+                    int id = Integer.parseInt(strings1.get(x));
+                    skill.setJobId(id);
+                    skill.setContent(sysIndexService.getById(id).getName());
+                    types.add(skill);
+                }
+                demandEmployeesVo.setWorkType(types);
+
                 QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
                 qw.eq("demand_order_id",demandIds.get(i));
                 qw.eq("user_id",userId);
                 List<DemandEmployees> list = demandEmployeesService.list(qw);
                 List<EmployeesDetailsDemandVo> employeesDetails = new ArrayList<>();
                 for (int i1 = 0; i1 < list.size(); i1++) {
-                    EmployeesDetails byId = employeesDetailsService.getById(list.get(i).getEmployeesId());
-                    EmployeesDetailsDemandVo employeesDetailsDemandVo = new EmployeesDetailsDemandVo();
-                    employeesDetailsDemandVo.setStatus(list.get(i).getStatus());
-                    employeesDetailsDemandVo.setAccountLine(byId.getAccountLine());
-                    employeesDetailsDemandVo.setAddress1(byId.getAddress1());
-                    employeesDetailsDemandVo.setAddress2(byId.getAddress2());
-                    employeesDetailsDemandVo.setAddress3(byId.getAddress3());
-                    employeesDetailsDemandVo.setAddress4(byId.getAddress4());
-                    List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                    employeesDetailsDemandVo.setWorkDetailsPOJOList(serviceTimeByEmployees);
-                    BigDecimal price = this.getPrice(serviceTimeByEmployees, list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                    if(CommonUtils.isEmpty(list.get(i).getPrice())){
-                        employeesDetailsDemandVo.setPrice(price);
-                    }else {
-                        employeesDetailsDemandVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
-                    }
-                    employeesDetailsDemandVo.setBlacklistFlag(byId.getBlacklistFlag());
-                    employeesDetailsDemandVo.setCompanyId(byId.getCompanyId());
-                    employeesDetailsDemandVo.setCreateTime(byId.getCreateTime());
-                    employeesDetailsDemandVo.setDateOfBirth(byId.getDateOfBirth());
-                    employeesDetailsDemandVo.setDescribes(byId.getDescribes());
-                    employeesDetailsDemandVo.setEducationBackground(byId.getEducationBackground());
-                    employeesDetailsDemandVo.setEmail(byId.getEmail());
-                    employeesDetailsDemandVo.setEngName(byId.getEngName());
-                    employeesDetailsDemandVo.setWorkYear(byId.getWorkYear());
-                    employeesDetailsDemandVo.setWorkingArea(byId.getWorkingArea());
-                    employeesDetailsDemandVo.setUserId(byId.getUserId());
-                    employeesDetailsDemandVo.setUpdateTime(byId.getUpdateTime());
-                    employeesDetailsDemandVo.setTags(byId.getTags());
-                    employeesDetailsDemandVo.setStarRating(byId.getStarRating());
-                    employeesDetailsDemandVo.setSex(byId.getSex());
-                    employeesDetailsDemandVo.setScopeOfOrder(byId.getScopeOfOrder());
-                    employeesDetailsDemandVo.setRecordOfFormalSchooling(byId.getRecordOfFormalSchooling());
-                    employeesDetailsDemandVo.setPresetJobIds(byId.getPresetJobIds());
-                    employeesDetailsDemandVo.setPhoneUrl(byId.getPhoneUrl());
-                    employeesDetailsDemandVo.setPhonePrefix(byId.getPhonePrefix());
-                    employeesDetailsDemandVo.setNumberOfOrders(byId.getNumberOfOrders());
-                    employeesDetailsDemandVo.setName(byId.getName());
-                    employeesDetailsDemandVo.setLng(byId.getLng());
-                    employeesDetailsDemandVo.setLat(byId.getLat());
-                    employeesDetailsDemandVo.setLastReviserId(byId.getLastReviserId());
-                    employeesDetailsDemandVo.setIdCard(byId.getIdCard());
-                    employeesDetailsDemandVo.setHeadUrl(byId.getHeadUrl());
-                    employeesDetailsDemandVo.setId(byId.getId());
-                    employeesDetailsDemandVo.setDemandEmployeesId(list.get(i).getId());
-                    employeesDetails.add(employeesDetailsDemandVo);
+                    EmployeesDetailsDemandVo detailsDemandVo = new EmployeesDetailsDemandVo();
+                    detailsDemandVo.setId(list.get(i1).getId());
+                    detailsDemandVo.setPrice(list.get(i1).getPrice());
+                    detailsDemandVo.setStatus(list.get(i1).getStatus());
+                    detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
+                    detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
+                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i).getEmployeesId()));
+                    employeesDetails.add(detailsDemandVo);
                 }
                 demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
-                demandEmployeesVos.add(demandEmployeesVo);
             }
         }
         return R.ok(demandEmployeesVos);
@@ -288,56 +284,43 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
             DemandOrder byId = demandOrderService.getById(integer);
             demandEmployeesVo.setDemandOrder(byId);
+            //需求单工作内容
+            String jobs = byId.getJobIds();
+            List<Skill> skills = new ArrayList<>();
+            List<String> strings = Arrays.asList(jobs.split(" "));
+            for (int x = 0; x < strings.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings.get(x));
+                skill.setJobId(id);
+                skill.setContent(jobContendService.getById(id).getContend());
+                skills.add(skill);
+            }
+            demandEmployeesVo.setWorkContent(skills);
+
+            //需求单工作类型
+            String type = byId.getParentId();
+            List<Skill> types = new ArrayList<>();
+            List<String> strings1 = Arrays.asList(type.split(" "));
+            for (int x = 0; x < strings1.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings1.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysIndexService.getById(id).getName());
+                types.add(skill);
+            }
+            demandEmployeesVo.setWorkType(types);
+
             List<EmployeesDetailsDemandVo> employeesDetails = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
                 if(list.get(i).getDemandOrderId().equals(integer)){
-
-                    EmployeesDetails employees = employeesDetailsService.getById(list.get(i).getEmployeesId());
-                    EmployeesDetailsDemandVo employeesDetailsDemandVo = new EmployeesDetailsDemandVo();
-                    employeesDetailsDemandVo.setStatus(list.get(i).getStatus());
-                    employeesDetailsDemandVo.setAccountLine(employees.getAccountLine());
-                    employeesDetailsDemandVo.setAddress1(employees.getAddress1());
-                    employeesDetailsDemandVo.setAddress2(employees.getAddress2());
-                    employeesDetailsDemandVo.setAddress3(employees.getAddress3());
-                    employeesDetailsDemandVo.setAddress4(employees.getAddress4());
-                    List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                    employeesDetailsDemandVo.setWorkDetailsPOJOList(serviceTimeByEmployees);
-                    BigDecimal price = this.getPrice(serviceTimeByEmployees, list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                    if(CommonUtils.isEmpty(list.get(i).getPrice())){
-                        employeesDetailsDemandVo.setPrice(price);
-                    }else {
-                        employeesDetailsDemandVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
-                    }
-                    employeesDetailsDemandVo.setBlacklistFlag(employees.getBlacklistFlag());
-                    employeesDetailsDemandVo.setCompanyId(employees.getCompanyId());
-                    employeesDetailsDemandVo.setCreateTime(employees.getCreateTime());
-                    employeesDetailsDemandVo.setDateOfBirth(employees.getDateOfBirth());
-                    employeesDetailsDemandVo.setDescribes(employees.getDescribes());
-                    employeesDetailsDemandVo.setEducationBackground(employees.getEducationBackground());
-                    employeesDetailsDemandVo.setEmail(employees.getEmail());
-                    employeesDetailsDemandVo.setEngName(employees.getEngName());
-                    employeesDetailsDemandVo.setWorkYear(employees.getWorkYear());
-                    employeesDetailsDemandVo.setWorkingArea(employees.getWorkingArea());
-                    employeesDetailsDemandVo.setUserId(employees.getUserId());
-                    employeesDetailsDemandVo.setUpdateTime(employees.getUpdateTime());
-                    employeesDetailsDemandVo.setTags(employees.getTags());
-                    employeesDetailsDemandVo.setStarRating(employees.getStarRating());
-                    employeesDetailsDemandVo.setSex(employees.getSex());
-                    employeesDetailsDemandVo.setScopeOfOrder(employees.getScopeOfOrder());
-                    employeesDetailsDemandVo.setRecordOfFormalSchooling(employees.getRecordOfFormalSchooling());
-                    employeesDetailsDemandVo.setPresetJobIds(employees.getPresetJobIds());
-                    employeesDetailsDemandVo.setPhoneUrl(employees.getPhoneUrl());
-                    employeesDetailsDemandVo.setPhonePrefix(employees.getPhonePrefix());
-                    employeesDetailsDemandVo.setNumberOfOrders(employees.getNumberOfOrders());
-                    employeesDetailsDemandVo.setName(employees.getName());
-                    employeesDetailsDemandVo.setLng(employees.getLng());
-                    employeesDetailsDemandVo.setLat(employees.getLat());
-                    employeesDetailsDemandVo.setLastReviserId(employees.getLastReviserId());
-                    employeesDetailsDemandVo.setIdCard(employees.getIdCard());
-                    employeesDetailsDemandVo.setHeadUrl(employees.getHeadUrl());
-                    employeesDetailsDemandVo.setId(employees.getId());
-                    employeesDetailsDemandVo.setDemandEmployeesId(list.get(i).getId());
-                    employeesDetails.add(employeesDetailsDemandVo);
+                    EmployeesDetailsDemandVo detailsDemandVo = new EmployeesDetailsDemandVo();
+                    detailsDemandVo.setId(list.get(i).getId());
+                    detailsDemandVo.setPrice(list.get(i).getPrice());
+                    detailsDemandVo.setStatus(list.get(i).getStatus());
+                    detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i).getDemandOrderId()));
+                    detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i).getEmployeesId()));
+                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(),list.get(i).getEmployeesId()));
+                    employeesDetails.add(detailsDemandVo);
                 }
             }
             demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
@@ -546,6 +529,23 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         quotationVo.setPrice(BigDecimal.valueOf(byId.getPrice()));
 
         return quotationVo;
+    }
+
+    @Override
+    public R selectSuitableEmployees(Integer employeesId, Integer demandOrderId) {
+        QuotationVo quotationVo = new QuotationVo();
+        quotationVo.setId(null);
+
+        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(demandOrderId, employeesId);
+        quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+
+        BigDecimal price = this.getPrice(serviceTimeByEmployees, demandOrderId, employeesId);
+        quotationVo.setPrice(price);
+
+        quotationVo.setEmployeesDetails(employeesDetailsService.getById(employeesId));
+        quotationVo.setDemandOrder(demandOrderService.getById(demandOrderId));
+
+        return R.ok(quotationVo);
     }
 
 

@@ -20,7 +20,7 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     /* 生成每个员工的临时订单，返回筛选后的员工ids */
     R suitableEmployees(Integer userId,Integer typeId,Integer  demandOrderId);
     /* 存储该保洁员的的临时订单 */
-    R selectSuitableEmployees(Integer employeesId, Integer demandOrderId);
+    R sendOffer(Integer employeesId, Integer demandOrderId,BigDecimal price);
 
     R getAllInterestedEmployees(Integer demandOrderId);
 
@@ -40,4 +40,6 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     R cusRemove(Integer id);
 
     QuotationVo cusGetById(Integer quotationId);
+
+    R selectSuitableEmployees(Integer employeesId, Integer demandOrderId);
 }

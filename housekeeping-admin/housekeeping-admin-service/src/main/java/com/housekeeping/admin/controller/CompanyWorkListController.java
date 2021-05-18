@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 /**
  *
  * 1 客户发布需求
@@ -69,6 +71,14 @@ public class CompanyWorkListController {
                                Integer  demandOrderId){
         /* 根据客户需求,返回筛选后的员工ids */
         return companyWorkListService.suitableEmployees(userId,typeId,demandOrderId);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】第三步：发送报价")
+    @GetMapping("/sendOffer")
+    public R sendOffer(@RequestParam Integer employeesId, @RequestParam Integer demandOrderId, BigDecimal price){
+        /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
+        return companyWorkListService.sendOffer(employeesId, demandOrderId,price);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
