@@ -35,7 +35,7 @@ public interface ISysIndexService extends IService<SysIndex> {
     List<TimeAndPrice> periodSplittingA(List<TimeSlotDTO> slots);
     /* 拆分时间段 */
     List<LocalTime> periodSplittingB(List<TimeSlot> slots);
-    /* 搜索功能简化版 */
-    R querySimplifiedVersion(QueryIndexDTO dto);
+    /* 输入关键词进行搜索 */
+    R query(String param);
 
 }

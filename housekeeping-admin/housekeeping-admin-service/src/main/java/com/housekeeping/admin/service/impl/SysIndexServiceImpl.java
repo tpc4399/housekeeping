@@ -863,9 +863,17 @@ public class SysIndexServiceImpl
     }
 
     @Override
-    public R querySimplifiedVersion(QueryIndexDTO dto) {
-
-        return null;
+    public R query(String param) {
+        QueryWrapper qw1 = new QueryWrapper();
+        qw1.like("name", param);
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.like("no_certified_company", param);
+        List<EmployeesDetails> eds = employeesDetailsService.list(qw1);
+        List<CompanyDetails> cds = companyDetailsService.list(qw2);
+        Map<String, List> res = new HashMap<>();
+        res.put("eds", eds);
+        res.put("cds", cds);
+        return R.ok(res);
     }
 
     private Map<LocalDate, List<TimeSlot>> periodMerging(Map<LocalDate, List<LocalTime>> periods){

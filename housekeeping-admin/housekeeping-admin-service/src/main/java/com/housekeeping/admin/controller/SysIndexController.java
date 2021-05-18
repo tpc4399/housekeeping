@@ -54,10 +54,10 @@ public class SysIndexController {
         return sysIndexService.getCusById(id);
     }
 
-    @ApiOperation("主页搜索")
-    @PostMapping("/query")
-    public R query(@RequestBody QueryIndexDTO dto) throws InterruptedException {
-        return sysIndexService.query(dto);
+    @ApiOperation("输入关键词进行搜索")
+    @GetMapping("/query")
+    public R query(String param) {
+        return sysIndexService.query(param);
     }
 
     @ApiOperation("主页搜索,新接口 2021-5-9 18:12")
@@ -113,5 +113,7 @@ public class SysIndexController {
     public R flush2(String credential){
         return sysIndexService.flush2(credential);
     }
+
+
 
 }
