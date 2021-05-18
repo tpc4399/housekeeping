@@ -1222,4 +1222,62 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return workDetailsPOJOS;
     }
 
+    @Override
+    public R getAllInCompany() {
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("company_id", companyId);
+        qw.select("id");
+        List<Integer> employeesIds = employeesDetailsService.listObjs(qw); //公司所有保洁员
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.in("employees_id", employeesIds);
+        List<EmployeesCalendar> calendars = employeesCalendarService.list(qw2);
+
+        return R.ok(calendars, "獲取成功");
+    }
+
+    @Override
+    public R setCalendarAll(SetEmployeesCalendar2DTO dto) {
+        /* 獲取公司所有保潔員 */
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("company_id", companyId);
+        qw.select("id");
+        List<Integer> employeesIds = employeesDetailsService.listObjs(qw); //公司所有保洁员
+
+        /* 添加新的 */
+        StringBuilder week = new StringBuilder();
+        dto.getWeek().forEach(wk->{
+            week.append(wk);
+        });
+
+        Map<Integer, List> res = new HashMap<>();
+        employeesIds.forEach(employeesId -> {
+            dto.setEmployeesId(employeesId);
+            List<String> info = this.rationalityJudgmentD(dto);
+            if (res.size() == 0){
+                //这是合理的
+                dto.getTimeSlotPriceDTOList().forEach(timeSlot -> {
+                    EmployeesCalendar employeesCalendar =
+                            new EmployeesCalendar(
+                                    employeesId,
+                                    true,
+                                    null,
+                                    week.toString(),
+                                    timeSlot.getTimeSlotStart(),
+                                    timeSlot.getTimeSlotLength()
+                            );
+                    employeesCalendar.setHourlyWage(new BigDecimal(timeSlot.getPrice()));
+                    employeesCalendar.setCode(timeSlot.getCode());
+                    baseMapper.insert(employeesCalendar);
+                });
+            }
+            res.put(employeesId, info);
+        });
+
+        return null;
+    }
+
 }
