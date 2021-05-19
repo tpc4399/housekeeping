@@ -59,6 +59,8 @@ public class OrderDetails extends Model<OrderDetails> {
 
     private Integer orderState;                 //订单状态
     private Integer orderOrigin;                //订单来源 0钟点工 1包工
+    private String contractImageUrl;            //包工图片
+    private String contractName;                //包工名
 
     private LocalDateTime payDateTime;          //付款时间
     private LocalDateTime completionDateTime;   //完成时间
@@ -95,6 +97,8 @@ public class OrderDetails extends Model<OrderDetails> {
         this.payDeadline = pojo.getPayDeadline();
         this.orderState = pojo.getOrderState();
         this.orderOrigin = pojo.getOrderOrigin();
+        this.contractImageUrl = pojo.getContractImageUrl();
+        this.contractName = pojo.getContractName();
         this.payDateTime = pojo.getPayDateTime();
         this.completionDateTime = pojo.getCompletionDateTime();
         this.fixDateTime = pojo.getFixDateTime();

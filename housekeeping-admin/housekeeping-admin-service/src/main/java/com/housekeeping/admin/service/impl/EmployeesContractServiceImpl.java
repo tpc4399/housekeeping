@@ -342,9 +342,12 @@ public class EmployeesContractServiceImpl
     public R appointmentContract(AppointmentContractDTO dto) {
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
+        EmployeesContract ec = this.getById(dto.getContractId());
 
         /* 订单来源 */
         odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
+        odp.setContractImageUrl(ec.getPhotoUrls());
+        odp.setContractName(ec.getName());
 
         /* 订单编号 */
         Long number = orderIdService.generateId();
@@ -354,7 +357,6 @@ public class EmployeesContractServiceImpl
         odp.setConsumptionItems("2");
 
         /* 订单甲方 保洁员 */
-        EmployeesContract ec = this.getById(dto.getContractId());
         Integer employeesId = ec.getEmployeesId();
         Boolean exist = employeesDetailsService.judgmentOfExistence(employeesId);
         if (!exist) return R.failed(null, "保潔員不存在");
