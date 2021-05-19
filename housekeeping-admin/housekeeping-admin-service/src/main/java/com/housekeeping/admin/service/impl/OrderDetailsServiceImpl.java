@@ -64,6 +64,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private PaymentCallbackMapper paymentCallbackMapper;
     @Resource
     private ISysJobContendService sysJobContendService;
+    @Resource
+    private ICompanyDetailsService companyDetailsService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -390,6 +392,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
+    public R queryByCom(Integer type) {
+        return null;
+    }
+
+    @Override
     public List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId) {
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         /* odp 获取订单信息 */
@@ -594,6 +601,29 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             return odp;
         }).collect(Collectors.toList());
         return pojoList;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order1ByEmployeesAll(List<Integer> empIds) { return null;}
+
+    @Override
+    public List<OrderDetailsPOJO> order2ByEmployeesAll(List<Integer> empIds) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order3ByEmployeesAll(List<Integer> empIds) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order4ByEmployeesAll(List<Integer> empIds) {
+        return null;
+    }
+
+    @Override
+    public List<OrderDetailsPOJO> order5ByEmployeesAll(List<Integer> empIds) {
+        return null;
     }
 
     @Override

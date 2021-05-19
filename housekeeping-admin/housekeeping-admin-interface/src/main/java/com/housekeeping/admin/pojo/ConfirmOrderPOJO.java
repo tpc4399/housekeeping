@@ -58,6 +58,9 @@ public class ConfirmOrderPOJO {
      * 20 --> 已评价       已完成状态  Completed
      */
     private Integer orderState;                 //订单状态
+    private Integer orderOrigin;                //订单来源 0钟点工 1包工
+    private String contractImageUrl;            //包工图片
+    private String contractName;                //包工名
 
     public ConfirmOrderPOJO(OrderDetailsPOJO pojo){
         this.number = pojo.getNumber();
@@ -89,6 +92,9 @@ public class ConfirmOrderPOJO {
         this.h = pojo.getH();
         this.payDeadline = pojo.getPayDeadline();
         this.orderState = pojo.getOrderState();
+        this.orderOrigin = pojo.getOrderOrigin();
+        this.contractImageUrl = pojo.getContractImageUrl();
+        this.contractName = pojo.getContractName();
     }
 
 }

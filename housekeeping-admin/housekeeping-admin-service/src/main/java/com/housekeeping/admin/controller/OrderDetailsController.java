@@ -122,6 +122,13 @@ public class OrderDetailsController {
         return orderDetailsService.queryByCus(type);
     }
 
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("【公司】本公司订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
+    @GetMapping("/queryByCom")
+    public R queryByCom(Integer type){
+        return orderDetailsService.queryByCus(type);
+    }
+
     @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【保洁员】订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
     @GetMapping("/queryByEmp")

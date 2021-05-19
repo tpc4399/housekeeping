@@ -59,6 +59,9 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     /* 订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
     R queryByEmp(Integer type);
 
+    /* 公司订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+    R queryByCom(Integer type);
+
     /* 查询保洁员的待付款订单 */
     List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId);
     /* 查询保洁员的待服务订单 */
@@ -79,6 +82,17 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     List<OrderDetailsPOJO> order4ByCustomer(Integer customerId);
     /* 查询客户的已完成订单 */
     List<OrderDetailsPOJO> order5ByCustomer(Integer customerId);
+    /* 查询公司的待付款订单 */
+    List<OrderDetailsPOJO> order1ByEmployeesAll(List<Integer> empIds);
+    /* 查询公司的待服务订单 */
+    List<OrderDetailsPOJO> order2ByEmployeesAll(List<Integer> empIds);
+    /* 查询公司的进行中订单 */
+    List<OrderDetailsPOJO> order3ByEmployeesAll(List<Integer> empIds);
+    /* 查询公司的待评价订单 */
+    List<OrderDetailsPOJO> order4ByEmployeesAll(List<Integer> empIds);
+    /* 查询公司的已完成订单 */
+    List<OrderDetailsPOJO> order5ByEmployeesAll(List<Integer> empIds);
+
     /* 【保洁员】【客户】取消订单,将订单放入取消的订单列表 */
     R payment1();
     /* 【保洁员】订单状态———— 处理中->未支付 */
