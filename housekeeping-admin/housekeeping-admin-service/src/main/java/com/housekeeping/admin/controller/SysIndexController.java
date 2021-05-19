@@ -56,7 +56,7 @@ public class SysIndexController {
 
     @ApiOperation("输入关键词进行搜索")
     @PostMapping("/query")
-    public R query(QueryParamsDTO dto) {
+    public R query(@RequestBody QueryParamsDTO dto) {
         return sysIndexService.query(dto);
     }
 
