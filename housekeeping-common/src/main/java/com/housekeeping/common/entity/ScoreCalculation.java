@@ -105,10 +105,12 @@ public class ScoreCalculation {
             scope4 = getScope4();
             scope5 = getScope5();
         }
-        if (priorityType == 1) scope1 = getScope1();
-        if (priorityType == 2) scope2 = getScope2();
-        if (priorityType == 3) scope3 = getScope3();
-        if (priorityType == 4) scope4 = getScope4();
+        if (priorityType == 1 || priorityType == 2 || priorityType == 3 || priorityType == 4) {
+            scope1 = getScope1();
+            scope2 = getScope2();
+            scope3 = getScope3();
+            scope4 = getScope4();
+        }
 
         return scope1+scope2+scope3+scope4+scope5+scope6;
     }
