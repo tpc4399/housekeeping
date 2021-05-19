@@ -784,6 +784,14 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<WorkDetails> wds = workDetailsService.list(qw2);
             List<OrderPhotos> ops = orderPhotosService.list(qw2);
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
+            OrderDetailsParent parent = odp;
+            List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            parent.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            parent.setEmployeesHeaderUrl(employeesDetailsService.getById(odp.getEmployeesId()).getHeadUrl());
+            /* 客户头像二次加工处理 */
+            parent.setCustomerHeaderUrl(customerDetailsService.getById(odp.getCustomerId()).getHeadUrl());
             return R.ok(odp);
         }
         return R.failed(null, "訂單不存在");
