@@ -110,7 +110,6 @@ public class SysConfigServiceImpl
         List<String> keys = new ArrayList<>();
         keys.add(ApplicationConfigConstants.timeScopeDouble);
         keys.add(ApplicationConfigConstants.workScopeDouble);
-        keys.add(ApplicationConfigConstants.workScopeDouble);
         keys.add(ApplicationConfigConstants.priceScopeDouble);
         keys.add(ApplicationConfigConstants.distanceScoreDouble);
         keys.add(ApplicationConfigConstants.extensionScopeDouble);
@@ -123,6 +122,41 @@ public class SysConfigServiceImpl
         res.forEach(x -> {
             map.put(x.getConfigKey(), x.getConfigValue());
         });
+        /* 排序类型
+                                         0 | null 默认排序
+                                         1    价格合适排序
+                                         2    距离排序
+                                         3    评价排序
+                                         4    钟点工作内容排序
+                                    */
+        if (priorityType.equals(1)){
+            //价格->工作内容->距离->评价
+            map.put(ApplicationConfigConstants.priceScopeDouble, "100000");  //价格
+            map.put(ApplicationConfigConstants.workScopeDouble, "10000");  //工作内容
+            map.put(ApplicationConfigConstants.distanceScoreDouble, "1000"); //距离
+            map.put(ApplicationConfigConstants.evaluateScopeDouble, "100"); //评价
+        }
+        if (priorityType.equals(2)){
+            //距离->工作内容->价格->评价
+            map.put(ApplicationConfigConstants.distanceScoreDouble, "100000"); //距离
+            map.put(ApplicationConfigConstants.workScopeDouble, "10000");  //工作内容
+            map.put(ApplicationConfigConstants.priceScopeDouble, "1000");  //价格
+            map.put(ApplicationConfigConstants.evaluateScopeDouble, "100"); //评价
+        }
+        if (priorityType.equals(3)){
+            //评价->工作内容->距离->价格
+            map.put(ApplicationConfigConstants.evaluateScopeDouble, "100000"); //评价
+            map.put(ApplicationConfigConstants.workScopeDouble, "10000");  //工作内容
+            map.put(ApplicationConfigConstants.distanceScoreDouble, "1000"); //距离
+            map.put(ApplicationConfigConstants.priceScopeDouble, "100");  //价格
+        }
+        if (priorityType.equals(4)){
+            //工作内容->距离->价格->评价
+            map.put(ApplicationConfigConstants.workScopeDouble, "100000");  //工作内容
+            map.put(ApplicationConfigConstants.distanceScoreDouble, "10000"); //距离
+            map.put(ApplicationConfigConstants.priceScopeDouble, "1000");  //价格
+            map.put(ApplicationConfigConstants.evaluateScopeDouble, "100"); //评价
+        }
         return map;
     }
 }
