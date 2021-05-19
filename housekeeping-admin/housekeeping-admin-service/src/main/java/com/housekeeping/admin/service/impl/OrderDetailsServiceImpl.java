@@ -9,10 +9,7 @@ import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.mapper.PaymentCallbackMapper;
-import com.housekeeping.admin.pojo.OrderDetailsPOJO;
-import com.housekeeping.admin.pojo.OrderDetailsParent;
-import com.housekeeping.admin.pojo.OrderPhotoPOJO;
-import com.housekeeping.admin.pojo.WorkDetailsPOJO;
+import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.*;
@@ -757,7 +754,24 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return R.ok(odp);
+            List<OrderPhotoPOJO> ops = new ArrayList<>();
+            List<WorkDetailsPOJO> wds = new ArrayList<>();
+            Object photoObj = map.get("photos");
+            Object workDetailsObj = map.get("workDetails");
+            if (!photoObj.equals("")) ops = (List<OrderPhotoPOJO>) map.get("photos");;
+            if (!workDetailsObj.equals("")) wds = (List<WorkDetailsPOJO>) map.get("workDetails");
+            odp.setPhotos(ops);
+            odp.setWorkDetails(wds);
+
+            OrderDetailsParent parent = odp;
+            List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            parent.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            parent.setEmployeesHeaderUrl(employeesDetailsService.getById(odp.getEmployeesId()).getHeadUrl());
+            /* 客户头像二次加工处理 */
+            parent.setCustomerHeaderUrl(customerDetailsService.getById(odp.getCustomerId()).getHeadUrl());
+            return R.ok(parent);
         }
 
         /* 查數據庫 */
