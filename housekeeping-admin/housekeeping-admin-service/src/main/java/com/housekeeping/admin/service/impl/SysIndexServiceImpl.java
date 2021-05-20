@@ -87,6 +87,8 @@ public class SysIndexServiceImpl
         sysIndex.setOrderValue(sysIndexAddDto.getOrderValue());
         sysIndex.setSelectedLogo(sysIndexAddDto.getSelectedLogo());
         sysIndex.setUncheckedLogo(sysIndexAddDto.getUncheckedLogo());
+        sysIndex.setNewSelectedLogo(sysIndexAddDto.getSelectedLogo());
+        sysIndex.setNewUncheckedLogo(sysIndexAddDto.getNewUncheckedLogo());
         StringBuilder priceSlot = new StringBuilder("");
         List<PriceSlotVo> priceSlotList = sysIndexAddDto.getPriceSlotList();
         for (int i = 0; i < priceSlotList.size(); i++) {
@@ -123,6 +125,8 @@ public class SysIndexServiceImpl
         sysIndex.setOrderValue(dto.getOrderValue());
         sysIndex.setSelectedLogo(dto.getSelectedLogo());
         sysIndex.setUncheckedLogo(dto.getUncheckedLogo());
+        sysIndex.setNewSelectedLogo(dto.getSelectedLogo());
+        sysIndex.setNewUncheckedLogo(dto.getNewUncheckedLogo());
         StringBuilder priceSlot = new StringBuilder("");
         dto.getPriceSlotList().forEach(x->{
             priceSlot.append(x.getLowPrice());
@@ -164,6 +168,8 @@ public class SysIndexServiceImpl
             sysIndexVo.setOrderValue(x.getOrderValue());
             sysIndexVo.setSelectedLogo(x.getSelectedLogo());
             sysIndexVo.setUncheckedLogo(x.getUncheckedLogo());
+            sysIndexVo.setNewSelectedLogo(x.getNewSelectedLogo());
+            sysIndexVo.setNewUncheckedLogo(x.getNewUncheckedLogo());
             List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
             String[] arr = x.getPriceSlot().split(",");
             for (int i = 0; i < arr.length - 1; i++) {
@@ -396,6 +402,8 @@ public class SysIndexServiceImpl
             sysIndexVo.setOrderValue(x.getOrderValue());
             sysIndexVo.setSelectedLogo(x.getSelectedLogo());
             sysIndexVo.setUncheckedLogo(x.getUncheckedLogo());
+            sysIndexVo.setNewSelectedLogo(x.getNewSelectedLogo());
+            sysIndexVo.setNewUncheckedLogo(x.getNewUncheckedLogo());
             List<PriceSlotVo> priceSlotVoList = new ArrayList<>();
             String[] arr = x.getPriceSlot().split(" ");
             for (int i = 0; i < arr.length - 1; i++) {

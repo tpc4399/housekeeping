@@ -18,4 +18,6 @@ public class SysIndexUpdateDTO {
     private Integer orderValue;                 /* 顺序 */
     private String selectedLogo;                /* 已选中的logo--base64 */
     private String uncheckedLogo;               /* 未选中的logo——base64 */
+    private String newSelectedLogo;        /* 新已选中的logo--base64 */
+    private String newUncheckedLogo;    /* 新未选中的logo */
 }
