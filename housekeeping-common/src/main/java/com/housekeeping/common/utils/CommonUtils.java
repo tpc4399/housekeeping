@@ -354,6 +354,7 @@ public class CommonUtils {
 	/* 工作内容string 切割成List */
 	public static List<Integer> stringToList(String jobId){
 		List<Integer> list = new ArrayList<>();
+		if (jobId.equals("")) return list;
 		String[] strings = jobId.split(" ");
 		for (int i = 0; i < strings.length; i++) {
 			list.add(Integer.valueOf(strings[i]));

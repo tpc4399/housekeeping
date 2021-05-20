@@ -1,0 +1,5 @@
+com\housekeeping\order\HousekeepingOrderApplication.class
+com\housekeeping\order\controller\PaymentController.class
+com\housekeeping\order\config\AccessAutoConfig.class
+com\housekeeping\order\config\SwaggerConfig.class
+com\housekeeping\order\auth\aspect\AccessAspect.class

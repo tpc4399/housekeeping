@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.housekeeping.im.mapper.ImUserMapper">
+    <resultMap id="baseResultMap" type="com.housekeeping.im.entity.ImUser">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="nickname" column="nickname"/>
+        <result property="name" column="name"/>
+        <result property="dateOfBirth" column="date_of_birth"/>
+        <result property="phonePrefix" column="phone_prefix"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="lastReviserId" column="last_reviser_id"/>
+    </resultMap>
+    <select id="getUserGroups" parameterType="string" resultType="com.housekeeping.im.entity.ImChatGroup">
+        SELECT
+            id,
+            name,
+            avatar
+        FROM im_chat_group
+        WHERE id IN (SELECT cg.chat_group_id
+                     FROM im_chat_group_user cg
+                     WHERE cg.user_id = #{userId})
+    </select>
+    <select id="getChatUserList" parameterType="string" resultType="com.housekeeping.im.entity.ImUserInfo">
+       SELECT
+            id,
+            name,
+            dept_id
+        FROM sys_user
+        WHERE id IN (SELECT cg.user_id
+                     FROM im_chat_group_user cg
+                     WHERE cg.chat_group_id = #{chatId})
+    </select>
+
+    <select id="getGroupsById" resultType="java.lang.Integer">
+        SELECT group_id FROM group_employees WHERE employees_id = #{id}
+    </select>
+
+    <select id="getMansByGroupId" resultType="java.lang.Integer">
+        SELECT manager_id FROM group_manager WHERE group_id = #{gid}
+    </select>
+
+    <select id="getCompanyId" resultType="java.lang.Integer">
+        SELECT company_id FROM employees_details WHERE id = #{id}
+    </select>
+
+    <select id="getUserId" resultType="java.lang.Integer">
+        SELECT user_id FROM manager_details WHERE id = #{id}
+    </select>
+
+    <select id="getEmpId" resultType="java.lang.Integer">
+        SELECT user_id FROM employees_details WHERE id = #{id}
+    </select>
+
+    <select id="getUserIdByCom" resultType="java.lang.Integer">
+        SELECT user_id FROM company_details WHERE id = #{companyId}
+    </select>
+
+    <select id="getCompanyLogo" resultType="java.lang.String">
+        SELECT
+        logo_url
+        FROM
+        company_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="employeesHeadUrl" resultType="java.lang.String">
+        SELECT
+        head_url
+        FROM
+        employees_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="managerHeadUrl" resultType="java.lang.String">
+        SELECT
+        head_url
+        FROM
+        manager_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="customerHeadUrl" resultType="java.lang.String">
+        SELECT
+        head_url
+        FROM
+        customer_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="getCusIdByDemand" resultType="java.lang.Integer">
+        SELECT
+        customer_id
+        FROM
+        demand_order
+        WHERE
+        id = #{demandId}
+    </select>
+
+    <select id="getUSerIdByEmpId" resultType="java.lang.Integer">
+        SELECT
+        user_id
+        FROM
+        employees_details
+        WHERE
+        id = #{empId}
+    </select>
+
+    <select id="getCompanyIdByUser" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        company_details
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="getMangerId" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        manager_details
+        WHERE user_id = #{parseInt}
+    </select>
+
+    <select id="getAllEmp" resultType="java.lang.Integer">
+        SELECT
+        distinct
+        employees_id
+        FROM
+        group_employees
+        WHERE
+        group_id in (SELECT DISTINCT group_id FROM group_manager AS gm WHERE gm.manager_id = #{managerId})
+    </select>
+</mapper>

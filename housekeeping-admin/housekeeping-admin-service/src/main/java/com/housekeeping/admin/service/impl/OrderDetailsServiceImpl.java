@@ -390,7 +390,44 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public R queryByCom(Integer type) {
-        return null;
+        /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());
+        QueryWrapper qw = new QueryWrapper();
+        qw.select("id");
+        qw.eq("company_id", companyId);
+        List<Integer> empIds = employeesDetailsService.listObjs(qw);
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
+        if (type.equals(0)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+            res.addAll(this.order2ByEmployeesAll(empIds));
+            res.addAll(this.order3ByEmployeesAll(empIds));
+            res.addAll(this.order4ByEmployeesAll(empIds));
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }else if (type.equals(1)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+        }else if (type.equals(2)){
+            res.addAll(this.order2ByEmployeesAll(empIds));
+        }else if (type.equals(3)){
+            res.addAll(this.order3ByEmployeesAll(empIds));
+        }else if (type.equals(4)){
+            res.addAll(this.order4ByEmployeesAll(empIds));
+        }else if (type.equals(5)){
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
     }
 
     @Override
@@ -601,26 +638,112 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public List<OrderDetailsPOJO> order1ByEmployeesAll(List<Integer> empIds) { return null;}
+    public List<OrderDetailsPOJO> order1ByEmployeesAll(List<Integer> empIds) {
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        empIds.forEach(empId -> {
+            Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId"+empId+"*");
+            Object[] keysArr = keys.toArray();
+            for (int i = 0; i < keysArr.length; i++) {
+                String key = keysArr[i].toString();
+                OrderDetailsPOJO odp = null;
+                Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+                try {
+                    odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                List<OrderPhotoPOJO> ops = new ArrayList<>();
+                List<WorkDetailsPOJO> wds = new ArrayList<>();
+                Object photoObj = map.get("photos");
+                Object workDetailsObj = map.get("workDetails");
+                if (!photoObj.equals("")) ops = (List<OrderPhotoPOJO>) map.get("photos");;
+                if (!workDetailsObj.equals("")) wds = (List<WorkDetailsPOJO>) map.get("workDetails");
+                odp.setPhotos(ops);
+                odp.setWorkDetails(wds);
+                pojoList.add(odp);//
+            }
+        });
+        return pojoList;
+    }
 
     @Override
     public List<OrderDetailsPOJO> order2ByEmployeesAll(List<Integer> empIds) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        empIds.forEach(empId -> {
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("employees_id", empId);
+            qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_SERVED);
+            List<OrderDetails> ods = orderDetailsService.list(qw);
+            ods.forEach(od -> {
+                QueryWrapper qw2 = new QueryWrapper();
+                qw2.eq("number", od.getNumber());
+                List<WorkDetails> wds = workDetailsService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                OrderDetailsPOJO odp = this.odp(od, wds, ops);
+                pojoList.add(odp);
+            });
+        });
+        return pojoList;
     }
 
     @Override
     public List<OrderDetailsPOJO> order3ByEmployeesAll(List<Integer> empIds) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        empIds.forEach(empId -> {
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("employees_id", empId);
+            qw.eq("order_state", CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+            List<OrderDetails> ods = orderDetailsService.list(qw);
+            ods.forEach(od -> {
+                QueryWrapper qw2 = new QueryWrapper();
+                qw2.eq("number", od.getNumber());
+                List<WorkDetails> wds = workDetailsService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                OrderDetailsPOJO odp = this.odp(od, wds, ops);
+                pojoList.add(odp);
+            });
+        });
+        return pojoList;
     }
 
     @Override
     public List<OrderDetailsPOJO> order4ByEmployeesAll(List<Integer> empIds) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        empIds.forEach(empId -> {
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("employees_id", empId);
+            qw.eq("order_state", CommonConstants.ORDER_STATE_TO_BE_EVALUATED);
+            List<OrderDetails> ods = orderDetailsService.list(qw);
+            ods.forEach(od -> {
+                QueryWrapper qw2 = new QueryWrapper();
+                qw2.eq("number", od.getNumber());
+                List<WorkDetails> wds = workDetailsService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                OrderDetailsPOJO odp = this.odp(od, wds, ops);
+                pojoList.add(odp);
+            });
+        });
+        return pojoList;
     }
 
     @Override
     public List<OrderDetailsPOJO> order5ByEmployeesAll(List<Integer> empIds) {
-        return null;
+        List<OrderDetailsPOJO> pojoList = new ArrayList<>();
+        empIds.forEach(empId -> {
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("employees_id", empId);
+            qw.eq("order_state", CommonConstants.ORDER_STATE_COMPLETED);
+            List<OrderDetails> ods = orderDetailsService.list(qw);
+            ods.forEach(od -> {
+                QueryWrapper qw2 = new QueryWrapper();
+                qw2.eq("number", od.getNumber());
+                List<WorkDetails> wds = workDetailsService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                OrderDetailsPOJO odp = this.odp(od, wds, ops);
+                pojoList.add(odp);
+            });
+        });
+        return pojoList;
     }
 
     @Override

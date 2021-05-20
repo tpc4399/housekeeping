@@ -59,7 +59,7 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     /* 订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
     R queryByEmp(Integer type);
 
-    /* 公司订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+    /* 公司查询本公司订单 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
     R queryByCom(Integer type);
 
     /* 查询保洁员的待付款订单 */

@@ -877,7 +877,10 @@ public class SysIndexServiceImpl
                     ed.getLng());
             BigDecimal insBig = new BigDecimal(instance).setScale(1, BigDecimal.ROUND_DOWN);
             List<Integer> jobIds = CommonUtils.stringToList(ed.getPresetJobIds());
-            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()){
+                jobs = sysJobContendService.listByIds(jobIds);
+            }
             QueryEmployeesInfo qei = new QueryEmployeesInfo(ed, jobs, insBig.toString());
             qes.add(qei);
         });
