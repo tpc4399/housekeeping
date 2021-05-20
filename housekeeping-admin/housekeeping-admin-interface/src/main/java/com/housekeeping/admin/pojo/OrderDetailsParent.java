@@ -14,4 +14,7 @@ public class OrderDetailsParent {
     private List<SysJobContend> jobs; //工作内容
     private String customerHeaderUrl; //客户头像
     private String employeesHeaderUrl; //保洁员头像
+    private String addressEmployees;  //保洁员的地址
+    private Float lngEmployees;  //经度
+    private Float latEmployees;  //纬度
 }

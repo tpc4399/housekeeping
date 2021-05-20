@@ -767,10 +767,22 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
             List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             parent.setJobs(jobs);
-            /* 保洁员头像二次加工处理 */
-            parent.setEmployeesHeaderUrl(employeesDetailsService.getById(odp.getEmployeesId()).getHeadUrl());
-            /* 客户头像二次加工处理 */
-            parent.setCustomerHeaderUrl(customerDetailsService.getById(odp.getCustomerId()).getHeadUrl());
+
+            EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
+            CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
+            if (CommonUtils.isNotEmpty(ed)){
+                /* 保洁员头像二次加工处理 */
+                parent.setEmployeesHeaderUrl(ed.getHeadUrl());
+                /* 保洁员地址二次加工 */
+                parent.setAddressEmployees(ed.getAddress2()+ed.getAddress3()+ed.getAddress4());
+                parent.setLatEmployees(new Float(ed.getLat()));
+                parent.setLngEmployees(new Float(ed.getLng()));
+            }
+            if (CommonUtils.isNotEmpty(cd)){
+                /* 客户头像二次加工处理 */
+                parent.setCustomerHeaderUrl(cd.getHeadUrl());
+            }
+
             return R.ok(parent);
         }
 
@@ -788,10 +800,21 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
             List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             parent.setJobs(jobs);
-            /* 保洁员头像二次加工处理 */
-            parent.setEmployeesHeaderUrl(employeesDetailsService.getById(odp.getEmployeesId()).getHeadUrl());
-            /* 客户头像二次加工处理 */
-            parent.setCustomerHeaderUrl(customerDetailsService.getById(odp.getCustomerId()).getHeadUrl());
+            EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
+            CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
+            if (CommonUtils.isNotEmpty(ed)){
+                /* 保洁员头像二次加工处理 */
+                parent.setEmployeesHeaderUrl(ed.getHeadUrl());
+                /* 保洁员地址二次加工 */
+                parent.setAddressEmployees(ed.getAddress2()+ed.getAddress3()+ed.getAddress4());
+                parent.setLatEmployees(new Float(ed.getLat()));
+                parent.setLngEmployees(new Float(ed.getLng()));
+            }
+            if (CommonUtils.isNotEmpty(cd)){
+                /* 客户头像二次加工处理 */
+                parent.setCustomerHeaderUrl(cd.getHeadUrl());
+            }
+
             return R.ok(odp);
         }
         return R.failed(null, "訂單不存在");
