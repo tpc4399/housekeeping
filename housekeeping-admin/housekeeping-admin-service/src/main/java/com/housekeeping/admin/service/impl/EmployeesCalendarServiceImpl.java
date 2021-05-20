@@ -1000,6 +1000,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     public List<FreeDateTimeDTO> getCalendarByDateSlot2(GetCalendarByDateSlotDTO dto) {
+        List<FreeDateTimeDTO> freeDateTimeDTOS = new ArrayList<>();
 
         /* 先得到三大map */
         SortListUtil<TimeSlotPOJO> sort = new SortListUtil<>();
@@ -1010,7 +1011,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         qw.eq("employees_id", dto.getId());
         List<EmployeesCalendar> employeesCalendarList = this.list(qw);
         if (CommonUtils.isEmpty(employeesCalendarList)){
-            return null;
+            return freeDateTimeDTOS;
         }
 
         employeesCalendarList.forEach(ec -> {
@@ -1042,7 +1043,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         });
         /* 先得到三大map */
 
-        List<FreeDateTimeDTO> freeDateTimeDTOS = new ArrayList<>();
 
         LocalDate start = dto.getDateSlot().getStart();
         LocalDate end = dto.getDateSlot().getEnd();
