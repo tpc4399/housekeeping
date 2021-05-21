@@ -204,6 +204,7 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     @Override
     public R cusPage(Page page, PageOfManagerDetailsDTO pageOfEmployeesDetailsDTO, String type) {
         QueryWrapper  queryWrapper = new QueryWrapper();
+        queryWrapper.orderByDesc("id");
         if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getId())){
             queryWrapper.eq("id", pageOfEmployeesDetailsDTO.getId());
         }

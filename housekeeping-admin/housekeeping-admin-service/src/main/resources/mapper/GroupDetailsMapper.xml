@@ -52,6 +52,7 @@
                 and company_id =  #{companyId}
             </if>
         </where>
+        order by id DESC
     </select>
 
     <select id="getAllGroups" resultType="com.housekeeping.admin.vo.GroupDetailsVo">

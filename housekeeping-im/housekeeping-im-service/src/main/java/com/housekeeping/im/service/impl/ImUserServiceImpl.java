@@ -166,6 +166,12 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
 
         List<ImChatGroup> imChatGroups = new ArrayList<>();
 
+        //客户端群组信息
+        if(byId.getDeptId().equals(3)){
+            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+            imChatGroups.addAll(chatGroups);
+        }
+
         //员工的群组信息
         if(byId.getDeptId().equals(5)){
             List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());

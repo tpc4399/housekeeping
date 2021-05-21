@@ -42,7 +42,6 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             return R.ok(null);
         }
         QueryWrapper<ImMessage> wrapper = new QueryWrapper<>();
-        wrapper.orderByDesc("id");
         System.out.println(FRIEND);
         if(FRIEND.equals(chatType)){
             wrapper.and(wrapper1 -> wrapper1.eq("to_id", chatId)

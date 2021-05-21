@@ -162,6 +162,7 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
     public R getGroupData(Page page,Integer companyId, Integer id,String groupName) {
         QueryWrapper<GroupDetails> qw = new QueryWrapper<>();
         qw.eq("company_id",companyId);
+        qw.orderByDesc("id");
         List<GroupDetails> list = this.list(qw);
         if(CollectionUtils.isEmpty(list)){
             return R.ok(null);
