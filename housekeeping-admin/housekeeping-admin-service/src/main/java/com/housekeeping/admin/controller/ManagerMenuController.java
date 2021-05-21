@@ -29,8 +29,8 @@ public class ManagerMenuController {
         return managerMenuService.updateManagerMenu(dto);
     }
 
-    @Access({RolesEnum.USER_COMPANY})
-    @ApiOperation("【公司】获取经理权限")
+    @Access({RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】获取经理权限")
     @GetMapping
     public R getManagerMenu(Integer managerId){
         return managerMenuService.getManagerMenu(managerId);
