@@ -1010,9 +1010,6 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         QueryWrapper qw = new QueryWrapper();
         qw.eq("employees_id", dto.getId());
         List<EmployeesCalendar> employeesCalendarList = this.list(qw);
-        if (CommonUtils.isEmpty(employeesCalendarList)){
-            return freeDateTimeDTOS;
-        }
 
         employeesCalendarList.forEach(ec -> {
             TimeSlotPOJO pojo = new TimeSlotPOJO();
