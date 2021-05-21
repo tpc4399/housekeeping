@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         }
                         //在保存後台管理員詳情信息
                         CompanyDetails companyDetails = new CompanyDetails();
-//                        companyDetails.setCompanyName(registerDTO.getName());
+                        companyDetails.setNoCertifiedCompany(dto.getName());
                         companyDetails.setUserId(maxUserId);
                         companyDetails.setIsValidate(false);
                         companyDetails.setLastReviserId(TokenUtils.getCurrentUserId());

@@ -247,6 +247,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Override
     public R cusPage(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO, String type) {
         QueryWrapper  queryWrapper = new QueryWrapper();
+        queryWrapper.orderByDesc("id");
 //        if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getNumber())){
 //            queryWrapper.like("number", pageOfEmployeesDetailsDTO.getNumber());
 //        }
@@ -690,7 +691,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Override
     public R cusPage5(Page page, PageOfEmployeesDetailsDTO pageOfEmployeesDetailsDTO) {
         QueryWrapper<EmployeesDetails> queryWrapper = new QueryWrapper<>();
-
+        queryWrapper.orderByDesc("id");
         if (CommonUtils.isNotEmpty(pageOfEmployeesDetailsDTO.getId())){
             queryWrapper.eq("id", pageOfEmployeesDetailsDTO.getId());
         }
