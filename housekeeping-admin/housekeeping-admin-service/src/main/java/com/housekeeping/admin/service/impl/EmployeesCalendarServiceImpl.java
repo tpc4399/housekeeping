@@ -502,7 +502,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     @Override
     public R getFreeTimeByMonth(GetFreeTimeByMonthDTO dto) {
         if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
-        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份錯誤");
+        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份不能选择以前");
 
         LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
         LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天

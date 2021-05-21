@@ -4,11 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.UpdateManagerMenuDTO;
 import com.housekeeping.admin.entity.ManagerMenu;
+import com.housekeeping.admin.entity.SysMenu;
 import com.housekeeping.admin.mapper.ManagerMenuMapper;
 import com.housekeeping.admin.service.IManagerMenuService;
+import com.housekeeping.admin.service.ISysMenuService;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +24,10 @@ import java.util.stream.Collectors;
 public class ManagerMenuServiceImpl
         extends ServiceImpl<ManagerMenuMapper, ManagerMenu>
         implements IManagerMenuService {
+
+    @Resource
+    private ISysMenuService sysMenuService;
+
     @Override
     public R updateManagerMenu(UpdateManagerMenuDTO dto) {
         Integer managerId = dto.getManagerId();
@@ -48,6 +55,7 @@ public class ManagerMenuServiceImpl
         List<Integer> menuIds = managerMenus.stream().map(x -> {
             return x.getMenuId();
         }).collect(Collectors.toList());
-        return R.ok(menuIds, "獲取經理菜單成功");
+        List<SysMenu> sysMenuList = sysMenuService.listByIds(menuIds);
+        return R.ok(sysMenuList, "獲取經理菜單成功");
     }
 }
