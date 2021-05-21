@@ -42,6 +42,7 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             return R.ok(null);
         }
         QueryWrapper<ImMessage> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("id");
         System.out.println(FRIEND);
         if(FRIEND.equals(chatType)){
             wrapper.and(wrapper1 -> wrapper1.eq("to_id", chatId)
@@ -74,7 +75,7 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }
-        Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
+        Page pages = PageUtils.getPages((int)page.getCurrent(), 50, messageList);
         return R.ok(pages);
     }
 
