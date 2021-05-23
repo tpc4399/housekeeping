@@ -66,9 +66,11 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         if (resCollections.size() != 0){
             return R.failed(resCollections, "服務時間不合理");
         }
-
         //TODO 选中的工作内容标签
         List<Integer> jobIds = dto.getJobs();
+        if(CommonUtils.isEmpty(jobIds)){
+            return R.failed("請選擇工作內容!");
+        }
 
         //TODO 服务时间二象化展开
         Map<LocalDate, List<PeriodOfTime>> listMap =  timeExpansion(dto.getRulesWeekVo());
@@ -178,14 +180,18 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             String jobs = list3.get(i).getJobIds();
             List<Skill> skills = new ArrayList<>();
             List<String> strings = Arrays.asList(jobs.split(" "));
-            for (int x = 0; x < strings.size(); x++) {
-                Skill skill = new Skill();
-                int id = Integer.parseInt(strings.get(x));
-                skill.setJobId(id);
-                skill.setContent(sysJobContendService.getById(id).getContend());
-                skills.add(skill);
+            if(CommonUtils.isNotEmpty(strings)){
+                for (int x = 0; x < strings.size(); x++) {
+                    Skill skill = new Skill();
+                    int id = Integer.parseInt(strings.get(x));
+                    skill.setJobId(id);
+                    skill.setContent(sysJobContendService.getById(id).getContend());
+                    skills.add(skill);
+                }
+                demandOrderDTO.setWorkContent(skills);
+            }else {
+                demandOrderDTO.setWorkContent(null);
             }
-            demandOrderDTO.setWorkContent(skills);
 
             //需求单工作类型
             String type = list3.get(i).getParentId();
@@ -317,10 +323,16 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
 
     @Override
     public R removedCusId(Integer id) {
-        demandOrderService.removeById(id);
+
         QueryWrapper<DemandOrderDetails> qw = new QueryWrapper<>();
         qw.eq("demand_order_id",id);
         demandOrderDetailsService.remove(qw);
+
+        QueryWrapper<DemandEmployees> qw2 = new QueryWrapper<>();
+        qw2.eq("demand_order_id",id);
+        demandEmployeesService.remove(qw2);
+
+        demandOrderService.removeById(id);
         return R.ok("刪除成功!");
     }
 
