@@ -169,7 +169,7 @@ public class EmployeesCalendarController {
         return employeesCalendarService.getFreeTimeByMonth(dto);
     }
 
-    @ApiOperation("根据年份月份和员工_id 獲取員工日期段內的空闲时间。以详细列举形式返回2")
+    @ApiOperation("根据年份月份和员工_id 获取无时间日期")
     @PostMapping("/getAbsenceDaysByMonth")
     public R getAbsenceDaysByMonth(@RequestBody GetFreeTimeByMonthDTO dto){
         return employeesCalendarService.getAbsenceDaysByMonth(dto);
