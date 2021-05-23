@@ -72,6 +72,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private ISysJobContendService sysJobContendService;
     @Resource
+    private IDemandEmployeesService demandEmployService;
+    @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -466,6 +468,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         employeesCalendarService.remove(qw); //删除依赖5
         employeesPromotionService.remove(qw); //删除依赖6
         employeesContractService.remove(qw);//刪除依賴7
+        demandEmployService.remove(qw);
         //……
         this.removeById(employeesId);
         return R.ok("删除成功");
