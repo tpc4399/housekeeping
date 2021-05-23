@@ -943,6 +943,46 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return R.failed(null, "訂單不存在");
     }
 
+    @Override
+    public R queryByAdmin(Integer type) {
+        /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.select("id");
+        List<Integer> empIds = employeesDetailsService.listObjs(qw);
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
+        if (type.equals(0)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+            res.addAll(this.order2ByEmployeesAll(empIds));
+            res.addAll(this.order3ByEmployeesAll(empIds));
+            res.addAll(this.order4ByEmployeesAll(empIds));
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }else if (type.equals(1)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+        }else if (type.equals(2)){
+            res.addAll(this.order2ByEmployeesAll(empIds));
+        }else if (type.equals(3)){
+            res.addAll(this.order3ByEmployeesAll(empIds));
+        }else if (type.equals(4)){
+            res.addAll(this.order4ByEmployeesAll(empIds));
+        }else if (type.equals(5)){
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();

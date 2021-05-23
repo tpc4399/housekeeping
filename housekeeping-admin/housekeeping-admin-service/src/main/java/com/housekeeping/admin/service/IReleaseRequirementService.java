@@ -29,4 +29,6 @@ public interface IReleaseRequirementService {
     R getCusById(Integer id);
 
     public Integer getStatus(DemandOrder demandOrder);
+
+    R getAllRequirementsByAdmin(DemandDto demandDto, Page page);
 }

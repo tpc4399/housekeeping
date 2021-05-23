@@ -111,4 +111,6 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     Integer getState(String number);
     /* 根据number获取订单详情 */
     R getOrder(String number);
+
+    R queryByAdmin(Integer type);
 }

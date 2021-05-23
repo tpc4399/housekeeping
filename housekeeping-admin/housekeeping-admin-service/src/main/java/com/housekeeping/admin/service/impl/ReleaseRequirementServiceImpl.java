@@ -576,4 +576,74 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         }
         return demandStatus;
     }
+
+    @Override
+    public R getAllRequirementsByAdmin(DemandDto demandDto, Page page) {
+        List<DemandOrder> list3 = demandOrderMapper.cusPage(demandDto);
+        if(CommonUtils.isEmpty(list3)){
+            return R.ok(null);
+        }
+
+        ArrayList<DemandOrderDTO> list = new ArrayList<>();
+        for (int i = 0; i < list3.size(); i++) {
+            DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+            //需求单工作内容
+            String jobs = list3.get(i).getJobIds();
+            List<Skill> skills = new ArrayList<>();
+            List<String> strings = Arrays.asList(jobs.split(" "));
+            for (int x = 0; x < strings.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysJobContendService.getById(id).getContend());
+                skills.add(skill);
+            }
+            demandOrderDTO.setWorkContent(skills);
+
+            //需求单工作类型
+            String type = list3.get(i).getParentId();
+            List<Skill> types = new ArrayList<>();
+            List<String> strings1 = Arrays.asList(type.split(" "));
+            for (int x = 0; x < strings1.size(); x++) {
+                Skill skill = new Skill();
+                int id = Integer.parseInt(strings1.get(x));
+                skill.setJobId(id);
+                skill.setContent(sysIndexService.getById(id).getName());
+                types.add(skill);
+            }
+            demandOrderDTO.setWorkType(types);
+
+            //需求单地址
+            demandOrderDTO.setCustomerName(list3.get(i).getCustomerName());
+            demandOrderDTO.setAddress(list3.get(i).getAddress());
+            demandOrderDTO.setLat(list3.get(i).getLat());
+            demandOrderDTO.setLng(list3.get(i).getLng());
+            demandOrderDTO.setPhonePrefix(list3.get(i).getPhonePrefix());
+            demandOrderDTO.setPhone(list3.get(i).getPhone());
+
+            demandOrderDTO.setCustomerId(list3.get(i).getCustomerId());
+            demandOrderDTO.setCode(list3.get(i).getCode());
+            demandOrderDTO.setEndDate(list3.get(i).getEndDate());
+            demandOrderDTO.setEstimatedSalary(list3.get(i).getEstimatedSalary());
+            demandOrderDTO.setHousingArea(list3.get(i).getHousingArea());
+            demandOrderDTO.setId(list3.get(i).getId());
+            demandOrderDTO.setJobIds(list3.get(i).getJobIds());
+            demandOrderDTO.setLiveAtHome(list3.get(i).getLiveAtHome());
+            demandOrderDTO.setNote(list3.get(i).getNote());
+            demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
+            demandOrderDTO.setStartDate(list3.get(i).getStartDate());
+            demandOrderDTO.setWeek(list3.get(i).getWeek());
+            demandOrderDTO.setParentId(list3.get(i).getParentId());
+            demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
+            list.add(demandOrderDTO);
+        }
+        for (int i = 0; i < list.size(); i++) {
+            Integer demandId = list.get(i).getId();
+            List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
+            list.get(i).setTimeSlots(timeSlots);
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
+        return R.ok(pages);
+    }
 }

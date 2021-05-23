@@ -666,7 +666,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Override
     public R getAllEmployeesByAdmin(Page page, PageOfEmployeesDTO pageOfEmployeesDTO) {
-        List<EmployeesVo> allEmployeesByAdmin = baseMapper.getAllEmployeesByAdmin(page,pageOfEmployeesDTO);
+        List<EmployeesVo> allEmployeesByAdmin = baseMapper.getAllEmployeesByAdmin(pageOfEmployeesDTO);
         if(CommonUtils.isEmpty(allEmployeesByAdmin)){
             return R.ok(null);
         }

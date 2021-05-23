@@ -58,6 +58,13 @@ public class ReleaseRequirementsController {
         return releaseRequirementService.getAllRequirementsByCompany(demandDto,page);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/getAllRequirementsByAdmin")
+    @ApiOperation("【管理端】获取所有需求")
+    public R getAllRequirementsByAdmin(DemandDto demandDto,Page page){
+        return releaseRequirementService.getAllRequirementsByAdmin(demandDto,page);
+    }
+
     @Access({RolesEnum.USER_CUSTOMER})
     @GetMapping("/getAllRequirements")
     @ApiOperation("【家庭端】获取所有已发布的需求")
