@@ -23,7 +23,4 @@ public class SysOrderController {
     public R paymentSuccessCallbackInterface(){
         return R.ok();
     }
-
-
-
 }

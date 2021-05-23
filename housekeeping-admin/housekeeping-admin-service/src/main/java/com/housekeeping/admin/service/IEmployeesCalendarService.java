@@ -46,6 +46,9 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     /* 获取这个月的空闲时间表,自动补全 */
     R getFreeTimeByMonth(GetFreeTimeByMonthDTO dto);
 
+    /* 获取这个月的无法出勤的日子,自动补全 */
+    R getAbsenceDaysByMonth(GetFreeTimeByMonthDTO dto);
+
     /* 预约钟点工 */
     R makeAnAppointment(MakeAnAppointmentDTO dto);
 

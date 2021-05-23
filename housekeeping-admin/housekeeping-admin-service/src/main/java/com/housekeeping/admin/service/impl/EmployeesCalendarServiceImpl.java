@@ -526,6 +526,31 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
+    public R getAbsenceDaysByMonth(GetFreeTimeByMonthDTO dto) {
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份不能选择以前");
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+        List<FreeDateTimeDTO> freeTime =  getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(startDate, endDate), dto.getEmployeesId()));
+        List<LocalDate> list = freeTime.stream().map(x -> {
+            if (!x.getHasTime()) return x.getDate();
+            else return null;
+        }).collect(Collectors.toList());
+        list.removeIf(x -> x == null);
+        return R.ok(list,"獲取成功");
+    }
+
+    @Override
     public R makeAnAppointment(MakeAnAppointmentDTO dto) {
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
