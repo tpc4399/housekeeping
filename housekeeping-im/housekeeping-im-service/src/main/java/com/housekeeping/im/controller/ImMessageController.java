@@ -3,6 +3,7 @@ package com.housekeeping.im.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.im.entity.ImChatGroup;
 import com.housekeeping.im.service.IImMessageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,17 @@ public class ImMessageController {
     public R listMessage(String chatId, String fromId, String chatType, Page page) {
        return iImMessageService.listMessage(chatId,fromId,chatType,page);
     }
+
+    /**
+     * 获取所有群组
+     */
+    @ApiOperation("【管理员】获取所有群组")
+    @ResponseBody
+    @GetMapping("listGroup")
+    public R listGroup(ImChatGroup chatGroup,Page page) {
+        return iImMessageService.listGroup(chatGroup,page);
+    }
+
 
 
     @ApiOperation("【管理员】获取所有聊天记录")

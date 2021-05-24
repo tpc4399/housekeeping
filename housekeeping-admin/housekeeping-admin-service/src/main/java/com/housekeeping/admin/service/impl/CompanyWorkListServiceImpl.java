@@ -1,6 +1,7 @@
 package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.MakeAnAppointmentDTO;
 import com.housekeeping.admin.entity.*;
@@ -12,10 +13,7 @@ import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.*;
-import com.housekeeping.common.utils.CommonConstants;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.TokenUtils;
+import com.housekeeping.common.utils.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -461,9 +459,14 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         odp.setHOfDay(h);
 
         /* 原价格计算 */
-        BigDecimal pdb = this.getPrice(wds,byId.getDemandOrderId(), byId.getEmployeesId());
-        odp.setPriceBeforeDiscount(pdb);
-        odp.setPriceAfterDiscount(pdb);
+        if(CommonUtils.isNotEmpty(byId.getPrice())){
+            odp.setPriceBeforeDiscount(BigDecimal.valueOf(byId.getPrice()));
+            odp.setPriceAfterDiscount(BigDecimal.valueOf(byId.getPrice()));
+        }else {
+            BigDecimal pdb = this.getPrice(wds,byId.getDemandOrderId(), byId.getEmployeesId());
+            odp.setPriceBeforeDiscount(pdb);
+            odp.setPriceAfterDiscount(pdb);
+        }
 
         /* 订单状态 */
         odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态
@@ -567,5 +570,33 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         }else {
             return 1;
         }
+    }
+
+    @Override
+    public R getAllQuotationByAdmin(Page page) {
+        List<DemandEmployees> list = demandEmployeesService.list();
+        List<QuotationVo> collect = list.stream().map(x -> {
+            QuotationVo quotationVo = new QuotationVo();
+            quotationVo.setId(x.getId());
+            DemandOrder byId1 = demandOrderService.getById(x.getDemandOrderId());
+            byId1.setStatus(releaseRequirementService.getStatus(byId1));
+            quotationVo.setDemandOrder(byId1);
+            quotationVo.setEmployeesDetails(employeesDetailsService.getById(x.getEmployeesId()));
+
+            List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(x.getDemandOrderId(), x.getEmployeesId());
+            quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+
+            quotationVo.setPrice(BigDecimal.valueOf(x.getPrice()));
+
+            Integer status = this.getStatus(x);
+            quotationVo.setStatus(status);
+
+            return quotationVo;
+        }).collect(Collectors.toList());
+        if(CommonUtils.isEmpty(collect)){
+            return R.ok(null);
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), collect);
+        return R.ok(pages);
     }
 }

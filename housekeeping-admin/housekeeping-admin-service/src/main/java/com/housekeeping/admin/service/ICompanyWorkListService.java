@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.entity.CompanyWorkList;
 import com.housekeeping.admin.entity.DemandEmployees;
@@ -45,4 +46,6 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     R selectSuitableEmployees(Integer employeesId, Integer demandOrderId);
 
     public Integer getStatus(DemandEmployees demandEmployees);
+
+    R getAllQuotationByAdmin(Page page);
 }

@@ -56,5 +56,6 @@
                 and demand_order.estimated_salary BETWEEN #{query.lowPrice} AND #{query.highPrice}
             </if>
         </where>
+        order by demand_order.id DESC
     </select>
 </mapper>

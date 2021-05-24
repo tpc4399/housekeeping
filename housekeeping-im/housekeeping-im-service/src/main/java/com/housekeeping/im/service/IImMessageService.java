@@ -3,6 +3,7 @@ package com.housekeeping.im.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.common.utils.R;
+import com.housekeeping.im.entity.ImChatGroup;
 import com.housekeeping.im.entity.ImMessage;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface IImMessageService extends IService<ImMessage> {
 
 
     R getAllMessage(Page page);
+
+    R listGroup(ImChatGroup chatGroup,Page page);
 }

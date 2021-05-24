@@ -17,7 +17,6 @@ import com.housekeeping.im.service.IImUserService;
 import com.housekeeping.im.tio.StartTioRunner;
 import com.housekeeping.im.tio.TioServerConfig;
 import com.housekeeping.im.tio.WsOnlineContext;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
