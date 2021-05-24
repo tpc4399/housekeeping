@@ -70,6 +70,7 @@ housekeeping:
       - /api/admin/employeesContract/getFreeTimeByDateSlot
       - /api/admin/employeesCalendar/getFreeTimeByDateSlot2
       - /api/admin/employeesCalendar/getFreeTimeByMonth
+      - /api/admin/employeesCalendar/getAbsenceDaysByMonth
       - /api/admin/employeesCalendar/tags
       - /api/admin/sysJobContend/getAll
       - /api/admin/employeesDetails/getAllEmpByCompanyId
