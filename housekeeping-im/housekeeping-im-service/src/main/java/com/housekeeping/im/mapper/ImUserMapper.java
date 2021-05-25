@@ -2,9 +2,7 @@ package com.housekeeping.im.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.housekeeping.im.entity.ImChatGroup;
-import com.housekeeping.im.entity.ImUser;
-import com.housekeeping.im.entity.ImUserInfo;
+import com.housekeeping.im.entity.*;
 import org.omg.CORBA.INTERNAL;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -60,4 +58,10 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     Integer getMangerId(int parseInt);
 
     List<Integer> getAllEmp(Integer managerId);
+
+    CompanyDetails getCompanyByUser(String toId);
+
+    EmployeesDetails getEmployeesByUser(String toId);
+
+    CustomerDetails getCustomerByUser(String toId);
 }

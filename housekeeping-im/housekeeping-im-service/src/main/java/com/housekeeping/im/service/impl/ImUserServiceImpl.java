@@ -2,6 +2,7 @@ package com.housekeeping.im.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,16 +73,25 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     @Override
     public R createGroup(String toId) {
 
+        Integer empId = baseMapper.getEmpId(Integer.parseInt(toId));
+
         String currentUserId = TokenUtils.getCurrentUserId().toString();
+        CustomerDetails customer = baseMapper.getCustomerByUser(currentUserId);
+        EmployeesDetails employeesByUser = baseMapper.getEmployeesByUser(empId.toString());
         ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setEmployeesName(employeesByUser.getName());
+        imChatGroup.setAvatarEmployees(employeesByUser.getHeadUrl());
+        imChatGroup.setCustomerName(customer.getName());
+        imChatGroup.setAvatarCustomer(customer.getHeadUrl());
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
         imChatGroup.setCreateDate(LocalDateTime.now());
+
         Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
         Integer userId = baseMapper.getUserIdByCom(companyId);
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
+
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
-        Integer empId = baseMapper.getEmpId(Integer.parseInt(toId));
         Set<String> ids = new HashSet<>();
 
         //群聊添加客户
@@ -212,7 +222,13 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     public R createGroupByCompany(String toId) {
 
         String currentUserId = TokenUtils.getCurrentUserId().toString();
+        CompanyDetails companyDetails = baseMapper.getCompanyByUser(toId);
+        CustomerDetails customer = baseMapper.getCustomerByUser(currentUserId);
         ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setAvatarCustomer(customer.getHeadUrl());
+        imChatGroup.setAvatarEmployees(companyDetails.getLogoUrl());
+        imChatGroup.setCustomerName(customer.getName());
+        imChatGroup.setEmployeesName(companyDetails.getCompanyName());
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
         imChatGroup.setCreateDate(LocalDateTime.now());
         Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
@@ -236,17 +252,22 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     @Override
     public R createGroupByCus(String demandId, String empId) {
 
+        Integer cusId = baseMapper.getCusIdByDemand(demandId);
+        Integer userId = baseMapper.getUSerIdByEmpId(empId);
+
+        CustomerDetails customer = baseMapper.getCustomerByUser(cusId.toString());
+        EmployeesDetails employees = baseMapper.getEmployeesByUser(empId);
         String currentUserId = TokenUtils.getCurrentUserId().toString();
         ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setCustomerName(customer.getName());
+        imChatGroup.setAvatarCustomer(customer.getHeadUrl());
+        imChatGroup.setEmployeesName(employees.getName());
+        imChatGroup.setAvatarEmployees(employees.getHeadUrl());
         imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
         imChatGroup.setCreateDate(LocalDateTime.now());
         Integer companyId = baseMapper.getCompanyId(Integer.parseInt(empId));
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
-
-        Integer cusId = baseMapper.getCusIdByDemand(demandId);
-
-        Integer userId = baseMapper.getUSerIdByEmpId(empId);
 
         ArrayList<String> strings = new ArrayList<>();
         strings.add(currentUserId);
