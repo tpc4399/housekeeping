@@ -29,8 +29,16 @@ public class ImChatGroup extends Model<ImChatGroup> implements Serializable {
     /**
      * 群头像
      */
-    private String avatar;
+    private String avatarCustomer;
 
+    /**
+     * 群头像
+     */
+    private String avatarEmployees;
+
+    private String customerName;
+
+    private String employeesName;
     /**
      * 群主
      */

@@ -4,16 +4,19 @@ package com.housekeeping.im.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.PageUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.im.common.utils.ChatUtils;
+import com.housekeeping.im.entity.ImChatGroup;
 import com.housekeeping.im.entity.ImMessage;
 import com.housekeeping.im.entity.ImUser;
 import com.housekeeping.im.entity.Message;
 import com.housekeeping.im.mapper.ImMessageMapper;
+import com.housekeeping.im.service.IImChatGroupService;
 import com.housekeeping.im.service.IImMessageService;
 import com.housekeeping.im.service.IImUserService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +37,9 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
     @Resource
     @Qualifier(value = "imUserService")
     private IImUserService imUserService;
-
+    @Resource
+    @Qualifier(value = "imChatGroupServiceImpl")
+    private IImChatGroupService imChatGroupService;
 
     @Override
     public R listMessage(String chatId, String fromId, String chatType,Page page) {
@@ -133,6 +138,11 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
         }
         Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), messageList);
         return R.ok(pages);
+    }
+
+    @Override
+    public R listGroup(ImChatGroup chatGroup,Page page) {
+        return R.ok(imChatGroupService.page(page, Wrappers.query(chatGroup)));
     }
 
 

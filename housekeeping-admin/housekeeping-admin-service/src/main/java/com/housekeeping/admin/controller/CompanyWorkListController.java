@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.housekeeping.admin.service.ICompanyWorkListService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
@@ -116,6 +117,13 @@ public class CompanyWorkListController {
     @GetMapping("/getQuotationById")
     public R cusGetByid(@RequestParam Integer quotationId){
         return R.ok(companyWorkListService.cusGetById(quotationId));
+    }
+
+    @Access(RolesEnum.SYSTEM_ADMIN)
+    @ApiOperation("【管理员】获取所有报价单")
+    @GetMapping("/getAllQuotationByAdmin")
+    public R getAllQuotationByAdmin(Page page){
+        return companyWorkListService.getAllQuotationByAdmin(page);
     }
 
 }

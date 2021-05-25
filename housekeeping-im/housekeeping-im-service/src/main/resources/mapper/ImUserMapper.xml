@@ -19,7 +19,12 @@
         SELECT
             id,
             name,
-            avatar
+            avatar_customer,
+            avatar_employees,
+            customer_name,
+            employees_name,
+            master,
+            create_date
         FROM im_chat_group
         WHERE id IN (SELECT cg.chat_group_id
                      FROM im_chat_group_user cg
@@ -98,11 +103,11 @@
 
     <select id="getCusIdByDemand" resultType="java.lang.Integer">
         SELECT
-        customer_id
+        user_id
         FROM
-        demand_order
+        customer_details
         WHERE
-        id = #{demandId}
+        id = (SELECT customer_id FROM demand_order WHERE id = #{demandId})
     </select>
 
     <select id="getUSerIdByEmpId" resultType="java.lang.Integer">
@@ -140,4 +145,33 @@
         WHERE
         group_id in (SELECT DISTINCT group_id FROM group_manager AS gm WHERE gm.manager_id = #{managerId})
     </select>
+
+    <select id="getCompanyByUser" resultType="com.housekeeping.im.entity.CompanyDetails">
+        SELECT
+        *
+        FROM
+        company_details
+        WHERE
+        user_id = #{toId}
+    </select>
+
+    <select id="getEmployeesByUser" resultType="com.housekeeping.im.entity.EmployeesDetails">
+        SELECT
+        *
+        FROM
+        employees_details
+        WHERE
+        user_id = #{toId}
+    </select>
+
+    <select id="getCustomerByUser" resultType="com.housekeeping.im.entity.CustomerDetails">
+        SELECT
+        *
+        FROM
+        customer_details
+        WHERE
+        user_id = #{toId}
+    </select>
+
+
 </mapper>
