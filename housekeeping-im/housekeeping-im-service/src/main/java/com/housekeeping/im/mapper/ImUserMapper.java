@@ -19,7 +19,7 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
      * @param userId id
      * @return List<ImGroup>
      */
-    List<ImChatGroup> getUserGroups(String userId);
+    List<ImChatGroupVo> getUserGroups(String userId);
 
 
     /**
@@ -64,4 +64,8 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     EmployeesDetails getEmployeesByUser(String toId);
 
     CustomerDetails getCustomerByUser(String toId);
+
+    ImMessage getMessageByChatId(Integer id);
+
+    List<ImChatGroupVo> getAllGroupByCompany(Integer companyId);
 }

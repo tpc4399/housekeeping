@@ -58,7 +58,7 @@ public class TioWsMsgHandler implements IWsMsgHandler {
             // 在线用户绑定到上下文 用于发送在线消息
             WsOnlineContext.bindUser(userId, channelContext);
             //绑定群组
-            List<ImChatGroup> groups = imUserService.getChatGroups(userId);
+            List<ImChatGroupVo> groups = imUserService.getChatGroups(userId);
             for (ImChatGroup group : groups) {
                 Tio.bindGroup(channelContext, group.getId().toString());
             }

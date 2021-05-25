@@ -2,7 +2,6 @@ package com.housekeeping.im.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +30,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Qualifier(value = "imUserService")
@@ -59,7 +59,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     private ImChatGroupUserServiceImpl imChatGroupUserService;
 
     @Override
-    public List<ImChatGroup> getChatGroups(String userId) {
+    public List<ImChatGroupVo> getChatGroups(String userId) {
         return baseMapper.getUserGroups(userId);
     }
 
@@ -173,24 +173,39 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         user.setPassword(null);
         objectMap.put("me", user);
 
-        List<ImChatGroup> imChatGroups = new ArrayList<>();
+        List<ImChatGroupVo> imChatGroups = new ArrayList<>();
 
         //客户端群组信息
         if(byId.getDeptId().equals(3)){
-            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+            List<ImChatGroupVo> chatGroups = imUserService.getChatGroups(userId.toString());
+            chatGroups.stream().map(x->{
+                ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                x.setMessage(message);
+                return x;
+            }).collect(Collectors.toList());
             imChatGroups.addAll(chatGroups);
         }
 
         //员工的群组信息
         if(byId.getDeptId().equals(5)){
-            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+            List<ImChatGroupVo> chatGroups = imUserService.getChatGroups(userId.toString());
+            chatGroups.stream().map(x->{
+                ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                x.setMessage(message);
+                return x;
+            }).collect(Collectors.toList());
             imChatGroups.addAll(chatGroups);
         }
 
         //经理的群组信息
         if(byId.getDeptId().equals(4)){
 
-            List<ImChatGroup> chatGroups = imUserService.getChatGroups(userId.toString());
+            List<ImChatGroupVo> chatGroups = imUserService.getChatGroups(userId.toString());
+            chatGroups.stream().map(x->{
+                ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                x.setMessage(message);
+                return x;
+            }).collect(Collectors.toList());
 
             Integer managerId = baseMapper.getMangerId(Integer.parseInt(userId));
             List<Integer> empIds = baseMapper.getAllEmp(managerId);
@@ -199,7 +214,12 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
                 userIds.add(baseMapper.getUSerIdByEmpId(empIds.get(i).toString()).toString());
             }
             for (int i = 0; i < userIds.size(); i++) {
-                List<ImChatGroup> chatGroups1 = imUserService.getChatGroups(userIds.get(i).toString());
+                List<ImChatGroupVo> chatGroups1 = imUserService.getChatGroups(userIds.get(i).toString());
+                chatGroups1.stream().map(x->{
+                    ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                    x.setMessage(message);
+                    return x;
+                }).collect(Collectors.toList());
                 imChatGroups.addAll(chatGroups1);
             }
             imChatGroups.addAll(chatGroups);
@@ -208,12 +228,14 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         //公司的群组信息
         if(byId.getDeptId().equals(2)){
             Integer companyId = baseMapper.getCompanyIdByUser(Integer.parseInt(userId));
-            QueryWrapper<ImChatGroup> qw = new QueryWrapper<>();
-            qw.eq("company_id",companyId);
-            List<ImChatGroup> list = imChatGroupService.list(qw);
-            imChatGroups.addAll(list);
+            List<ImChatGroupVo> chatGroups =  baseMapper.getAllGroupByCompany(companyId);
+            chatGroups.stream().map(x->{
+                ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                x.setMessage(message);
+                return x;
+            }).collect(Collectors.toList());
+            imChatGroups.addAll(chatGroups);
         }
-
         objectMap.put("groups", imChatGroups);
         return R.ok(objectMap);
     }
