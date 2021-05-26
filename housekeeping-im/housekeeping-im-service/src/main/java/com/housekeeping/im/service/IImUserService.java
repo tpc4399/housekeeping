@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.im.entity.ImChatGroup;
+import com.housekeeping.im.entity.ImChatGroupVo;
 import com.housekeeping.im.entity.ImUser;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ public interface IImUserService extends IService<ImUser> {
      * @param userId 用户
      * @return 群List
      */
-    List<ImChatGroup> getChatGroups(String userId);
+    List<ImChatGroupVo> getChatGroups(String userId);
 
     /**
      * 获取群组的用户
@@ -37,4 +38,8 @@ public interface IImUserService extends IService<ImUser> {
     R createGroupByCus(String demandId, String empId);
 
     public String getHeadUrl(Integer userId,Integer deptId);
+
+    R removeGroup(Integer id);
+
+    R getChatGroupById(Integer empId);
 }

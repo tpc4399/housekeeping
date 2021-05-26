@@ -15,7 +15,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="lastReviserId" column="last_reviser_id"/>
     </resultMap>
-    <select id="getUserGroups" parameterType="string" resultType="com.housekeeping.im.entity.ImChatGroup">
+    <select id="getUserGroups" parameterType="string" resultType="com.housekeeping.im.entity.ImChatGroupVo">
         SELECT
             id,
             name,
@@ -29,6 +29,7 @@
         WHERE id IN (SELECT cg.chat_group_id
                      FROM im_chat_group_user cg
                      WHERE cg.user_id = #{userId})
+        and del_flag = '0'
     </select>
     <select id="getChatUserList" parameterType="string" resultType="com.housekeeping.im.entity.ImUserInfo">
        SELECT
@@ -171,6 +172,31 @@
         customer_details
         WHERE
         user_id = #{toId}
+    </select>
+
+    <select id="getMessageByChatId" resultType="com.housekeeping.im.entity.ImMessage">
+        SELECT
+        *
+        FROM
+        im_message
+        WHERE
+        to_id = #{id}
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <select id="getAllGroupByCompany" resultType="com.housekeeping.im.entity.ImChatGroupVo">
+        SELECT
+            id,
+            name,
+            avatar_customer,
+            avatar_employees,
+            customer_name,
+            employees_name,
+            master,
+            create_date
+        FROM im_chat_group
+        WHERE company_id = #{companyId}
     </select>
 
 

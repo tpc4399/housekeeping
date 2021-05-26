@@ -76,9 +76,12 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setFromid(imMessage.getFromId());
             message.setCid(String.valueOf(imMessage.getId()));
             message.setContent(imMessage.getContent());
-            message.setTimestamp(new Date().getTime());
+            message.setTimestamp(imMessage.getSendTime());
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
+        }
+        if(CommonUtils.isEmpty(messageList)){
+            return R.ok(null);
         }
         Page pages = PageUtils.getPages((int)page.getCurrent(), messageList.size(), messageList);
         return R.ok(pages);
@@ -132,7 +135,7 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setFromid(imMessage.getFromId());
             message.setCid(String.valueOf(imMessage.getId()));
             message.setContent(imMessage.getContent());
-            message.setTimestamp(new Date().getTime());
+            message.setTimestamp(imMessage.getSendTime());
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }

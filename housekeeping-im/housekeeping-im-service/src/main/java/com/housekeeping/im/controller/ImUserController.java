@@ -36,6 +36,16 @@ public class ImUserController {
         return imUserService.init();
     }
 
+    /**
+     * 用户信息初始化
+     * @return json
+     */
+    @ApiOperation("根据员工id获取聊天组")
+    @GetMapping("/getChatGroupById")
+    public R getChatGroupById(Integer empId) {
+        return imUserService.getChatGroupById(empId);
+    }
+
 
     /**
      * 获取群组的用户
@@ -79,6 +89,12 @@ public class ImUserController {
     public R createGroupByCus(@RequestParam String demandId,
                               @RequestParam String empId){
         return imUserService.createGroupByCus(demandId,empId);
+    }
+
+    @GetMapping("/removeGroup")
+    @ApiOperation("临时删除该群组")
+    public R removeGroup(Integer id){
+        return imUserService.removeGroup(id);
     }
 
 }
