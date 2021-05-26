@@ -66,7 +66,7 @@ public class Serial extends Model<Serial> {
     private LocalDateTime evaluationDateTime;   //评价时间
 
     public Serial(OrderDetailsPOJO pojo) {
-        this.serialNumber = serialNumber;
+        this.serialNumber = pojo.getSerialNumber();
         this.consumptionItems = pojo.getConsumptionItems();
         this.employeesId = pojo.getEmployeesId();
         this.name1 = pojo.getName1();
