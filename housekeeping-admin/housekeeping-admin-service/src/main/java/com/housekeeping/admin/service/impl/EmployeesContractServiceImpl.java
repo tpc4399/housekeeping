@@ -75,6 +75,8 @@ public class EmployeesContractServiceImpl
     private IOrderDetailsService orderDetailsService;
     @Resource
     private ICompanyDetailsService companyDetailsService;
+    @Resource
+    private ISerialNumberService serialNumberService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -352,6 +354,10 @@ public class EmployeesContractServiceImpl
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number.toString());
+
+        /* 流水号 */
+        String serialNumber = serialNumberService.generateSerialNumber(number);
+        odp.setSerialNumber(serialNumber);
 
         /* 消费项目 */
         odp.setConsumptionItems("2");

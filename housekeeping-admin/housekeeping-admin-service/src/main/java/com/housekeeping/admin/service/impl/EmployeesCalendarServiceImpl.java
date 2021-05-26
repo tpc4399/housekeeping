@@ -60,6 +60,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private RedisTemplate redisTemplate;
     @Resource
     private ISysJobContendService sysJobContendService;
+    @Resource
+    private ISerialNumberService serialNumberService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -561,6 +563,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number.toString());
+
+        /* 流水号 */
+        String serialNumber = serialNumberService.generateSerialNumber(number);
+        odp.setSerialNumber(serialNumber);
 
         /* 消费项目 */
         odp.setConsumptionItems("1");

@@ -66,6 +66,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private ISysJobContendService jobContendService;
     @Resource
     private ISysIndexService sysIndexService;
+    @Resource
+    private ISerialNumberService serialNumberService;
     /*@Override
     public R beInterested(Integer demandOrderId) {
         Integer userId = TokenUtils.getCurrentUserId();
@@ -408,6 +410,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         /* 订单编号 */
         Long number = orderIdService.generateId();
         odp.setNumber(number.toString());
+
+        /* 流水号 */
+        String serialNumber = serialNumberService.generateSerialNumber(number);
+        odp.setSerialNumber(serialNumber);
 
         /* 消费项目 */
         odp.setConsumptionItems("2");

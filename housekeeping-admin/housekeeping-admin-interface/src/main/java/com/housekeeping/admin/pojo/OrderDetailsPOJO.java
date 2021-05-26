@@ -20,6 +20,7 @@ import java.util.List;
 public class OrderDetailsPOJO extends OrderDetailsParent{
 
     private String number;                      //订单编号
+    private String serialNumber;                //流水号
     private String consumptionItems;            //消费项目
 
     private Integer employeesId;                //订单甲方 保洁员 (一个)

@@ -3,8 +3,6 @@ package com.housekeeping.admin.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
-import com.housekeeping.admin.pojo.OrderPhotoPOJO;
-import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,20 +10,19 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
+ * 流水
  * @Author su
- * @Date 2021/4/19 9:40
+ * @create 2021/5/26 9:39
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("order_details")
+@TableName("serial")
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDetails extends Model<OrderDetails> {
+public class Serial extends Model<Serial> {
 
-    private Long number;                        //订单编号
     private String serialNumber;                //流水号
     private String consumptionItems;            //消费项目
 
@@ -68,9 +65,8 @@ public class OrderDetails extends Model<OrderDetails> {
     private LocalDateTime fixDateTime;          //确认时间
     private LocalDateTime evaluationDateTime;   //评价时间
 
-    public OrderDetails(OrderDetailsPOJO pojo) {
-        this.number = Long.valueOf(pojo.getNumber());
-        this.serialNumber = pojo.getSerialNumber();
+    public Serial(OrderDetailsPOJO pojo) {
+        this.serialNumber = serialNumber;
         this.consumptionItems = pojo.getConsumptionItems();
         this.employeesId = pojo.getEmployeesId();
         this.name1 = pojo.getName1();
