@@ -29,6 +29,7 @@
         WHERE id IN (SELECT cg.chat_group_id
                      FROM im_chat_group_user cg
                      WHERE cg.user_id = #{userId})
+        and del_flag = '0'
     </select>
     <select id="getChatUserList" parameterType="string" resultType="com.housekeeping.im.entity.ImUserInfo">
        SELECT

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.housekeeping.common.utils.TokenUtils;
 import com.housekeeping.im.common.utils.ChatUtils;
 import com.housekeeping.im.entity.*;
+import com.housekeeping.im.service.IImChatGroupService;
 import com.housekeeping.im.service.IImMessageService;
 import com.housekeeping.im.service.IImUserService;
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ public class TioWsMsgHandler implements IWsMsgHandler {
     @Qualifier(value = "iImMessageService")
     private IImMessageService iImMessageService;
 
+    @Resource
+    @Qualifier(value = "imChatGroupServiceImpl")
+    private IImChatGroupService imChatGroupService;
 
     /**
      * 握手时走这个方法，业务可以在这里获取cookie，request参数等
@@ -132,11 +136,19 @@ public class TioWsMsgHandler implements IWsMsgHandler {
                         Tio.sendToUser(channelContext.groupContext, message.getId(), wsResponse);
                         //入库操作
                         saveMessage(message, ChatUtils.READED);
+                        //更新组
+                        ImChatGroup byId = imChatGroupService.getById(message.getId());
+                        byId.setDelFlag("0");
+                        imChatGroupService.updateById(byId);
                     }
                 } else {
                     Tio.sendToGroup(channelContext.groupContext, message.getId(), wsResponse);
                     //入库操作
                     saveMessage(message, ChatUtils.READED);
+                    //更新组
+                    ImChatGroup byId = imChatGroupService.getById(message.getId());
+                    byId.setDelFlag("0");
+                    imChatGroupService.updateById(byId);
                 }
             }
             //准备就绪，需要发送离线消息

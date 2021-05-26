@@ -336,4 +336,26 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         return headUrl;
     }
 
+    @Override
+    public R removeGroup(Integer id) {
+        ImChatGroup byId = imChatGroupService.getById(id);
+        byId.setDelFlag("1");
+        imChatGroupService.updateById(byId);
+        return R.ok("删除成功");
+    }
+
+    @Override
+    public R getChatGroupById(Integer empId) {
+        ArrayList<ImChatGroupVo> imChatGroups = new ArrayList<>();
+        Integer userId = baseMapper.getUSerIdByEmpId(empId.toString());
+        List<ImChatGroupVo> chatGroups = imUserService.getChatGroups(userId.toString());
+        chatGroups.stream().map(x->{
+            ImMessage message = baseMapper.getMessageByChatId(x.getId());
+            x.setMessage(message);
+            return x;
+        }).collect(Collectors.toList());
+        imChatGroups.addAll(chatGroups);
+        return R.ok(imChatGroups);
+    }
+
 }

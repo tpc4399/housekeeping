@@ -38,4 +38,8 @@ public interface IImUserService extends IService<ImUser> {
     R createGroupByCus(String demandId, String empId);
 
     public String getHeadUrl(Integer userId,Integer deptId);
+
+    R removeGroup(Integer id);
+
+    R getChatGroupById(Integer empId);
 }
