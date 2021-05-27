@@ -106,17 +106,17 @@ public class GroupManagerServiceImpl extends ServiceImpl<GroupManagerMapper, Gro
     }
 
     @Override
-    public R getAllManById(Integer groupId) {
-        ArrayList<ManagerDetails> ms = new ArrayList<>();
+    public List<ManagerDetails> getAllManById(Integer groupId) {
+        List<ManagerDetails> ms = new ArrayList<>();
         List<Integer> manIdsByGroupId = this.getManIdsByGroupId(groupId);
         for (int i = 0; i < manIdsByGroupId.size(); i++) {
             ManagerDetails byId = managerDetailsService.getById(manIdsByGroupId.get(i));
             ms.add(byId);
         }
         if(CollectionUtils.isEmpty(ms)){
-            return R.ok(null);
+            return null;
         }else {
-            return R.ok(ms);
+            return ms;
         }
     }
 

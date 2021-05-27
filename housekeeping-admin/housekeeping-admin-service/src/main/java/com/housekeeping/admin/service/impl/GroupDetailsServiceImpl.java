@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service("groupService")
 public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, GroupDetails> implements IGroupDetailsService {
@@ -262,6 +263,11 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         if(CommonUtils.isEmpty(groupDetailsVos)){
             return R.ok(null);
         }
+        groupDetailsVos.stream().map(x->{
+            x.setEmployeesDetails(groupEmployeesService.getAllEmpById(x.getId()));
+            x.setManagerDetails(groupManagerService.getAllManById(x.getId()));
+            return x;
+        }).collect(Collectors.toList());
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupDetailsVos);
         return R.ok(pages);
     }

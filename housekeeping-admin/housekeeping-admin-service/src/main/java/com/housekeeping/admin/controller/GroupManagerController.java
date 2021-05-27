@@ -57,6 +57,6 @@ public class GroupManagerController {
     @GetMapping("/getAllManById")
     @ApiOperation("【公司】【管理员】通过组id获取组下所有经理")
     public R getAllManById(Integer groupId){
-        return groupManagerService.getAllManById(groupId);
+        return R.ok(groupManagerService.getAllManById(groupId));
     }
 }

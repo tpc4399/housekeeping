@@ -5,9 +5,12 @@ import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupEmployeesAdminDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * @Author su
@@ -21,7 +24,7 @@ public interface IGroupEmployeesService extends IService<GroupEmployees> {
 
     R getAllEmp(GroupDTO groupDTO);
 
-    R getAllEmpById(Integer groupId);
+    List<EmployeesDetails> getAllEmpById(Integer groupId);
 
     R getAllEmpByAdmin(GroupAdminDTO groupDTO);
 
