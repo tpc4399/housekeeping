@@ -68,6 +68,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private ISysIndexService sysIndexService;
     @Resource
     private ISerialNumberService serialNumberService;
+    @Resource
+    private ISerialService serialService;
+
     /*@Override
     public R beInterested(Integer demandOrderId) {
         Integer userId = TokenUtils.getCurrentUserId();
@@ -496,6 +499,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         }
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
+        serialService.generatePipeline(odp);
 
         byId.setStatus(1);
         byId.setOrderNumber(number.toString());

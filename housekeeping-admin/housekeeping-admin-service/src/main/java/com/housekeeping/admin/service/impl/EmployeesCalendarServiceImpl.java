@@ -62,6 +62,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ISysJobContendService sysJobContendService;
     @Resource
     private ISerialNumberService serialNumberService;
+    @Resource
+    private ISerialService serialService;
 
     @Override
     public R setCalendar(SetEmployeesCalendarDTO dto) {
@@ -643,6 +645,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         }
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
+        serialService.generatePipeline(odp);
 
         return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }

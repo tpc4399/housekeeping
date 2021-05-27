@@ -77,6 +77,8 @@ public class EmployeesContractServiceImpl
     private ICompanyDetailsService companyDetailsService;
     @Resource
     private ISerialNumberService serialNumberService;
+    @Resource
+    private ISerialService serialService;
 
     @Override
     public R add(AddEmployeesContractDTO dto) {
@@ -442,6 +444,8 @@ public class EmployeesContractServiceImpl
         }
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
+        serialService.generatePipeline(odp);
+
         return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
     }
 
