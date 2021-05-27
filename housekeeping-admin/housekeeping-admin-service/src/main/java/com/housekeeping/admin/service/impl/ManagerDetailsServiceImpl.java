@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
+import com.housekeeping.admin.pojo.ManagerDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.EmployeesVo;
 import com.housekeeping.admin.vo.ManagerVo;
@@ -231,6 +232,21 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         }).collect(Collectors.toList());
         managerMenuService.saveBatch(managerMenuList);//增
         return R.ok("修改成功");
+    }
+
+    @Override
+    public R getManager(Integer managerId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("manager_id", managerId);
+        ManagerDetails md = managerDetailsService.getById(managerId);
+        List<ManagerMenu> mm = managerMenuService.list(qw);
+        List<Integer> roles =  mm.stream().map(x -> {
+            return x.getMenuId();
+        }).collect(Collectors.toList());
+        ManagerDetailsPOJO pojo = new ManagerDetailsPOJO();
+        pojo.setMd(md);
+        pojo.setRoles(roles);
+        return R.ok(pojo, "成功獲取經理信息");
     }
 
     @Override

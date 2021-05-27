@@ -99,6 +99,13 @@ public class ManagerDetailsController {
         return managerDetailsService.cusPage(page, pageOfEmployeesDetailsDTO, CommonConstants.REQUEST_ORIGIN_COMPANY);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】查询经理信息以及权限")
+    @GetMapping("/getManager")
+    public R getManager(Integer managerId){
+        return null;
+    }
+
     @Access({RolesEnum.USER_MANAGER})
     @ApiOperation("【经理】上传头像")
     @PostMapping("/uploadHead")

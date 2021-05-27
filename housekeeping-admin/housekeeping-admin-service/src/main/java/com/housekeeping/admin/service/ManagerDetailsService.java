@@ -20,6 +20,8 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     R updateEmp(ManagerDetailsDTO managerDetailsDTO);
     /* 修改经理，新接口 */
     R updateEmp2(UpdateManagerDetailsDTO dto);
+    /* 获取经理信息 */
+    R getManager(Integer managerId);
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
     Integer getCompanyIdByManagerId(Integer managerId);
     R cusPage1(Page page, PageOfManagerDTO pageOfEmployeesDTO, String type);
