@@ -103,7 +103,7 @@ public class ManagerDetailsController {
     @ApiOperation("【公司】查询经理信息以及权限")
     @GetMapping("/getManager")
     public R getManager(Integer managerId){
-        return null;
+        return managerDetailsService.getManager(managerId);
     }
 
     @Access({RolesEnum.USER_MANAGER})
