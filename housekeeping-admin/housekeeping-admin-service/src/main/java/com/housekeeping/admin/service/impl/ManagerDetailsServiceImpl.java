@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.ManagerDetailsDTO;
-import com.housekeeping.admin.dto.PageOfManagerDTO;
-import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.ManagerDetailsMapper;
 import com.housekeeping.admin.service.*;
@@ -120,6 +118,66 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
     }
 
     @Override
+    public R saveEmp2(AddManagerDetailsDTO dto) {
+        //先保存User
+        User user = new User();
+        String ss = String.valueOf(System.currentTimeMillis());
+        user.setNumber("c"+ss);
+        user.setDeptId(4);
+        user.setLastReviserId(TokenUtils.getCurrentUserId());
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+        Integer maxUserId = 0;
+        Integer maxManagerId = 0;
+        synchronized (this) {
+            userService.save(user);
+            maxUserId = ((User) CommonUtils.getMaxId("sys_user", userService)).getId();
+        }
+        ManagerDetails managerDetails = new ManagerDetails();
+        QueryWrapper<CompanyDetails> wrComp=new QueryWrapper<>();
+        wrComp.inSql("id","select id from company_details where user_id=" + TokenUtils.getCurrentUserId());
+        CompanyDetails one = companyDetailsService.getOne(wrComp);
+        String s = String.valueOf(System.currentTimeMillis());
+        managerDetails.setUserId(maxUserId);
+        managerDetails.setNumber("man"+s);
+        managerDetails.setName(dto.getName());
+        managerDetails.setDateOfBirth(dto.getDateOfBirth());
+        managerDetails.setPhone(dto.getPhone());
+        managerDetails.setPhonePrefix(dto.getPhonePrefix());
+        managerDetails.setAddress(dto.getAddress());
+        managerDetails.setDescribes(dto.getDescribes());
+        managerDetails.setSex(dto.getSex());
+        managerDetails.setEducationBackground(dto.getEducationBackground());
+        managerDetails.setUpdateTime(LocalDateTime.now());
+        managerDetails.setCreateTime(LocalDateTime.now());
+        managerDetails.setCompanyId(one.getId());
+        managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+
+        if(dto.getHeaderUrl()!=null&&!dto.getHeaderUrl().equals("")){
+            managerDetails.setHeadUrl(dto.getHeaderUrl());
+        }else {
+            managerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210508110600.png");
+        }
+
+        synchronized (this){
+            this.save(managerDetails);
+            maxManagerId = ((ManagerDetails) CommonUtils.getMaxId("manager_details", this)).getId();
+        }
+
+        /** 2021-05-27 su新增 增加经理的同时，给予设置的菜单权限 */
+        Integer finalMaxManagerId = maxManagerId;
+        List<ManagerMenu> managerMenuList = dto.getRoles().stream().map(x -> {
+            ManagerMenu managerMenu = new ManagerMenu();
+            managerMenu.setManagerId(finalMaxManagerId);
+            managerMenu.setMenuId(x);
+            return managerMenu;
+        }).collect(Collectors.toList());
+        managerMenuService.saveBatch(managerMenuList);
+
+        return R.ok("添加經理成功");
+    }
+
+    @Override
     public R updateEmp(ManagerDetailsDTO managerDetailsDTO) {
         ManagerDetails managerDetails = new ManagerDetails();
         managerDetails.setId(managerDetailsDTO.getId());
@@ -141,6 +199,38 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
             return R.failed("修改失敗");
         }
 
+    }
+
+    @Override
+    public R updateEmp2(UpdateManagerDetailsDTO dto) {
+        ManagerDetails managerDetails = new ManagerDetails();
+        managerDetails.setId(dto.getId());
+        managerDetails.setName(dto.getName());
+        managerDetails.setDateOfBirth(dto.getDateOfBirth());
+        managerDetails.setPhone(dto.getPhone());
+        managerDetails.setPhonePrefix(dto.getPhonePrefix());
+        managerDetails.setAddress(dto.getAddress());
+        managerDetails.setDescribes(dto.getDescribes());
+        managerDetails.setSex(dto.getSex());
+        managerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
+        managerDetails.setEducationBackground(dto.getEducationBackground());
+        managerDetails.setCreateTime(LocalDateTime.now());
+        managerDetails.setUpdateTime(LocalDateTime.now());
+        managerDetails.setHeadUrl(dto.getHeaderUrl());
+        this.updateById(managerDetails);
+
+        /** 经理权限修改 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("manager_id", dto.getId());
+        managerMenuService.remove(qw);//删
+        List<ManagerMenu> managerMenuList = dto.getRoles().stream().map(x -> {
+            ManagerMenu managerMenu = new ManagerMenu();
+            managerMenu.setManagerId(dto.getId());
+            managerMenu.setMenuId(x);
+            return managerMenu;
+        }).collect(Collectors.toList());
+        managerMenuService.saveBatch(managerMenuList);//增
+        return R.ok("修改成功");
     }
 
     @Override

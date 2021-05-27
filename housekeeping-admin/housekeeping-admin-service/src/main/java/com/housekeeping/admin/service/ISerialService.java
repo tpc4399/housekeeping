@@ -10,7 +10,7 @@ import com.housekeeping.common.utils.R;
  */
 public interface ISerialService {
 
-    /* 生成流水 */
+    /* 保存流水 */
     R generatePipeline(OrderDetailsPOJO od);
 
 }

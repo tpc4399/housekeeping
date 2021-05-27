@@ -2,12 +2,11 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.ManagerDetailsDTO;
-import com.housekeeping.admin.dto.PageOfManagerDTO;
-import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.common.utils.R;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,7 +15,11 @@ import java.util.List;
 
 public interface ManagerDetailsService extends IService<ManagerDetails> {
     R saveEmp(ManagerDetailsDTO managerDetailsDTO);
+    /* 添加经理，新接口 */
+    R saveEmp2(AddManagerDetailsDTO dto);
     R updateEmp(ManagerDetailsDTO managerDetailsDTO);
+    /* 修改经理，新接口 */
+    R updateEmp2(UpdateManagerDetailsDTO dto);
     R getLinkToLogin(Integer id, Long h) throws UnknownHostException;
     Integer getCompanyIdByManagerId(Integer managerId);
     R cusPage1(Page page, PageOfManagerDTO pageOfEmployeesDTO, String type);

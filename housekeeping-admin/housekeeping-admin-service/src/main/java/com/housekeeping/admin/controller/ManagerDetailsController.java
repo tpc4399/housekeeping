@@ -2,10 +2,8 @@ package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.housekeeping.admin.dto.ManagerDetailsDTO;
+import com.housekeeping.admin.dto.*;
 
-import com.housekeeping.admin.dto.PageOfManagerDTO;
-import com.housekeeping.admin.dto.PageOfManagerDetailsDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupManager;
 import com.housekeeping.admin.entity.ManagerDetails;
@@ -46,12 +44,28 @@ public class ManagerDetailsController {
         return managerDetailsService.saveEmp(managerDetailsDTO);
     }
 
+    @Access({RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】新增經理新接口，可以设置经理权限的")
+    @LogFlag(description = "新增經理新接口，可以设置经理权限的")
+    @PostMapping("/saveEmp2")
+    public R saveEmp2(@RequestBody AddManagerDetailsDTO dto){
+        return managerDetailsService.saveEmp2(dto);
+    }
+
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
     @ApiOperation("【管理员】【公司】【经理】修改經理信息")
     @LogFlag(description = "修改經理信息")
     @PostMapping("/updateEmp")
     public R updateEmp(@RequestBody ManagerDetailsDTO managerDetailsDTO){
         return managerDetailsService.updateEmp(managerDetailsDTO);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理员】【公司】【经理】修改經理信息")
+    @LogFlag(description = "修改經理信息")
+    @PostMapping("/updateEmp2")
+    public R updateEmp2(@RequestBody UpdateManagerDetailsDTO dto){
+        return managerDetailsService.updateEmp2(dto);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY})
