@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,17 +110,17 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
     }
 
     @Override
-    public R getAllEmpById(Integer groupId) {
+    public List<EmployeesDetails> getAllEmpById(Integer groupId) {
         List<Integer> idsByGroupId = this.getIdsByGroupId(groupId);
-        ArrayList<EmployeesDetails> es = new ArrayList<>();
+        List<EmployeesDetails> es = new ArrayList<>();
         for (int i = 0; i < idsByGroupId.size(); i++) {
             EmployeesDetails byId = employeesDetailsService.getById(idsByGroupId.get(i));
             es.add(byId);
         }
         if(CollectionUtils.isEmpty(es)){
-            return R.ok(null);
+            return null;
         }else {
-            return R.ok(es);
+            return es;
         }
     }
 

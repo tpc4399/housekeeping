@@ -48,4 +48,6 @@ public class ImChatGroup extends Model<ImChatGroup> implements Serializable {
 
     private Integer companyId;
 
+    private String delFlag;
+
 }

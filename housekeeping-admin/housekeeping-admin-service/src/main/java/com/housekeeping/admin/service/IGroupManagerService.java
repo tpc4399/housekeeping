@@ -3,7 +3,10 @@ package com.housekeeping.admin.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.GroupManager;
+import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.common.utils.R;
+
+import java.util.List;
 
 /**
  * @Author su
@@ -14,7 +17,7 @@ public interface IGroupManagerService extends IService<GroupManager> {
 
     R getAllMan(GroupDTO groupDTO);
 
-    R getAllManById(Integer groupId);
+    List<ManagerDetails> getAllManById(Integer groupId);
 
     R getAllManByAdmin(GroupAdminDTO groupDTO);
 
