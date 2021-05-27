@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.entity.Serial;
@@ -47,6 +48,22 @@ public class SerialServiceImpl
     @Override
     public R pageOfSerial(Page page) {
         return R.ok(this.page(page), "分頁查詢成功");
+    }
+
+    @Override
+    public R serialPhotos(String serialNumber) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("serial_number", serialNumber);
+        List<SerialPhotos> serialPhotosList = serialPhotosService.list(qw);
+        return R.ok(serialPhotosList, "获取照片成功");
+    }
+
+    @Override
+    public R serialWorks(String serialNumber) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("serial_number", serialNumber);
+        List<SerialWorks> serialWorksList = serialWorksService.list(qw);
+        return R.ok(serialWorksList, "获取工作成功");
     }
 
     private List<SerialPhotos> serialPhotos(OrderDetailsPOJO od){

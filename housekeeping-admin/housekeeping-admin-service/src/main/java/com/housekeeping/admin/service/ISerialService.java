@@ -17,4 +17,10 @@ public interface ISerialService {
     /* 分頁查詢流水 */
     R pageOfSerial(Page page);
 
+    /* 流水关联信息——照片以及描述 */
+    R serialPhotos(String serialNumber);
+
+    /* 流水关联信息——工作内容 */
+    R serialWorks(String serialNumber);
+
 }
