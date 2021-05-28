@@ -189,9 +189,9 @@ public class EmployeesCalendarController {
     }
 
     @Access(RolesEnum.USER_COMPANY)
-    @ApiOperation("【公司】统一设置公司保洁员时间表")
+    @ApiOperation("【公司】统一设置公司保洁员时间表，不用传employeesId或者传个0，不会用上这个参数")
     @PostMapping("/setCalendarAll")
-    public R setCalendarAll(@RequestBody SetEmployeesCalendar2DTO dto){
+    public R setCalendarAll(@RequestBody SetCalendarAllDTO dto){
         return employeesCalendarService.setCalendarAll(dto);
     }
 

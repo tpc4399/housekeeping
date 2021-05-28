@@ -94,5 +94,5 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R getAllInCompany();
 
     /* 統一設置本公司保潔時間表 */
-    R setCalendarAll(SetEmployeesCalendar2DTO dto);
+    R setCalendarAll(SetCalendarAllDTO dto);
 }

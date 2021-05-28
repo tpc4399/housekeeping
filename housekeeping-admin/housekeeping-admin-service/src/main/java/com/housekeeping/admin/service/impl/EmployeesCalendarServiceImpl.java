@@ -1283,7 +1283,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
-    public R setCalendarAll(SetEmployeesCalendar2DTO dto) {
+    public R setCalendarAll(SetCalendarAllDTO dto) {
         /* 獲取公司所有保潔員 */
         Integer userId = TokenUtils.getCurrentUserId();
         Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
@@ -1300,8 +1300,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         Map<Integer, List> res = new HashMap<>();
         employeesIds.forEach(employeesId -> {
-            dto.setEmployeesId(employeesId);
-            List<String> info = this.rationalityJudgmentD(dto); //不合理记录收集
+            SetEmployeesCalendar2DTO setEmployeesCalendar2DTO = new SetEmployeesCalendar2DTO(employeesId, dto.getWeek(), dto.getTimeSlotPriceDTOList());
+            List<String> info = this.rationalityJudgmentD(setEmployeesCalendar2DTO); //不合理记录收集
             if (info.size() == 0){
                 //这是合理的,就进行添加时间表
                 dto.getTimeSlotPriceDTOList().forEach(timeSlot -> {
@@ -1318,6 +1318,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                     employeesCalendar.setCode(timeSlot.getCode());
                     baseMapper.insert(employeesCalendar);
                 });
+                info.add("添加成功");
             }
             res.put(employeesId, info);
         });
