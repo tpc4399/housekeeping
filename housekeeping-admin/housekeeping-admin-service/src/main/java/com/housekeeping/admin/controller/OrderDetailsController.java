@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.SetOrderWorkDetailsDTO;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.PaymentCallbackParams;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
@@ -169,6 +170,13 @@ public class OrderDetailsController {
     @GetMapping("/getOrder")
     public R getOrder(String number){
         return R.ok(orderDetailsService.getOrder(number), "成功獲取訂單详情");
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【保洁员】【经理】修改待支付订单的工作安排")
+    @PostMapping("/setWorks")
+    public R setWorks(@RequestBody SetOrderWorkDetailsDTO dto){
+        return null;
     }
 
 }

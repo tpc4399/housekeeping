@@ -1292,7 +1292,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         qw.select("id");
         List<Integer> employeesIds = employeesDetailsService.listObjs(qw); //公司所有保洁员
 
-        /* 添加新的 */
+        /* 为每个保洁员添加新的时间表 */
         StringBuilder week = new StringBuilder();
         dto.getWeek().forEach(wk->{
             week.append(wk);
@@ -1301,9 +1301,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         Map<Integer, List> res = new HashMap<>();
         employeesIds.forEach(employeesId -> {
             dto.setEmployeesId(employeesId);
-            List<String> info = this.rationalityJudgmentD(dto);
-            if (res.size() == 0){
-                //这是合理的
+            List<String> info = this.rationalityJudgmentD(dto); //不合理记录收集
+            if (info.size() == 0){
+                //这是合理的,就进行添加时间表
                 dto.getTimeSlotPriceDTOList().forEach(timeSlot -> {
                     EmployeesCalendar employeesCalendar =
                             new EmployeesCalendar(
@@ -1322,7 +1322,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             res.put(employeesId, info);
         });
 
-        return null;
+        return R.ok(res, "設置成功，設置結果已返回");
     }
 
 }
