@@ -111,7 +111,6 @@ public class ScoreCalculation {
             scope3 = getScope3();
             scope4 = getScope4();
         }
-
         return scope1+scope2+scope3+scope4+scope5+scope6;
     }
 
