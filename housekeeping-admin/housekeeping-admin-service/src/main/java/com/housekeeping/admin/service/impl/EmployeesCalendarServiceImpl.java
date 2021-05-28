@@ -555,6 +555,20 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
+    public R getAbsenceDaysByDateSlot(GetCalendarByDateSlotDTO dto) {
+        LocalDate startDate = dto.getDateSlot().getStart();
+        LocalDate endDate = dto.getDateSlot().getEnd();
+        Integer employeesId = dto.getId();
+        List<FreeDateTimeDTO> freeTime =  getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(startDate, endDate), employeesId));
+        List<LocalDate> list = freeTime.stream().map(x -> {
+            if (!x.getHasTime()) return x.getDate();
+            else return null;
+        }).collect(Collectors.toList());
+        list.removeIf(x -> x == null);
+        return R.ok(list,"獲取成功");
+    }
+
+    @Override
     public R makeAnAppointment(MakeAnAppointmentDTO dto) {
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();

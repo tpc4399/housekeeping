@@ -175,6 +175,12 @@ public class EmployeesCalendarController {
         return employeesCalendarService.getAbsenceDaysByMonth(dto);
     }
 
+    @ApiOperation("根据日期段 获取无时间日期")
+    @PostMapping("/getAbsenceDaysByDateSlot")
+    public R getAbsenceDaysByDateSlot(@RequestBody GetCalendarByDateSlotDTO dto){
+        return employeesCalendarService.getAbsenceDaysByDateSlot(dto);
+    }
+
     @Access(RolesEnum.USER_COMPANY)
     @ApiOperation("【公司】查询本公司所有员工的时间表")
     @PostMapping("/getAllInCompany")
