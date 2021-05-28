@@ -449,13 +449,16 @@ public class SysIndexServiceImpl
         List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
         Collections.shuffle(employeesDetails);//先随机打乱排序
         List<EmployeesInstanceDTO> dos = employeesDetails.stream().map(x -> {
+            /** certified:員工認證準備 */
+            CompanyDetails cd = companyDetailsService.getById(x.getCompanyId());
+            Boolean certified = cd.getIsValidate();
             if (dto.getGetGPSSuccess()){
                 String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
                 Double instance = new Double(str);
-                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance);
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance, certified);
                 return employeesInstanceDTO;
             }else {
-                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, new Double(0));
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, new Double(0), certified);
                 return employeesInstanceDTO;
             }
         }).collect(Collectors.toList());
@@ -477,10 +480,13 @@ public class SysIndexServiceImpl
             if (companyIds.size() >= defaultRecommendationCompanyInteger) break;
         }
         List<CompanyDetails> companyDetails = companyDetailsService.listByIds(companyIds);
-
+        List<CompanyDetails> cds = companyDetails.stream().filter(cd -> {
+            if (cd.getIsValidate()) return true;
+            else return false;
+        }).collect(Collectors.toList());
         dos = new ArrayList<>(dos.subList(0, defaultRecommendationEmployeesInteger));
         res.put("employees", dos);
-        res.put("company", companyDetails);
+        res.put("company", cds);
         return R.ok(res, "獲取成功");
     }
 
@@ -526,7 +532,10 @@ public class SysIndexServiceImpl
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
+            /** certified:員工認證準備 */
+            CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
+            Boolean certified = cd.getIsValidate();
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified);
             employeesInstanceDTOArrayList.add(employeesInstanceDTO);
         }
         res.put("list", employeesInstanceDTOArrayList);
@@ -585,7 +594,10 @@ public class SysIndexServiceImpl
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance());
+            /** certified:員工認證準備 */
+            CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
+            Boolean certified = cd.getIsValidate();
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified);
             employeesInstanceDTOS.add(employeesInstanceDTO);
         }
         return R.ok(employeesInstanceDTOS, "获取成功");

@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 public class EmployeesInstanceDTO {
     private EmployeesDetails employeesDetails;
     private Double instance;
+    private Boolean certified;
 }
