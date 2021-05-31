@@ -184,7 +184,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 if (CommonUtils.isNotEmpty(employeesDetailsDTO.getJobIds()))
                     employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), maxEmployeesId));
                 /**
-                 * 时间表初始化
+                 * 时间表初始化，时间表模板为空就不初始化
                  */
                 List<EmployeesCalendar> employeesCalendars = companyCalendarService.initEmpCalendar(one.getId(), maxEmployeesId);
                 if (!employeesCalendars.isEmpty()) employeesCalendarService.saveBatch(employeesCalendars);

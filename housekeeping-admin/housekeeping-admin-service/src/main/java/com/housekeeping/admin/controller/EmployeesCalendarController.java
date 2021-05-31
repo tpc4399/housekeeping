@@ -51,7 +51,7 @@ public class EmployeesCalendarController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER, RolesEnum.USER_EMPLOYEES})
-    @ApiOperation("【员工】【經理】【公司】【平台】修改员工时间表")
+    @ApiOperation("【员工】【經理】【公司】【平台】删除员工某条时间表")
     @DeleteMapping("{id}")
     public R del(@PathVariable Integer id){
         return employeesCalendarService.del(id);
