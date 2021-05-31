@@ -74,6 +74,8 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     @Resource
     private IDemandEmployeesService demandEmployService;
     @Resource
+    private ICompanyCalendarService companyCalendarService;
+    @Resource
     private OSSClient ossClient;
     @Value("${oss.bucketName}")
     private String bucketName;
@@ -181,7 +183,11 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                  */
                 if (CommonUtils.isNotEmpty(employeesDetailsDTO.getJobIds()))
                     employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), maxEmployeesId));
-//                    employeesJobsService.setJobIdsByEmployeesId(employeesDetailsDTO.getJobIds(), maxEmployeesId);
+                /**
+                 * 时间表初始化
+                 */
+                List<EmployeesCalendar> employeesCalendars = companyCalendarService.initEmpCalendar(one.getId(), maxEmployeesId);
+                if (!employeesCalendars.isEmpty()) employeesCalendarService.saveBatch(employeesCalendars);
             } catch (Exception e){
                 TransactionAspectSupport.currentTransactionStatus().rollbackToSavepoint(savePoint);
                 return R.failed("添加失敗");
