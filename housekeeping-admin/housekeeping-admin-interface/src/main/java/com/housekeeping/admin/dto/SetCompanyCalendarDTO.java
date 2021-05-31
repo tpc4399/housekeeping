@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class SetCompanyCalendarDTO {
 
-    private Integer companyId;
     private List<Integer> week;
     private List<TimeSlotPriceDTO> timeSlotPriceDTOList;
 

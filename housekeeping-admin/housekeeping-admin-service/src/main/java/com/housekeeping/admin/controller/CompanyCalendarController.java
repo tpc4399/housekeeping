@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Author su
  * @create 2021/5/31 8:58
  */
-@Api("【公司时间表模板】接口")
+@Api(tags = "【公司时间表模板】接口")
 @RestController
 @AllArgsConstructor
 @RequestMapping("/companyCalendar")
