@@ -28,7 +28,7 @@ public class CompanyCalendarController {
 
     @Access(RolesEnum.USER_COMPANY)
     @PostMapping("/setCalendar")
-    @ApiOperation("【公司】添加时间表模板")
+    @ApiOperation("【公司】添加时间表模板，公司id可以不用传")
     public R setCalendar(@RequestBody SetCompanyCalendarDTO dto){
         return companyCalendarService.setCalendar(dto);
     }

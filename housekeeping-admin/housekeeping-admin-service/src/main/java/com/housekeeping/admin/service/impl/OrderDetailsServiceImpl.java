@@ -332,7 +332,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             /* 工作内容二次加工处理 */
             OrderDetailsParent son = x;
             List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
-            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
             son.setJobs(jobs);
             /* 保洁员头像二次加工处理 */
             son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
