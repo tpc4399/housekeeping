@@ -55,7 +55,8 @@ public class ManagerMenuServiceImpl
         List<Integer> menuIds = managerMenus.stream().map(x -> {
             return x.getMenuId();
         }).collect(Collectors.toList());
-        List<SysMenu> sysMenuList = sysMenuService.listByIds(menuIds);
+        List<SysMenu> sysMenuList = new ArrayList<>();
+        if (!menuIds.isEmpty()) sysMenuList = sysMenuService.listByIds(menuIds);
         return R.ok(sysMenuList, "獲取經理菜單成功");
     }
 }
