@@ -51,9 +51,9 @@ public class ReleaseRequirementsController {
         return releaseRequirementService.updateCus(dto);
     }
 
-    @Access({RolesEnum.USER_COMPANY})
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @GetMapping("/getAllRequirementsByCompany")
-    @ApiOperation("【公司端】获取所有未接需求")
+    @ApiOperation("【公司端】【经理】获取所有未接需求")
     public R page(DemandDto demandDto,Page page){
         return releaseRequirementService.getAllRequirementsByCompany(demandDto,page);
     }
@@ -73,9 +73,9 @@ public class ReleaseRequirementsController {
         return releaseRequirementService.getAllRequirement(cd.getId(),page,status);
     }
 
-    @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY})
+    @Access({RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @GetMapping("/getById")
-    @ApiOperation("【家庭端】【公司端】根据id获取需求")
+    @ApiOperation("【家庭端】【公司端】【经理】根据id获取需求")
     public R getAllReleaseRequirements(Integer id){
         return releaseRequirementService.getCusById(id);
     }
