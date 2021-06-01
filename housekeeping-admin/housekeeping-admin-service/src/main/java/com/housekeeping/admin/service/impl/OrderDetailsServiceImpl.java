@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.CardPayCallbackParams;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
@@ -990,7 +991,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
-    public String cardPay(String number) {
+    public String cardPay(String number, String callBackUrl) {
         Integer userId = TokenUtils.getCurrentUserId();
         CustomerDetails cd = customerDetailsService.getByUserId(userId);
         Integer customerId = cd.getId();
@@ -1006,14 +1007,14 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (!isNoPay) return "待支付訂單："+number+" 不存在";
 
         //生成支付页面
-        String doc = this.odpToPaymentPage(odp);
+        String doc = this.odpToPaymentPage(odp, callBackUrl);
 
         //返回支付页面
         return doc;
     }
 
     @Override
-    public String odpToPaymentPage(OrderDetailsPOJO odp) {
+    public String odpToPaymentPage(OrderDetailsPOJO odp, String callBackUrl) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         String nowP = dtf2.format(now);
@@ -1039,11 +1040,16 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             obj.setItemName("家政需求單服務");
         }
 
-        obj.setReturnURL("http://211.23.128.214:5000");
+        obj.setReturnURL(callBackUrl);
         obj.setNeedExtraPaidInfo("N");
         obj.setRedeem("Y");
         String form = all.aioCheckOut(obj, null);
         return form;
+    }
+
+    @Override
+    public String cardPayCallback(CardPayCallbackParams params) {
+        return null;
     }
 
     /* 转换到数据库存储 */

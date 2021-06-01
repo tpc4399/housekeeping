@@ -1,12 +1,14 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.CardPayCallbackParams;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -115,8 +117,11 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R queryByAdmin(Integer type);
 
     /* 调用信用卡支付接口：用于家政服务支付 */
-    String cardPay(String number);
+    String cardPay(String number, String callBackUrl);
 
     /* odp生成信用卡支付页面 */
-    String odpToPaymentPage(OrderDetailsPOJO odp);
+    String odpToPaymentPage(OrderDetailsPOJO odp, String callBackUrl);
+
+    /* 信用卡支付結果回調處理 */
+    String cardPayCallback(CardPayCallbackParams params);
 }

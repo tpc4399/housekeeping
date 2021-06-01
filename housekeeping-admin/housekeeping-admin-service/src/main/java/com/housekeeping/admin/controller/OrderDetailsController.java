@@ -1,5 +1,6 @@
 package com.housekeeping.admin.controller;
 
+import com.housekeeping.admin.dto.CardPayCallbackParams;
 import com.housekeeping.admin.dto.SetOrderWorkDetailsDTO;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.PaymentCallbackParams;
@@ -153,8 +154,15 @@ public class OrderDetailsController {
     @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【客户】信用卡支付调用接口,返回支付界面")
     @GetMapping("/cardPay")
-    public String cardPay(String number){
-        return orderDetailsService.cardPay(number);
+    public String cardPay(String number, String callBackUrl){
+        return orderDetailsService.cardPay(number, callBackUrl);
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("【客户】信用卡支付結果回調接口，獲取回調數據")
+    @PostMapping("/cardPayCallback")
+    public String cardPayCallback(@RequestBody CardPayCallbackParams params){
+        return "1|OK";
     }
 
     @Access(RolesEnum.SYSTEM_ADMIN)
