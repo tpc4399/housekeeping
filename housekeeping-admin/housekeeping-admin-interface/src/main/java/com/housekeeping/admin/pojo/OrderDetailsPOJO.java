@@ -64,7 +64,7 @@ public class OrderDetailsPOJO extends OrderDetailsParent{
      * 20 --> 已评价       已完成状态  Completed
      */
     private Integer orderState;                 //订单状态
-    private Integer orderOrigin;                //订单来源 0钟点工 1包工
+    private Integer orderOrigin;                //订单来源 0钟点工 1包工 2需求单
     private String contractImageUrl;            //包工图片
     private String contractName;                //包工名
 

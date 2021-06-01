@@ -13,6 +13,9 @@ import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import ecpay.payment.integration.AllInOne;
+import ecpay.payment.integration.domain.AioCheckOutOneTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -984,6 +987,63 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
+    }
+
+    @Override
+    public String cardPay(String number) {
+        Integer userId = TokenUtils.getCurrentUserId();
+        CustomerDetails cd = customerDetailsService.getByUserId(userId);
+        Integer customerId = cd.getId();
+
+        //获取订单详情
+        OrderDetailsPOJO odp = (OrderDetailsPOJO) this.getOrder(number).getData();
+
+        //判斷是否是自己的訂單
+        if (!odp.getCustomerId().equals(customerId)) return "待支付訂單："+number+" 不存在";
+
+        //订单状态判断_是否是未支付状态
+        Boolean isNoPay = odp.getOrderState().equals(2);
+        if (!isNoPay) return "待支付訂單："+number+" 不存在";
+
+        //生成支付页面
+        String doc = this.odpToPaymentPage(odp);
+
+        //返回支付页面
+        return doc;
+    }
+
+    @Override
+    public String odpToPaymentPage(OrderDetailsPOJO odp) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String nowP = dtf2.format(now);
+        String price = odp.getPriceBeforeDiscount().toString();
+
+        AllInOne all = new AllInOne("");
+        AioCheckOutOneTime obj = new AioCheckOutOneTime();
+        obj.setMerchantTradeNo(odp.getNumber());
+        obj.setMerchantTradeDate(nowP);
+        obj.setTotalAmount(price);
+
+        //订单来源 0钟点工 1包工 2需求单
+        if (odp.getOrderOrigin().equals(0)){
+            obj.setTradeDesc("訂單來源，鐘點工");
+            obj.setItemName("家政鐘點服務");
+        }
+        if (odp.getOrderOrigin().equals(1)){
+            obj.setTradeDesc("訂單來源，單次服務");
+            obj.setItemName("家政單次服務");
+        }
+        if (odp.getOrderOrigin().equals(2)){
+            obj.setTradeDesc("訂單來源，需求單");
+            obj.setItemName("家政需求單服務");
+        }
+
+        obj.setReturnURL("http://211.23.128.214:5000");
+        obj.setNeedExtraPaidInfo("N");
+        obj.setRedeem("Y");
+        String form = all.aioCheckOut(obj, null);
+        return form;
     }
 
     /* 转换到数据库存储 */

@@ -113,4 +113,10 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R getOrder(String number);
 
     R queryByAdmin(Integer type);
+
+    /* 调用信用卡支付接口：用于家政服务支付 */
+    String cardPay(String number);
+
+    /* odp生成信用卡支付页面 */
+    String odpToPaymentPage(OrderDetailsPOJO odp);
 }

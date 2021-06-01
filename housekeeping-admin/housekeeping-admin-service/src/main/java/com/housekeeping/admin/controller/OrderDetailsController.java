@@ -151,11 +151,10 @@ public class OrderDetailsController {
     }
 
     @Access(RolesEnum.USER_CUSTOMER)
-    @ApiOperation("【客户】信用卡支付调用接口")
+    @ApiOperation("【客户】信用卡支付调用接口,返回支付界面")
     @GetMapping("/cardPay")
-    public R cardPay(){
-        allInOne.aioCheckOut(new Object(), new InvoiceObj());
-        return R.ok();
+    public String cardPay(String number){
+        return orderDetailsService.cardPay(number);
     }
 
     @Access(RolesEnum.SYSTEM_ADMIN)

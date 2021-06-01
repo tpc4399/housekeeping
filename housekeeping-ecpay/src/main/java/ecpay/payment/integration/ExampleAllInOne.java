@@ -27,7 +27,7 @@ public class ExampleAllInOne {
         System.out.println("aioCheckOutCVS: " + genAioCheckOutCVS());
 //		System.out.println("aioCheckOutBARCODE: " + genAioCheckOutBARCODE());
 //		System.out.println("aioCheckOutDevide: " + genAioCheckOutDevide());
-//		System.out.println("aioCheckOutOneTime: " + genAioCheckOutOneTime());
+		System.out.println("aioCheckOutOneTime: " + genAioCheckOutOneTime());
 //		System.out.println("aioCheckOutPeriod: " + genAioCheckOutPeriod());
 //		System.out.println("aioCheckOutWebATM: " + genAioCheckOutWebATM());
     }
