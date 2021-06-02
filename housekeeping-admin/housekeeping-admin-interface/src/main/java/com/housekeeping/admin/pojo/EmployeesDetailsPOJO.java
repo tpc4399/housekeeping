@@ -1,8 +1,11 @@
 package com.housekeeping.admin.pojo;
 
 import com.housekeeping.admin.dto.AddressDetailsDTO;
+import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.SysJobContend;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,6 +17,8 @@ import java.util.List;
  * @Date 2021/4/16 4:55
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeesDetailsPOJO {
 
     private Integer employeesId;        /* 保洁员的id */
@@ -30,4 +35,14 @@ public class EmployeesDetailsPOJO {
     private List<SysJobContend> skillTags;/* 技能标签 */
     private Boolean certified;          /* 是否已认证 */
 
+    public EmployeesDetailsPOJO(EmployeesDetails ed){
+        employeesId = ed.getId();
+        name = ed.getName();
+        birthDate = ed.getDateOfBirth();
+        workYear = ed.getWorkYear();
+        numberOfOrder = ed.getNumberOfOrders();
+        headerUrl = ed.getHeadUrl();
+        starRating = ed.getStarRating();
+        addressDTO = new AddressDetailsDTO(ed.getAddress2()+ed.getAddress3()+ed.getAddress4(), new Float(ed.getLng()), new Float(ed.getLat()));
+    }
 }

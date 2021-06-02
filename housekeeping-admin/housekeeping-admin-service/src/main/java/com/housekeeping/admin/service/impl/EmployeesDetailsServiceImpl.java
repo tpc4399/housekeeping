@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
+import com.housekeeping.admin.pojo.EmployeesDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.admin.vo.EmployeesDetailsWorkVo;
@@ -302,7 +303,23 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         if (type.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
             Integer userId = TokenUtils.getCurrentUserId();
             Integer companyId = companyDetailsService.getCompanyIdByUserId(userId);
+            CompanyDetails cd = companyDetailsService.getById(companyId);
+            Boolean certified = cd.getIsValidate(); //是否已认证
             queryWrapper.eq("company_id", companyId);
+
+            List<EmployeesDetails> eds = this.list(queryWrapper);
+            List<EmployeesDetailsPOJO> edps = eds.stream().map(ed->{
+                EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO(ed);
+                //技能标签和是否已认证
+                edp.setCertified(certified);
+                List<SysJobContend> jobs = new ArrayList<>();
+                List<Integer> jobIds = CommonUtils.stringToList(ed.getPresetJobIds());
+                if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+                edp.setSkillTags(jobs);
+                return edp;
+            }).collect(Collectors.toList());
+            Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), edps);
+            return R.ok(pages, "分頁查詢成功");
         }
 
         if (type.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
@@ -315,6 +332,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         }
 
         IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
+
         return R.ok(employeesDetailsIPage, "分頁查詢成功");
     }
 
