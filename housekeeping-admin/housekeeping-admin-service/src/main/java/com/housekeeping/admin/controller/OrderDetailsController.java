@@ -5,6 +5,7 @@ import com.housekeeping.admin.dto.SetOrderWorkDetailsDTO;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.dto.PaymentCallbackParams;
 import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
+import com.housekeeping.admin.service.ICardPayCallbackService;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
@@ -34,7 +35,7 @@ public class OrderDetailsController {
     @Resource
     private IOrderDetailsService orderDetailsService;
     @Resource
-    private AllInOne allInOne;
+    private ICardPayCallbackService cardPayCallbackService;
 
     @ApiOperation("【客户】确认订单——请求修改服务地址(需要保洁员同意才能修改成功)")
     @Access(RolesEnum.USER_CUSTOMER)
@@ -162,7 +163,7 @@ public class OrderDetailsController {
     @ApiOperation("【客户】信用卡支付結果回調接口，獲取回調數據")
     @PostMapping("/cardPayCallback")
     public String cardPayCallback(@RequestBody CardPayCallbackParams params){
-        return "1|OK";
+        return orderDetailsService.cardPayCallback(params);
     }
 
     @Access(RolesEnum.SYSTEM_ADMIN)

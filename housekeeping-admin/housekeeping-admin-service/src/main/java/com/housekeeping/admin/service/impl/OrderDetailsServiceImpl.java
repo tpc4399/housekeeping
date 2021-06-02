@@ -67,6 +67,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ISysJobContendService sysJobContendService;
     @Resource
     private ICompanyDetailsService companyDetailsService;
+    @Resource
+    private ICardPayCallbackService cardPayCallbackService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -1049,7 +1051,12 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public String cardPayCallback(CardPayCallbackParams params) {
-        return null;
+        /* 保存回调信息 */
+        CardPayCallback cpc = new CardPayCallback(params);
+        cardPayCallbackService.save(cpc);
+        /* 订单状态转变 */
+        this.inputSql(cpc.getMerchantTradeNo(), true); //将处理中订单，转变为待支付订单
+        return "1|OK";
     }
 
     /* 转换到数据库存储 */
