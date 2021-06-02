@@ -33,6 +33,27 @@ public class SysJobContendController {
         return sysJobContendService.add(dos);
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @PostMapping("/addBatch")
+    @ApiOperation("【管理员】批量或单个地增加工作内容新接口")
+    public R addBatch(){
+        return R.ok();
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @PutMapping("/update")
+    @ApiOperation("【管理员】修改工作内容")
+    public R update(){
+        return R.ok();
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @DeleteMapping("/del")
+    @ApiOperation("【管理员】批量删除工作内容")
+    public R del(){
+        return R.ok();
+    }
+
     @ApiOperation("获取所有工作内容标签，ids為null--查詢所有  ids有值--查詢id對應的工作內容標籤")
     @GetMapping("/getAll")
     public R getAll(@RequestParam(value = "ids", required = false) List<Integer> ids){

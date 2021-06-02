@@ -347,6 +347,7 @@ public class EmployeesContractServiceImpl
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
         EmployeesContract ec = this.getById(dto.getContractId());
+        if (CommonUtils.isEmpty(ec)) return R.failed(null, "包工不存在");
 
         /* 订单来源 */
         odp.setOrderOrigin(CommonConstants.ORDER_ORIGIN_CONTRACT);
@@ -383,7 +384,7 @@ public class EmployeesContractServiceImpl
         /* 订单乙方 客户 */
         CustomerDetails cd = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
         CustomerAddress ca = customerAddressService.getById(dto.getAddressId());
-        odp.setCustomerId(ed.getId());
+        odp.setCustomerId(cd.getId());
         odp.setName2(cd.getName());
         odp.setPhPrefix2(ca.getPhonePrefix());
         odp.setPhone2(ca.getPhone());
