@@ -440,6 +440,49 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
+    public R queryEmpByCom(Integer type, Integer employeesId) {
+        /* type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
+        //判斷是否是本公司
+        Boolean exist = employeesDetailsService.judgmentOfExistenceFromCompany(employeesId);
+        if (!exist) return R.failed(null, "貴公司不存在該員工");
+        List<Integer> empIds = new ArrayList<>();
+        empIds.add(employeesId);
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
+        if (type.equals(0)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+            res.addAll(this.order2ByEmployeesAll(empIds));
+            res.addAll(this.order3ByEmployeesAll(empIds));
+            res.addAll(this.order4ByEmployeesAll(empIds));
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }else if (type.equals(1)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+        }else if (type.equals(2)){
+            res.addAll(this.order2ByEmployeesAll(empIds));
+        }else if (type.equals(3)){
+            res.addAll(this.order3ByEmployeesAll(empIds));
+        }else if (type.equals(4)){
+            res.addAll(this.order4ByEmployeesAll(empIds));
+        }else if (type.equals(5)){
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
+    }
+
+    @Override
     public List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId) {
         List<OrderDetailsPOJO> pojoList = new ArrayList<>();
         /* odp 获取订单信息 */
