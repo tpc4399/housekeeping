@@ -8,6 +8,11 @@
         FROM order_details
         WHERE `number` = #{number}
     </update>
+    <update id="status">
+        UPDATE order_status = #{status}
+        FROM order_details
+        WHERE `number` = #{number}
+    </update>
 
     <select id="orderRetentionTime" resultType="java.lang.Integer">
         SELECT c.order_retention_time

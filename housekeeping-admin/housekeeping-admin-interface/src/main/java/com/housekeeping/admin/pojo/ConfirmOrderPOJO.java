@@ -74,7 +74,7 @@ public class ConfirmOrderPOJO {
         this.invoiceNumber = pojo.getInvoiceNumber();
         this.customerId = pojo.getCustomerId();
         this.name2 = pojo.getName2();
-        this.phPrefix2 = pojo.getPhPrefix1();
+        this.phPrefix2 = pojo.getPhPrefix2();
         this.phone2 = pojo.getPhone2();
         this.jobIds = pojo.getJobIds();
         this.address = pojo.getAddress();

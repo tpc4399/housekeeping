@@ -111,6 +111,8 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R payment4();
     /* 【保洁员】订单误判———— 已取消订单->已支付 */
     R payment5();
+    /* 【保洁员】订单状态———— 待服務->進行中 */
+    R payment7(String number);
     /* 【保洁员】【客户】根据订单编号，查看是否属于调用者 或者管理者 */
     Boolean orderVerification(OrderDetailsPOJO odp);
     /* 根据订单编号获取订单的全部 */

@@ -19,4 +19,7 @@ public interface OrderDetailsMapper extends BaseMapper<OrderDetails> {
                        @Param("status") Integer status,
                        @Param("time") LocalDateTime time);
 
+    void status(@Param("number") Long number,
+                @Param("status") Integer status);
+
 }

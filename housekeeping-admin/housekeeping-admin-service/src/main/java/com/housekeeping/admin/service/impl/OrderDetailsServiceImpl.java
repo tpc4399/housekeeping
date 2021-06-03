@@ -896,6 +896,22 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     @Override
+    public R payment7(String number) {
+        OrderDetails od = this.getById(number);
+        if (CommonUtils.isEmpty(od)) return R.failed(null, "订单不存在");
+        /* 获取调用者信息 */
+        Integer userId = TokenUtils.getCurrentUserId();
+        Integer employeesId = employeesDetailsService.getEmployeesIdByUserId(userId);
+        /* 检查订单是不是你的 */
+        if (!employeesId.equals(od.getEmployeesId())) return R.failed(null, "这不是你的订单");
+        /* 检查订单初试状态 */
+        if (!od.getOrderState().equals(CommonConstants.ORDER_STATE_TO_BE_SERVED)) return R.failed(null, "订单不是待服務的状态，无法变更为進行中状态");
+        /* 开始修改数据 修改订单状态 */
+        baseMapper.status(Long.valueOf(number), CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+        return R.ok(null, "成功将进行中订单转变为待评价状态");
+    }
+
+    @Override
     public Boolean orderVerification(OrderDetailsPOJO odp) {
         /* 获取调用者信息 */
         Integer userId = TokenUtils.getCurrentUserId();
