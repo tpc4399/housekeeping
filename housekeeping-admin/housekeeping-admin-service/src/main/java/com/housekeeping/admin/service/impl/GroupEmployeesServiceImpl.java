@@ -9,8 +9,11 @@ import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
+import com.housekeeping.admin.entity.ManagerDetails;
 import com.housekeeping.admin.mapper.GroupEmployeesMapper;
 import com.housekeeping.admin.service.IGroupEmployeesService;
+import com.housekeeping.admin.service.IGroupManagerService;
+import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.vo.EmpVo;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
@@ -37,6 +40,10 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
     private CompanyDetailsServiceImpl companyDetailsService;
     @Resource
     private EmployeesDetailsServiceImpl employeesDetailsService;
+    @Resource
+    private ManagerDetailsService managerDetailsService;
+    @Resource
+    private IGroupManagerService groupManagerService;
 
     @Override
     public R save(GroupEmployeesDTO groupEmployeesDTO) {
@@ -176,6 +183,13 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
             baseMapper.insert(groupEmployees);
         });
         return R.ok("員工修改成功");
+    }
+
+    @Override
+    public List<Integer> getEmployeesIdsByManager() {
+        ManagerDetails md = managerDetailsService.getManagerDetailsByUserId(TokenUtils.getCurrentUserId());
+        List<Integer> employeesIds = baseMapper.getEmployeesIdsByManager(md.getId());
+        return employeesIds.isEmpty()?new ArrayList<>():employeesIds;
     }
 
     public List<Integer> getIdsByGroupId(Integer groupId){

@@ -139,6 +139,13 @@ public class OrderDetailsController {
         return orderDetailsService.queryEmpByCom(type, employeesId);
     }
 
+    @Access(RolesEnum.USER_MANAGER)
+    @ApiOperation("【經理】自己旗下保潔員的訂單查詢 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
+    @GetMapping("/queryByManager")
+    public R queryByManager(Integer type){
+        return orderDetailsService.queryByManager(type);
+    }
+
     @Access(RolesEnum.SYSTEM_ADMIN)
     @ApiOperation("【管理员】订单查询 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
     @GetMapping("/queryByAdmin")

@@ -67,6 +67,9 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     /* 指定本公司某保潔員的訂單查詢 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成 */
     R queryEmpByCom(Integer type, Integer employeesId);
 
+    /* 自己旗下保潔員的訂單查詢 */
+    R queryByManager(Integer type);
+
     /* 查询保洁员的待付款订单 */
     List<OrderDetailsPOJO> order1ByEmployees(Integer employeesId);
     /* 查询保洁员的待服务订单 */

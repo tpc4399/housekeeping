@@ -455,6 +455,14 @@ public class ManagerDetailsServiceImpl extends ServiceImpl<ManagerDetailsMapper,
         return R.ok(collect);
     }
 
+    @Override
+    public ManagerDetails getManagerDetailsByUserId(Integer userId) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("user_id", userId);
+        ManagerDetails md = managerDetailsService.getOne(qw);
+        return md;
+    }
+
     /**
      * 判斷公司是否可以新增員工
      * @return

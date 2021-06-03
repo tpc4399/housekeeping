@@ -44,4 +44,6 @@ public interface ManagerDetailsService extends IService<ManagerDetails> {
     Boolean judgeManagerInCompany(Integer managerId, Integer companyId);
 
     R getManagersByIds(List<Integer> ids);
+
+    ManagerDetails getManagerDetailsByUserId(Integer userId);
 }

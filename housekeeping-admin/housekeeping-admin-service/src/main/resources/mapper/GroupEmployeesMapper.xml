@@ -11,4 +11,12 @@
     <select id="getIdsByGroupId" resultType="java.lang.Integer">
         SELECT employees_id FROM group_employees  WHERE group_id  = #{groupId}
     </select>
+    <select id="getEmployeesIdsByManager" resultType="java.lang.Integer">
+        select employees_id
+        from group_employees
+        where group_id in (select group_id
+                           from group_manager
+                           where manager_id = #{managerId})
+        group by employees_id;
+    </select>
 </mapper>

@@ -7,6 +7,8 @@ import com.housekeeping.admin.dto.GroupEmployeesAdminDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
+import com.housekeeping.common.annotation.Access;
+import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,4 +31,8 @@ public interface IGroupEmployeesService extends IService<GroupEmployees> {
     R getAllEmpByAdmin(GroupAdminDTO groupDTO);
 
     R saveByAdmin(GroupEmployeesAdminDTO groupEmployeesDTO);
+
+    /* 經理 獲取自己旗下保潔員的ids */
+    @Access(RolesEnum.USER_MANAGER)
+    List<Integer> getEmployeesIdsByManager();
 }

@@ -69,6 +69,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ICompanyDetailsService companyDetailsService;
     @Resource
     private ICardPayCallbackService cardPayCallbackService;
+    @Resource
+    private IGroupEmployeesService groupEmployeesService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -447,6 +449,45 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (!exist) return R.failed(null, "貴公司不存在該員工");
         List<Integer> empIds = new ArrayList<>();
         empIds.add(employeesId);
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
+        if (type.equals(0)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+            res.addAll(this.order2ByEmployeesAll(empIds));
+            res.addAll(this.order3ByEmployeesAll(empIds));
+            res.addAll(this.order4ByEmployeesAll(empIds));
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }else if (type.equals(1)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+        }else if (type.equals(2)){
+            res.addAll(this.order2ByEmployeesAll(empIds));
+        }else if (type.equals(3)){
+            res.addAll(this.order3ByEmployeesAll(empIds));
+        }else if (type.equals(4)){
+            res.addAll(this.order4ByEmployeesAll(empIds));
+        }else if (type.equals(5)){
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
+    }
+
+    @Override
+    public R queryByManager(Integer type) {
+        /* 獲取經理旗下保潔員的Ids */
+        List<Integer> empIds = groupEmployeesService.getEmployeesIdsByManager();
 
         List<OrderDetailsPOJO> res = new ArrayList<>();
         if (type.equals(0)){

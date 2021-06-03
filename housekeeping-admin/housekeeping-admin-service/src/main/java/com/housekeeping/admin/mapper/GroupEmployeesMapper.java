@@ -13,4 +13,6 @@ public interface GroupEmployeesMapper extends BaseMapper<GroupEmployees> {
     Integer count(Integer groupId);
 
     List<Integer> getIdsByGroupId(Integer groupId);
+
+    List<Integer> getEmployeesIdsByManager(Integer managerId);
 }
