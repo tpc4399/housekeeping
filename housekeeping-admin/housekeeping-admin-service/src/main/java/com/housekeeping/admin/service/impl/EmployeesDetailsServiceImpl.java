@@ -318,6 +318,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                 edp.setSkillTags(jobs);
                 return edp;
             }).collect(Collectors.toList());
+            if(CommonUtils.isEmpty(edps)){
+                return R.ok(null);
+            }
             Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), edps);
             return R.ok(pages, "分頁查詢成功");
         }

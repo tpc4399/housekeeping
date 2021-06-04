@@ -24,7 +24,7 @@ public class ImChatGroupUser extends Model<ImChatGroupUser> implements Serializa
     /**
      * 用户id
      */
-    private String userId;
+    private Integer userId;
 
     /**
      * 入群时间

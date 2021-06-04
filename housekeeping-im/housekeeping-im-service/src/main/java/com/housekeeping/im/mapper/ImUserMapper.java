@@ -68,4 +68,6 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     ImMessage getMessageByChatId(Integer id);
 
     List<ImChatGroupVo> getAllGroupByCompany(Integer companyId);
+
+    List<Integer> getAllGroupId();
 }

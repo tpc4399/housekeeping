@@ -209,6 +209,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerAddress.setLng(dto.getLng());
                         customerAddress.setLat(dto.getLat());
                         customerAddress.setPhone(dto.getPhone());
+                        customerAddress.setPhonePrefix(dto.getPhonePrefix());
                         customerAddressService.save(customerAddress);
                     } else {
                         return R.failed("兩次密碼不一致");

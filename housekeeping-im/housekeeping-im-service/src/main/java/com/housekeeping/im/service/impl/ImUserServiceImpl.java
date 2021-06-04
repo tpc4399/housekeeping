@@ -73,9 +73,33 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     @Override
     public R createGroup(String toId) {
 
+        //员工userId
         Integer empId = baseMapper.getEmpId(Integer.parseInt(toId));
 
+        //客户userId
         String currentUserId = TokenUtils.getCurrentUserId().toString();
+
+        String check;
+        if(empId<Integer.parseInt(currentUserId)){
+            check = new StringBuilder().append(empId).append(",").append(currentUserId).append(",").toString();
+        }else {
+            check = new StringBuilder().append(currentUserId).append(",").append(empId).append(",").toString();
+        }
+
+        List<Integer> groupIds = baseMapper.getAllGroupId();
+        for (int i = 0; i < groupIds.size(); i++) {
+            QueryWrapper<ImChatGroupUser> qw = new QueryWrapper<>();
+            qw.eq("chat_group_id",groupIds.get(i));
+            qw.orderByAsc("user_id");
+            List<ImChatGroupUser> list = imChatGroupUserService.getBaseMapper().selectList(qw);
+            StringBuilder sb = new StringBuilder();
+            for (int i1 = 0; i1 < list.size(); i1++) {
+                sb.append(list.get(i1).getUserId()).append(",");
+            }
+            if(check.equals(sb.toString())){
+                return R.ok(groupIds.get(i));
+            }
+        }
         CustomerDetails customer = baseMapper.getCustomerByUser(currentUserId);
         EmployeesDetails employeesByUser = baseMapper.getEmployeesByUser(empId.toString());
         ImChatGroup imChatGroup = new ImChatGroup();
@@ -118,10 +142,10 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
             imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(id);
+            imChatGroupUser.setUserId(Integer.parseInt(id));
             imChatGroupUserService.save(imChatGroupUser);
         }
-        return R.ok("聊天组创建成功");
+        return R.ok(maxId,"聊天组创建成功");
     }
 
     @Override
@@ -265,7 +289,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
             imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(strings.get(i));
+            imChatGroupUser.setUserId(Integer.parseInt(strings.get(i)));
             imChatGroupUserService.save(imChatGroupUser);
         }
         return R.ok("聊天组创建成功");
@@ -300,7 +324,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
             imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(strings.get(i));
+            imChatGroupUser.setUserId(Integer.parseInt(strings.get(i)));
             imChatGroupUserService.save(imChatGroupUser);
         }
         return R.ok("聊天组创建成功");
