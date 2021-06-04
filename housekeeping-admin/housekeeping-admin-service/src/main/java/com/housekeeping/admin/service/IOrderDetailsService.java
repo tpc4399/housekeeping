@@ -132,4 +132,6 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
 
     /* 信用卡支付結果回調處理 */
     String cardPayCallback(CardPayCallbackParams params);
+
+    R queryByManagerId(Integer manId, Integer type);
 }

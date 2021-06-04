@@ -35,4 +35,8 @@ public interface IGroupEmployeesService extends IService<GroupEmployees> {
     /* 經理 獲取自己旗下保潔員的ids */
     @Access(RolesEnum.USER_MANAGER)
     List<Integer> getEmployeesIdsByManager();
+
+    /* 公司查看經理旗下保潔員的ids */
+    @Access(RolesEnum.USER_COMPANY)
+    List<Integer> getEmployeesIdsByManagerId(Integer manId);
 }

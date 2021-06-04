@@ -220,4 +220,12 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
         return results;
     }
 
+
+    @Override
+    public List<Integer> getEmployeesIdsByManagerId(Integer manId) {
+        Integer userId = managerDetailsService.getById(manId).getUserId();
+        ManagerDetails md = managerDetailsService.getManagerDetailsByUserId(userId);
+        List<Integer> employeesIds = baseMapper.getEmployeesIdsByManager(md.getId());
+        return employeesIds.isEmpty()?new ArrayList<>():employeesIds;
+    }
 }

@@ -1159,6 +1159,45 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return "1|OK";
     }
 
+    @Override
+    public R queryByManagerId(Integer manId, Integer type) {
+        /* 獲取經理旗下保潔員的Ids */
+        List<Integer> empIds = groupEmployeesService.getEmployeesIdsByManagerId(manId);
+
+        List<OrderDetailsPOJO> res = new ArrayList<>();
+        if (type.equals(0)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+            res.addAll(this.order2ByEmployeesAll(empIds));
+            res.addAll(this.order3ByEmployeesAll(empIds));
+            res.addAll(this.order4ByEmployeesAll(empIds));
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }else if (type.equals(1)){
+            res.addAll(this.order1ByEmployeesAll(empIds));
+        }else if (type.equals(2)){
+            res.addAll(this.order2ByEmployeesAll(empIds));
+        }else if (type.equals(3)){
+            res.addAll(this.order3ByEmployeesAll(empIds));
+        }else if (type.equals(4)){
+            res.addAll(this.order4ByEmployeesAll(empIds));
+        }else if (type.equals(5)){
+            res.addAll(this.order5ByEmployeesAll(empIds));
+        }
+        SortListUtil<OrderDetailsPOJO> sort = new SortListUtil<>();
+        sort.Sort(res,"getStartDateTime","desc");
+        List<OrderDetailsParent> sons = res.stream().map(x -> {
+            /* 工作内容二次加工处理 */
+            OrderDetailsParent son = x;
+            List<Integer> jobIds = CommonUtils.stringToList(x.getJobIds());
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+            son.setJobs(jobs);
+            /* 保洁员头像二次加工处理 */
+            son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            return son;
+        }).collect(Collectors.toList());
+        return R.ok(sons, "获取成功");
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();

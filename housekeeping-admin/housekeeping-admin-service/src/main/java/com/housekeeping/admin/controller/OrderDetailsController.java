@@ -153,6 +153,13 @@ public class OrderDetailsController {
         return orderDetailsService.queryEmpByCom(type, employeesId);
     }
 
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("【公司】公司查看某个经理旗下的保洁员订单 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
+    @GetMapping("/queryByManagerId")
+    public R queryByManager(@RequestParam Integer manId,@RequestParam Integer type){
+        return orderDetailsService.queryByManagerId(manId,type);
+    }
+
     @Access(RolesEnum.USER_MANAGER)
     @ApiOperation("【經理】自己旗下保潔員的訂單查詢 type = 0全部 1待付款 2待服务 3进行中 4待评价 5已完成")
     @GetMapping("/queryByManager")
