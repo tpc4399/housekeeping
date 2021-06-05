@@ -17,11 +17,16 @@
 	</resultMap>
 
 	<select id="getByRan" resultMap="baseResultMap">
-		select *
+		select
+		*
 		from
-		company_advertising
-		where
-		end_time > NOW()
+		company_advertising ca
+		<where>
+			end_time > NOW()
+			<if test="typeId != null and typeId != ''" >
+				and ca.type_id =#{typeId}
+			</if>
+		</where>
 		order by rand() limit #{ran}
 	</select>
 

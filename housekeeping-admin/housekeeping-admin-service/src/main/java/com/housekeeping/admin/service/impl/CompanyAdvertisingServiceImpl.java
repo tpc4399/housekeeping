@@ -108,13 +108,16 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
     }
 
     @Override
-    public R getByCompanyId(Integer companyId, Integer id, String name) {
+    public R getByCompanyId(Integer companyId,Integer typeId, Integer id, String name) {
         QueryWrapper<CompanyAdvertising> qw = new QueryWrapper<>();
         if(CommonUtils.isNotEmpty(companyId)){
             qw.eq("company_id",companyId);
         }
         if(CommonUtils.isNotEmpty(id)){
             qw.eq("id",id);
+        }
+        if(CommonUtils.isNotEmpty(typeId)){
+            qw.eq("type_id",typeId);
         }
         if(CommonUtils.isNotEmpty(name)){
             qw.like("title",name);
@@ -131,8 +134,8 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
     }
 
     @Override
-    public R getByRan(Integer ran) {
-        return baseMapper.getByRan(ran);
+    public R getByRan(Integer typeId,Integer ran) {
+        return R.ok(baseMapper.getByRan(typeId,ran));
     }
 
     @Override

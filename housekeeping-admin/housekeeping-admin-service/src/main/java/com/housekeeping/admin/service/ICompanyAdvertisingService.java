@@ -20,9 +20,9 @@ public interface ICompanyAdvertisingService extends IService<CompanyAdvertising>
 
     R renewal(AdvertisingRenewalVo companyAdvertising);
 
-    R getByCompanyId(Integer companyId, Integer id, String name);
+    R getByCompanyId(Integer companyId,Integer typeId, Integer id, String name);
 
-    R getByRan(Integer ran);
+    R getByRan(Integer typeId,Integer ran);
 
     R uploadPhoto(MultipartFile file);
 

@@ -57,8 +57,8 @@ public class CompanyAdvertisingController {
 
     @GetMapping("/getByCompanyId")
     @ApiOperation("【公司】查詢公司的廣告")
-    public R getByCompanyId(Integer companyId,Integer id,String name){
-        return iCompanyAdvertisingService.getByCompanyId(companyId, id, name);
+    public R getByCompanyId(Integer companyId,Integer typeId,Integer id,String name){
+        return iCompanyAdvertisingService.getByCompanyId(companyId,typeId, id, name);
     }
 
     @GetMapping("/getByAdmin")
@@ -74,9 +74,9 @@ public class CompanyAdvertisingController {
     }
 
     @GetMapping("getByRan")
-    @ApiOperation("【公司】根據數量隨機獲取推薦廣告")
-    public R getByRan(Integer ran){
-        return iCompanyAdvertisingService.getByRan(ran);
+    @ApiOperation("根據數量隨機獲取推薦廣告(0大广告 1小广告)")
+    public R getByRan(Integer typeId,Integer ran){
+        return iCompanyAdvertisingService.getByRan(typeId,ran);
     }
 
     @ApiOperation("【公司】【管理员】廣告上傳圖片")

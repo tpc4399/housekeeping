@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface CompanyAdvertisingMapper extends BaseMapper<CompanyAdvertising> {
 
-    R getByRan(Integer ran);
+    List<CompanyAdvertising> getByRan(@Param("typeId")Integer typeId,@Param("ran")Integer ran);
 
     R getAllProAd();
 
