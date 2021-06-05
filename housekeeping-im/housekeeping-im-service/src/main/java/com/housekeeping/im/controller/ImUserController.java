@@ -97,4 +97,10 @@ public class ImUserController {
         return imUserService.removeGroup(id);
     }
 
+    @ApiOperation("公司查看经理的聊天组")
+    @GetMapping("/getEmpChat")
+    public R getEmpChat(Integer manId){
+        return imUserService.getManChat(manId);
+    }
+
 }

@@ -54,6 +54,7 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
         }else {
             LocalDateTime now = LocalDateTime.now();
             CompanyAdvertising companyAdvertising1 = new CompanyAdvertising();
+            companyAdvertising1.setTypeId(companyAdvertising.getType());
             companyAdvertising1.setCompanyId(companyId);
             companyAdvertising1.setContent(companyAdvertising.getContent());
             companyAdvertising1.setLink(companyAdvertising.getLink());
@@ -188,6 +189,7 @@ public class CompanyAdvertisingServiceImpl extends ServiceImpl<CompanyAdvertisin
         int day = companyAdvertising.getDay().intValue();
             LocalDateTime now = LocalDateTime.now();
             CompanyAdvertising companyAdvertising1 = new CompanyAdvertising();
+            companyAdvertising1.setTypeId(companyAdvertising.getTypeId());
             companyAdvertising1.setCompanyId(companyId);
             companyAdvertising1.setContent(companyAdvertising.getContent());
             companyAdvertising1.setLink(companyAdvertising.getLink());

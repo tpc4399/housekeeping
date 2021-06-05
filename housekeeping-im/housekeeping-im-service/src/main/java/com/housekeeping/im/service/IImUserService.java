@@ -42,4 +42,6 @@ public interface IImUserService extends IService<ImUser> {
     R removeGroup(Integer id);
 
     R getChatGroupById(Integer empId);
+
+    R getManChat(Integer manId);
 }

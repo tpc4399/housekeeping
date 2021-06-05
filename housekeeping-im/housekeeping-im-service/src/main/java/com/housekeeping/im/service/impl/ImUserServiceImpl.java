@@ -300,10 +300,36 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
 
         Integer cusId = baseMapper.getCusIdByDemand(demandId);
         Integer userId = baseMapper.getUSerIdByEmpId(empId);
+        Integer currentUserId = TokenUtils.getCurrentUserId();
+
+        List<Integer> list1 = new ArrayList<>();
+        list1.add(cusId);
+        list1.add(userId);
+        list1.add(currentUserId);
+        Collections.sort(list1);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list1.size(); i++) {
+            sb.append(list1.get(i)).append(",");
+        }
+
+        List<Integer> groupIds = baseMapper.getAllGroupId();
+        for (int i = 0; i < groupIds.size(); i++) {
+            QueryWrapper<ImChatGroupUser> qw = new QueryWrapper<>();
+            qw.eq("chat_group_id",groupIds.get(i));
+            qw.orderByAsc("user_id");
+            List<ImChatGroupUser> list = imChatGroupUserService.getBaseMapper().selectList(qw);
+            StringBuilder sb1 = new StringBuilder();
+            for (int i1 = 0; i1 < list.size(); i1++) {
+                sb1.append(list.get(i1).getUserId()).append(",");
+            }
+            if(sb.toString().equals(sb1.toString())){
+                return R.ok(groupIds.get(i));
+            }
+        }
+
 
         CustomerDetails customer = baseMapper.getCustomerByUser(cusId.toString());
         EmployeesDetails employees = baseMapper.getEmployeesByUser(empId);
-        String currentUserId = TokenUtils.getCurrentUserId().toString();
         ImChatGroup imChatGroup = new ImChatGroup();
         imChatGroup.setCustomerName(customer.getName());
         imChatGroup.setAvatarCustomer(customer.getHeadUrl());
@@ -315,16 +341,16 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
 
-        ArrayList<String> strings = new ArrayList<>();
+        ArrayList<Integer> strings = new ArrayList<>();
         strings.add(currentUserId);
-        strings.add(cusId.toString());
-        strings.add(empId);
+        strings.add(cusId);
+        strings.add(userId);
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         for (int i = 0; i < strings.size(); i++) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
             imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(Integer.parseInt(strings.get(i)));
+            imChatGroupUser.setUserId(strings.get(i));
             imChatGroupUserService.save(imChatGroupUser);
         }
         return R.ok("聊天组创建成功");
@@ -379,6 +405,38 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             return x;
         }).collect(Collectors.toList());
         imChatGroups.addAll(chatGroups);
+        return R.ok(imChatGroups);
+    }
+
+    @Override
+    public R getManChat(Integer manId) {
+
+        List<ImChatGroupVo> imChatGroups = new ArrayList<>();
+        Integer userId = baseMapper.getUserId(manId);
+        List<ImChatGroupVo> chatGroups = imUserService.getChatGroups(userId.toString());
+        chatGroups.stream().map(x->{
+            ImMessage message = baseMapper.getMessageByChatId(x.getId());
+            x.setMessage(message);
+            return x;
+        }).collect(Collectors.toList());
+
+        Integer managerId = baseMapper.getMangerId(userId);
+        List<Integer> empIds = baseMapper.getAllEmp(managerId);
+        List<String> userIds = new ArrayList<>();
+        for (int i = 0; i < empIds.size(); i++) {
+            userIds.add(baseMapper.getUSerIdByEmpId(empIds.get(i).toString()).toString());
+        }
+        for (int i = 0; i < userIds.size(); i++) {
+            List<ImChatGroupVo> chatGroups1 = imUserService.getChatGroups(userIds.get(i).toString());
+            chatGroups1.stream().map(x->{
+                ImMessage message = baseMapper.getMessageByChatId(x.getId());
+                x.setMessage(message);
+                return x;
+            }).collect(Collectors.toList());
+            imChatGroups.addAll(chatGroups1);
+        }
+        imChatGroups.addAll(chatGroups);
+
         return R.ok(imChatGroups);
     }
 

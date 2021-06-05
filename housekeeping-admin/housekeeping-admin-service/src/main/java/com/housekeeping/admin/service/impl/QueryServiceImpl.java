@@ -100,7 +100,7 @@ public class QueryServiceImpl implements IQueryService {
                 EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO();
                 edp.setEmployeesId(employeesId);
                 edp.setName(ed.getName());
-                edp.setBirthDate(ed.getDateOfBirth());
+                edp.setDateOfBirth(ed.getDateOfBirth());
                 edp.setWorkYear(ed.getWorkYear());
                 edp.setNumberOfOrder(ed.getNumberOfOrders());
                 edp.setHeaderUrl(ed.getHeadUrl());

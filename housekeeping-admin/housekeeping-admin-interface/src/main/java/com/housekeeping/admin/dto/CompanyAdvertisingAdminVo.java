@@ -1,12 +1,12 @@
 package com.housekeeping.admin.dto;
 
 
-import com.housekeeping.admin.vo.CompanyAdvertisingVo;
 import lombok.Data;
 
 @Data
 public class CompanyAdvertisingAdminVo {
 
+    private Integer typeId;         /* 广告类型 */
     private Integer companyId;
     private String title;           /* 標題 */
     private String link;            /* 鏈接 */

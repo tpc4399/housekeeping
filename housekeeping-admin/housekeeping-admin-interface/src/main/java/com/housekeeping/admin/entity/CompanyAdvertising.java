@@ -17,6 +17,7 @@ public class CompanyAdvertising extends Model<CompanyAdvertising> {
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;             /* 主鍵id */
     private Integer companyId;      /* 公司id */
+    private Integer typeId;         /* 广告类型 */
     private String title;           /* 標題 */
     private String link;            /* 鏈接 */
     private String content;         /* 内容 */

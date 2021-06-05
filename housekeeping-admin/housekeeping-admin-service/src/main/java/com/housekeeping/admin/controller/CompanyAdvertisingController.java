@@ -31,6 +31,12 @@ public class CompanyAdvertisingController {
         return iCompanyAdvertisingService.add(companyAdvertising);
     }
 
+    @PutMapping("/renewal")
+    @ApiOperation("【公司】續費廣告推廣")
+    public R renewal(@RequestBody AdvertisingRenewalVo companyAdvertising){
+        return iCompanyAdvertisingService.renewal(companyAdvertising);
+    }
+
     @PostMapping("/addByAdmin")
     @ApiOperation("【管理员】廣告推廣")
     public R addByAdmin(@RequestBody CompanyAdvertisingAdminVo companyAdvertising){
@@ -41,12 +47,6 @@ public class CompanyAdvertisingController {
     @ApiOperation("【公司】【管理员】修改廣告推廣")
     public R update(@RequestBody AdvertisingVo companyAdvertising){
         return iCompanyAdvertisingService.cusUpdate(companyAdvertising);
-    }
-
-    @PutMapping("/renewal")
-    @ApiOperation("【公司】續費廣告推廣")
-    public R renewal(@RequestBody AdvertisingRenewalVo companyAdvertising){
-        return iCompanyAdvertisingService.renewal(companyAdvertising);
     }
 
     @PutMapping("/renewalByAdmin")

@@ -80,9 +80,6 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }
-        if(CommonUtils.isEmpty(messageList)){
-            return R.ok(null);
-        }
         Page pages = PageUtils.getPages((int)page.getCurrent(), messageList.size(), messageList);
         return R.ok(pages);
     }

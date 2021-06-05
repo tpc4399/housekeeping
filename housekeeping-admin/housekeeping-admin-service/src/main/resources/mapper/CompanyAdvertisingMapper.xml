@@ -6,6 +6,7 @@
 
 	<resultMap id="baseResultMap" type="com.housekeeping.admin.entity.CompanyAdvertising">
 		<id property="id" column="id"/>
+		<result property="typeId" column="type_id"/>
 		<result property="companyId" column="company_id"/>
 		<result property="title" column="title"/>
 		<result property="link" column="link"/>
@@ -36,6 +37,7 @@
     <select id="getAllAdderByAdmin" resultType="com.housekeeping.admin.vo.CompanyAdvertingVo">
 		SELECT
 		ca.id,
+		ca.type_id,
 		ca.company_id,
 		ca.title,
 		ca.link,

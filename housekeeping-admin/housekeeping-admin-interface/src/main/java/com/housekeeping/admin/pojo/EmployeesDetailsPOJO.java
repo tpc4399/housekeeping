@@ -23,7 +23,7 @@ public class EmployeesDetailsPOJO {
 
     private Integer employeesId;        /* 保洁员的id */
     private String name;                /* 保洁员姓名 */
-    private LocalDate birthDate;        /* 出生年月日 */
+    private LocalDate dateOfBirth;        /* 出生年月日 */
     private String workYear;            /* 工作年限 */
     private Integer numberOfOrder;      /* 接单次数 */
     private String headerUrl;           /* 头像地址 */
@@ -38,7 +38,7 @@ public class EmployeesDetailsPOJO {
     public EmployeesDetailsPOJO(EmployeesDetails ed){
         employeesId = ed.getId();
         name = ed.getName();
-        birthDate = ed.getDateOfBirth();
+        dateOfBirth = ed.getDateOfBirth();
         workYear = ed.getWorkYear();
         numberOfOrder = ed.getNumberOfOrders();
         headerUrl = ed.getHeadUrl();
