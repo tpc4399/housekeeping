@@ -570,6 +570,15 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         quotationVo.setEmployeesDetails(employeesDetailsService.getById(employeesId));
         quotationVo.setDemandOrder(demandOrderService.getById(demandOrderId));
 
+        /* 可工作天数计算 */
+        Integer days = employeesCalendarService.days(serviceTimeByEmployees);
+        quotationVo.setDays(days);
+
+        List<TimeSlot> times = demandOrderMapper.getTimes(demandOrderId);
+        /* 每日工作时长计算 */
+        Float h = this.hOfDay(times);
+        quotationVo.setH(h);
+
         return R.ok(quotationVo);
     }
 

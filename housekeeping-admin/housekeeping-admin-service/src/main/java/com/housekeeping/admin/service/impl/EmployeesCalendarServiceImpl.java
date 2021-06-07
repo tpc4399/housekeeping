@@ -313,6 +313,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         ec.setWeek(week.toString());
         ec.setTimeSlotStart(dto.getTimeSlotStart());
         ec.setTimeSlotLength(dto.getTimeSlotLength());
+        ec.setHourlyWage(BigDecimal.valueOf(dto.getPrice()));
         this.updateById(ec);
         return R.ok(null, "修改成功");
     }
@@ -737,23 +738,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 數據從數據庫獲取 */
         EmployeesCalendar ec = employeesCalendarService.getById(id);
 
-        /* 時間表存在性判斷 */
-        if (CommonUtils.isEmpty(ec)) return R.failed(null, "該時間表不存在");
-        CalendarPOJO pojo = new CalendarPOJO(ec);
-        QueryWrapper qw = new QueryWrapper();
-        qw.eq("calendar_id", ec.getId());
-        List<EmployeesCalendarDetails> ecds = employeesCalendarDetailsService.list(qw);
-        if(ecds.isEmpty()){
-            pojo.setPrice(new Float(26));
-            pojo.setCode("TWD");
-        }else {
-            EmployeesCalendarDetails ecd = ecds.get(0);
-            pojo.setPrice(ecd.getPrice());
-            pojo.setCode(ecd.getCode());
-        }
-
         /* 返回信息 */
-        return R.ok(pojo, "獲取成功");
+        return R.ok(ec, "獲取成功");
     }
 
     @Override

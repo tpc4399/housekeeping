@@ -17,4 +17,6 @@ public class QuotationVo {
     private List<WorkDetailsPOJO> workDetailsPOJOS;
     private BigDecimal price;
     private Integer status;
+    private Integer days;
+    private Float h;
 }
