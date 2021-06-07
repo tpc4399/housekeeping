@@ -48,4 +48,19 @@ public class EmployeesCalendar extends Model<EmployeesCalendar> {
         this.timeSlotStart = timeSlotStart;
         this.timeSlotLength = timeSlotLength;
     }
+
+    @Override
+    public String toString() {
+        return "EmployeesCalendar{" +
+                "id=" + id +
+                ", employeesId=" + employeesId +
+                ", stander=" + stander +
+                ", date=" + date +
+                ", week='" + week + '\'' +
+                ", timeSlotStart=" + timeSlotStart +
+                ", timeSlotLength=" + timeSlotLength +
+                ", hourlyWage=" + hourlyWage +
+                ", code='" + code + '\'' +
+                '}';
+    }
 }

@@ -17,4 +17,5 @@ public class OrderDetailsParent {
     private String addressEmployees;  //保洁员的地址
     private Float lngEmployees;  //经度
     private Float latEmployees;  //纬度
+    private WorkDetailsPOJO wdp;   //第一天的安排
 }

@@ -19,4 +19,12 @@ public class SetEmployeesCalendar2DTO {
     private List<Integer> week;    /* 週數 */
     private List<TimeSlotPriceDTO> timeSlotPriceDTOList;
 
+    @Override
+    public String toString() {
+        return "SetEmployeesCalendar2DTO{" +
+                "employeesId=" + employeesId +
+                ", week=" + week +
+                ", timeSlotPriceDTOList=" + timeSlotPriceDTOList +
+                '}';
+    }
 }

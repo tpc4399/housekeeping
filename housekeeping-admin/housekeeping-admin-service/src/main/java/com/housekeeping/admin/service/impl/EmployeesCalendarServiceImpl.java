@@ -10,6 +10,7 @@ import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
  * @Author su
  * @create 2020/11/12 16:22
  */
+@Slf4j
 @Service("employeesCalendarService")
 public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarMapper, EmployeesCalendar> implements IEmployeesCalendarService {
 
@@ -253,6 +255,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Override
     public R setCalendar2(SetEmployeesCalendar2DTO dto) {
+        log.info("后台接收到的数据："+dto.toString());
+
         /* dto合理性判斷 */
         List<String> res = this.rationalityJudgmentD(dto);
         if (res.size() == 0){
@@ -292,6 +296,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                     );
             employeesCalendar.setHourlyWage(new BigDecimal(timeSlot.getPrice()));
             employeesCalendar.setCode(timeSlot.getCode());
+            log.info("插入数据库前："+employeesCalendar.toString());
             baseMapper.insert(employeesCalendar);
         });
 

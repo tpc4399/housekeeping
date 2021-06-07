@@ -345,6 +345,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             son.setJobs(jobs);
             /* 保洁员头像二次加工处理 */
             son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            /* 第一次工作内容 */
+            List<WorkDetailsPOJO> wdp = x.getWorkDetails();
+            if (wdp.isEmpty()){
+                son.setWdp(new WorkDetailsPOJO());
+            }else {
+                son.setWdp(x.getWorkDetails().get(0));
+            }
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -393,6 +400,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             son.setJobs(jobs);
             /* 客户头像二次加工处理 */
             son.setCustomerHeaderUrl(customerDetailsService.getById(x.getCustomerId()).getHeadUrl());
+            /* 第一次工作内容 */
+            List<WorkDetailsPOJO> wdp = x.getWorkDetails();
+            if (wdp.isEmpty()){
+                son.setWdp(new WorkDetailsPOJO());
+            }else {
+                son.setWdp(x.getWorkDetails().get(0));
+            }
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -436,6 +450,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             son.setJobs(jobs);
             /* 保洁员头像二次加工处理 */
             son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            /* 第一次工作内容 */
+            List<WorkDetailsPOJO> wdp = x.getWorkDetails();
+            if (wdp.isEmpty()){
+                son.setWdp(new WorkDetailsPOJO());
+            }else {
+                son.setWdp(x.getWorkDetails().get(0));
+            }
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -479,6 +500,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             son.setJobs(jobs);
             /* 保洁员头像二次加工处理 */
             son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            /* 第一次工作内容 */
+            List<WorkDetailsPOJO> wdp = x.getWorkDetails();
+            if (wdp.isEmpty()){
+                son.setWdp(new WorkDetailsPOJO());
+            }else {
+                son.setWdp(x.getWorkDetails().get(0));
+            }
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -518,6 +546,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             son.setJobs(jobs);
             /* 保洁员头像二次加工处理 */
             son.setEmployeesHeaderUrl(employeesDetailsService.getById(x.getEmployeesId()).getHeadUrl());
+            /* 第一次工作内容 */
+            List<WorkDetailsPOJO> wdp = x.getWorkDetails();
+            if (wdp.isEmpty()){
+                son.setWdp(new WorkDetailsPOJO());
+            }else {
+                son.setWdp(x.getWorkDetails().get(0));
+            }
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
