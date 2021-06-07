@@ -2,11 +2,13 @@ package com.housekeeping.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.housekeeping.admin.dto.WeightDTO;
 import com.housekeeping.admin.entity.SysConfig;
 import com.housekeeping.admin.mapper.SysConfigMapper;
 import com.housekeeping.admin.service.ISysConfigService;
 import com.housekeeping.common.utils.ApplicationConfigConstants;
 import com.housekeeping.common.utils.CommonUtils;
+import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -158,5 +160,28 @@ public class SysConfigServiceImpl
             map.put(ApplicationConfigConstants.evaluateScopeDouble, "100"); //评价
         }
         return map;
+    }
+
+    @Override
+    public R config(String key, String value) {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("config_key", key);
+        SysConfig config = this.getOne(qw);
+        if (CommonUtils.isEmpty(config)) {
+            this.save(new SysConfig(null, key, value, config.getDescription()));
+        } else {
+            if (value.equals(config.getConfigValue())) {
+                //还是这个值，不用管
+            } else {
+                this.updateById(new SysConfig(config.getId(), key, value, config.getDescription()));
+            }
+        }
+        return R.ok("设置成功");
+    }
+
+    @Override
+    public R weight(WeightDTO dto) {
+
+        return null;
     }
 }

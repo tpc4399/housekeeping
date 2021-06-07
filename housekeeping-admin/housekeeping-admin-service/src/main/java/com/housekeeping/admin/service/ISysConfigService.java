@@ -1,8 +1,12 @@
 package com.housekeeping.admin.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.housekeeping.admin.dto.WeightDTO;
 import com.housekeeping.admin.entity.SysConfig;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -20,5 +24,9 @@ public interface ISysConfigService extends IService<SysConfig> {
     Map<String, Integer> getDefaultRecommendationInteger();
     /* 获取搜索的权重 */
     Map<String, String> getQueryWeight(Integer priorityType);
+
+    R config(String key, String value);
+
+    R weight(WeightDTO dto);
 
 }

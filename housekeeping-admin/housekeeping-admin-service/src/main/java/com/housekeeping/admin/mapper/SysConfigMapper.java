@@ -1,6 +1,7 @@
 package com.housekeeping.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.housekeeping.admin.dto.WeightDTO;
 import com.housekeeping.admin.entity.SysConfig;
 
 /**
@@ -8,4 +9,7 @@ import com.housekeeping.admin.entity.SysConfig;
  * @Date 2021/2/23 10:47
  */
 public interface SysConfigMapper extends BaseMapper<SysConfig> {
+
+    void weight(WeightDTO dto);
+
 }

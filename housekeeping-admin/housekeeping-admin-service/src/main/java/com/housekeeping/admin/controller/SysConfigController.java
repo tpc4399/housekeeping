@@ -1,10 +1,13 @@
 package com.housekeeping.admin.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.housekeeping.admin.dto.WeightDTO;
 import com.housekeeping.admin.entity.SysConfig;
 import com.housekeeping.admin.service.ISysConfigService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
+import com.housekeeping.common.utils.ApplicationConfigConstants;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
@@ -50,6 +53,122 @@ public class SysConfigController {
                 sysConfigService.updateById(new SysConfig(config.getId(), key, value, description));
             }
         }
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/matchmakingFeeSwitchBoolean")
+    @ApiOperation("【管理员】设置媒合費开关")
+    public R matchmakingFeeSwitchBoolean(String value){
+        String key = ApplicationConfigConstants.matchmakingFeeSwitchBoolean;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/matchmakingFeeFloat")
+    @ApiOperation("【管理员】设置媒合費")
+    public R matchmakingFeeFloat(String value){
+        String key = ApplicationConfigConstants.matchmakingFeeFloat;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/systemServiceFeeSwitchBoolean")
+    @ApiOperation("【管理员】设置系統服務費開關")
+    public R systemServiceFeeSwitchBoolean(String value){
+        String key = ApplicationConfigConstants.systemServiceFeeSwitchBoolean;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/systemServiceFeeFloat")
+    @ApiOperation("【管理员】设置系統服務費")
+    public R systemServiceFeeFloat(String value){
+        String key = ApplicationConfigConstants.systemServiceFeeFloat;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/servicesChargeForCreditCardFloat")
+    @ApiOperation("【管理员】设置刷卡手續費百分比")
+    public R servicesChargeForCreditCardFloat(String value){
+        String key = ApplicationConfigConstants.servicesChargeForCreditCardFloat;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/servicesChargeForCreditCardSwitchBoolean")
+    @ApiOperation("【管理员】设置刷卡手續費开关")
+    public R servicesChargeForCreditCardSwitchBoolean(String value){
+        String key = ApplicationConfigConstants.servicesChargeForCreditCardSwitchBoolean;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/numberOfConsecutiveCompanyInteger")
+    @ApiOperation("【管理员】设置连续公司数量")
+    public R numberOfConsecutiveCompanyInteger(String value){
+        String key = ApplicationConfigConstants.numberOfConsecutiveCompanyInteger;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/numberOfConsecutiveEmployeesInteger")
+    @ApiOperation("【管理员】设置连续员工数量")
+    public R numberOfConsecutiveEmployeesInteger(String value){
+        String key = ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/defaultRecommendationCompanyInteger")
+    @ApiOperation("【管理员】设置默认推荐公司数量")
+    public R defaultRecommendationCompanyInteger(String value){
+        String key = ApplicationConfigConstants.defaultRecommendationCompanyInteger;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/defaultRecommendationEmployeesInteger")
+    @ApiOperation("【管理员】设置默认推荐员工数量")
+    public R defaultRecommendationEmployeesInteger(String value){
+        String key = ApplicationConfigConstants.defaultRecommendationEmployeesInteger;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/orderRetentionTime")
+    @ApiOperation("【管理员】设置订单保留时间")
+    public R orderRetentionTime(String value){
+        String key = ApplicationConfigConstants.orderRetentionTime;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @PostMapping("/weight")
+    @ApiOperation("【管理员】设置搜索权重")
+    public R weight(@RequestBody WeightDTO dto){
+        sysConfigService.config(ApplicationConfigConstants.distanceScoreDouble, dto.getDistanceScoreDouble());
+        sysConfigService.config(ApplicationConfigConstants.areaScopeDouble, dto.getAreaScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.priceScopeDouble, dto.getPriceScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.attendanceScopeDouble, dto.getAttendanceScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.evaluateScopeDouble, dto.getEvaluateScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.extensionScopeDouble, dto.getExtensionScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.extensionCompanyScopeDouble, dto.getExtensionCompanyScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.numberOfOrdersReceivedScopeDouble, dto.getNumberOfOrdersReceivedScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.timeScopeDouble, dto.getTimeScopeDouble());
+        sysConfigService.config(ApplicationConfigConstants.workScopeDouble, dto.getWorkScopeDouble());
         return R.ok("设置成功");
     }
 

@@ -47,8 +47,10 @@ public interface ApplicationConfigConstants {
     String defaultRecommendationCompanyInteger = "defaultRecommendationCompanyInteger";
     /** 默认推荐员工数量 */
     String defaultRecommendationEmployeesInteger = "defaultRecommendationEmployeesInteger";
-
-
+    /** 订单保留时间 */
+    String orderRetentionTime = "orderRetentionTime";
+    /** 自动好评时间 */
+    String automaticEvaluationTime = "automaticEvaluationTime";
 
 
 
