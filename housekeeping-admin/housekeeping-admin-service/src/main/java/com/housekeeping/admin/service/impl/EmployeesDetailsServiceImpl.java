@@ -148,6 +148,7 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
             employeesDetails.setStarRating(3.0f); //新增的员工默认为三星级，中等好评
             employeesDetails.setBlacklistFlag(false);
+            employeesDetails.setNumberOfOrders(0); //默认接单次数为0
 
             employeesDetails.setUpdateTime(LocalDateTime.now());
             employeesDetails.setCreateTime(LocalDateTime.now());
