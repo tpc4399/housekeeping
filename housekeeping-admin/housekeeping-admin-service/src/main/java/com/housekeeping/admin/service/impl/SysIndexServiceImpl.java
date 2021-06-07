@@ -453,7 +453,8 @@ public class SysIndexServiceImpl
             CompanyDetails cd = companyDetailsService.getById(x.getCompanyId());
             Boolean certified = cd.getIsValidate();
             List<Integer> jobIds = CommonUtils.stringToList(x.getPresetJobIds());
-            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
             if (dto.getGetGPSSuccess()){
                 String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
                 Double instance = new Double(str);
@@ -537,7 +538,8 @@ public class SysIndexServiceImpl
             /** certified:員工認證準備 */
             CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
             List<Integer> jobIds = CommonUtils.stringToList(employeesDetails.getPresetJobIds());
-            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
             Boolean certified = cd.getIsValidate();
             EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified, jobs);
             employeesInstanceDTOArrayList.add(employeesInstanceDTO);
@@ -602,7 +604,8 @@ public class SysIndexServiceImpl
             CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
             Boolean certified = cd.getIsValidate();
             List<Integer> jobIds = CommonUtils.stringToList(employeesDetails.getPresetJobIds());
-            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            List<SysJobContend> jobs = new ArrayList<>();
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
             EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified, jobs);
             employeesInstanceDTOS.add(employeesInstanceDTO);
         }
