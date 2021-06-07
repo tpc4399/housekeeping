@@ -1,9 +1,12 @@
 package com.housekeeping.admin.dto;
 
 import com.housekeeping.admin.entity.EmployeesDetails;
+import com.housekeeping.admin.entity.SysJobContend;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @Author su
@@ -16,4 +19,5 @@ public class EmployeesInstanceDTO {
     private EmployeesDetails employeesDetails;
     private Double instance;
     private Boolean certified;
+    private List<SysJobContend> jobs;
 }

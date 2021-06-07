@@ -452,13 +452,15 @@ public class SysIndexServiceImpl
             /** certified:員工認證準備 */
             CompanyDetails cd = companyDetailsService.getById(x.getCompanyId());
             Boolean certified = cd.getIsValidate();
+            List<Integer> jobIds = CommonUtils.stringToList(x.getPresetJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             if (dto.getGetGPSSuccess()){
                 String str = CommonUtils.getInstanceByPoint(x.getLat(), x.getLng(), dto.getLat().toString(), dto.getLng().toString());
                 Double instance = new Double(str);
-                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance, certified);
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, instance, certified, jobs);
                 return employeesInstanceDTO;
             }else {
-                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, new Double(0), certified);
+                EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(x, new Double(0), certified, jobs);
                 return employeesInstanceDTO;
             }
         }).collect(Collectors.toList());
@@ -534,8 +536,10 @@ public class SysIndexServiceImpl
             }
             /** certified:員工認證準備 */
             CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
+            List<Integer> jobIds = CommonUtils.stringToList(employeesDetails.getPresetJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             Boolean certified = cd.getIsValidate();
-            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified);
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified, jobs);
             employeesInstanceDTOArrayList.add(employeesInstanceDTO);
         }
         res.put("list", employeesInstanceDTOArrayList);
@@ -597,7 +601,9 @@ public class SysIndexServiceImpl
             /** certified:員工認證準備 */
             CompanyDetails cd = companyDetailsService.getById(employeesDetails.getCompanyId());
             Boolean certified = cd.getIsValidate();
-            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified);
+            List<Integer> jobIds = CommonUtils.stringToList(employeesDetails.getPresetJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            EmployeesInstanceDTO employeesInstanceDTO = new EmployeesInstanceDTO(employeesDetails, addrDTO.getInstance(), certified, jobs);
             employeesInstanceDTOS.add(employeesInstanceDTO);
         }
         return R.ok(employeesInstanceDTOS, "获取成功");
