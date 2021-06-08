@@ -342,7 +342,7 @@ public class EmployeesContractServiceImpl
         /* 工作内容技能标签返回 */
         List<Integer> jobIdsInteger = CommonUtils.stringToList(jobs);
         List<SysJobContend> sysJobContends = new ArrayList<>();
-        if (!jobIdsInteger.isEmpty()) sysJobContends = sysJobContendService.listByIds(sysJobContends);
+        if (!jobIdsInteger.isEmpty()) sysJobContends = sysJobContendService.listByIds(Arrays.asList(jobIds));
         map.put("jobContends", sysJobContends);
 
         return R.ok(map);
