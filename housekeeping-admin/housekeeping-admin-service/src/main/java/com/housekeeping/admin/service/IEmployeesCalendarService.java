@@ -6,6 +6,7 @@ import com.housekeeping.admin.entity.EmployeesCalendar;
 import com.housekeeping.admin.pojo.LocalTimeAndPricePOJO;
 import com.housekeeping.admin.pojo.TodayDetailsPOJO;
 import com.housekeeping.admin.pojo.WorkDetailsPOJO;
+import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.utils.R;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -67,11 +68,14 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     /* 判断employeesId的时间表存在性 */
     Boolean judgmentOfExistenceByEmployeesId(Integer employeesId);
 
-    /* 处理预约钟点流程，取消不能做的日子 */
-    List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto);
+    /* 处理预约钟点流程，取消不能做的日子,是否需要 */
+    List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto, Boolean need);
 
     /* 判断今日能否做 */
     Boolean judgeToday(List<LocalTimeAndPricePOJO> table, List<LocalTime> item);
+
+    /* 给时段带上价格 */
+    List<TimeSlot> withPriceOfSlot(List<LocalTime> item, List<LocalTimeAndPricePOJO> enableTimeToday);
 
     /* 计算订单总价格 */
     BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails);

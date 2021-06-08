@@ -627,7 +627,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
 
         /* 工作时间安排 */
-        List<WorkDetailsPOJO> wds = this.makeAnAppointmentHandle(dto);
+        List<WorkDetailsPOJO> wds = this.makeAnAppointmentHandle(dto, true);
         odp.setWorkDetails(wds);
 
         /* 可工作天数计算 */
@@ -757,7 +757,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     }
 
     @Override
-    public List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto) {
+    public List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto, Boolean need) {
         List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
         /* 获取这段日期内的空闲时间 */
         List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
@@ -769,7 +769,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             List<LocalTimeAndPricePOJO> enableTimeToday = this.enableTimeToday(x.getTimes());//切割的时间表与价格
             List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());//切割的需求时间段
             Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
-            List<TimeSlot> timeSlots = dto.getTimeSlots();
+            List<TimeSlot> timeSlots = new ArrayList<>();
+            if (need) {
+                if(todayIsOk) timeSlots = this.withPriceOfSlot(item, enableTimeToday); //给时段加价格
+                else timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }else {
+                timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }
+
             Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
             if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
@@ -808,6 +815,54 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             if (!bool1.get()) todayIsOk.set(false); //如果这个时段不行，那么今天就不行
         });
         return todayIsOk.get();
+    }
+
+    @Override
+    public List<TimeSlot> withPriceOfSlot(List<LocalTime> item, List<LocalTimeAndPricePOJO> enableTimeToday) {
+        /* 价格格式处理 */
+        Map<LocalTime, LocalTimeAndPricePOJO> ltpMap = new HashMap<>();
+        enableTimeToday.forEach(ett -> {
+            ltpMap.put(ett.getTime(), ett);
+        });
+
+        /* 带价格的时间段生成 */
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        LocalTime start = LocalTime.MIN; //当前段的开始时间
+        Float length = 0f;//当前段累计长度
+        BigDecimal lastHw = new BigDecimal(-1); //上一个的时薪记录
+        LocalTime lastTime = LocalTime.MIN; //上一个遍历到的时间记录
+
+        for (LocalTime time : item) {
+            //生成新段的条件 价格跳段 或 时间段跳段
+            LocalTimeAndPricePOJO ltp = ltpMap.get(time); //当前半小时，价格
+            BigDecimal a = ltp.getHourlyWage(); //当前半小时的时薪
+            LocalTime b = time;  //当前半小时
+
+            //生成新段判断  价格跳段 或 时间段跳段
+            if (!a.equals(lastHw) || !lastTime.plusMinutes(30).equals(b)){
+                //结束上一段,将上一段放进结果中
+                if (length!=0) {
+                    TimeSlot timeSlot = new TimeSlot(start, length);
+                    timeSlot.setThisSlotPrice(lastHw.multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+                    timeSlots.add(timeSlot);
+                }
+                //开始新段
+                start = b; length = 0f;
+            }
+
+            //老段延长
+            length += 0.5f;
+
+            //最后必做的事~更新这两个值
+            lastHw = a; lastTime = b;
+        }
+
+        //最后还存留一段时间段长度不小于0.5h的时间段，只需要上传就好了
+        TimeSlot timeSlot = new TimeSlot(start, length);
+        timeSlot.setThisSlotPrice(lastHw.multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        timeSlots.add(timeSlot);
+
+        return timeSlots;
     }
 
     /*時間段合理性判斷   假設都不為空*/

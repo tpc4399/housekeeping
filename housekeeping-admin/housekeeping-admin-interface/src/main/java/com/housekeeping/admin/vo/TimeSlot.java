@@ -1,5 +1,6 @@
 package com.housekeeping.admin.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +12,14 @@ import java.time.LocalTime;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class TimeSlot {
     /* 时间段开始点 */
     private LocalTime timeSlotStart;
     /* 时间段长度（h） */
     private Float timeSlotLength;
+    /* 该时间段的价格 */
+    private String thisSlotPrice;
 
     public TimeSlot(LocalTime timeSlotStart, Float timeSlotLength) {
         Float rw = new Float(24);

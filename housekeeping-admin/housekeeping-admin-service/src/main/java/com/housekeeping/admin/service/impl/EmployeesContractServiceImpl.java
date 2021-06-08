@@ -414,7 +414,7 @@ public class EmployeesContractServiceImpl
         TimeSlot timeSlot = new TimeSlot(dto.getStartTime(), ec.getTimeLength());
         timeSlots.add(timeSlot);
         MakeAnAppointmentDTO mapDTO = new MakeAnAppointmentDTO(employeesId, null, start, end, weeks, jobIdsList, timeSlots);
-        List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO);
+        List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO, false);
         odp.setWorkDetails(wds);
 
         /* 可工作天数计算 */
