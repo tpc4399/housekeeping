@@ -200,6 +200,26 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
     @Override
     public R updateEmp(EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
+
+
+        EmployeesDetails byId = this.getById(employeesDetailsDTO.getId());
+
+        //修改员工名、关联修改聊天组名
+        if(!byId.getName().equals(employeesDetailsDTO.getName())){
+            List<Integer> chatIds = baseMapper.getAllChatGroup(byId.getUserId());
+            for (int i = 0; i < chatIds.size(); i++) {
+                baseMapper.updateChatName(chatIds.get(i),employeesDetailsDTO.getName());
+            }
+        }
+
+        //修改员工头像、关联修改聊天组头像
+        if(!byId.getHeadUrl().equals(employeesDetailsDTO.getHeaderUrl())){
+            List<Integer> chatIds = baseMapper.getAllChatGroup(byId.getUserId());
+            for (int i = 0; i < chatIds.size(); i++) {
+                baseMapper.updateChatPhoto(chatIds.get(i),employeesDetailsDTO.getHeaderUrl());
+            }
+        }
+
         EmployeesDetails employeesDetails = new EmployeesDetails();
         employeesDetails.setId(employeesDetailsDTO.getId());
         employeesDetails.setNumber(employeesDetailsDTO.getNumber());

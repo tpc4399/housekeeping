@@ -35,8 +35,8 @@ public class ImMessageController {
     @ApiOperation("获取聊天记录")
     @ResponseBody
     @GetMapping("list")
-    public R listMessage(String chatId, String fromId, String chatType, Page page) {
-       return iImMessageService.listMessage(chatId,fromId,chatType,page);
+    public R listMessage(String chatId, String fromId, String chatType) {
+       return iImMessageService.listMessage(chatId,fromId,chatType);
     }
 
     /**

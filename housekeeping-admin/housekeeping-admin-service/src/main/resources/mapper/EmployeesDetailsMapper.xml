@@ -118,6 +118,15 @@
 		WHERE id = #{empId}
 	</select>
 
+    <select id="getAllChatGroup" resultType="java.lang.Integer">
+		SELECT
+		chat_group_id
+		FROM
+		im_chat_group_user
+		WHERE
+		user_id = #{userId}
+	</select>
+
 
     <update id="updateHeadUrlById">
 		UPDATE employees_details
@@ -142,4 +151,20 @@
 		SET preset_job_ids = #{presetJobIds}
 		WHERE id = #{employeesId}
     </update>
+
+	<update id="updateChatName">
+		UPDATE
+		im_chat_group
+		SET
+		employees_name = #{name}
+		WHERE id = #{chatId}
+	</update>
+
+	<update id="updateChatPhoto">
+		UPDATE
+		im_chat_group
+		SET
+		avatar_employees = #{headerUrl}
+		WHERE id = #{chatId}
+	</update>
 </mapper>

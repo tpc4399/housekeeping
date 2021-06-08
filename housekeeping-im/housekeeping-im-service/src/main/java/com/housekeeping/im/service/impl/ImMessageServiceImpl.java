@@ -42,7 +42,7 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
     private IImChatGroupService imChatGroupService;
 
     @Override
-    public R listMessage(String chatId, String fromId, String chatType,Page page) {
+    public R listMessage(String chatId, String fromId, String chatType) {
         if (CommonUtils.isEmpty(chatId) || StringUtils.isEmpty(fromId)) {
             return R.ok(null);
         }
@@ -57,9 +57,8 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
         }else {
             wrapper.eq("to_id",chatId);
         }
-        IPage<ImMessage> messageIPage = this.page(page, wrapper);
+        List<ImMessage> imMessageList = this.list(wrapper);
 
-        List<ImMessage> imMessageList = messageIPage.getRecords();
         List<Message> messageList = new ArrayList<>();
         for (ImMessage imMessage : imMessageList) {
             Message message = new Message();
@@ -80,8 +79,12 @@ public class ImMessageServiceImpl extends ServiceImpl<ImMessageMapper, ImMessage
             message.setMsgtype(imMessage.getMsgType());
             messageList.add(message);
         }
-        Page pages = PageUtils.getPages((int)page.getCurrent(), messageList.size(), messageList);
-        return R.ok(pages);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("group",imChatGroupService.getById(chatId));
+        map.put("message",messageList);
+
+        return R.ok(map);
     }
 
 

@@ -33,4 +33,10 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
                          @Param("employeesId") Integer employeesId);
 
     EmployeesDetailsSkillVo getCusById(Integer empId);
+
+    List<Integer> getAllChatGroup(Integer userId);
+
+    void updateChatName(@Param("chatId") Integer chatId,@Param("name") String name);
+
+    void updateChatPhoto(@Param("chatId")Integer chatId,@Param("headerUrl") String headerUrl);
 }

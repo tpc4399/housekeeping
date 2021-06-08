@@ -12,7 +12,7 @@ import java.util.Map;
 public interface IImMessageService extends IService<ImMessage> {
 
 
-    R listMessage(String chatId, String fromId, String chatType, Page page);
+    R listMessage(String chatId, String fromId, String chatType);
 
     /**
      * 保存消息
