@@ -339,6 +339,12 @@ public class EmployeesContractServiceImpl
 
         map.put("jobs",employeesContractJobVos);
 
+        /* 工作内容技能标签返回 */
+        List<Integer> jobIdsInteger = CommonUtils.stringToList(jobs);
+        List<SysJobContend> sysJobContends = new ArrayList<>();
+        if (!jobIdsInteger.isEmpty()) sysJobContends = sysJobContendService.listByIds(sysJobContends);
+        map.put("jobContends", sysJobContends);
+
         return R.ok(map);
     }
 
