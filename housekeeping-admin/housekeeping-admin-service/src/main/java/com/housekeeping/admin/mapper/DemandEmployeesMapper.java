@@ -13,4 +13,6 @@ public interface DemandEmployeesMapper extends BaseMapper<DemandEmployees> {
     List<Integer> getAllDemandIds(Integer userId);
 
     List<Integer> getAllUserId();
+
+    List<Integer> getAllDemandIdsByEmpId(Integer employeesId);
 }
