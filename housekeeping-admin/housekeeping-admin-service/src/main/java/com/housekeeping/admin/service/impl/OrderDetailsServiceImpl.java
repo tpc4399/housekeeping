@@ -13,6 +13,7 @@ import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.common.entity.Message;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import ecpay.payment.integration.AllInOne;
@@ -71,6 +72,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ICardPayCallbackService cardPayCallbackService;
     @Resource
     private IGroupEmployeesService groupEmployeesService;
+    @Resource
+    private DelayingQueueService delayingQueueService;
+    @Resource
+    private ISysConfigService sysConfigService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -923,6 +928,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         baseMapper.insertEvaluation(number);
         /* 生成七天自动评价消息 */
         //TODO 生成七天自动评价消息
+        String delaySeconds = sysConfigService.getAutomaticEvaluationTime();
+        String seqId = UUID.randomUUID().toString();
+        String channel1 = CommonConstants.MESSAGE_CHANNEL_CUSTOMER;
+        String channel2 = CommonConstants.MESSAGE_CHANNEL_EMPLOYEES;
+        String body = number;
+        Long delayTime = Long.valueOf(delaySeconds) * 1000 * 60; //延时时间，分钟
+        Message message1 = new Message(seqId, channel1, body, delayTime, LocalDateTime.now()); //客户 自动评价订单的延时消息
+        Message message2 = new Message(seqId, channel2, body, delayTime, LocalDateTime.now()); //保洁员 自动评价订单的延时消息
+
+        delayingQueueService.push(message1);
+        delayingQueueService.push(message2);
 
         return R.ok(null, "成功将进行中订单转变为待评价状态,成功生成评价记录");
     }

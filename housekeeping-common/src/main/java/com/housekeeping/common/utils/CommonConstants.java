@@ -128,4 +128,9 @@ public interface CommonConstants {
 	/** 三方支付：商家验证参数 */
 	String PAY_RVG2C = "1974";
 
+	/** 消息用途：保洁员自动评价订单 */
+	String MESSAGE_CHANNEL_EMPLOYEES = "MESSAGE_CHANNEL_EMPLOYEES";
+	/** 消息用途：客户自动评评价订单 */
+	String MESSAGE_CHANNEL_CUSTOMER = "MESSAGE_CHANNEL_CUSTOMER";
+
 }

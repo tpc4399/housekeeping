@@ -156,6 +156,15 @@ public class SysConfigController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})
+    @GetMapping("/automaticEvaluationTime")
+    @ApiOperation("【管理员】设置订单自动好评时间(分钟)")
+    public R automaticEvaluationTime(String value){
+        String key = ApplicationConfigConstants.automaticEvaluationTime;
+        sysConfigService.config(key, value);
+        return R.ok("设置成功");
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @PostMapping("/weight")
     @ApiOperation("【管理员】设置搜索权重")
     public R weight(@RequestBody WeightDTO dto){

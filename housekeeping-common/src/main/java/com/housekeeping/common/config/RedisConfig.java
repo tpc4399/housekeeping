@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.housekeeping.common.utils.DelayingQueueService;
 import com.housekeeping.common.utils.RedisUtils;
 import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -122,6 +123,11 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public RedisUtils redisUtils(RedisTemplate redisTemplate){
         return new RedisUtils(redisTemplate);
+    }
+
+    @Bean
+    public DelayingQueueService delayingQueueService(RedisTemplate redisTemplate){
+        return new DelayingQueueService(redisTemplate);
     }
 
 }

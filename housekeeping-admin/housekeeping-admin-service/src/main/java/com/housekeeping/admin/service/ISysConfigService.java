@@ -27,6 +27,7 @@ public interface ISysConfigService extends IService<SysConfig> {
 
     R config(String key, String value);
 
-    R weight(WeightDTO dto);
+    /* 获取自动好评时间 */
+    String getAutomaticEvaluationTime();
 
 }

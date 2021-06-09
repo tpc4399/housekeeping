@@ -180,8 +180,11 @@ public class SysConfigServiceImpl
     }
 
     @Override
-    public R weight(WeightDTO dto) {
-
-        return null;
+    public String getAutomaticEvaluationTime() {
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("config_key", ApplicationConfigConstants.automaticEvaluationTime);
+        SysConfig config = this.getOne(qw);
+        return config.getConfigValue();
     }
+
 }
