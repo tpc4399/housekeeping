@@ -2,8 +2,8 @@ package com.housekeeping.admin.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.housekeeping.admin.entity.OrderDetails;
-import com.housekeeping.admin.entity.WorkDetails;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDateTime;
 
@@ -15,11 +15,14 @@ public interface OrderDetailsMapper extends BaseMapper<OrderDetails> {
 
     Integer orderRetentionTime(Integer employeesId);
 
-    void statusAndTime(@Param("number") Long number,
+    void statusAndTime(@Param("number") String number,
                        @Param("status") Integer status,
                        @Param("time") LocalDateTime time);
 
-    void status(@Param("number") Long number,
+    void status(@Param("number") String number,
                 @Param("status") Integer status);
+
+    @Async
+    void insertEvaluation(String orderNumber);
 
 }

@@ -8,10 +8,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -29,7 +26,14 @@ public class OrderEvaluationController {
     @Access({RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
     @PostMapping
     public R evaluation(@RequestBody OrderEvaluationDTO dto){
-        return R.ok();
+        return orderEvaluationService.evaluation(dto);
+    }
+
+    @ApiOperation("【管理員】【公司】【經理】【保洁员】【客户】查看某个订单的評價")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER, RolesEnum.USER_MANAGER})
+    @GetMapping
+    public R getEvaluation(String orderNumber){
+        return orderEvaluationService.getEvaluation(orderNumber);
     }
 
 }

@@ -1,9 +1,16 @@
 package com.housekeeping.admin.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * @Author su
  * @create 2021/6/7 9:42
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderEvaluationDTO {
 
     private String orderNumber; //訂單編號

@@ -905,7 +905,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public R payment3(String number) {
-        OrderDetails od = this.getById(number);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        OrderDetails od = this.getOne(qw);
         if (CommonUtils.isEmpty(od)) return R.failed(null, "订单不存在");
         /* 获取调用者信息 */
         Integer userId = TokenUtils.getCurrentUserId();
@@ -916,8 +918,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (!od.getOrderState().equals(CommonConstants.ORDER_STATE_HAVE_IN_HAND)) return R.failed(null, "订单不是进行中的状态，无法变更为待评价状态");
         /* 开始修改数据 修改订单状态和完成时间 */
         LocalDateTime now = LocalDateTime.now();
-        baseMapper.statusAndTime(Long.valueOf(number), CommonConstants.ORDER_STATE_TO_BE_EVALUATED, now);
-        return R.ok(null, "成功将进行中订单转变为待评价状态");
+        baseMapper.statusAndTime(number, CommonConstants.ORDER_STATE_TO_BE_EVALUATED, now);
+        /* 生成空的评价记录 */
+        baseMapper.insertEvaluation(number);
+
+        return R.ok(null, "成功将进行中订单转变为待评价状态,成功生成评价记录");
     }
 
     @Override
@@ -932,7 +937,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public R payment7(String number) {
-        OrderDetails od = this.getById(number);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        OrderDetails od = this.getOne(qw);
         if (CommonUtils.isEmpty(od)) return R.failed(null, "订单不存在");
         /* 获取调用者信息 */
         Integer userId = TokenUtils.getCurrentUserId();
@@ -942,7 +949,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         /* 检查订单初试状态 */
         if (!od.getOrderState().equals(CommonConstants.ORDER_STATE_TO_BE_SERVED)) return R.failed(null, "订单不是待服務的状态，无法变更为進行中状态");
         /* 开始修改数据 修改订单状态 */
-        baseMapper.status(Long.valueOf(number), CommonConstants.ORDER_STATE_HAVE_IN_HAND);
+        baseMapper.status(number, CommonConstants.ORDER_STATE_HAVE_IN_HAND);
         return R.ok(null, "成功将进行中订单转变为待评价状态");
     }
 
