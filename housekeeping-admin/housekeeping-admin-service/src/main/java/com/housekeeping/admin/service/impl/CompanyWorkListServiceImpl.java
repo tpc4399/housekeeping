@@ -207,8 +207,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     }
 
     @Override
-    public R getInterestedByManager() {
-        Integer userId = TokenUtils.getCurrentUserId();
+    public R getInterestedByManager(Integer managerId) {
+        Integer userId = managerDetailsService.getById(managerId).getUserId();
         List<Integer> demandIds = demandEmployeesMapper.getAllDemandIds(userId);
         List<DemandEmployeesVo> demandEmployeesVos = new ArrayList<>();
         if(CommonUtils.isNotEmpty(demandIds)){
@@ -256,10 +256,11 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     detailsDemandVo.setPrice(list.get(i1).getPrice());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
-                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i).getEmployeesId()));
+                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i1).getEmployeesId()));
                     employeesDetails.add(detailsDemandVo);
                 }
                 demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
+                demandEmployeesVos.add(demandEmployeesVo);
             }
         }
         return R.ok(demandEmployeesVos);
@@ -617,5 +618,64 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         }
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), collect);
         return R.ok(pages);
+    }
+
+    @Override
+    public R getInterestedByEmp(Integer employeesId) {
+        List<Integer> demandIds = demandEmployeesMapper.getAllDemandIdsByEmpId(employeesId);
+        List<DemandEmployeesVo> demandEmployeesVos = new ArrayList<>();
+        if(CommonUtils.isNotEmpty(demandIds)){
+            for (int i = 0; i < demandIds.size(); i++) {
+                DemandEmployeesVo demandEmployeesVo = new DemandEmployeesVo();
+                DemandOrder byId1 = demandOrderService.getById(demandIds.get(i));
+                Integer status = releaseRequirementService.getStatus(byId1);
+                byId1.setStatus(status);
+                demandEmployeesVo.setDemandOrder(byId1);
+                //需求单工作内容
+                String jobs = byId1.getJobIds();
+                List<Skill> skills = new ArrayList<>();
+                List<String> strings = Arrays.asList(jobs.split(" "));
+                for (int x = 0; x < strings.size(); x++) {
+                    Skill skill = new Skill();
+                    int id = Integer.parseInt(strings.get(x));
+                    skill.setJobId(id);
+                    skill.setContent(jobContendService.getById(id).getContend());
+                    skills.add(skill);
+                }
+                demandEmployeesVo.setWorkContent(skills);
+
+                //需求单工作类型
+                String type = byId1.getParentId();
+                List<Skill> types = new ArrayList<>();
+                List<String> strings1 = Arrays.asList(type.split(" "));
+                for (int x = 0; x < strings1.size(); x++) {
+                    Skill skill = new Skill();
+                    int id = Integer.parseInt(strings1.get(x));
+                    skill.setJobId(id);
+                    skill.setContent(sysIndexService.getById(id).getName());
+                    types.add(skill);
+                }
+                demandEmployeesVo.setWorkType(types);
+
+                QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
+                qw.eq("demand_order_id",demandIds.get(i));
+                qw.eq("employees_id",employeesId);
+                List<DemandEmployees> list = demandEmployeesService.list(qw);
+                List<EmployeesDetailsDemandVo> employeesDetails = new ArrayList<>();
+                for (int i1 = 0; i1 < list.size(); i1++) {
+                    EmployeesDetailsDemandVo detailsDemandVo = new EmployeesDetailsDemandVo();
+                    detailsDemandVo.setId(list.get(i1).getId());
+                    detailsDemandVo.setStatus(this.getStatus(list.get(i1)));
+                    detailsDemandVo.setPrice(list.get(i1).getPrice());
+                    detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
+                    detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
+                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i1).getEmployeesId()));
+                    employeesDetails.add(detailsDemandVo);
+                }
+                demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
+                demandEmployeesVos.add(demandEmployeesVo);
+            }
+        }
+        return R.ok(demandEmployeesVos);
     }
 }

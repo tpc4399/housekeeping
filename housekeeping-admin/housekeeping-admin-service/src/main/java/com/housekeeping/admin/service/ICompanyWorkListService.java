@@ -26,7 +26,7 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
 
     R getAllInterestedEmployees(Integer demandOrderId);
 
-    R getInterestedByManager();
+    R getInterestedByManager(Integer managerId);
 
     R getInterestedByCompany();
 
@@ -48,4 +48,6 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     public Integer getStatus(DemandEmployees demandEmployees);
 
     R getAllQuotationByAdmin(Page page);
+
+    R getInterestedByEmp(Integer employeesId);
 }

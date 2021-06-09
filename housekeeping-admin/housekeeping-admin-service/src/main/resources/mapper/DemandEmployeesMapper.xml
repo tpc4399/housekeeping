@@ -20,4 +20,14 @@
         FROM
         demand_employees
     </select>
+
+    <select id="getAllDemandIdsByEmpId" resultType="java.lang.Integer">
+        SELECT
+        DISTINCT
+        demand_order_id
+        FROM
+        demand_employees
+        WHERE
+        employees_id = #{employeesId}
+    </select>
 </mapper>

@@ -51,10 +51,17 @@ public class CompanyWorkListController {
     }
 
     @Access(RolesEnum.USER_MANAGER)
-    @ApiOperation("【经理】查看已参与的需求单")
+    @ApiOperation("【公司】【经理】根据经理id查看已参与的需求单")
     @GetMapping("/getInterestedByManager")
-    public R getInterestedByManager(){
-        return companyWorkListService.getInterestedByManager();
+    public R getInterestedByManager(Integer managerId){
+        return companyWorkListService.getInterestedByManager(managerId);
+    }
+
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER,RolesEnum.USER_COMPANY})
+    @ApiOperation("【公司】【经理】【员工】根据员工id查看已参与的需求单")
+    @GetMapping("/getInterestedByEmp")
+    public R getInterestedByEmp(Integer employeesId){
+        return companyWorkListService.getInterestedByEmp(employeesId);
     }
 
     @Access(RolesEnum.USER_CUSTOMER)
@@ -74,16 +81,16 @@ public class CompanyWorkListController {
         return companyWorkListService.suitableEmployees(userId,typeId,demandOrderId);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【经理】第三步：发送报价")
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【经理】【员工】第三步：发送报价")
     @GetMapping("/sendOffer")
     public R sendOffer(@RequestParam Integer employeesId, @RequestParam Integer demandOrderId, BigDecimal price){
         /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
         return companyWorkListService.sendOffer(employeesId, demandOrderId,price);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【经理】第二步：选择合适的保洁员")
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【经理】【员工】第二步：选择合适的保洁员")
     @GetMapping("/selectSuitableEmployees")
     public R selectSuitableEmployees(@RequestParam Integer employeesId,@RequestParam Integer demandOrderId){
         /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
@@ -91,7 +98,7 @@ public class CompanyWorkListController {
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【经理】修改报价单价格")
+    @ApiOperation("【公司】【经理】【员工】修改报价单价格")
     @GetMapping("/changePrice")
     public R changePrice(@RequestParam String quotationId,@RequestParam Integer price){
         return companyWorkListService.changePrice(quotationId,price);
@@ -105,15 +112,15 @@ public class CompanyWorkListController {
         return companyWorkListService.confirmDemand(quotationId);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【经理】删除报价单")
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【经理】【员工】删除报价单")
     @DeleteMapping("/remove")
     public R remove(@RequestParam Integer id){
         return companyWorkListService.cusRemove(id);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【经理】根据id获取报价单")
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【经理】【员工】根据id获取报价单")
     @GetMapping("/getQuotationById")
     public R cusGetByid(@RequestParam Integer quotationId){
         return R.ok(companyWorkListService.cusGetById(quotationId));
