@@ -9,7 +9,8 @@
     </insert>
     <update id="statusAndTime">
         UPDATE order_details
-        SET order_state = #{status} and completion_date_time = #{time}
+        SET order_state = #{status},
+            completion_date_time = #{time}
         WHERE number = #{number}
     </update>
     <update id="status">

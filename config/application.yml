@@ -96,3 +96,9 @@ address:
     host_google: https://maps.googleapis.com
     path_google: /maps/api/geocode/json
     google_key: AIzaSyDNC2MO9tl5mMc9H_DcWVisMHC2hI0IR1M
+logging:
+  level:
+    com:
+      housekeeping:
+        admin:
+          mapper: debug

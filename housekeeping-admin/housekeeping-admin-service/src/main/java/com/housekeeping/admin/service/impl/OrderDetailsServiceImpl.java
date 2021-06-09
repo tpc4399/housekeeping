@@ -921,6 +921,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         baseMapper.statusAndTime(number, CommonConstants.ORDER_STATE_TO_BE_EVALUATED, now);
         /* 生成空的评价记录 */
         baseMapper.insertEvaluation(number);
+        /* 生成七天自动评价消息 */
+        //TODO 生成七天自动评价消息
 
         return R.ok(null, "成功将进行中订单转变为待评价状态,成功生成评价记录");
     }
@@ -950,7 +952,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (!od.getOrderState().equals(CommonConstants.ORDER_STATE_TO_BE_SERVED)) return R.failed(null, "订单不是待服務的状态，无法变更为進行中状态");
         /* 开始修改数据 修改订单状态 */
         baseMapper.status(number, CommonConstants.ORDER_STATE_HAVE_IN_HAND);
-        return R.ok(null, "成功将进行中订单转变为待评价状态");
+        return R.ok(null, "成功将待服务订单转变为进行中状态");
     }
 
     @Override
