@@ -2,6 +2,7 @@ package com.housekeeping.im.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -341,16 +342,16 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
 
-        ArrayList<Integer> strings = new ArrayList<>();
+        HashSet<Integer> strings = new HashSet<>();
         strings.add(currentUserId);
         strings.add(cusId);
         strings.add(userId);
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
-        for (int i = 0; i < strings.size(); i++) {
+        for (Integer string : strings) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
             imChatGroupUser.setChatGroupId(maxId);
             imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(strings.get(i));
+            imChatGroupUser.setUserId(string);
             imChatGroupUserService.save(imChatGroupUser);
         }
         return R.ok("聊天组创建成功");
@@ -438,6 +439,68 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroups.addAll(chatGroups);
 
         return R.ok(imChatGroups);
+    }
+
+    @Override
+    public R addGroupByCom(String empId, String cusId) {
+        //员工userId
+        Integer empUserId = baseMapper.getEmpId(Integer.parseInt(empId));
+
+        //客户userId
+        String cusUserId = baseMapper.getCustomerId(cusId).toString();
+
+        String check;
+        if(empUserId<Integer.parseInt(cusUserId)){
+            check = new StringBuilder().append(empUserId).append(",").append(cusUserId).append(",").toString();
+        }else {
+            check = new StringBuilder().append(cusUserId).append(",").append(empUserId).append(",").toString();
+        }
+
+        List<Integer> groupIds = baseMapper.getAllGroupId();
+        for (int i = 0; i < groupIds.size(); i++) {
+            QueryWrapper<ImChatGroupUser> qw = new QueryWrapper<>();
+            qw.eq("chat_group_id",groupIds.get(i));
+            qw.orderByAsc("user_id");
+            List<ImChatGroupUser> list = imChatGroupUserService.getBaseMapper().selectList(qw);
+            StringBuilder sb = new StringBuilder();
+            for (int i1 = 0; i1 < list.size(); i1++) {
+                sb.append(list.get(i1).getUserId()).append(",");
+            }
+            if(check.equals(sb.toString())){
+                return R.ok(groupIds.get(i));
+            }
+        }
+        CustomerDetails customer = baseMapper.getCustomerByUser(cusUserId);
+        EmployeesDetails employeesByUser = baseMapper.getEmployeesByUser(empUserId.toString());
+        ImChatGroup imChatGroup = new ImChatGroup();
+        imChatGroup.setEmployeesName(employeesByUser.getName());
+        imChatGroup.setAvatarEmployees(employeesByUser.getHeadUrl());
+        imChatGroup.setCustomerName(customer.getName());
+        imChatGroup.setAvatarCustomer(customer.getHeadUrl());
+        imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
+        imChatGroup.setCreateDate(LocalDateTime.now());
+
+        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(empId));
+        imChatGroup.setCompanyId(companyId);
+        imChatGroupService.save(imChatGroup);
+
+        Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
+        Set<String> ids = new HashSet<>();
+
+        //群聊添加客户
+        ids.add(cusUserId);
+
+        //群聊加入保洁员
+        ids.add(empUserId.toString());
+
+        for (String id : ids) {
+            ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
+            imChatGroupUser.setChatGroupId(maxId);
+            imChatGroupUser.setCreateDate(LocalDateTime.now());
+            imChatGroupUser.setUserId(Integer.parseInt(id));
+            imChatGroupUserService.save(imChatGroupUser);
+        }
+        return R.ok(maxId,"聊天组创建成功");
     }
 
 }

@@ -78,6 +78,13 @@ public class ImUserController {
         return imUserService.createGroup(toId);
     }
 
+    @GetMapping("/addGroupByCom")
+    @ApiOperation("经理、公司、保洁员对客户发起群聊")
+    public R addGroupByCom(@RequestParam String empId,
+                           @RequestParam String cusId){
+        return imUserService.addGroupByCom(empId,cusId);
+    }
+
     @GetMapping("/addGroupByCompany")
     @ApiOperation("客户对公司发起群聊")
     public R createGroupByCompany(@RequestParam String toId){

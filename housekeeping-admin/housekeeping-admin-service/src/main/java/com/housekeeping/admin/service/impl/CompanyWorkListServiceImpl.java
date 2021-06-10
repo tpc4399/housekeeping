@@ -720,7 +720,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         Integer price = (Integer) map.remove("price");
         DemandEmployees byId = demandEmployeesService.getById(quotationId);
         byId.setPrice(price);
-        byId.setWorkTime(JSONObject.toJSONString(map));
+        byId.setWorkTime(JSONObject.toJSONString(map.get("workDetailsPOJOS")));
         demandEmployeesService.updateById(byId);
         return R.ok("修改成功");
     }
