@@ -92,7 +92,7 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     /* 獲取時間表空閒時間 */
     Map<LocalDate, TodayDetailsPOJO> getCalendarFreeTime(GetCalendarByDateSlotDTO dto);
 
-    List<WorkDetailsPOJO> makeAnAppointmentHandles(MakeAnAppointmentDTO dto);
+    List<WorkDetailsPOJO> makeAnAppointmentHandles(MakeAnAppointmentDTO dto, Boolean need);
 
     /* 获取本公司所有保洁员的时间表 */
     R getAllInCompany();
