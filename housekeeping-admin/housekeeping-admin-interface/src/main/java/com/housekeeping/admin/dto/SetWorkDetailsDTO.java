@@ -13,9 +13,8 @@ import java.util.List;
 public class SetWorkDetailsDTO {
 
     private LocalDate date;             //日期
-    private Integer week;               //星期几
+    private Integer week;               //周数
     private List<TimeSlot> timeSlots;   //安排时间段
-    private Boolean canBeOnDuty;        //能否出勤
     private BigDecimal todayPrice;      //今日价格 台币
 
 }

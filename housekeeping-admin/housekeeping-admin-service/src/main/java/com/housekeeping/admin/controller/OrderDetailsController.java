@@ -72,7 +72,7 @@ public class OrderDetailsController {
     }
 
 
-    @Access(RolesEnum.USER_EMPLOYEES)
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER})
     @ApiOperation("【保洁员】【客户】订单作废")
     @GetMapping("/payment1")
     public R payment1(String number){
