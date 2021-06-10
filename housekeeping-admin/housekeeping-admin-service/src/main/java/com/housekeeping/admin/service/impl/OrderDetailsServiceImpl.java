@@ -77,6 +77,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private DelayingQueueService delayingQueueService;
     @Resource
     private ISysConfigService sysConfigService;
+    @Resource
+    private IOrderEvaluationService orderEvaluationService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -358,6 +360,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }else {
                 son.setWdp(x.getWorkDetails().get(0));
             }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(x.getNumber());
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
+            son.setYes1(yes1);
+            son.setYes2(yes2);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -413,6 +420,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }else {
                 son.setWdp(x.getWorkDetails().get(0));
             }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(x.getNumber());
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
+            son.setYes1(yes1);
+            son.setYes2(yes2);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -463,6 +475,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }else {
                 son.setWdp(x.getWorkDetails().get(0));
             }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(x.getNumber());
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
+            son.setYes1(yes1);
+            son.setYes2(yes2);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -513,6 +530,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }else {
                 son.setWdp(x.getWorkDetails().get(0));
             }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(x.getNumber());
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
+            son.setYes1(yes1);
+            son.setYes2(yes2);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -559,6 +581,11 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }else {
                 son.setWdp(x.getWorkDetails().get(0));
             }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(x.getNumber());
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
+            son.setYes1(yes1);
+            son.setYes2(yes2);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");

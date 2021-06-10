@@ -18,4 +18,6 @@ public class OrderDetailsParent {
     private Float lngEmployees;  //经度
     private Float latEmployees;  //纬度
     private WorkDetailsPOJO wdp;   //第一天的安排
+    private Boolean yes1; // 客户是否已评价, 当订单处于待评价状态时，值有效
+    private Boolean yes2; // 保洁员是否已评价, 当订单处于待评价状态时，值有效
 }
