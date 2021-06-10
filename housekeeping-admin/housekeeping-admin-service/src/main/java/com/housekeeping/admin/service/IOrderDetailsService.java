@@ -1,10 +1,8 @@
 package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.CardPayCallbackParams;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
-import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
-import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import com.housekeeping.common.utils.R;
@@ -134,4 +132,11 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     String cardPayCallback(CardPayCallbackParams params);
 
     R queryByManagerId(Integer manId, Integer type);
+
+    /* 【公司】【经理】修改待支付订单的工作安排 */
+    R setWorkDetails(SetOrderWorkDetailsDTO dto);
+    /* 【公司】【经理】修改待支付订单的工作内容 */
+    R setJobs(SetOrderJobsDTO dto);
+    /* 【公司】【经理】修改待支付订单的折后价格 */
+    R setDiscountPrice(SetOrderDiscountPriceDTO dto);
 }

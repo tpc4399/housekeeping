@@ -333,7 +333,7 @@ public class CommonUtils {
 	}
 
 	//list转string 空格隔开
-	public static String listToString(List<Object> list){
+	public static String listToString(List<Integer> list){
 		StringBuilder sb = new StringBuilder();
 		list.forEach(x->{
 			sb.append(x.toString());

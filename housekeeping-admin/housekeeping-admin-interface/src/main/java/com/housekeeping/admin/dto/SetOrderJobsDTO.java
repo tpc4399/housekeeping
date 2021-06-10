@@ -6,12 +6,12 @@ import java.util.List;
 
 /**
  * @Author su
- * @create 2021/5/28 16:25
+ * @create 2021/6/10 15:40
  */
 @Data
-public class SetOrderWorkDetailsDTO {
+public class SetOrderJobsDTO {
 
     private String number;                        //订单编号
-    private List<SetWorkDetailsDTO> workDetails;  //订单安排详情 (工作内容、时间安排)
+    private List<Integer> jobIds;                 //工作内容
 
 }

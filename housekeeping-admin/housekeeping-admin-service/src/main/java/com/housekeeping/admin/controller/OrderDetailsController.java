@@ -1,10 +1,7 @@
 package com.housekeeping.admin.controller;
 
-import com.housekeeping.admin.dto.CardPayCallbackParams;
-import com.housekeeping.admin.dto.SetOrderWorkDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
-import com.housekeeping.admin.dto.PaymentCallbackParams;
-import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
 import com.housekeeping.admin.service.ICardPayCallbackService;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.common.annotation.Access;
@@ -215,11 +212,25 @@ public class OrderDetailsController {
         return R.ok(orderDetailsService.getOrder(number), "成功獲取訂單详情");
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER})
-    @ApiOperation("【公司】【保洁员】【经理】修改待支付订单的工作安排")
-    @PostMapping("/setWorks")
-    public R setWorks(@RequestBody SetOrderWorkDetailsDTO dto){
-        return null;
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改待支付订单的工作安排")
+    @PostMapping("/setWorkDetails")
+    public R setWorkDetails(@RequestBody SetOrderWorkDetailsDTO dto){
+        return orderDetailsService.setWorkDetails(dto);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改待支付订单的工作内容")
+    @PostMapping("/setJobs")
+    public R setJobs(@RequestBody SetOrderJobsDTO dto){
+        return orderDetailsService.setJobs(dto);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改待支付订单的折后价格")
+    @PostMapping("/setDiscountPrice")
+    public R setDiscountPrice(@RequestBody SetOrderDiscountPriceDTO dto){
+        return orderDetailsService.setDiscountPrice(dto);
     }
 
 }

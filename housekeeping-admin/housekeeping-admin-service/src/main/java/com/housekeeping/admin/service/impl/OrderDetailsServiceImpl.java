@@ -3,10 +3,8 @@ package com.housekeeping.admin.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.housekeeping.admin.dto.CardPayCallbackParams;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
-import com.housekeeping.admin.dto.RequestToChangeAddressDTO;
-import com.housekeeping.admin.dto.SmilePayVerificationCodeDTO;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.mapper.PaymentCallbackMapper;
@@ -26,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -119,8 +118,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         if (result){
             NotificationOfRequestForChangeOfAddress na = notificationOfRequestForChangeOfAddressService.getById(id);
             Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + na.getNumber());
-            String[] keysArr = (String[]) keys.toArray();
-            String key = keysArr[0];
+            Object[] keysArr = keys.toArray();
+            String key = keysArr[0].toString();
             Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
             OrderDetailsPOJO odp = null;
             try {
@@ -283,7 +282,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         /* odp 获取订单信息 */
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
         if (keys.isEmpty()) return R.failed(null, "訂單編號不存在于redis");
-        Object[] keysArr = (Object[]) keys.toArray();
+        Object[] keysArr = keys.toArray();
         String key = keysArr[0].toString();
         OrderDetailsPOJO odp = null;
         Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
@@ -916,8 +915,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R payment2(String number) {
         /* odp 获取订单信息 */
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
-        String[] keysArr = (String[]) keys.toArray();
-        String key = keysArr[0];
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
         OrderDetailsPOJO odp = null;
         Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
         try {
@@ -1286,6 +1285,48 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
+    }
+
+    @Override
+    public R setWorkDetails(SetOrderWorkDetailsDTO dto) {
+        /* 先做数据处理 */
+        List<WorkDetailsPOJO> wdp = dto.getWorkDetails().stream().map(wd -> {
+            return new WorkDetailsPOJO(wd.getDate(), wd.getWeek(), wd.getTimeSlots(), true, wd.getTodayPrice());
+        }).collect(Collectors.toList());
+
+        /* 数据修改,对hash操控，直接修改workDetails */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
+
+        redisTemplate.opsForHash().put(key, "workDetails", wdp);
+
+        return R.ok(null, "成功修改工作安排");
+    }
+
+    @Override
+    public R setJobs(SetOrderJobsDTO dto) {
+        /* 先做数据处理 */
+        String jobIds = CommonUtils.listToString(dto.getJobIds());
+
+        /* 数据修改,对hash操控，直接修改jobIds */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
+        redisTemplate.opsForHash().put(key, "jobIds", jobIds);
+
+        return R.ok(null, "成功修改工作內容");
+    }
+
+    @Override
+    public R setDiscountPrice(SetOrderDiscountPriceDTO dto) {
+        /* 数据修改,对hash操控，直接修改priceAfterDiscount */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
+        redisTemplate.opsForHash().put(key, "priceAfterDiscount", dto.getDiscountPrice());
+
+        return R.ok(null, "成功修改折後價");
     }
 
     /* 转换到数据库存储 */
