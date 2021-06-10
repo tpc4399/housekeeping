@@ -14,5 +14,7 @@ public interface IOrderEvaluationService {
     R getEvaluation(String orderNumber);//查看某個訂單評價
     Boolean getEvaluationStatusOfEmployees(String orderNumber);//查看保洁员评价状态
     Boolean getEvaluationStatusOfCustomer(String orderNumber);//查看客户评价状态
+    void evaluationStatusHandle(String orderNumber);//查看订单评价状态处理 ，如果已评价，修改订单状态
+
 
 }

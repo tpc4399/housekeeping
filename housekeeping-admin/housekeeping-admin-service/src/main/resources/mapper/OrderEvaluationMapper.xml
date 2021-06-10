@@ -22,6 +22,9 @@
 			create_time2 = now()
 		where order_number = #{orderNumber}
 	</update>
+	<update id="setOrderDetails">
+		UPDATE order_details t SET t.order_state = 20 WHERE t.number = #{number}
+	</update>
 	<select id="getEvaluation" resultType="com.housekeeping.admin.entity.OrderEvaluation">
 		select *
 		from order_evaluation

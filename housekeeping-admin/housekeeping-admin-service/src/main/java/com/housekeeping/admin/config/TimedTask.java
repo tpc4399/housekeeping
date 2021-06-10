@@ -90,20 +90,16 @@ public class TimedTask {
                     try {
                         log.info("消费消息：{}:消息创建时间：{},消费时间：{}", mapper.writeValueAsString(msg), msg.getCreateTime(), LocalDateTime.now());
                         //插入好评
-                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_CUSTOMER)){
+                        String orderNumber = msg.getBody();
+                        Boolean status1 = orderEvaluationService.getEvaluationStatusOfCustomer(orderNumber);
+                        Boolean status2 = orderEvaluationService.getEvaluationStatusOfEmployees(orderNumber);
+                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_CUSTOMER) && !status1)
                             //客户自动好评的任务需要执行
-                            String orderNumber = msg.getBody();
-                            Boolean status = orderEvaluationService.getEvaluationStatusOfCustomer(orderNumber);
-                            if (!status) orderEvaluationService.customerEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該客戶默認好評",""));
-                        }
-                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_EMPLOYEES)){
+                            orderEvaluationService.customerEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該客戶默認好評",""));
+                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_EMPLOYEES) && !status2)
                             //保洁员自动好评的任务需要执行
-                            String orderNumber = msg.getBody();
-                            System.out.println(orderNumber);
-                            Boolean status = orderEvaluationService.getEvaluationStatusOfEmployees(orderNumber);
-                            System.out.println(status);
-                            if (!status) orderEvaluationService.employeesEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該保潔員默認好評",""));
-                        }
+                            orderEvaluationService.employeesEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該保潔員默認好評",""));
+                        orderEvaluationService.evaluationStatusHandle(orderNumber);
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }

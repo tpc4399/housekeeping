@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.housekeeping.admin.dto.OrderEvaluationDTO;
 import com.housekeeping.admin.entity.OrderEvaluation;
 import com.housekeeping.admin.mapper.OrderEvaluationMapper;
+import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.admin.service.IOrderEvaluationService;
 import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
@@ -23,9 +24,13 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
 
     @Override
     public R evaluation(OrderEvaluationDTO dto) {
+        //TODO 判断订单所有者
+        //执行评价流程
         String roleType = TokenUtils.getRoleType();
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_CUSTOMER)) customerEvaluation(dto);
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)) employeesEvaluation(dto);
+        //检测订单是否已完成
+        this.evaluationStatusHandle(dto.getOrderNumber());
         return R.ok(null, "評價成功");
     }
 
@@ -64,6 +69,15 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
         if (oe == null) return false;
         if (oe.getYes1() == false) return false;
         return true;
+    }
+
+    @Override
+    public void evaluationStatusHandle(String orderNumber) {
+        OrderEvaluation oe = orderEvaluationMapper.getEvaluation(orderNumber);
+        if (oe.getYes1() && oe.getYes2()) {
+            //修改订单状态
+            orderEvaluationMapper.setOrderDetails(orderNumber);
+        }
     }
 
 }
