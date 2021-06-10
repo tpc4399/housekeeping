@@ -1298,9 +1298,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
         Object[] keysArr = keys.toArray();
         String key = keysArr[0].toString();
-
         redisTemplate.opsForHash().put(key, "workDetails", wdp);
-
         return R.ok(null, "成功修改工作安排");
     }
 
@@ -1314,7 +1312,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         Object[] keysArr = keys.toArray();
         String key = keysArr[0].toString();
         redisTemplate.opsForHash().put(key, "jobIds", jobIds);
-
         return R.ok(null, "成功修改工作內容");
     }
 
@@ -1325,8 +1322,22 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         Object[] keysArr = keys.toArray();
         String key = keysArr[0].toString();
         redisTemplate.opsForHash().put(key, "priceAfterDiscount", dto.getDiscountPrice());
-
         return R.ok(null, "成功修改折後價");
+    }
+
+    @Override
+    public R setCustomerInformation(SetOrderCustomerInformationDTO dto) {
+        /* 数据修改,对hash操控，直接修改priceAfterDiscount */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getOrderNumber());
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
+        redisTemplate.opsForHash().put(key, "name2", dto.getName());
+        redisTemplate.opsForHash().put(key, "phone2", dto.getPhone());
+        redisTemplate.opsForHash().put(key, "phPrefix2", dto.getPhonePrefix());
+        redisTemplate.opsForHash().put(key, "address", dto.getAddress());
+        redisTemplate.opsForHash().put(key, "lat", dto.getLat());
+        redisTemplate.opsForHash().put(key, "lng", dto.getLng());
+        return R.ok(null, "成功修改客戶信息");
     }
 
     /* 转换到数据库存储 */

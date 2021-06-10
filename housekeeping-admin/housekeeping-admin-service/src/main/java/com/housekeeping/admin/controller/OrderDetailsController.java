@@ -233,4 +233,11 @@ public class OrderDetailsController {
         return orderDetailsService.setDiscountPrice(dto);
     }
 
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改待支付订单的客戶信息")
+    @PostMapping("/setCustomerInformation")
+    public R setCustomerInformation(@RequestBody SetOrderCustomerInformationDTO dto){
+        return orderDetailsService.setCustomerInformation(dto);
+    }
+
 }
