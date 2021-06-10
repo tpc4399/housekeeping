@@ -100,7 +100,7 @@ public class CompanyWorkListController {
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @ApiOperation("（新）【公司】【经理】【员工】修改报价单价格")
-    @GetMapping("/newChangePrice")
+    @PostMapping("/newChangePrice")
     public R changePrice(@RequestBody Map map){
         return companyWorkListService.newChangePrice(map);
     }
