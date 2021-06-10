@@ -2,7 +2,6 @@ package com.housekeeping.admin.controller;
 
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.service.IEmployeesCalendarService;
-import com.housekeeping.auth.annotation.PassToken;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.CommonUtils;

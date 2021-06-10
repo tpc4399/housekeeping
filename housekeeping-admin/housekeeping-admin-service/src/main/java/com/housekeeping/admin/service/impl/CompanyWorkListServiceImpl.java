@@ -1,5 +1,7 @@
 package com.housekeeping.admin.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -194,8 +196,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 quotationVo.setDemandOrder(demandOrderService.getById(list.get(i).getDemandOrderId()));
                 quotationVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i).getEmployeesId()));
 
-                List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(), list.get(i).getEmployeesId());
-                quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+                List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(list.get(i).getWorkTime(), WorkDetailsPOJO.class);
+                quotationVo.setWorkDetailsPOJOS(workDetailsPOJOS);
 
                 quotationVo.setPrice(BigDecimal.valueOf(list.get(i).getPrice()));
 
@@ -256,7 +258,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     detailsDemandVo.setPrice(list.get(i1).getPrice());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
-                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i1).getEmployeesId()));
+
+                    List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(list.get(i1).getWorkTime(), WorkDetailsPOJO.class);
+                    detailsDemandVo.setWorkDetailsPOJOS(workDetailsPOJOS);
                     employeesDetails.add(detailsDemandVo);
                 }
                 demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
@@ -329,7 +333,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     detailsDemandVo.setPrice(list.get(i).getPrice());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i).getEmployeesId()));
-                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i).getDemandOrderId(),list.get(i).getEmployeesId()));
+
+                    List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(list.get(i).getWorkTime(), WorkDetailsPOJO.class);
+                    detailsDemandVo.setWorkDetailsPOJOS(workDetailsPOJOS);
                     employeesDetails.add(detailsDemandVo);
                 }
             }
@@ -366,7 +372,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandOrderId);
        makeAnAppointmentDTO.setTimeSlots(timeSlots);
 
-        List<WorkDetailsPOJO> workDetailsPOJOS = employeesCalendarService.makeAnAppointmentHandles(makeAnAppointmentDTO);
+        List<WorkDetailsPOJO> workDetailsPOJOS = employeesCalendarService.makeAnAppointmentHandles(makeAnAppointmentDTO,true);
 
         return workDetailsPOJOS;
 
@@ -456,7 +462,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
 
         /* 工作时间安排 */
-        List<WorkDetailsPOJO> wds = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
+        List<WorkDetailsPOJO> wds = JSONArray.parseArray(byId.getWorkTime(), WorkDetailsPOJO.class);
         odp.setWorkDetails(wds);
 
         /* 可工作天数计算 */
@@ -546,8 +552,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         quotationVo.setDemandOrder(byId1);
         quotationVo.setEmployeesDetails(employeesDetailsService.getById(byId.getEmployeesId()));
 
-        List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(byId.getDemandOrderId(), byId.getEmployeesId());
-        quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+        List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(byId.getWorkTime(), WorkDetailsPOJO.class);
+        quotationVo.setWorkDetailsPOJOS(workDetailsPOJOS);
 
         quotationVo.setPrice(BigDecimal.valueOf(byId.getPrice()));
 
@@ -603,8 +609,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             quotationVo.setDemandOrder(byId1);
             quotationVo.setEmployeesDetails(employeesDetailsService.getById(x.getEmployeesId()));
 
-            List<WorkDetailsPOJO> serviceTimeByEmployees = this.getServiceTimeByEmployees(x.getDemandOrderId(), x.getEmployeesId());
-            quotationVo.setWorkDetailsPOJOS(serviceTimeByEmployees);
+            List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(x.getWorkTime(), WorkDetailsPOJO.class);
+            quotationVo.setWorkDetailsPOJOS(workDetailsPOJOS);
 
             quotationVo.setPrice(BigDecimal.valueOf(x.getPrice()));
 
@@ -669,7 +675,9 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                     detailsDemandVo.setPrice(list.get(i1).getPrice());
                     detailsDemandVo.setDemandOrder(demandOrderService.getById(list.get(i1).getDemandOrderId()));
                     detailsDemandVo.setEmployeesDetails(employeesDetailsService.getById(list.get(i1).getEmployeesId()));
-                    detailsDemandVo.setWorkDetailsPOJOS(this.getServiceTimeByEmployees(list.get(i1).getDemandOrderId(),list.get(i1).getEmployeesId()));
+
+                    List<WorkDetailsPOJO> workDetailsPOJOS = JSONArray.parseArray(list.get(i1).getWorkTime(), WorkDetailsPOJO.class);
+                    detailsDemandVo.setWorkDetailsPOJOS(workDetailsPOJOS);
                     employeesDetails.add(detailsDemandVo);
                 }
                 demandEmployeesVo.setEmployeesDetailsDemandVos(employeesDetails);
@@ -677,5 +685,43 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             }
         }
         return R.ok(demandEmployeesVos);
+    }
+
+    @Override
+    public R newSendOffer(Map map) {
+        Integer employeesId = (Integer) map.remove("employeesId");
+        Integer demandOrderId = (Integer) map.remove("demandOrderId");
+        Integer price = (Integer) map.remove("price");
+        QueryWrapper<DemandEmployees> qw = new QueryWrapper<>();
+        qw.eq("employees_id",employeesId);
+        qw.eq("demand_order_id",demandOrderId);
+        int count = demandEmployeesService.count(qw);
+        if(count>0){
+            return R.failed("该员工已参与该需求单，请勿重复添加!");
+        }
+
+        DemandEmployees demandEmployees = new DemandEmployees();
+        demandEmployees.setEmployeesId(employeesId);
+        demandEmployees.setCreateTime(LocalDateTime.now());
+        demandEmployees.setDemandOrderId(demandOrderId);
+        demandEmployees.setStatus(0);
+        demandEmployees.setReadStatus(0);
+        demandEmployees.setPrice(price.intValue());
+        demandEmployees.setUserId(TokenUtils.getCurrentUserId());
+        demandEmployees.setUpdateTime(LocalDateTime.now());
+        demandEmployees.setWorkTime(JSONObject.toJSONString(map.get("workDetailsPOJOS")));
+        demandEmployeesService.save(demandEmployees);
+        return R.ok("发送成功");
+    }
+
+    @Override
+    public R newChangePrice(Map map) {
+        Integer quotationId = (Integer) map.remove("quotationId");
+        Integer price = (Integer) map.remove("price");
+        DemandEmployees byId = demandEmployeesService.getById(quotationId);
+        byId.setPrice(price);
+        byId.setWorkTime(JSONObject.toJSONString(map));
+        demandEmployeesService.updateById(byId);
+        return R.ok("修改成功");
     }
 }

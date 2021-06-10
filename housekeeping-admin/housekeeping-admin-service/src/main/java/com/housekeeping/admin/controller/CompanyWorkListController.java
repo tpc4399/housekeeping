@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  *
@@ -87,6 +88,21 @@ public class CompanyWorkListController {
     public R sendOffer(@RequestParam Integer employeesId, @RequestParam Integer demandOrderId, BigDecimal price){
         /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
         return companyWorkListService.sendOffer(employeesId, demandOrderId,price);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("(新)【公司】【经理】【员工】第三步：发送报价")
+    @PostMapping("/newSendOffer")
+    public R sendOffer(@RequestBody Map map){
+        /* 经理或者公司选取员工，将员工添加到需求单感兴趣列表 */
+        return companyWorkListService.newSendOffer(map);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("（新）【公司】【经理】【员工】修改报价单价格")
+    @GetMapping("/newChangePrice")
+    public R changePrice(@RequestBody Map map){
+        return companyWorkListService.newChangePrice(map);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})

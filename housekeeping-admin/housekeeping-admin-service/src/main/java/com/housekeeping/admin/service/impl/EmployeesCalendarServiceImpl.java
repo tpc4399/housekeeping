@@ -1287,13 +1287,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return this.getCalendar(dto);
     }
 
-    public List<WorkDetailsPOJO> makeAnAppointmentHandles(MakeAnAppointmentDTO dto) {
+    public List<WorkDetailsPOJO> makeAnAppointmentHandles(MakeAnAppointmentDTO dto, Boolean need) {
         List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
         /* 获取这段日期内的空闲时间 */
-        List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
-        if(CommonUtils.isEmpty(freeTime)){
-            return workDetailsPOJOS;
-        }
+        List<FreeDateTimeDTO> freeTime = this.getCalendarByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
         freeTime.forEach(x -> {
             /* 今日数据准备 */
             LocalDate today = x.getDate(); //今日日期
@@ -1302,7 +1299,14 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             List<LocalTimeAndPricePOJO> enableTimeToday = this.enableTimeToday(x.getTimes());//切割的时间表与价格
             List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());//切割的需求时间段
             Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
-            List<TimeSlot> timeSlots = dto.getTimeSlots();
+            List<TimeSlot> timeSlots = new ArrayList<>();
+            if (need) {
+                if(todayIsOk) timeSlots = this.withPriceOfSlot(item, enableTimeToday); //给时段加价格
+                else timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }else {
+                timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }
+
             Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
             if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);

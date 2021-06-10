@@ -10,6 +10,7 @@ import com.housekeeping.common.utils.R;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author su
@@ -50,4 +51,8 @@ public interface ICompanyWorkListService extends IService<CompanyWorkList> {
     R getAllQuotationByAdmin(Page page);
 
     R getInterestedByEmp(Integer employeesId);
+
+    R newSendOffer(Map map);
+
+    R newChangePrice(Map map);
 }
