@@ -12,4 +12,7 @@ public interface IOrderEvaluationService {
     void customerEvaluation(OrderEvaluationDTO dto);//客户评价订单
     void employeesEvaluation(OrderEvaluationDTO dto);//保洁员评价订单
     R getEvaluation(String orderNumber);//查看某個訂單評價
+    Boolean getEvaluationStatusOfEmployees(String orderNumber);//查看保洁员评价状态
+    Boolean getEvaluationStatusOfCustomer(String orderNumber);//查看客户评价状态
+
 }

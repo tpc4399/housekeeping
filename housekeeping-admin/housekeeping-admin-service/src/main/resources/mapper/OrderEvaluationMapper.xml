@@ -9,7 +9,8 @@
 		set yes1 = true,
 			star_rating1 = #{starRating},
 			evaluation1 = #{evaluation},
-			image_urls1 = #{imageUrls}
+			image_urls1 = #{imageUrls},
+		    create_time1 = now()
 		where order_number = #{orderNumber}
 	</update>
 	<update id="employeesEvaluation">
@@ -17,7 +18,8 @@
 		set yes2 = true,
 			star_rating2 = #{starRating},
 			evaluation2 = #{evaluation},
-			image_urls2 = #{imageUrls}
+			image_urls2 = #{imageUrls},
+			create_time2 = now()
 		where order_number = #{orderNumber}
 	</update>
 	<select id="getEvaluation" resultType="com.housekeeping.admin.entity.OrderEvaluation">

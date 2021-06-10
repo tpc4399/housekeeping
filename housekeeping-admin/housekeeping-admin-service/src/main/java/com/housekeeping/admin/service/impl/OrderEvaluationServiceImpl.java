@@ -50,4 +50,20 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
         return R.ok(oe, "保潔員與客戶都已經評價了");
     }
 
+    @Override
+    public Boolean getEvaluationStatusOfEmployees(String orderNumber) {
+        OrderEvaluation oe = orderEvaluationMapper.getEvaluation(orderNumber);
+        if (oe == null) return false;
+        if (oe.getYes2() == false) return false;
+        return true;
+    }
+
+    @Override
+    public Boolean getEvaluationStatusOfCustomer(String orderNumber) {
+        OrderEvaluation oe = orderEvaluationMapper.getEvaluation(orderNumber);
+        if (oe == null) return false;
+        if (oe.getYes1() == false) return false;
+        return true;
+    }
+
 }

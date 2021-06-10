@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -934,8 +935,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         String channel2 = CommonConstants.MESSAGE_CHANNEL_EMPLOYEES;
         String body = number;
         Long delayTime = Long.valueOf(delaySeconds) * 1000 * 60; //延时时间，分钟
-        Message message1 = new Message(seqId, channel1, body, delayTime, LocalDateTime.now()); //客户 自动评价订单的延时消息
-        Message message2 = new Message(seqId, channel2, body, delayTime, LocalDateTime.now()); //保洁员 自动评价订单的延时消息
+        Long nowMilliSecond = LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long deadLine = nowMilliSecond + delayTime;   //一分钟后的时间戳
+        Message message1 = new Message(seqId, channel1, body, deadLine, LocalDateTime.now()); //客户 自动评价订单的延时消息
+        Message message2 = new Message(seqId, channel2, body, deadLine, LocalDateTime.now()); //保洁员 自动评价订单的延时消息
 
         delayingQueueService.push(message1);
         delayingQueueService.push(message2);

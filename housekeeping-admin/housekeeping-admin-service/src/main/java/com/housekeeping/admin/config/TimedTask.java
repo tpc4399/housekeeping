@@ -2,15 +2,14 @@ package com.housekeeping.admin.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.housekeeping.admin.dto.OrderEvaluationDTO;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.ICompanyDetailsService;
+import com.housekeeping.admin.service.IOrderEvaluationService;
 import com.housekeeping.common.entity.Message;
-import com.housekeeping.common.utils.CommonUtils;
-import com.housekeeping.common.utils.DelayingQueueService;
-import com.housekeeping.common.utils.R;
-import com.housekeeping.common.utils.RedisUtils;
+import com.housekeeping.common.utils.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +43,8 @@ public class TimedTask {
     private static ObjectMapper mapper = Jackson2ObjectMapperBuilder.json().build();
     @Resource
     private DelayingQueueService delayingQueueService;
+    @Resource
+    private IOrderEvaluationService orderEvaluationService;
 
     //3.添加定时任务
     @Scheduled(cron = "0 0 0,13,20,23 * * ?")
@@ -89,6 +90,20 @@ public class TimedTask {
                     try {
                         log.info("消费消息：{}:消息创建时间：{},消费时间：{}", mapper.writeValueAsString(msg), msg.getCreateTime(), LocalDateTime.now());
                         //插入好评
+                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_CUSTOMER)){
+                            //客户自动好评的任务需要执行
+                            String orderNumber = msg.getBody();
+                            Boolean status = orderEvaluationService.getEvaluationStatusOfCustomer(orderNumber);
+                            if (!status) orderEvaluationService.customerEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該客戶默認好評",""));
+                        }
+                        if (msg.getChannel().equals(CommonConstants.MESSAGE_CHANNEL_EMPLOYEES)){
+                            //保洁员自动好评的任务需要执行
+                            String orderNumber = msg.getBody();
+                            System.out.println(orderNumber);
+                            Boolean status = orderEvaluationService.getEvaluationStatusOfEmployees(orderNumber);
+                            System.out.println(status);
+                            if (!status) orderEvaluationService.employeesEvaluation(new OrderEvaluationDTO(orderNumber, new Integer(5), "該保潔員默認好評",""));
+                        }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
