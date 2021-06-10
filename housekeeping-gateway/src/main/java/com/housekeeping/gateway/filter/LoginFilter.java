@@ -104,7 +104,7 @@ public class LoginFilter extends ZuulFilter {
                 // 设置响应状态码，401
                 context.setResponseStatusCode(HttpStatus.SC_UNAUTHORIZED);
                 // 设置响应信息
-                context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"token失效，請重新聯繫管理員\"\n}");
+                context.setResponseBody("{\n\t\"status\":\"401\", \n\t\"text\":\"Token invalid!!!\"\n}");
             }
             return null;
         }

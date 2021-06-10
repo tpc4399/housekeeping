@@ -1311,6 +1311,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }
             return null;
         }).collect(Collectors.toList());
+        /* 去null */
+        wds = wds.stream().filter(wd -> {
+            return wd != null;
+        }).collect(Collectors.toList());
         return wds;
     }
 
