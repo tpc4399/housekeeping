@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author su
@@ -46,10 +44,9 @@ public class TimedTask {
     @Resource
     private IOrderEvaluationService orderEvaluationService;
 
-    //3.添加定时任务
-    @Scheduled(cron = "0 0 0,13,20,23 * * ?")
-    //或直接指定时间间隔，例如：5秒
-    //@Scheduled(fixedRate=5000)
+//    @Scheduled(cron = "0 0 0,13,20,23 * * ?") //每天13点 20点 23点
+    @Scheduled(cron = "* 0/30 * * * ?") //每半个小时执行一次
+    //@Scheduled(fixedRate=5000)    //或直接指定时间间隔，例如：5秒
     private void configureTasks() {
         /* 保洁员数据 */
         List<EmployeesDetails> employeesDetails = employeesDetailsService.list();
@@ -59,8 +56,9 @@ public class TimedTask {
         fun(companyDetails, "company", "details");
     }
 
-
     private void fun(List list, String name1, String name2){
+        List<Integer> mysqlIds = new ArrayList<>(); //当前数据库的ids
+        /* 增，改 */
         list.forEach(x -> {
             Map<String, Object> map = new HashMap<>();
             try {
@@ -70,14 +68,29 @@ public class TimedTask {
             }
             String key = name1+":"+map.get("id")+":"+name2;
             redisUtils.hmset(key, map);
+            mysqlIds.add((Integer) map.get("id"));
         });
+
+        /* redis数据准备 */
+        String pattern = name1+":*:"+name2;
+        Set<String> keys = redisUtils.keys(pattern);
+        Object[] keysArr = keys.toArray();//当前redis的key
+
+        /* 该删的删 */
+        for (int i = 0; i < keysArr.length; i++) {
+            String key = keysArr[i].toString();
+            String[] section = key.split(":");
+            Integer redisKeyId = Integer.valueOf(section[1]);
+            if (!mysqlIds.contains(redisKeyId)){
+                //既然mysql中没有，redis里面有，那就要执行删除程序了
+                redisUtils.del(key);
+            }
+        }
+
     }
 
-
     /**
-     * 定时对自动好评队列进行消费
-     * zset会对score进行排序 让最早消费的数据位于最前
-     * 拿最前的数据跟当前时间比较 时间到了则消费
+     * 延时队列 之定时获取队列中即将过期的消息
      */
     @Scheduled(cron = "*/1 * * * * *")
     public void consumer() throws JsonProcessingException {
