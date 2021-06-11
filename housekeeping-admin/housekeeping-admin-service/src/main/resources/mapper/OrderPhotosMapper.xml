@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.OrderPhotosMapper">
+
+    <update id="keyWorkReturn">
+        UPDATE order_photos t
+        SET t.yes = 1, t.result_photo_urls = #{dto.resultPhotoUrls}, t.result = #{dto.result}, t.result_time = #{now}
+        WHERE t.id = #{dto.orderPhotosId}
+    </update>
+
+</mapper>

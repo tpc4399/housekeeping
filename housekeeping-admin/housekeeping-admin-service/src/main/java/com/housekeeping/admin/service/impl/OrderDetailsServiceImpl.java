@@ -364,6 +364,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(x.getNumber());
+            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -424,6 +427,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(x.getNumber());
+            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -479,6 +485,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(x.getNumber());
+            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -534,6 +543,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(x.getNumber());
+            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -585,6 +597,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(x.getNumber());
+            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");

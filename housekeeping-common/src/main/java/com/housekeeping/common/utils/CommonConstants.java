@@ -133,4 +133,13 @@ public interface CommonConstants {
 	/** 消息用途：客户自动评评价订单 */
 	String MESSAGE_CHANNEL_CUSTOMER = "MESSAGE_CHANNEL_CUSTOMER";
 
+	/** 订单的工作重点的状态:未回传工作重点 */
+	Integer ORDER_PHOTOS_STATUS_0 = 0;
+	/** 订单的工作重点的状态:部分工作重点未回传 */
+	Integer ORDER_PHOTOS_STATUS_1 = 1;
+	/** 订单的工作重点的状态:已回传工作重点 */
+	Integer ORDER_PHOTOS_STATUS_2 = 2;
+	/** 订单的工作重点的状态:无需回传，客户根本没指定工作重点 */
+	Integer ORDER_PHOTOS_STATUS_3 = 3;
+
 }
