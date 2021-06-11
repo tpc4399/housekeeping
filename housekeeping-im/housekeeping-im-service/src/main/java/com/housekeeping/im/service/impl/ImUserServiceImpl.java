@@ -3,6 +3,7 @@ package com.housekeeping.im.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,7 @@ import com.housekeeping.im.service.IImUserService;
 import com.housekeeping.im.tio.StartTioRunner;
 import com.housekeeping.im.tio.TioServerConfig;
 import com.housekeeping.im.tio.WsOnlineContext;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -97,7 +99,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             for (int i1 = 0; i1 < list.size(); i1++) {
                 sb.append(list.get(i1).getUserId()).append(",");
             }
-            if(check.equals(sb.toString())){
+            if(sb.toString().contains(empId.toString())&&sb.toString().contains(currentUserId)){
                 return R.ok(groupIds.get(i));
             }
         }
@@ -126,10 +128,10 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         ids.add(empId.toString());
 
         //群聊添加公司账户
-        /*ids.add(userId.toString());*/
+        ids.add(userId.toString());
 
         //群聊加入经理
-        /*List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(toId));
+        List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(toId));
         if(!CollectionUtils.isEmpty(groups)){
             for (int i = 0; i < groups.size(); i++) {
                 List<Integer> manIds = baseMapper.getMansByGroupId(groups.get(i));
@@ -137,7 +139,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
                     ids.add(baseMapper.getUserId(manIds.get(j)).toString());
                 }
             }
-        }*/
+        }
 
         for (String id : ids) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
@@ -232,7 +234,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
                 return x;
             }).collect(Collectors.toList());
 
-            Integer managerId = baseMapper.getMangerId(Integer.parseInt(userId));
+            /*Integer managerId = baseMapper.getMangerId(Integer.parseInt(userId));
             List<Integer> empIds = baseMapper.getAllEmp(managerId);
             List<String> userIds = new ArrayList<>();
             for (int i = 0; i < empIds.size(); i++) {
@@ -247,7 +249,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
                 }).collect(Collectors.toList());
                 imChatGroups.addAll(chatGroups1);
             }
-            imChatGroups.addAll(chatGroups);
+            imChatGroups.addAll(chatGroups);*/
         }
 
         //公司的群组信息
@@ -266,52 +268,10 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
     }
 
     @Override
-    public R createGroupByCompany(String toId) {
-
-        String currentUserId = TokenUtils.getCurrentUserId().toString();
-        CompanyDetails companyDetails = baseMapper.getCompanyByUser(toId);
-        CustomerDetails customer = baseMapper.getCustomerByUser(currentUserId);
-        ImChatGroup imChatGroup = new ImChatGroup();
-        imChatGroup.setAvatarCustomer(customer.getHeadUrl());
-        imChatGroup.setAvatarEmployees(companyDetails.getLogoUrl());
-        imChatGroup.setCustomerName(customer.getName());
-        imChatGroup.setEmployeesName(companyDetails.getCompanyName());
-        imChatGroup.setName("临时群聊"+ CommonUtils.getRandomSixCode());
-        imChatGroup.setCreateDate(LocalDateTime.now());
-        Integer companyId = baseMapper.getCompanyId(Integer.parseInt(toId));
-        imChatGroup.setCompanyId(companyId);
-        imChatGroupService.save(imChatGroup);
-
-        ArrayList<String> strings = new ArrayList<>();
-        strings.add(currentUserId);
-        strings.add(toId);
-        Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
-        for (int i = 0; i < strings.size(); i++) {
-            ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
-            imChatGroupUser.setChatGroupId(maxId);
-            imChatGroupUser.setCreateDate(LocalDateTime.now());
-            imChatGroupUser.setUserId(Integer.parseInt(strings.get(i)));
-            imChatGroupUserService.save(imChatGroupUser);
-        }
-        return R.ok("聊天组创建成功");
-    }
-
-    @Override
     public R createGroupByCus(String demandId, String empId) {
 
         Integer cusId = baseMapper.getCusIdByDemand(demandId);
         Integer userId = baseMapper.getUSerIdByEmpId(empId);
-        Integer currentUserId = TokenUtils.getCurrentUserId();
-
-        List<Integer> list1 = new ArrayList<>();
-        list1.add(cusId);
-        list1.add(userId);
-        list1.add(currentUserId);
-        Collections.sort(list1);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list1.size(); i++) {
-            sb.append(list1.get(i)).append(",");
-        }
 
         List<Integer> groupIds = baseMapper.getAllGroupId();
         for (int i = 0; i < groupIds.size(); i++) {
@@ -319,15 +279,14 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             qw.eq("chat_group_id",groupIds.get(i));
             qw.orderByAsc("user_id");
             List<ImChatGroupUser> list = imChatGroupUserService.getBaseMapper().selectList(qw);
-            StringBuilder sb1 = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             for (int i1 = 0; i1 < list.size(); i1++) {
-                sb1.append(list.get(i1).getUserId()).append(",");
+                sb.append(list.get(i1).getUserId()).append(",");
             }
-            if(sb.toString().equals(sb1.toString())){
+            if(sb.toString().contains(userId.toString())&&sb.toString().contains(cusId.toString())){
                 return R.ok(groupIds.get(i));
             }
         }
-
 
         CustomerDetails customer = baseMapper.getCustomerByUser(cusId.toString());
         EmployeesDetails employees = baseMapper.getEmployeesByUser(empId);
@@ -342,10 +301,28 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
 
-        HashSet<Integer> strings = new HashSet<>();
-        strings.add(currentUserId);
+        Integer companyId1 = baseMapper.getCompanyId(Integer.parseInt(empId));
+        Integer userId1 = baseMapper.getUserIdByCom(companyId1);
+
+        List<Integer> strings = new ArrayList<>();
+
+        //群聊加入客户
         strings.add(cusId);
+        //群聊加入保洁员
         strings.add(userId);
+        //群聊添加公司账户
+        strings.add(userId1);
+        //群聊加入经理
+        List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(empId));
+        if(!CollectionUtils.isEmpty(groups)){
+            for (int i = 0; i < groups.size(); i++) {
+                List<Integer> manIds = baseMapper.getMansByGroupId(groups.get(i));
+                for (int j = 0; j < manIds.size(); j++) {
+                    strings.add(baseMapper.getUserId(manIds.get(j)));
+                }
+            }
+        }
+
         Integer maxId = ((ImChatGroup) CommonUtils.getMaxId("im_chat_group", imChatGroupService)).getId();
         for (Integer string : strings) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
@@ -421,7 +398,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             return x;
         }).collect(Collectors.toList());
 
-        Integer managerId = baseMapper.getMangerId(userId);
+        /*Integer managerId = baseMapper.getMangerId(userId);
         List<Integer> empIds = baseMapper.getAllEmp(managerId);
         List<String> userIds = new ArrayList<>();
         for (int i = 0; i < empIds.size(); i++) {
@@ -436,7 +413,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             }).collect(Collectors.toList());
             imChatGroups.addAll(chatGroups1);
         }
-        imChatGroups.addAll(chatGroups);
+        imChatGroups.addAll(chatGroups);*/
 
         return R.ok(imChatGroups);
     }
@@ -466,7 +443,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             for (int i1 = 0; i1 < list.size(); i1++) {
                 sb.append(list.get(i1).getUserId()).append(",");
             }
-            if(check.equals(sb.toString())){
+            if(sb.toString().contains(empUserId.toString())&&sb.toString().contains(cusUserId)){
                 return R.ok(groupIds.get(i));
             }
         }
@@ -481,6 +458,8 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
         imChatGroup.setCreateDate(LocalDateTime.now());
 
         Integer companyId = baseMapper.getCompanyId(Integer.parseInt(empId));
+        Integer userId = baseMapper.getUserIdByCom(companyId);
+
         imChatGroup.setCompanyId(companyId);
         imChatGroupService.save(imChatGroup);
 
@@ -492,6 +471,20 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
 
         //群聊加入保洁员
         ids.add(empUserId.toString());
+
+        //群聊添加公司账户
+        ids.add(userId.toString());
+
+        //群聊加入经理
+        List<Integer> groups =  baseMapper.getGroupsById(Integer.parseInt(empId));
+        if(!CollectionUtils.isEmpty(groups)){
+            for (int i = 0; i < groups.size(); i++) {
+                List<Integer> manIds = baseMapper.getMansByGroupId(groups.get(i));
+                for (int j = 0; j < manIds.size(); j++) {
+                    ids.add(baseMapper.getUserId(manIds.get(j)).toString());
+                }
+            }
+        }
 
         for (String id : ids) {
             ImChatGroupUser imChatGroupUser = new ImChatGroupUser();
