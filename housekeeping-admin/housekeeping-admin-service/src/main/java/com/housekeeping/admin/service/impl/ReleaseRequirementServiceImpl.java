@@ -338,6 +338,13 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
 
     @Override
     public R updateCus(ReleaseRequirementUDTO dto) throws InterruptedException {
+
+        DemandOrder byId1 = demandOrderService.getById(dto.getId());
+        Integer status = this.getStatus(byId1);
+        if(status==1){
+            return R.failed("该需求单已接，不能修改");
+        }
+
         Integer userId = TokenUtils.getCurrentUserId();
         QueryWrapper qw = new QueryWrapper();
         qw.eq("user_id", userId);

@@ -70,4 +70,6 @@ public interface ImUserMapper extends BaseMapper<ImUser> {
     List<ImChatGroupVo> getAllGroupByCompany(Integer companyId);
 
     List<Integer> getAllGroupId();
+
+    Integer getCustomerId(String cusId);
 }

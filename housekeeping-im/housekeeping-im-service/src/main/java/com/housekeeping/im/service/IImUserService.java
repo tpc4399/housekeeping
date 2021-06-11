@@ -44,4 +44,6 @@ public interface IImUserService extends IService<ImUser> {
     R getChatGroupById(Integer empId);
 
     R getManChat(Integer manId);
+
+    R addGroupByCom(String empId, String cusId);
 }

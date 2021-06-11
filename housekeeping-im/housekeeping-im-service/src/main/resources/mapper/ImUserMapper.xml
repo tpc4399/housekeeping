@@ -206,5 +206,14 @@
         im_chat_group
     </select>
 
+    <select id="getCustomerId" resultType="java.lang.Integer">
+        SELECT
+        user_id
+        FROM
+        customer_details
+        WHERE
+        id = #{cusId}
+    </select>
+
 
 </mapper>
