@@ -522,6 +522,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
 
     @Override
     public R changePrice(String quotationId, Integer price) {
+        DemandEmployees byId1 = demandEmployeesService.getById(quotationId);
+        if(this.getStatus(byId1).equals(1)){
+            return R.failed("该报价单已被确认，无法修改！");
+        }
         DemandEmployees byId = demandEmployeesService.getById(quotationId);
         byId.setPrice(price);
         demandEmployeesService.updateById(byId);
