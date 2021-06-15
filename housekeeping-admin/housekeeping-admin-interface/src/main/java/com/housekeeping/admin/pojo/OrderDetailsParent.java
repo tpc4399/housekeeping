@@ -20,5 +20,10 @@ public class OrderDetailsParent {
     private WorkDetailsPOJO wdp;   //第一天的安排
     private Boolean yes1; // 客户是否已评价, 当订单处于待评价状态时，值有效
     private Boolean yes2; // 保洁员是否已评价, 当订单处于待评价状态时，值有效
-    private Integer keyWorkReturn; //工作重点回传
+    private Integer keyWorkReturn;   /* 工作重点回传 -1:程序故障，联系后端
+                                                    0：未回传
+                                                    1：部分已回传
+                                                    2：已回传
+                                                    3：无需回传，未指定工作重点*/
+
 }
