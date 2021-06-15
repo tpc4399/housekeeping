@@ -35,6 +35,7 @@ public class TimeSlot {
         return "TimeSlot{" +
                 "timeSlotStart=" + timeSlotStart +
                 ", timeSlotLength=" + timeSlotLength +
+                ", thisSlotPrice='" + thisSlotPrice + '\'' +
                 '}';
     }
 }

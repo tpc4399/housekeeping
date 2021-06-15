@@ -1118,6 +1118,20 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 /* 客户头像二次加工处理 */
                 parent.setCustomerHeaderUrl(cd.getHeadUrl());
             }
+            /* 第一次工作内容 */
+            if (wds.isEmpty()){
+                parent.setWdp(new WorkDetailsPOJO());
+            }else {
+                parent.setWdp(wds.get(0));
+            }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(number);
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(number);
+            parent.setYes1(yes1);
+            parent.setYes2(yes2);
+            /* 工作重点回传状态 */
+            Integer status = orderPhotosService.isCallback(number);
+            parent.setKeyWorkReturn(status);
 
             return R.ok(parent);
         }
@@ -1371,7 +1385,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             if (x.getCanBeOnDuty()) {
                 StringBuilder sb = new StringBuilder();
                 x.getTimeSlots().forEach(timeSlot -> {
-                    String s = timeSlot.getTimeSlotStart()+"+"+timeSlot.getTimeSlotLength().toString()+" ";
+                    String s = timeSlot.getTimeSlotStart()+"+"+timeSlot.getTimeSlotLength().toString()+"+"+timeSlot.getThisSlotPrice()+" ";
                     sb.append(s);
                 });
                 return new WorkDetails(null, Long.valueOf(number), x.getDate(), x.getWeek(), sb.toString().trim(), x.getCanBeOnDuty(), x.getTodayPrice());
@@ -1420,15 +1434,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         String[] strings = s.split("\\+");
         String s1 = strings[0];
         String s2 = strings[1];
+        String s3 = strings[2];
         LocalTime time = LocalTime.of(Integer.valueOf(s1.substring(0,2)), Integer.valueOf(s1.substring(3,5)));
         Float length = Float.valueOf(s2);
         TimeSlot ts = new TimeSlot(time, length);
+        ts.setThisSlotPrice(s3);
         return ts;
     }
 
     @Test
     public void k(){
-        String s = "09:00+3.5";
+        String s = "09:00+3.5+5556";
         System.out.println(ts(s));
     }
 
