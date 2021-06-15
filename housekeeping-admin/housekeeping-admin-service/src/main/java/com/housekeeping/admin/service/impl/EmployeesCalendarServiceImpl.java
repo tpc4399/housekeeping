@@ -920,7 +920,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 timeSlots = dto.getTimeSlots();  //不用给时段加价格了
             }
 
-            Boolean canBeOnDuty = true;
+            Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
             if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
             /* 今日数据返回 */
