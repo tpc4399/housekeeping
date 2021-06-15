@@ -33,8 +33,6 @@ public interface IImUserService extends IService<ImUser> {
 
     R init();
 
-    R createGroupByCompany(String toId);
-
     R createGroupByCus(String demandId, String empId);
 
     public String getHeadUrl(Integer userId,Integer deptId);

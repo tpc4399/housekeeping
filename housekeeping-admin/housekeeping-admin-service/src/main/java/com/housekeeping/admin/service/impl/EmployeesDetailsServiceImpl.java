@@ -349,7 +349,25 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
             ManagerDetails managerDetails = managerDetailsService.getOne(queryWrapper2);
             Integer managerId = managerDetails.getId();
             Integer companyId = managerDetailsService.getCompanyIdByManagerId(managerId);
+            CompanyDetails cd = companyDetailsService.getById(companyId);
             queryWrapper.eq("company_id", companyId);
+
+            Boolean certified = cd.getIsValidate(); //是否已认证
+            queryWrapper.eq("company_id", companyId);
+
+            List<EmployeesDetails> eds = this.list(queryWrapper);
+            List<EmployeesDetailsPOJO> edps = eds.stream().map(ed->{
+                EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO(ed);
+                //技能标签和是否已认证
+                edp.setCertified(certified);
+                List<SysJobContend> jobs = new ArrayList<>();
+                List<Integer> jobIds = CommonUtils.stringToList(ed.getPresetJobIds());
+                if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+                edp.setSkillTags(jobs);
+                return edp;
+            }).collect(Collectors.toList());
+            Page pages = PageUtils.getPages((int)page.getCurrent(), (int)page.getSize(), edps);
+            return R.ok(pages, "分頁查詢成功");
         }
 
         IPage<EmployeesDetails> employeesDetailsIPage = baseMapper.selectPage(page, queryWrapper);
