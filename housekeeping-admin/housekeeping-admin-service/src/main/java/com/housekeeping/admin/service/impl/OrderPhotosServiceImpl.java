@@ -35,7 +35,7 @@ public class OrderPhotosServiceImpl
 
         if (ok.equals(opLength)) return CommonConstants.ORDER_PHOTOS_STATUS_2;//已回传的，等于需要回传的，已经回传完成
         if (ok<opLength&&ok>0) return CommonConstants.ORDER_PHOTOS_STATUS_1;//已回传的，处于0-n之间,说明只有部分已经回传
-        if (ok.equals(0)) return CommonConstants.ORDER_PHOTOS_STATUS_0;//已回传的，为0，说明还未回传
+        if (ok.equals(new Long(0))) return CommonConstants.ORDER_PHOTOS_STATUS_0;//已回传的，为0，说明还未回传
         return -1;//说明程序故障
     }
 
