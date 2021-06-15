@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -22,7 +23,8 @@ import java.util.List;
 @RequestMapping("/orderPhotos")
 public class OrderPhotosController {
 
-    private final IOrderPhotosService orderPhotosService;
+    @Resource
+    private IOrderPhotosService orderPhotosService;
 
     @ApiOperation("【保洁员】获取订单的工作重点，以及回传信息")
     @Access({RolesEnum.USER_EMPLOYEES})
