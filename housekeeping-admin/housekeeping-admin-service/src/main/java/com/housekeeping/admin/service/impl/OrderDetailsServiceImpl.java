@@ -179,7 +179,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             String fileAbstractPath = catalogue + "/" + fileName;
             try {
                 ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
-                OrderPhotoPOJO pojo = new OrderPhotoPOJO(urlPrefix + fileAbstractPath, evaluates[count.get()]);
+                OrderPhotoPOJO pojo = new OrderPhotoPOJO(null, urlPrefix + fileAbstractPath, evaluates[count.get()]);
                 pojoList.add(pojo);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1401,7 +1401,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     private List<OrderPhotoPOJO> orderPhotosPOJOs(List<OrderPhotos> ops){
         List<OrderPhotoPOJO> orderPhotosPOJOs = ops.stream().map(wd -> {
-            OrderPhotoPOJO opp = new OrderPhotoPOJO(wd.getPhotoUrl(), wd.getEvaluate());
+            OrderPhotoPOJO opp = new OrderPhotoPOJO(wd.getId(), wd.getPhotoUrl(), wd.getEvaluate());
             return opp;
         }).collect(Collectors.toList());
         return orderPhotosPOJOs;

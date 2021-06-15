@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderPhotoPOJO {
 
+    private Integer orderPhotoId; //工作重点的id
     private String photoUrl;  //照片url
     private String evaluate;  //照片评论
 
