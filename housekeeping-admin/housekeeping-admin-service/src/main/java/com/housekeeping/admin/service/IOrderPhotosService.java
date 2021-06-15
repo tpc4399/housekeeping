@@ -20,4 +20,7 @@ public interface IOrderPhotosService extends IService<OrderPhotos> {
     /* 【保洁员】对订单进行工作重点回传 */
     R keyWorkReturn(List<KeyWorkReturnDTO> dto);
 
+    /* 【保洁员】查询订单的工作重点，以及回传信息 */
+    R getByOrderNumber(String orderNumber);
+
 }

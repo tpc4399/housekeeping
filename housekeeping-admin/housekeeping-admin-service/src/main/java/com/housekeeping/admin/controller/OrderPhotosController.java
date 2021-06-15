@@ -8,10 +8,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +23,13 @@ import java.util.List;
 public class OrderPhotosController {
 
     private final IOrderPhotosService orderPhotosService;
+
+    @ApiOperation("【保洁员】获取订单的工作重点，以及回传信息")
+    @Access({RolesEnum.USER_EMPLOYEES})
+    @GetMapping
+    private R getByOrderNumber(String orderNumber){
+        return orderPhotosService.getByOrderNumber(orderNumber);
+    }
 
     @ApiOperation("【保洁员】对订单进行工作重点回传")
     @Access({RolesEnum.USER_EMPLOYEES})

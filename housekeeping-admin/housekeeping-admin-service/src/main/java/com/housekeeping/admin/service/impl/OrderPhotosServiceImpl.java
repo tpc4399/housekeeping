@@ -47,4 +47,10 @@ public class OrderPhotosServiceImpl
         });
         return R.ok(null, "回傳成功");
     }
+
+    @Override
+    public R getByOrderNumber(String orderNumber) {
+        List<OrderPhotos> orderPhotos = baseMapper.getByOrderNumber(orderNumber);
+        return R.ok(orderPhotos, "查詢成功");
+    }
 }

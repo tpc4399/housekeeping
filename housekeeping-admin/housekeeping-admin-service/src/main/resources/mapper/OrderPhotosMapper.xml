@@ -9,5 +9,10 @@
         SET t.yes = 1, t.result_photo_urls = #{dto.resultPhotoUrls}, t.result = #{dto.result}, t.result_time = #{now}
         WHERE t.id = #{dto.orderPhotosId}
     </update>
+    <select id="getByOrderNumber" resultType="com.housekeeping.admin.entity.OrderPhotos">
+        SELECT t.*
+        FROM housekeeping.order_photos t
+        WHERE number = #{number}
+    </select>
 
 </mapper>
