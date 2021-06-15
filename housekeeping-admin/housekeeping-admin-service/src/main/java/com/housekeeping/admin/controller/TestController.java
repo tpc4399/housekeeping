@@ -79,16 +79,6 @@ public class TestController {
         return R.ok(jsonObject,"解析成功");
     }
 
-    @GetMapping("/noToken/test3")
-    @ApiOperation("测试3")
-    public R test3() {
-        DateSlot dateSlot = new DateSlot();
-        dateSlot.setStart(LocalDate.of(2021,3,1));
-        dateSlot.setEnd(LocalDate.of(2021,3,30));
-        Map<LocalDate, List<TimeSlot>> res =  employeesContractService.getCalendarByContractId(dateSlot, 1);
-        return R.ok("解析成功");
-    }
-
     @GetMapping("/noToken/test4")
     @ApiOperation("多线程测试")
     public R test4(){

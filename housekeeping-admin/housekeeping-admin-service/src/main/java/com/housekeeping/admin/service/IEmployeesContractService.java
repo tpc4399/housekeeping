@@ -23,13 +23,7 @@ import java.util.Map;
  */
 public interface IEmployeesContractService extends IService<EmployeesContract> {
 
-    R add(AddEmployeesContractDTO dto);
     R getByEmployeesId(Integer employeesId);
-    /* 获取这段日期这个包工的时间表 */
-    Map<LocalDate, List<TimeSlot>> getCalendarByContractId(DateSlot dateSlot, Integer contractId);
-    /* 获取这段日期这个闲置时间表 */
-    Map<LocalDate, List<TimeSlot>> getFreeTimeByContractId(DateSlot dateSlot, Integer contractId);
-
     R add2(Integer employeesId,
            String name,
            MultipartFile[] image,
