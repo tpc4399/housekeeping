@@ -8,6 +8,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,20 +24,19 @@ import java.util.List;
 @RequestMapping("/onfocus")
 public class OnfocusController {
 
-    @Resource
-    private IOrderPhotosService orderPhotosService;
+    private final IOrderPhotosService orderPhotosService;
 
     @ApiOperation("【保洁员】获取订单的工作重点，以及回传信息")
     @Access({RolesEnum.USER_EMPLOYEES})
     @GetMapping("/onfocus")
-    private R getByOrderNumber(String orderNumber){
+    public R getByOrderNumber(String orderNumber){
         return orderPhotosService.getByOrderNumber(orderNumber);
     }
 
     @ApiOperation("【保洁员】对订单进行工作重点回传")
     @Access({RolesEnum.USER_EMPLOYEES})
     @PostMapping("/onfocus")
-    private R keyWorkReturn(@RequestBody List<KeyWorkReturnDTO> dto){
+    public R keyWorkReturn(@RequestBody List<KeyWorkReturnDTO> dto){
         return orderPhotosService.keyWorkReturn(dto);
     }
 
