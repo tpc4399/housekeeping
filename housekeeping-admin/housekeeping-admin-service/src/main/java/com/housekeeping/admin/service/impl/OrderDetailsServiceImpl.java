@@ -2,6 +2,7 @@ package com.housekeeping.admin.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
@@ -308,7 +309,10 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
         synchronized (this){
             orderDetailsService.save(od);
-            if (CommonUtils.isNotEmpty(ops)) orderPhotosService.saveBatch(ops);
+            if (CollectionUtils.isNotEmpty(ops)) {
+                System.out.println();
+                orderPhotosService.saveBatch(ops);
+            }
             wds.forEach(wd -> {
                 workDetailsService.add(wd);
             });
