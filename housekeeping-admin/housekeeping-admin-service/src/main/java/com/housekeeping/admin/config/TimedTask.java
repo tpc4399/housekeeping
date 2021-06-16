@@ -45,7 +45,7 @@ public class TimedTask {
     private IOrderEvaluationService orderEvaluationService;
 
 //    @Scheduled(cron = "0 0 0,13,20,23 * * ?") //每天13点 20点 23点
-    @Scheduled(cron = "* 0/1 * * * ? ") //每半个小时执行一次
+    @Scheduled(cron = "* 0/1 * * * ? ") //每1分钟执行一次
     //@Scheduled(fixedRate=5000)    //或直接指定时间间隔，例如：5秒
     private void configureTasks() {
         /* 保洁员数据 */
@@ -54,7 +54,6 @@ public class TimedTask {
         /* 公司数据 */
         List<CompanyDetails> companyDetails = companyDetailsService.list();
         fun(companyDetails, "company", "details");
-        System.out.println("定时任务同步redis保洁员公司数据启动");
     }
 
     private void fun(List list, String name1, String name2){
