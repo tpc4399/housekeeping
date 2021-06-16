@@ -647,7 +647,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -665,7 +665,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -683,7 +683,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -701,7 +701,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -751,7 +751,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -769,7 +769,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -787,7 +787,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -805,7 +805,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             return odp;
         }).collect(Collectors.toList());
@@ -853,7 +853,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 QueryWrapper qw2 = new QueryWrapper();
                 qw2.eq("number", od.getNumber());
                 List<WorkDetails> wds = workDetailsService.list(qw2);
-                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
                 OrderDetailsPOJO odp = this.odp(od, wds, ops);
                 pojoList.add(odp);
             });
@@ -873,7 +873,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 QueryWrapper qw2 = new QueryWrapper();
                 qw2.eq("number", od.getNumber());
                 List<WorkDetails> wds = workDetailsService.list(qw2);
-                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
                 OrderDetailsPOJO odp = this.odp(od, wds, ops);
                 pojoList.add(odp);
             });
@@ -893,7 +893,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 QueryWrapper qw2 = new QueryWrapper();
                 qw2.eq("number", od.getNumber());
                 List<WorkDetails> wds = workDetailsService.list(qw2);
-                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
                 OrderDetailsPOJO odp = this.odp(od, wds, ops);
                 pojoList.add(odp);
             });
@@ -913,7 +913,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 QueryWrapper qw2 = new QueryWrapper();
                 qw2.eq("number", od.getNumber());
                 List<WorkDetails> wds = workDetailsService.list(qw2);
-                List<OrderPhotos> ops = orderPhotosService.list(qw2);
+                List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
                 OrderDetailsPOJO odp = this.odp(od, wds, ops);
                 pojoList.add(odp);
             });
@@ -1045,7 +1045,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         QueryWrapper qw = new QueryWrapper();
         qw.eq("number", number);
         List<WorkDetails> wds = workDetailsService.list(qw);
-        List<OrderPhotos> ops = orderPhotosService.list(qw);
+        List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
         OrderDetailsPOJO odp = odp(od, wds, ops);
         return odp;
     }
@@ -1144,7 +1144,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             QueryWrapper qw2 = new QueryWrapper();
             qw2.eq("number", od.getNumber());
             List<WorkDetails> wds = workDetailsService.list(qw2);
-            List<OrderPhotos> ops = orderPhotosService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             OrderDetailsParent parent = odp;
             List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());

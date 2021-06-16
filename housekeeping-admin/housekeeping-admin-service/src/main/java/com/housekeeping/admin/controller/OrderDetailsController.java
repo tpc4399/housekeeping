@@ -4,6 +4,7 @@ import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.service.ICardPayCallbackService;
 import com.housekeeping.admin.service.IOrderDetailsService;
+import com.housekeeping.admin.service.IOrderPhotosService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
@@ -18,12 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author su
  * @Date 2021/4/22 11:10
  */
-@Api(tags={"【确认订单】接口"})
+@Api(tags={"【确认订单&订单列表】相关接口"})
 @RestController
 @AllArgsConstructor
 @RequestMapping("/orderDetails")
@@ -239,5 +241,7 @@ public class OrderDetailsController {
     public R setCustomerInformation(@RequestBody SetOrderCustomerInformationDTO dto){
         return orderDetailsService.setCustomerInformation(dto);
     }
+
+
 
 }

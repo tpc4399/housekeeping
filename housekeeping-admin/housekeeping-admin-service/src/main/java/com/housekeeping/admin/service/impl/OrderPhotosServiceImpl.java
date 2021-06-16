@@ -1,7 +1,5 @@
 package com.housekeeping.admin.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.KeyWorkReturnDTO;
 import com.housekeeping.admin.entity.OrderPhotos;
 import com.housekeeping.admin.mapper.OrderPhotosMapper;
@@ -11,6 +9,7 @@ import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,14 +18,14 @@ import java.util.List;
  * @Date 2021/4/28 16:12
  */
 @Service("orderPhotosService")
-public class OrderPhotosServiceImpl
-        extends ServiceImpl<OrderPhotosMapper, OrderPhotos>
-        implements IOrderPhotosService {
+public class OrderPhotosServiceImpl implements IOrderPhotosService {
+
+    @Resource
+    private OrderPhotosMapper orderPhotosMapper;
+
     @Override
     public Integer isCallback(String number) {
-        QueryWrapper qw = new QueryWrapper();
-        qw.eq("number", number);
-        List<OrderPhotos> orderPhotos = this.list(qw);
+        List<OrderPhotos> orderPhotos = orderPhotosMapper.listByNumber(number);
         if (CommonUtils.isEmpty(orderPhotos)) return CommonConstants.ORDER_PHOTOS_STATUS_3; //没有工作重点,无需回传
         Long ok = new Long(0);//已回传的工作重点
         Long opLength = new Long(orderPhotos.size()); //需要回传的工作重点数量
@@ -42,14 +41,24 @@ public class OrderPhotosServiceImpl
     public R keyWorkReturn(List<KeyWorkReturnDTO> dto) {
         LocalDateTime now = LocalDateTime.now();
         dto.forEach(x -> {
-            baseMapper.keyWorkReturn(x, now);
+            orderPhotosMapper.keyWorkReturn(x, now);
         });
         return R.ok(null, "回傳成功");
     }
 
     @Override
     public R getByOrderNumber(String orderNumber) {
-        List<OrderPhotos> orderPhotos = baseMapper.getByOrderNumber(orderNumber);
+        List<OrderPhotos> orderPhotos = orderPhotosMapper.getByOrderNumber(orderNumber);
         return R.ok(orderPhotos, "查詢成功");
+    }
+
+    @Override
+    public void saveBatch(List<OrderPhotos> ops) {
+        orderPhotosMapper.saveBatch(ops);
+    }
+
+    @Override
+    public List<OrderPhotos> listByNumber(String number) {
+        return orderPhotosMapper.listByNumber(number);
     }
 }

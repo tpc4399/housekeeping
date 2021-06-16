@@ -44,6 +44,7 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     /* 根据employeesId判断员工是否存在于经理所在公司,存在true，不存在false   (本公司检索) */
     Boolean judgmentOfExistenceFromManager(Integer employeesId);
 
+    @Access(RolesEnum.USER_MANAGER)
     /* 根据employeesId判断员工是否管辖于经理,存在true，不存在false   (本组检索) */
     Boolean judgmentOfExistenceHaveJurisdictionOverManager(Integer employeesId);
 

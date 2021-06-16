@@ -12,11 +12,15 @@ import java.util.List;
  * @Author su
  * @Date 2021/4/28 16:09
  */
-public interface OrderPhotosMapper extends BaseMapper<OrderPhotos> {
+public interface OrderPhotosMapper {
+
+    List<OrderPhotos> listByNumber(String number);
 
     void keyWorkReturn(@Param("dto") KeyWorkReturnDTO dto,
                        @Param("now") LocalDateTime now);
 
     List<OrderPhotos> getByOrderNumber(String number);
+
+    void saveBatch(@Param("list") List<OrderPhotos> ops);
 
 }

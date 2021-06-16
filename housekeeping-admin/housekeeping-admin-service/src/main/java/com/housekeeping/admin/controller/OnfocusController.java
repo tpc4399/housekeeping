@@ -15,27 +15,27 @@ import java.util.List;
 
 /**
  * @Author su
- * @create 2021/6/11 15:32
+ * @create 2021/6/16 10:12
  */
-@Api(tags={"【订单工作重点】相关接口"})
+@Api(tags={"【订单工作重点】接口"})
 @RestController
 @AllArgsConstructor
-@RequestMapping("/orderPhotos")
-public class OrderPhotosController {
+@RequestMapping("/onfocus")
+public class OnfocusController {
 
     @Resource
     private IOrderPhotosService orderPhotosService;
 
     @ApiOperation("【保洁员】获取订单的工作重点，以及回传信息")
     @Access({RolesEnum.USER_EMPLOYEES})
-    @GetMapping
+    @GetMapping("/onfocus")
     private R getByOrderNumber(String orderNumber){
         return orderPhotosService.getByOrderNumber(orderNumber);
     }
 
     @ApiOperation("【保洁员】对订单进行工作重点回传")
     @Access({RolesEnum.USER_EMPLOYEES})
-    @PostMapping
+    @PostMapping("/onfocus")
     private R keyWorkReturn(@RequestBody List<KeyWorkReturnDTO> dto){
         return orderPhotosService.keyWorkReturn(dto);
     }
