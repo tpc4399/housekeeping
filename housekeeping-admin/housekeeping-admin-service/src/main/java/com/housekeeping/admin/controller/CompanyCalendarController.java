@@ -51,4 +51,11 @@ public class CompanyCalendarController {
         return companyCalendarService.del(id);
     }
 
+    @Access(RolesEnum.USER_COMPANY)
+    @GetMapping
+    @ApiOperation("【公司】根據id查詢公司排班記錄")
+    public R getById(Integer id){
+        return R.ok(companyCalendarService.getById(id), "獲取成功");
+    }
+
 }
