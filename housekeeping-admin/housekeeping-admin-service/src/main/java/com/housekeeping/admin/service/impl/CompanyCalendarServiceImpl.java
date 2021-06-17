@@ -80,6 +80,8 @@ public class CompanyCalendarServiceImpl
         cc.setWeek(week.toString());
         cc.setTimeSlotStart(dto.getTimeSlotStart());
         cc.setTimeSlotLength(dto.getTimeSlotLength());
+        cc.setHourlyWage(new BigDecimal(dto.getPrice()));
+        cc.setCode(dto.getCode());
         this.updateById(cc);
         return R.ok(null, "修改成功");
     }
