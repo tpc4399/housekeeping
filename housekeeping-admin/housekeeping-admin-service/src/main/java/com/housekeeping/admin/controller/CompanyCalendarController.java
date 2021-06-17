@@ -40,4 +40,11 @@ public class CompanyCalendarController {
         return companyCalendarService.updateCalendar(dto);
     }
 
+    @Access(RolesEnum.USER_COMPANY)
+    @PostMapping("/mineCalendar")
+    @ApiOperation("【公司】查看自己时间表")
+    public R mineCalendar(){
+        return companyCalendarService.mineCalendar();
+    }
+
 }

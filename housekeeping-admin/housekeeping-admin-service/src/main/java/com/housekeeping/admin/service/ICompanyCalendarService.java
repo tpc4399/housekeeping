@@ -19,5 +19,6 @@ public interface ICompanyCalendarService extends IService<CompanyCalendar> {
     R setCalendar(SetCompanyCalendarDTO dto);
     R updateCalendar(UpdateCompanyCalendarDTO dto);
     List<EmployeesCalendar> initEmpCalendar(Integer companyId, Integer employeesId);
+    R mineCalendar();
 
 }

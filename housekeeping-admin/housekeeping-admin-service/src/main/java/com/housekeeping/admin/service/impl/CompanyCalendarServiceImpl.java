@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -106,6 +103,18 @@ public class CompanyCalendarServiceImpl
             return ec;
         }).collect(Collectors.toList());
         return calendars;
+    }
+
+    @Override
+    public R mineCalendar() {
+        Integer companyUserId = TokenUtils.getCurrentUserId();
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(companyUserId);
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("company_id", companyId);
+        List<CompanyCalendar> companyCalendarList = this.list(qw);
+        if (companyCalendarList == null) return R.failed(null, "該公司未設置時間表");
+        if (companyCalendarList.size() == 0) return R.failed(null, "該公司未設置時間表");
+        return R.ok(companyCalendarList, "獲取成功");
     }
 
     /* 用于添加 時間段合理性判斷：周   假設都不為空 */
