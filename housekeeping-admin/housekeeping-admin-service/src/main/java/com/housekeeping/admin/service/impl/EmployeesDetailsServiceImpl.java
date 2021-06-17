@@ -206,6 +206,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
 
         //修改员工名、关联修改聊天组名
         if(!byId.getName().equals(employeesDetailsDTO.getName())){
+            User byId1 = userService.getById(byId.getUserId());
+            byId1.setName(employeesDetailsDTO.getName());
+            userService.updateById(byId1);
             List<Integer> chatIds = baseMapper.getAllChatGroup(byId.getUserId());
             for (int i = 0; i < chatIds.size(); i++) {
                 baseMapper.updateChatName(chatIds.get(i),employeesDetailsDTO.getName());

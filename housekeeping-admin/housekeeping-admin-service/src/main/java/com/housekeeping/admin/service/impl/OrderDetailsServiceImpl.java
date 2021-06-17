@@ -1216,15 +1216,15 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     @Override
     public String cardPay(String number, String callBackUrl) {
-        Integer userId = TokenUtils.getCurrentUserId();
-        CustomerDetails cd = customerDetailsService.getByUserId(userId);
-        Integer customerId = cd.getId();
+//        Integer userId = TokenUtils.getCurrentUserId();
+//        CustomerDetails cd = customerDetailsService.getByUserId(userId);
+//        Integer customerId = cd.getId();
 
         //获取订单详情
         OrderDetailsPOJO odp = (OrderDetailsPOJO) this.getOrder(number).getData();
 
-        //判斷是否是自己的訂單
-        if (!odp.getCustomerId().equals(customerId)) return "待支付訂單："+number+" 不存在";
+//        //判斷是否是自己的訂單
+//        if (!odp.getCustomerId().equals(customerId)) return "待支付訂單："+number+" 不存在";
 
         //订单状态判断_是否是未支付状态
         Boolean isNoPay = odp.getOrderState().equals(2);
