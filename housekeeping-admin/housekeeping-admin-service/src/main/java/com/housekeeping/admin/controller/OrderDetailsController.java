@@ -186,7 +186,6 @@ public class OrderDetailsController {
         return orderDetailsService.inputSql(number, true);
     }
 
-    @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("【客户】信用卡支付调用接口,返回支付界面")
     @GetMapping("/cardPay")
     public String cardPay(String number, String callBackUrl){
