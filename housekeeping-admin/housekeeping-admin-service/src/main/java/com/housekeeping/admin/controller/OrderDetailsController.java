@@ -242,6 +242,4 @@ public class OrderDetailsController {
         return orderDetailsService.setCustomerInformation(dto);
     }
 
-
-
 }

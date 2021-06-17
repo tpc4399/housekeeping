@@ -66,4 +66,6 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     R getAllInCompany();
     /* 統一設置本公司保潔時間表 */
     R setCalendarAll(SetCalendarAllDTO dto);
+    /* 根据保洁员employeesId获取保洁员的排班 */
+    R getSchedulingByEmployeesId(Integer employeesId);
 }

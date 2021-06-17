@@ -24,7 +24,7 @@ public class CalendarPOJO {
     private String week;    /* 周数 */
     private LocalTime timeSlotStart;    /* 时间段开始 */
     private Float timeSlotLength;    /* 时间段长度(小时) */
-    private Float price;            /* 價格 */
+    private String price;            /* 價格 */
     private String code;            /* 貨幣代碼 */
 
     public CalendarPOJO(EmployeesCalendar calendar) {
@@ -35,5 +35,7 @@ public class CalendarPOJO {
         this.week = calendar.getWeek();
         this.timeSlotStart = calendar.getTimeSlotStart();
         this.timeSlotLength = calendar.getTimeSlotLength();
+        this.price = calendar.getHourlyWage().toString();
+        this.code = calendar.getCode();
     }
 }
