@@ -117,6 +117,14 @@ public class CompanyCalendarServiceImpl
         return R.ok(companyCalendarList, "獲取成功");
     }
 
+    @Override
+    public R del(Integer id) {
+        CompanyCalendar cc = this.getById(id);
+        if (cc == null) return R.failed(null, "該記錄不存在，無需刪除");
+        this.removeById(id);
+        return R.ok(null, "刪除成功");
+    }
+
     /* 用于添加 時間段合理性判斷：周   假設都不為空 */
     public List<String> rationalityJudgmentD(SetCompanyCalendarDTO dto){
         List<String> resCollections = new ArrayList<>();//不合理性结果收集

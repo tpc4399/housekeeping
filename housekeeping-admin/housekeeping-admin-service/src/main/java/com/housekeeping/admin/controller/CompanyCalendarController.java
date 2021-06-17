@@ -9,10 +9,7 @@ import com.housekeeping.common.utils.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author su
@@ -41,10 +38,17 @@ public class CompanyCalendarController {
     }
 
     @Access(RolesEnum.USER_COMPANY)
-    @PostMapping("/mineCalendar")
+    @GetMapping("/mineCalendar")
     @ApiOperation("【公司】查看自己时间表")
     public R mineCalendar(){
         return companyCalendarService.mineCalendar();
+    }
+
+    @Access(RolesEnum.USER_COMPANY)
+    @DeleteMapping
+    @ApiOperation("【公司】刪除某一條時間表")
+    public R del(Integer id){
+        return companyCalendarService.del(id);
     }
 
 }
