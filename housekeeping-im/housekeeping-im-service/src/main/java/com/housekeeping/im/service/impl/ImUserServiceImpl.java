@@ -233,7 +233,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
                 x.setMessage(message);
                 return x;
             }).collect(Collectors.toList());
-
+            imChatGroups.addAll(chatGroups);
             /*Integer managerId = baseMapper.getMangerId(Integer.parseInt(userId));
             List<Integer> empIds = baseMapper.getAllEmp(managerId);
             List<String> userIds = new ArrayList<>();
@@ -397,7 +397,7 @@ public class ImUserServiceImpl extends ServiceImpl<ImUserMapper, ImUser> impleme
             x.setMessage(message);
             return x;
         }).collect(Collectors.toList());
-
+        imChatGroups.addAll(chatGroups);
         /*Integer managerId = baseMapper.getMangerId(userId);
         List<Integer> empIds = baseMapper.getAllEmp(managerId);
         List<String> userIds = new ArrayList<>();

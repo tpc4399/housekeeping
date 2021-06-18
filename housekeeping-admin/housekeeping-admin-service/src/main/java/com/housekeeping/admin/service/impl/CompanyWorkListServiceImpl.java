@@ -219,6 +219,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 DemandOrder byId1 = demandOrderService.getById(demandIds.get(i));
                 Integer status = releaseRequirementService.getStatus(byId1);
                 byId1.setStatus(status);
+                demandEmployeesVo.setCustomerDetails(customerDetailsService.getById(byId1.getCustomerId()));
                 demandEmployeesVo.setDemandOrder(byId1);
                 //需求单工作内容
                 String jobs = byId1.getJobIds();
@@ -298,6 +299,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             Integer status = releaseRequirementService.getStatus(byId);
             byId.setStatus(status);
             demandEmployeesVo.setDemandOrder(byId);
+            demandEmployeesVo.setCustomerDetails(customerDetailsService.getById(byId.getCustomerId()));
             //需求单工作内容
             String jobs = byId.getJobIds();
             List<Skill> skills = new ArrayList<>();
@@ -641,6 +643,7 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
                 Integer status = releaseRequirementService.getStatus(byId1);
                 byId1.setStatus(status);
                 demandEmployeesVo.setDemandOrder(byId1);
+                demandEmployeesVo.setCustomerDetails(customerDetailsService.getById(byId1.getCustomerId()));
                 //需求单工作内容
                 String jobs = byId1.getJobIds();
                 List<Skill> skills = new ArrayList<>();

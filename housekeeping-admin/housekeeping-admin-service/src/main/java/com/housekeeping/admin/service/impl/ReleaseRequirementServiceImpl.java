@@ -171,10 +171,14 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
 
+            //报价单数量
             QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
             qw3.eq("demand_order_id",list3.get(i).getId());
             int count = demandEmployeesService.count(qw3);
             demandOrderDTO.setCount(count);
+
+            //客户信息
+            demandOrderDTO.setCustomerDetails(customerDetailsService.getById(list3.get(i).getCustomerId()));
 
             //需求单工作内容
             String jobs = list3.get(i).getJobIds();
@@ -262,6 +266,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
 
+            //客户信息
+            demandOrderDTO.setCustomerDetails(customerDetailsService.getById(list3.get(i).getCustomerId()));
+
             //需求单工作内容
             String jobs = list3.get(i).getJobIds();
             List<Skill> skills = new ArrayList<>();
@@ -312,11 +319,16 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }
+
+        //需求时间
         for (int i = 0; i < list.size(); i++) {
             Integer demandId = list.get(i).getId();
             List<TimeSlot> timeSlots = demandOrderMapper.getTimes(demandId);
             list.get(i).setTimeSlots(timeSlots);
         }
+
+
+
         Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), list);
         return R.ok(pages);
     }
@@ -457,10 +469,14 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         DemandOrder byId = demandOrderService.getById(id);
         DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
 
+        //报价单数量
         QueryWrapper<DemandEmployees> qw3 = new QueryWrapper<>();
         qw3.eq("demand_order_id",byId.getId());
         int count = demandEmployeesService.count(qw3);
         demandOrderDTO.setCount(count);
+
+        //客户信息
+        demandOrderDTO.setCustomerDetails(customerDetailsService.getById(byId.getCustomerId()));
 
         //需求单工作内容
         String jobs = byId.getJobIds();
@@ -594,6 +610,9 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         ArrayList<DemandOrderDTO> list = new ArrayList<>();
         for (int i = 0; i < list3.size(); i++) {
             DemandOrderDTO demandOrderDTO = new DemandOrderDTO();
+
+            //客户信息
+            demandOrderDTO.setCustomerDetails(customerDetailsService.getById(list3.get(i).getCustomerId()));
 
             //需求单工作内容
             String jobs = list3.get(i).getJobIds();

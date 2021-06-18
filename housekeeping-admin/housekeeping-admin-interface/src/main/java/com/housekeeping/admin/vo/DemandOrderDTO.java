@@ -1,6 +1,7 @@
 package com.housekeeping.admin.vo;
 
 import com.housekeeping.admin.entity.CustomerAddress;
+import com.housekeeping.admin.entity.CustomerDetails;
 import com.housekeeping.admin.entity.DemandOrder;
 import com.housekeeping.admin.entity.Skill;
 import lombok.Data;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @Data
 public class DemandOrderDTO extends DemandOrder {
+
+    private CustomerDetails customerDetails;
 
     private List<TimeSlot> timeSlots;
 
