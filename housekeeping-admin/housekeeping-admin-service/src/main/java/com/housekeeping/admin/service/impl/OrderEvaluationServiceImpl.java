@@ -1,11 +1,14 @@
 package com.housekeeping.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.housekeeping.admin.dto.OrderEvaluationDTO;
+import com.housekeeping.admin.entity.OrderDetails;
 import com.housekeeping.admin.entity.OrderEvaluation;
 import com.housekeeping.admin.mapper.OrderEvaluationMapper;
 import com.housekeeping.admin.service.IOrderDetailsService;
 import com.housekeeping.admin.service.IOrderEvaluationService;
 import com.housekeeping.common.utils.CommonConstants;
+import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
 import org.springframework.stereotype.Service;
@@ -21,12 +24,16 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
 
     @Resource
     private OrderEvaluationMapper orderEvaluationMapper;
+    @Resource
+    private IOrderDetailsService orderDetailsService;
 
     @Override
     public R evaluation(OrderEvaluationDTO dto) {
         //TODO 判断订单所有者
         //执行评价流程
         String roleType = TokenUtils.getRoleType();
+        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)) customerEvaluation(dto);
+        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER))customerEvaluation(dto);
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_CUSTOMER)) customerEvaluation(dto);
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)) employeesEvaluation(dto);
         //检测订单是否已完成

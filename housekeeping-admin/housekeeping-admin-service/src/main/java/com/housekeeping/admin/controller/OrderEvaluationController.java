@@ -22,8 +22,8 @@ public class OrderEvaluationController {
 
     private final IOrderEvaluationService orderEvaluationService;
 
-    @ApiOperation("【保洁员】【客户】评价某个订单")
-    @Access({RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【保洁员】【客户】【公司】【经理】评价某个订单")
+    @Access({RolesEnum.USER_EMPLOYEES, RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @PostMapping
     public R evaluation(@RequestBody OrderEvaluationDTO dto){
         return orderEvaluationService.evaluation(dto);

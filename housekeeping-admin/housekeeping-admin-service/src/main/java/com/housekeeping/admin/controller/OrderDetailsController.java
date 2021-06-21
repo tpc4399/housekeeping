@@ -96,15 +96,15 @@ public class OrderDetailsController {
         return "OK";
     }
 
-    @Access(RolesEnum.USER_EMPLOYEES)
-    @ApiOperation("【保洁员】订单状态———— 待服務->進行中")
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【保洁员】【公司】【经理】订单状态———— 待服務->進行中")
     @GetMapping("/payment7")
     public R payment7(String number){
         return orderDetailsService.payment7(number);
     }
 
-    @Access(RolesEnum.USER_EMPLOYEES)
-    @ApiOperation("【保洁员】订单状态———— 进行中->待评价")
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【保洁员】【公司】【经理】订单状态———— 进行中->待评价")
     @GetMapping("/payment3")
     public R payment3(String number){
         return orderDetailsService.payment3(number);
