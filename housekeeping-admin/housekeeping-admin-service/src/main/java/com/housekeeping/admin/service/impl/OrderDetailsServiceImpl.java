@@ -1373,6 +1373,53 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return R.ok(null, "成功修改客戶信息");
     }
 
+    @Override
+    public R setOrderInformation(SetOrderInformationDTO dto) {
+        synchronized (this){
+            //修改訂單工作安排
+            /* 先做数据处理 */
+            List<WorkDetailsPOJO> wdp = dto.getWorkDetails().stream().map(wd -> {
+                return new WorkDetailsPOJO(wd.getDate(), wd.getWeek(), wd.getTimeSlots(), true, wd.getTodayPrice());
+            }).collect(Collectors.toList());
+
+            /* 数据修改,对hash操控，直接修改workDetails */
+            Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+            Object[] keysArr = keys.toArray();
+            String key = keysArr[0].toString();
+            redisTemplate.opsForHash().put(key, "workDetails", wdp);
+
+            //修改待支付订单的工作内容
+            /* 先做数据处理 */
+            String jobIds = CommonUtils.listToString(dto.getJobIds());
+
+            /* 数据修改,对hash操控，直接修改jobIds */
+            Set<String> keys1 = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+            Object[] keysArr1 = keys1.toArray();
+            String key1 = keysArr1[0].toString();
+            redisTemplate.opsForHash().put(key1, "jobIds", jobIds);
+
+            //修改待支付订单的折后价格
+            /* 数据修改,对hash操控，直接修改priceAfterDiscount */
+            Set<String> keys2 = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+            Object[] keysArr2 = keys2.toArray();
+            String key2 = keysArr2[0].toString();
+            redisTemplate.opsForHash().put(key2, "priceAfterDiscount", dto.getDiscountPrice());
+
+            //修改待支付订单的客戶信息
+            /* 数据修改,对hash操控，直接修改priceAfterDiscount */
+            Set<String> keys3 = redisTemplate.keys("OrderToBePaid:employeesId*:" + dto.getNumber());
+            Object[] keysArr3 = keys3.toArray();
+            String key3 = keysArr3[0].toString();
+            redisTemplate.opsForHash().put(key3, "name2", dto.getName());
+            redisTemplate.opsForHash().put(key3, "phone2", dto.getPhone());
+            redisTemplate.opsForHash().put(key3, "phPrefix2", dto.getPhonePrefix());
+            redisTemplate.opsForHash().put(key3, "address", dto.getAddress());
+            redisTemplate.opsForHash().put(key3, "lat", dto.getLat());
+            redisTemplate.opsForHash().put(key3, "lng", dto.getLng());
+            return R.ok(null, "成功修改訂單信息");
+        }
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();

@@ -32,8 +32,8 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
         //TODO 判断订单所有者
         //执行评价流程
         String roleType = TokenUtils.getRoleType();
-        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)) customerEvaluation(dto);
-        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER))customerEvaluation(dto);
+        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)) employeesEvaluation(dto);
+        if(roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)) employeesEvaluation(dto);
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_CUSTOMER)) customerEvaluation(dto);
         if (roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)) employeesEvaluation(dto);
         //检测订单是否已完成
@@ -81,7 +81,7 @@ public class OrderEvaluationServiceImpl implements IOrderEvaluationService {
     @Override
     public void evaluationStatusHandle(String orderNumber) {
         OrderEvaluation oe = orderEvaluationMapper.getEvaluation(orderNumber);
-        if (oe.getYes1() && oe.getYes2()) {
+        if (oe.getYes1().equals(true) && oe.getYes2().equals(true)) {
             //修改订单状态
             orderEvaluationMapper.setOrderDetails(orderNumber);
         }

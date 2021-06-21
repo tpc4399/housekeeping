@@ -12,7 +12,7 @@ public class GroupDetailsVo extends GroupDetails {
 
     private String noCertifiedCompany;
 
-    private List<EmployeesDetails> employeesDetails;
+    private List<EmployeesDetailsSkillVo> employeesDetails;
 
     private List<ManagerDetails> managerDetails;
 }

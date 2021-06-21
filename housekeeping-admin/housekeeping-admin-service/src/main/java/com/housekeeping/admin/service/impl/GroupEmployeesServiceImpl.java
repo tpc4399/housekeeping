@@ -6,15 +6,15 @@ import com.housekeeping.admin.dto.GroupAdminDTO;
 import com.housekeeping.admin.dto.GroupDTO;
 import com.housekeeping.admin.dto.GroupEmployeesAdminDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
-import com.housekeeping.admin.entity.CompanyDetails;
-import com.housekeeping.admin.entity.EmployeesDetails;
-import com.housekeeping.admin.entity.GroupEmployees;
-import com.housekeeping.admin.entity.ManagerDetails;
+import com.housekeeping.admin.entity.*;
+import com.housekeeping.admin.mapper.EmployeesDetailsMapper;
 import com.housekeeping.admin.mapper.GroupEmployeesMapper;
 import com.housekeeping.admin.service.IGroupEmployeesService;
 import com.housekeeping.admin.service.IGroupManagerService;
+import com.housekeeping.admin.service.ISysJobContendService;
 import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.vo.EmpVo;
+import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
@@ -44,6 +44,10 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
     private ManagerDetailsService managerDetailsService;
     @Resource
     private IGroupManagerService groupManagerService;
+    @Resource
+    private ISysJobContendService sysJobContendService;
+    @Resource
+    private EmployeesDetailsMapper employeesDetailsMapper;
 
     @Override
     public R save(GroupEmployeesDTO groupEmployeesDTO) {
@@ -117,12 +121,29 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
     }
 
     @Override
-    public List<EmployeesDetails> getAllEmpById(Integer groupId) {
+    public List<EmployeesDetailsSkillVo> getAllEmpById(Integer groupId) {
         List<Integer> idsByGroupId = this.getIdsByGroupId(groupId);
-        List<EmployeesDetails> es = new ArrayList<>();
+
+        List<EmployeesDetailsSkillVo> es = new ArrayList<>();
         for (int i = 0; i < idsByGroupId.size(); i++) {
-            EmployeesDetails byId = employeesDetailsService.getById(idsByGroupId.get(i));
-            es.add(byId);
+            EmployeesDetailsSkillVo byId = employeesDetailsMapper.getCusById(idsByGroupId.get(i));
+            if(CommonUtils.isNotEmpty(byId)){
+                if(CommonUtils.isEmpty(byId.getPresetJobIds())||byId.getPresetJobIds().equals("")){
+                    byId.setSkills(null);
+                }else {
+                    String presetJobIds = byId.getPresetJobIds();
+                    List<Skill> skills = new ArrayList<>();
+                    List<String> strings = Arrays.asList(presetJobIds.split(" "));
+                    for (int x = 0; x < strings.size(); x++) {
+                        Skill skill = new Skill();
+                        skill.setJobId(Integer.parseInt(strings.get(x)));
+                        skill.setContent(sysJobContendService.getById(Integer.parseInt(strings.get(x))).getContend());
+                        skills.add(skill);
+                    }
+                    byId.setSkills(skills);
+                    es.add(byId);
+            }
+        }
         }
         if(CollectionUtils.isEmpty(es)){
             return null;

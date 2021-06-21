@@ -142,4 +142,5 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     /* 【公司】【经理】修改待支付订单的客戶信息 */
     R setCustomerInformation(SetOrderCustomerInformationDTO dto);
 
+    R setOrderInformation(SetOrderInformationDTO dto);
 }

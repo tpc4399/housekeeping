@@ -7,6 +7,7 @@ import com.housekeeping.admin.dto.GroupEmployeesAdminDTO;
 import com.housekeeping.admin.dto.GroupEmployeesDTO;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
+import com.housekeeping.admin.vo.EmployeesDetailsSkillVo;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
@@ -26,7 +27,7 @@ public interface IGroupEmployeesService extends IService<GroupEmployees> {
 
     R getAllEmp(GroupDTO groupDTO);
 
-    List<EmployeesDetails> getAllEmpById(Integer groupId);
+    List<EmployeesDetailsSkillVo> getAllEmpById(Integer groupId);
 
     R getAllEmpByAdmin(GroupAdminDTO groupDTO);
 

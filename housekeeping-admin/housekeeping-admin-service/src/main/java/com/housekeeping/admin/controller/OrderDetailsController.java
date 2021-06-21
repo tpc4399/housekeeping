@@ -241,4 +241,11 @@ public class OrderDetailsController {
         return orderDetailsService.setCustomerInformation(dto);
     }
 
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【保潔員】【公司】【经理】修改待支付订单")
+    @PostMapping("/setOrderInformation")
+    public R setOrderInformation(@RequestBody SetOrderInformationDTO dto){
+        return orderDetailsService.setOrderInformation(dto);
+    }
+
 }

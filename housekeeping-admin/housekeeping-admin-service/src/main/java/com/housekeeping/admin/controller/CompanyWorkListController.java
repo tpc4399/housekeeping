@@ -98,7 +98,7 @@ public class CompanyWorkListController {
         return companyWorkListService.newSendOffer(map);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
     @ApiOperation("（新）【公司】【经理】【员工】修改报价单价格")
     @PostMapping("/newChangePrice")
     public R changePrice(@RequestBody Map map){
