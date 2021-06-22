@@ -167,4 +167,10 @@
 		avatar_employees = #{headerUrl}
 		WHERE id = #{chatId}
 	</update>
+
+	<update id="setPresetJobPrice">
+		UPDATE employees_details
+		SET job_price = #{price}
+		WHERE id = #{empId}
+	</update>
 </mapper>

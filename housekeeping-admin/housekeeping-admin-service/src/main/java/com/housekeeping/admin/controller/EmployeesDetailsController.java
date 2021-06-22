@@ -3,10 +3,7 @@ package com.housekeeping.admin.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.housekeeping.admin.dto.EmployeesDetailsDTO;
-import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.CompanyDetails;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.admin.entity.GroupEmployees;
@@ -94,6 +91,22 @@ public class EmployeesDetailsController {
     @PostMapping("/saveEmpByMan")
     public R saveEmpByMan(@RequestBody EmployeesDetailsDTO employeesDetailsDTO) throws ParseException {
         return employeesDetailsService.saveEmp(employeesDetailsDTO,CommonConstants.REQUEST_ORIGIN_MANAGER);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【公司】【经理】【员工】修改员工技能标签")
+    @LogFlag(description = "修改员工技能标签")
+    @PostMapping("/updateEmpSkill")
+    public R updateEmpSkill(@RequestBody EmployeesSkillDTO employeesDetailsDTO) {
+        return employeesDetailsService.updateEmpSkill(employeesDetailsDTO);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER})
+    @ApiOperation("【公司】【经理】【员工】【客户】查看员工技能标签")
+    @LogFlag(description = "查看员工技能标签")
+    @PostMapping("/getEmpSkill")
+    public R getEmpSkill(@RequestParam Integer empId) {
+        return employeesDetailsService.getEmpSkill(empId);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER,  RolesEnum.USER_EMPLOYEES})

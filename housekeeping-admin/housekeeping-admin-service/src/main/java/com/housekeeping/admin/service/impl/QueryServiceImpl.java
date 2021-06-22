@@ -191,6 +191,185 @@ public class QueryServiceImpl implements IQueryService {
         return R.ok(resultPOJOS, "搜索成功");
     }
 
+    @Override
+    public R query3(QueryDTO dto) throws InterruptedException {
+        List<String> resFailed = paramsEmpty(dto);
+        if (resFailed.size() != 0) return R.failed(resFailed, "存在空值");    //參數判空
+
+        Map<String, String> weight = sysConfigService.getQueryWeight(dto.getPriorityType());  //權重
+        List<Integer> searchPool = this.searchPool2(dto.getCertified(),dto.getJobs().get(0));      //搜索池                 //搜索池
+        List<IndexResultPOJO> resultPOJOS = Collections.synchronizedList(new ArrayList<>());    //结果池
+        List<EmployeesPOJO> employeesPOJOS = Collections.synchronizedList(new ArrayList<>());  //员工结果与分數
+        List<CompanyPOJO> companyPOJOS = Collections.synchronizedList(new ArrayList<>());  //公司结果与分數
+
+        Map<Integer, Float> companyScope = new Hashtable<>();         //公司分数
+
+        //员工处理线程池
+        ExecutorService exr1 = Executors.newCachedThreadPool();
+        for (int i = 0; i < searchPool.size(); i++) {
+            int finalI = i;
+            exr1.submit(() -> {
+                Integer employeesId = searchPool.get(finalI);
+                EmployeesDetails ed = employeesDetailsService.getById(employeesId);
+
+                GetCalendarByDateSlotDTO gc = new GetCalendarByDateSlotDTO();
+                DateSlot ds = new DateSlot();
+                ds.setStart(dto.getStart());
+                ds.setEnd(dto.getEnd());
+                gc.setDateSlot(ds);
+                gc.setId(employeesId);
+                Map<LocalDate, TodayDetailsPOJO> calendarFreeTime = employeesCalendarService.getCalendarFreeTime(gc);
+
+                QueryWrapper qw = new QueryWrapper();
+                qw.eq("employees_id", employeesId);
+                List<EmployeesContract> ecs1 = employeesContractService.list(qw);
+                /*List<EmployeesCalendar> ecs2 = employeesCalendarService.list(qw);*/
+                List<SysJobContend> skillTags = (List<SysJobContend>) employeesCalendarService.getSkillTags(employeesId).getData();
+
+                /** certified:員工認證準備 */
+                CompanyDetails cd = companyDetailsService.getById(ed.getCompanyId());
+                Boolean certified = cd.getIsValidate();
+
+                Float variable1 = this.variable1(calendarFreeTime, dto); //钟点工空闲時間匹配率
+                Float variable2 = this.variable2(ed.getPresetJobIds(), dto); //钟点工工作內容匹配率   如果不能匹配，那就是0
+                Float variable4 = this.variable4(ecs1, dto); //包工工作内容匹配率   如果不能匹配，那就是0
+
+                BigDecimal variable5  = this.variablePrice(employeesId,dto.getJobs().get(0));
+
+                /*BigDecimal variable5 = this.variable5(ecs1, ecs2); //最低時薪*/
+                String variable6 = this.variable6(ed, dto); //距離
+                Float variable7 = this.variable7(ed); //評價星級
+                Boolean variable8 = this.variable8(employeesId); //推广
+                Float scope = new ScoreCalculation(variable1, variable2, variable4, variable5, variable6, variable7, variable8, weight, dto.getLowHourlyWage(), dto.getHighHourlyWage(), dto.getPriorityType()).scope();
+
+                //构造对象
+                EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO();
+                edp.setEmployeesId(employeesId);
+                edp.setName(ed.getName());
+                edp.setDateOfBirth(ed.getDateOfBirth());
+                edp.setWorkYear(ed.getWorkYear());
+                edp.setNumberOfOrder(ed.getNumberOfOrders());
+                edp.setHeaderUrl(ed.getHeadUrl());
+                edp.setStarRating(ed.getStarRating());
+                edp.setAddressDTO(new AddressDetailsDTO(ed.getAddress2()+ed.getAddress3()+ed.getAddress4(), new Float(ed.getLng()), new Float(ed.getLat())));
+                edp.setHourlyWage(variable5);
+                edp.setCode("TWD");
+                edp.setInstances(variable6);
+                edp.setSkillTags(this.jobsEcho(skillTags, dto.getJobs()));
+                edp.setCertified(certified);
+                EmployeesPOJO employeesPOJO = new EmployeesPOJO();
+                employeesPOJO.setScope(scope);
+                employeesPOJO.setEmployeesDetailsPOJO(edp);
+                employeesPOJOS.add(employeesPOJO);
+
+                Integer companyId = ed.getCompanyId();
+
+                //添加公司分
+                synchronized (this){
+                    Float companyScopes = companyScope.getOrDefault(companyId, new Float(0))+scope;
+                    companyScope.put(companyId, companyScopes);
+                }
+            });
+        }
+        exr1.shutdown();
+        exr1.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+        //公司处理线程池
+        ExecutorService exr2 = Executors.newCachedThreadPool();
+        companyScope.forEach((x, y) -> {
+            exr2.submit(() -> {
+                CompanyDetails cd = companyDetailsService.getById(x);
+                CompanyDetailsPOJO cdp = new CompanyDetailsPOJO();
+                cdp.setCompanyId(x);
+                cdp.setCompanyName(cd.getNoCertifiedCompany());
+                cdp.setLogoUrl(cd.getLogoUrl());
+                cdp.setCertified(cd.getIsValidate());
+                cdp.setCompanyProfile(cd.getCompanyProfile());
+                cdp.setAddress(cd.getAddress2()+cd.getAddress3()+cd.getAddress4());
+                CompanyPOJO cp = new CompanyPOJO();
+                cp.setScope(y);
+                cp.setCompanyDetailsPOJO(cdp);
+                companyPOJOS.add(cp);
+            });
+        });
+        exr2.shutdown();
+        exr2.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+        SortListUtil<EmployeesPOJO> sort1 = new SortListUtil<>();
+        sort1.SortByFloat(employeesPOJOS, "getScope", "desc");
+        SortListUtil<CompanyPOJO> sort2 = new SortListUtil<>();
+        sort2.SortByFloat(companyPOJOS, "getScope", "desc");
+
+        Map<String, Integer> number = sysConfigService.getNumber();
+        Integer a = number.get(ApplicationConfigConstants.numberOfConsecutiveEmployeesInteger);
+        Integer b = number.get(ApplicationConfigConstants.numberOfConsecutiveCompanyInteger);
+        Integer sum = a + b;
+        Integer count = employeesPOJOS.size() + companyPOJOS.size();
+        for (int i = 0; i < count ; i++) {
+            Integer exist = i%sum;
+            IndexResultPOJO indexResultPOJO = null;
+            if (employeesPOJOS.size() == 0 && companyPOJOS.size() != 0){
+                //公司
+                indexResultPOJO = new IndexResultPOJO(companyPOJOS.remove(0));
+                resultPOJOS.add(indexResultPOJO);
+                continue;
+            }
+            if (companyPOJOS.size() == 0 && employeesPOJOS.size() != 0){
+                //保洁
+                indexResultPOJO = new IndexResultPOJO(employeesPOJOS.remove(0));
+                resultPOJOS.add(indexResultPOJO);
+                continue;
+            }
+            if (0 <= exist && exist < a){
+                //保洁
+                indexResultPOJO = new IndexResultPOJO(employeesPOJOS.remove(0));
+                resultPOJOS.add(indexResultPOJO);
+                continue;
+            }
+            if (a <= exist && exist < sum){
+                //公司
+                indexResultPOJO = new IndexResultPOJO(companyPOJOS.remove(0));
+                resultPOJOS.add(indexResultPOJO);
+                continue;
+            }
+        }
+
+        return R.ok(resultPOJOS, "搜索成功");
+    }
+
+    private BigDecimal variablePrice(Integer employeesId,Integer jobId) {
+        EmployeesDetails byId = employeesDetailsService.getById(employeesId);
+        List<String> skills = Arrays.asList(byId.getPresetJobIds().split(" "));
+        List<String> price = Arrays.asList(byId.getJobPrice().split(" "));
+        int i = skills.indexOf(jobId);
+        BigDecimal bigDecimal = new BigDecimal(price.get(i));
+        return bigDecimal;
+    }
+
+    /** 搜索池 */
+    private List<Integer> searchPool2(List<Boolean> certified,Integer jobId){
+        //鐘點，設置了時間表 設置了工作內容才能被搜索到
+        //包工，只要有，就能被搜索到
+
+//        List<Integer> searchPool = queryMapper.enableWork();//能干事的
+        List<Integer> searchPool = queryMapper.allCalendar2(jobId); //能干钟点工的
+        Boolean certified0 = certified.get(0);
+        Boolean certified1 = certified.get(1);
+
+        if (certified0 == false && certified1 == true){
+            //false true 未认证的才要
+            List<Integer> authNo = queryMapper.authNo();
+            searchPool.retainAll(authNo);
+        }
+        if (certified0 == true && certified1 ==false){
+            //true false 已认证公司才要
+            List<Integer> authOk = queryMapper.authOk();
+            searchPool.retainAll(authOk);
+        }
+
+        return searchPool;
+    }
+
     /** 参数判空 */
     private List<String> paramsEmpty(QueryDTO dto){
         /***

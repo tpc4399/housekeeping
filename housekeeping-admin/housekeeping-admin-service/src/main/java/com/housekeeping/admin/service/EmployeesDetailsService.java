@@ -2,10 +2,7 @@ package com.housekeeping.admin.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.housekeeping.admin.dto.EmployeesDetailsDTO;
-import com.housekeeping.admin.dto.EmployeesWorkExperienceDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDTO;
-import com.housekeeping.admin.dto.PageOfEmployeesDetailsDTO;
+import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.EmployeesDetails;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
@@ -100,4 +97,10 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
     R workStart(String phonePrefix,String phone);
 
     R workEnd(String phonePrefix,String phone);
+
+    R updateEmpSkill(EmployeesSkillDTO employeesDetailsDTO);
+
+    void setPresetJobPrice(String price,Integer empId);
+
+    R getEmpSkill(Integer empId);
 }

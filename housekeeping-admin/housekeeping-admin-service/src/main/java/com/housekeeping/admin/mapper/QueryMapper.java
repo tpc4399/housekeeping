@@ -23,4 +23,6 @@ public interface QueryMapper {
     /* 未认证的保洁员 */
     List<Integer> authNo();
 
+    /* 獲取可以做鐘點工的職員id 設置了時間表，相同工作內容 */
+    List<Integer> allCalendar2(Integer jobId);
 }

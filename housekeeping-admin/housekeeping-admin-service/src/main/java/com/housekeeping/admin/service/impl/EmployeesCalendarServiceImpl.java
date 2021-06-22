@@ -190,6 +190,92 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return this.getCalendarByDateSlot2(dto);
     }
 
+    public List<FreeDateTimePriceDTO> getFreeTimeByDateSlot3(GetCalendarByDateSlotDTO dto,Integer jobId) {
+        /* 2021-2-4 暂时先这样写着，目前还没做派任务，所以空闲时间=时间表 */
+        return this.getCalendarByDateSlot3(dto,jobId);
+    }
+
+    private List<FreeDateTimePriceDTO> getCalendarByDateSlot3(GetCalendarByDateSlotDTO dto, Integer jobId) {
+
+        Integer empId = dto.getId();
+        EmployeesDetails byId = employeesDetailsService.getById(empId);
+        List<String> skills = Arrays.asList(byId.getPresetJobIds().split(" "));
+        List<String> price = Arrays.asList(byId.getJobPrice().split(" "));
+        int i1 = skills.indexOf(jobId);
+        BigDecimal workPrice = new BigDecimal(price.get(i1));
+
+        List<FreeDateTimePriceDTO> freeDateTimeDTOS = new ArrayList<>();
+
+        /* 先得到三大map */
+        SortListUtil<TimeSlotPricePOJO> sort = new SortListUtil<>();
+        Map<LocalDate, List<TimeSlotPricePOJO>> map1 = new HashMap<>();
+        Map<Integer, List<TimeSlotPricePOJO>> map2 = new HashMap<>();
+        Map<String, List<TimeSlotPricePOJO>> map3 = new HashMap<>();
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("employees_id", dto.getId());
+        List<EmployeesCalendar> employeesCalendarList = this.list(qw);
+
+        employeesCalendarList.forEach(ec -> {
+            TimeSlotPricePOJO pojo = new TimeSlotPricePOJO();
+            pojo.setTimeSlotStart(ec.getTimeSlotStart());
+            pojo.setTimeSlotLength(ec.getTimeSlotLength());
+            pojo.setHourlyWage(ec.getHourlyWage());
+            pojo.setCode(ec.getCode());
+            pojo.setTotalPrice(workPrice.add(ec.getHourlyWage()));
+            if (CommonUtils.isEmpty(ec.getStander())){
+                List<TimeSlotPricePOJO> pojoList = map3.getOrDefault("", new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map3.put("", pojoList);
+            }else if (ec.getStander() == false){ //日期
+                List<TimeSlotPricePOJO> pojoList = map1.getOrDefault(ec.getDate(), new ArrayList<>());
+                pojoList.add(pojo);
+                sort.Sort(pojoList, "getTimeSlotStart", null);
+                map1.put(ec.getDate(), pojoList);
+            }else if (ec.getStander() == true){ //周
+                String weekString = ec.getWeek();
+                for (int i = 0; i < weekString.length(); i++) {
+                    Integer weekInteger = Integer.valueOf(String.valueOf(weekString.charAt(i)));
+                    List<TimeSlotPricePOJO> pojoList = map2.getOrDefault(weekInteger, new ArrayList<>());
+                    pojoList.add(pojo);
+                    sort.Sort(pojoList, "getTimeSlotStart", null);
+                    map2.put(weekInteger, pojoList);
+                }
+            }
+        });
+        /* 先得到三大map */
+
+
+        LocalDate start = dto.getDateSlot().getStart();
+        LocalDate end = dto.getDateSlot().getEnd();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
+            FreeDateTimePriceDTO freeDateTimeDTO = new FreeDateTimePriceDTO();
+            List<TimeSlotPricePOJO> todaySlot = new ArrayList<>();
+            if (map1.containsKey(date)){
+                //日期模板生效
+                todaySlot = map1.get(date);
+            }else if (!map2.isEmpty()){
+                //周模板生效
+                todaySlot = map2.getOrDefault(date.getDayOfWeek().getValue(), new ArrayList<>());
+            }else if (!map3.isEmpty()){
+                //通用模板生效
+                todaySlot = map3.get("");
+            }
+            if (todaySlot.size() != 0){
+                freeDateTimeDTO.setDate(date);
+                freeDateTimeDTO.setTimes(todaySlot);
+                freeDateTimeDTO.setHasTime(true);
+            }else {
+                freeDateTimeDTO.setDate(date);
+                freeDateTimeDTO.setTimes(new ArrayList<>());
+                freeDateTimeDTO.setHasTime(false);
+            }
+            freeDateTimeDTO.setWeek(date.getDayOfWeek().getValue());
+            freeDateTimeDTOS.add(freeDateTimeDTO);
+        }
+        return freeDateTimeDTOS;
+    }
+
     @Override
     public R getFreeTimeByMonth(GetFreeTimeByMonthDTO dto) {
         if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
@@ -1008,6 +1094,32 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         /* 返回信息 */
         return R.ok(cps, "獲取成功");
+    }
+
+    @Override
+    public R getFreeTimeByMonth2(GetFreeTimePriceByMonthDTO dto) {
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份不能选择以前");
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+        List<FreeDateTimePriceDTO> freeTime =  getFreeTimeByDateSlot3(new GetCalendarByDateSlotDTO(new DateSlot(startDate, endDate), dto.getEmployeesId()),dto.getJobId());
+        List<CalendarPriceDTO> list = freeTime.stream().map(x -> {
+            CalendarPriceDTO calendarInfoDTO = new CalendarPriceDTO(x);
+            calendarInfoDTO.setIsThisMonth(x.getDate().getMonth().getValue() == dto.getMonth());
+            return calendarInfoDTO;
+        }).collect(Collectors.toList());
+
+        return R.ok(list,"獲取成功");
     }
 
 }

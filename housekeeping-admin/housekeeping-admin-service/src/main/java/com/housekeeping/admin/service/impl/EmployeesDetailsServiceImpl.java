@@ -20,6 +20,7 @@ import com.housekeeping.common.sms.SendMessage;
 import com.housekeeping.common.utils.*;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -180,11 +181,10 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
                  * 工作经验保存
                  */
                 employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), maxEmployeesId);
-                /**
-                 * 可工作内容设置,工作内容不为空就可以
-                 */
-                if (CommonUtils.isNotEmpty(employeesDetailsDTO.getJobIds()))
-                    employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), maxEmployeesId));
+
+               /* if (CollectionUtils.isNotEmpty(employeesDetailsDTO.getJobIds()))
+                    employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), maxEmployeesId));*/
+
                 /**
                  * 时间表初始化，时间表模板为空就不初始化
                  */
@@ -268,10 +268,9 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
          * 工作经验修改
          */
         employeesWorkExperienceService.saveEmployeesWorkExperience(employeesDetailsDTO.getWorkExperiencesDTO(), employeesDetailsDTO.getId());
-        /**
-         * 可工作内容设置
-         */
-        employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId()));
+
+        /*employeesCalendarService.setJobs(new SetEmployeesJobsDTO(employeesDetailsDTO.getJobIds(), employeesDetailsDTO.getId()));*/
+
         return R.ok("修改成功");
 
 
@@ -957,6 +956,60 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
         String[] params = new String[]{one.getName()};
         SendMessage.sendWorkEndMessage(phonePrefix, phone, params);
         return R.ok("成功發送短信");
+    }
+
+    @Override
+    public R updateEmpSkill(EmployeesSkillDTO dto) {
+        /* 员工存在性判断 */
+        String roleType = TokenUtils.getRoleType();
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_ADMIN) || roleType.equals(CommonConstants.REQUEST_ORIGIN_EMPLOYEES)){
+            if (!employeesDetailsService.judgmentOfExistence(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_COMPANY)){
+            if (!employeesDetailsService.judgmentOfExistenceFromCompany(dto.getEmployeesId())) return R.failed(null, "該員工不存在");
+        }
+        if (roleType.equals(CommonConstants.REQUEST_ORIGIN_MANAGER)){
+            if (!employeesDetailsService.judgmentOfExistenceHaveJurisdictionOverManager(dto.getEmployeesId())) return R.failed(null, "該員工不存在或不受您管辖");
+        }
+
+        /* 先设置到预设工作内容字段 */
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        dto.getSkills().forEach(job->{
+            sb.append(job.getJobId());
+            sb.append(" ");
+            sb2.append(job.getPrice());
+            sb2.append(" ");
+        });
+        String jobIdsString = new String(sb).trim();
+        String jobPrice = new String(sb2).trim();
+        employeesDetailsService.setPresetJobIds(jobIdsString, dto.getEmployeesId());
+        employeesDetailsService.setPresetJobPrice(jobPrice,dto.getEmployeesId());
+        return R.ok(null, "已設置預設鐘點工工作內容");
+    }
+
+    @Override
+    public void setPresetJobPrice(String price, Integer empId) {
+        baseMapper.setPresetJobPrice(price, empId);
+    }
+
+    @Override
+    public R getEmpSkill(Integer empId) {
+        EmployeesDetails byId = this.getById(empId);
+        ArrayList<SkillPriceDTO> skillPriceDTOS = new ArrayList<>();
+        List<String> jobs = Arrays.asList(byId.getPresetJobIds().split(" "));
+        if(CollectionUtils.isEmpty(jobs)){
+            return R.ok(null);
+        }
+        List<String> price = Arrays.asList(byId.getJobPrice().split(" "));
+        for (int i = 0; i < jobs.size(); i++) {
+            SkillPriceDTO skillPrice = new SkillPriceDTO();
+            skillPrice.setJobId(Integer.parseInt(jobs.get(i)));
+            skillPrice.setJob(sysJobContendService.getById(Integer.parseInt(jobs.get(i))).getContend());
+            skillPrice.setPrice(price.get(i));
+            skillPriceDTOS.add(skillPrice);
+        }
+        return R.ok(skillPriceDTOS);
     }
 
 }

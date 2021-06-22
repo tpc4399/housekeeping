@@ -12,4 +12,5 @@ public interface IQueryService {
 
     R query(QueryDTO dto) throws InterruptedException;
 
+    R query3(QueryDTO dto) throws InterruptedException;
 }

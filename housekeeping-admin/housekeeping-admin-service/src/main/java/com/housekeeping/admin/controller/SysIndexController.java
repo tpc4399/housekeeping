@@ -66,6 +66,12 @@ public class SysIndexController {
         return queryService.query(dto);
     }
 
+    @ApiOperation("主页搜索,新接口 2021-6-22 14:12")
+    @PostMapping("/query3")
+    public R query3(@RequestBody QueryDTO dto) throws InterruptedException {
+        return queryService.query3(dto);
+    }
+
     @GetMapping("/tree")
     @ApiOperation("获取六大类包括类下的工作内容")
     public R tree(){

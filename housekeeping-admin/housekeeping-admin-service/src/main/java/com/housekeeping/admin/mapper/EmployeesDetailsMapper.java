@@ -39,4 +39,6 @@ public interface EmployeesDetailsMapper extends BaseMapper<EmployeesDetails> {
     void updateChatName(@Param("chatId") Integer chatId,@Param("name") String name);
 
     void updateChatPhoto(@Param("chatId")Integer chatId,@Param("headerUrl") String headerUrl);
+
+    void setPresetJobPrice(@Param("price")String price,@Param("empId") Integer empId);
 }
