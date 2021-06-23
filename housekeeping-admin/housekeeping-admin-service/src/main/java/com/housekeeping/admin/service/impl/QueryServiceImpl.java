@@ -197,7 +197,7 @@ public class QueryServiceImpl implements IQueryService {
         if (resFailed.size() != 0) return R.failed(resFailed, "存在空值");    //參數判空
 
         Map<String, String> weight = sysConfigService.getQueryWeight(dto.getPriorityType());  //權重
-        List<Integer> searchPool = this.searchPool2(dto.getCertified(),dto.getJobs().get(0));      //搜索池                 //搜索池
+        List<Integer> searchPool = this.searchPool2(dto.getCertified(),dto.getJobs().get(0));                       //搜索池
         List<IndexResultPOJO> resultPOJOS = Collections.synchronizedList(new ArrayList<>());    //结果池
         List<EmployeesPOJO> employeesPOJOS = Collections.synchronizedList(new ArrayList<>());  //员工结果与分數
         List<CompanyPOJO> companyPOJOS = Collections.synchronizedList(new ArrayList<>());  //公司结果与分數
@@ -223,7 +223,7 @@ public class QueryServiceImpl implements IQueryService {
                 QueryWrapper qw = new QueryWrapper();
                 qw.eq("employees_id", employeesId);
                 List<EmployeesContract> ecs1 = employeesContractService.list(qw);
-                /*List<EmployeesCalendar> ecs2 = employeesCalendarService.list(qw);*/
+                List<EmployeesCalendar> ecs2 = employeesCalendarService.list(qw);
                 List<SysJobContend> skillTags = (List<SysJobContend>) employeesCalendarService.getSkillTags(employeesId).getData();
 
                 /** certified:員工認證準備 */
@@ -235,7 +235,6 @@ public class QueryServiceImpl implements IQueryService {
                 Float variable4 = this.variable4(ecs1, dto); //包工工作内容匹配率   如果不能匹配，那就是0
 
                 BigDecimal variable5  = this.variablePrice(employeesId,dto.getJobs().get(0));
-
                 /*BigDecimal variable5 = this.variable5(ecs1, ecs2); //最低時薪*/
                 String variable6 = this.variable6(ed, dto); //距離
                 Float variable7 = this.variable7(ed); //評價星級
@@ -337,11 +336,12 @@ public class QueryServiceImpl implements IQueryService {
         return R.ok(resultPOJOS, "搜索成功");
     }
 
-    private BigDecimal variablePrice(Integer employeesId,Integer jobId) {
+    @Override
+    public BigDecimal variablePrice(Integer employeesId,Integer jobId) {
         EmployeesDetails byId = employeesDetailsService.getById(employeesId);
         List<String> skills = Arrays.asList(byId.getPresetJobIds().split(" "));
         List<String> price = Arrays.asList(byId.getJobPrice().split(" "));
-        int i = skills.indexOf(jobId);
+        int i = skills.indexOf(jobId.toString());
         BigDecimal bigDecimal = new BigDecimal(price.get(i));
         return bigDecimal;
     }

@@ -62,6 +62,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ISerialNumberService serialNumberService;
     @Resource
     private ISerialService serialService;
+    @Resource
+    private IQueryService queryService;
     @Override
     public R setCalendar2(SetEmployeesCalendar2DTO dto) {
         log.info("后台接收到的数据："+dto.toString());
@@ -470,7 +472,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
             List<TimeSlot> timeSlots = new ArrayList<>();
             if (need) {
-                if(todayIsOk) timeSlots = this.withPriceOfSlot(item, enableTimeToday); //给时段加价格
+                /*if(todayIsOk) timeSlots = this.withPriceOfSlot(item, enableTimeToday);*/
+                if(todayIsOk) timeSlots = this.withPriceOfSlot2(item, enableTimeToday,dto.getEmployeesId(),dto.getJobIds().get(0));//给时段加价格
                 else timeSlots = dto.getTimeSlots();  //不用给时段加价格了
             }else {
                 timeSlots = dto.getTimeSlots();  //不用给时段加价格了
@@ -484,6 +487,57 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             workDetailsPOJOS.add(wdp);
         });
         return workDetailsPOJOS;
+    }
+
+    private List<TimeSlot> withPriceOfSlot2(List<LocalTime> item, List<LocalTimeAndPricePOJO> enableTimeToday, Integer employeesId, Integer jobId) {
+        //工作小类一小时价格
+        BigDecimal bigDecimal = queryService.variablePrice(employeesId, jobId);
+        BigDecimal priceOfHalf = bigDecimal.divide(BigDecimal.valueOf(2));
+
+        /* 价格格式处理 */
+        Map<LocalTime, LocalTimeAndPricePOJO> ltpMap = new HashMap<>();
+        enableTimeToday.forEach(ett -> {
+            ltpMap.put(ett.getTime(), ett);
+        });
+
+        /* 带价格的时间段生成 */
+        List<TimeSlot> timeSlots = new ArrayList<>();
+        LocalTime start = LocalTime.MIN; //当前段的开始时间
+        Float length = 0f;//当前段累计长度
+        BigDecimal lastHw = new BigDecimal(-1); //上一个的时薪记录
+        LocalTime lastTime = LocalTime.MIN; //上一个遍历到的时间记录
+
+        for (LocalTime time : item) {
+            //生成新段的条件 价格跳段 或 时间段跳段
+            LocalTimeAndPricePOJO ltp = ltpMap.get(time); //当前半小时，价格
+            BigDecimal a = ltp.getHourlyWage(); //当前半小时的时薪
+            LocalTime b = time;  //当前半小时
+
+            //生成新段判断  价格跳段 或 时间段跳段
+            if (!a.equals(lastHw) || !lastTime.plusMinutes(30).equals(b)){
+                //结束上一段,将上一段放进结果中
+                if (length!=0) {
+                    TimeSlot timeSlot = new TimeSlot(start, length);
+                    timeSlot.setThisSlotPrice((lastHw.add(priceOfHalf)).multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+                    timeSlots.add(timeSlot);
+                }
+                //开始新段
+                start = b; length = 0f;
+            }
+
+            //老段延长
+            length += 0.5f;
+
+            //最后必做的事~更新这两个值
+            lastHw = a; lastTime = b;
+        }
+
+        //最后还存留一段时间段长度不小于0.5h的时间段，只需要上传就好了
+        TimeSlot timeSlot = new TimeSlot(start, length);
+        timeSlot.setThisSlotPrice(lastHw.multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        timeSlots.add(timeSlot);
+
+        return timeSlots;
     }
 
     /* 获取今日切割后的能做工作的时间与价格 */
