@@ -11,6 +11,7 @@ import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.utils.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -345,6 +346,11 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
     @Override
     public R makeAnAppointment(MakeAnAppointmentDTO dto) {
+
+        if(CollectionUtils.isEmpty(dto.getJobIds())){
+            return R.failed("請選擇工作內容!");
+        }
+
         LocalDateTime now = LocalDateTime.now();
         OrderDetailsPOJO odp = new OrderDetailsPOJO();
 
@@ -388,6 +394,10 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 订单工作内容 */
         String jobIds = CommonUtils.arrToString(dto.getJobIds().toArray(new Integer[0]));
         odp.setJobIds(jobIds);
+
+        /* 订单工作筆記 */
+        String noteIds = CommonUtils.arrToString(dto.getNotes().toArray(new Integer[0]));
+        odp.setNoteIds(noteIds);
 
         /* 地址 */
         odp.setAddress(ca.getAddress());

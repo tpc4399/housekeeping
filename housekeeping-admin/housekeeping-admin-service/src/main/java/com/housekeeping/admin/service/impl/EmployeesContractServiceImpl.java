@@ -305,6 +305,10 @@ public class EmployeesContractServiceImpl
         String jobIds = ec.getJobs();
         odp.setJobIds(jobIds);
 
+        /* 订单工作内容 */
+        odp.setNoteIds(null);
+
+
         /* 地址 */
         odp.setAddress(ca.getAddress());
         odp.setLat(new Float(ca.getLat()));
@@ -319,7 +323,7 @@ public class EmployeesContractServiceImpl
         List<TimeSlot> timeSlots = new ArrayList<>();
         TimeSlot timeSlot = new TimeSlot(dto.getStartTime(), ec.getTimeLength());
         timeSlots.add(timeSlot);
-        MakeAnAppointmentDTO mapDTO = new MakeAnAppointmentDTO(employeesId, null, start, end, weeks, jobIdsList, timeSlots);
+        MakeAnAppointmentDTO mapDTO = new MakeAnAppointmentDTO(employeesId, null, start, end, weeks, jobIdsList,null, timeSlots);
         List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO, false);
         odp.setWorkDetails(wds);
 

@@ -22,7 +22,8 @@ public class MakeAnAppointmentDTO {
     private LocalDate start;
     private LocalDate end;
     private List<Integer> weeks;
-    private List<Integer> jobIds;
+    private List<Integer> jobIds;   //工作內容
+    private List<Integer> notes;    //工作筆記
     private List<TimeSlot> timeSlots;
 
 }

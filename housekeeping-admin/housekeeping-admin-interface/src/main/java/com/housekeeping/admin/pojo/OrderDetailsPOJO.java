@@ -37,6 +37,7 @@ public class OrderDetailsPOJO extends OrderDetailsParent{
     private String phone2;                      //乙方手机号
 
     private String jobIds;                      //工作内容
+    private String noteIds;                     //工作筆記
     private String address;                     //服务地址
     private Float lng;                          //经度
     private Float lat;                          //纬度
@@ -88,6 +89,7 @@ public class OrderDetailsPOJO extends OrderDetailsParent{
         this.phPrefix2 = od.getPhPrefix2();
         this.phone2 = od.getPhone2();
         this.jobIds = od.getJobIds();
+        this.noteIds = od.getNoteIds();
         this.address = od.getAddress();
         this.lng = od.getLng();
         this.lat = od.getLat();

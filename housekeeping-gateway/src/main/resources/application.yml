@@ -91,6 +91,8 @@ housekeeping:
       - /api/order/payment
       - /api/admin/companyAdvertising/getByRan
       - /api/admin/orderDetails/cardPay
+      - /api/admin/sysJobNote/getAll
+      - /api/admin/sysJobNote/getAllByContent
 
 ribbon:
   ConnectTimeout: 60000 # ribbon链接超时时长

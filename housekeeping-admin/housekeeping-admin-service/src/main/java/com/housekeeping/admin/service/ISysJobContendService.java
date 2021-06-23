@@ -18,8 +18,11 @@ import java.util.List;
  */
 public interface ISysJobContendService extends IService<SysJobContend> {
 
-    R add(List<AddJobContendDTO> dos);
+    R add(AddJobContendDTO dos);
     R getAll(List<Integer> ids);
     R getAll2(String ids);
 
+    R cusRemove(List<Integer> ids);
+
+    R cusUpdate(AddJobContendDTO sysJobContend);
 }

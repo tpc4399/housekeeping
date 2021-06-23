@@ -1,9 +1,8 @@
 package com.housekeeping.admin.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.housekeeping.admin.dto.AddJobContendDTO;
+import com.housekeeping.admin.entity.SysJobContend;
 import com.housekeeping.admin.service.ISysJobContendService;
-import com.housekeeping.admin.vo.SysJobContendVo;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
@@ -13,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 /**
  * @Author su
@@ -28,31 +28,26 @@ public class SysJobContendController {
 
     @Access({RolesEnum.SYSTEM_ADMIN})
     @PostMapping
-    @ApiOperation("【管理员】批量或单个地增加工作内容")
-    public R add(@RequestBody List<AddJobContendDTO> dos){
+    @ApiOperation("【管理员】增加工作内容")
+    public R add(@RequestBody AddJobContendDTO dos){
         return sysJobContendService.add(dos);
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN})
-    @PostMapping("/addBatch")
-    @ApiOperation("【管理员】批量或单个地增加工作内容新接口")
-    public R addBatch(){
-        return R.ok();
-    }
 
     @Access({RolesEnum.SYSTEM_ADMIN})
     @PutMapping("/update")
     @ApiOperation("【管理员】修改工作内容")
-    public R update(){
-        return R.ok();
+    public R update(@RequestBody AddJobContendDTO sysJobContend){
+        return sysJobContendService.cusUpdate(sysJobContend);
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})
     @DeleteMapping("/del")
     @ApiOperation("【管理员】批量删除工作内容")
-    public R del(){
-        return R.ok();
+    public R del(@RequestParam List<Integer> ids){
+        return sysJobContendService.cusRemove(ids);
     }
+
 
     @ApiOperation("获取所有工作内容标签，ids為null--查詢所有  ids有值--查詢id對應的工作內容標籤")
     @GetMapping("/getAll")
