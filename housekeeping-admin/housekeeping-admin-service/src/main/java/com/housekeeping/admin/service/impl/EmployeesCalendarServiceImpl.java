@@ -396,8 +396,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         odp.setJobIds(jobIds);
 
         /* 订单工作筆記 */
-        String noteIds = CommonUtils.arrToString(dto.getNotes().toArray(new Integer[0]));
-        odp.setNoteIds(noteIds);
+        if(CollectionUtils.isEmpty(dto.getNotes())){
+            odp.setNoteIds(null);
+        }else {
+            String noteIds = CommonUtils.arrToString(dto.getNotes().toArray(new Integer[0]));
+            odp.setNoteIds(noteIds);
+        }
+
 
         /* 地址 */
         odp.setAddress(ca.getAddress());
@@ -491,7 +496,9 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
             Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
-            if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
+            /*if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);*/
+            if (canBeOnDuty) todayPrice = this.todayPrice2(enableTimeToday, item,dto.getEmployeesId(),dto.getJobIds().get(0));
+
             /* 今日数据返回 */
             WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);
             workDetailsPOJOS.add(wdp);
@@ -499,10 +506,27 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return workDetailsPOJOS;
     }
 
+    private BigDecimal todayPrice2(List<LocalTimeAndPricePOJO> table, List<LocalTime> item, Integer employeesId, Integer jobId) {
+        //工作小类一小时价格
+        BigDecimal bigDecimal = queryService.variablePrice(employeesId, jobId);
+
+        BigDecimal todayPrice = new BigDecimal(0);
+        for (LocalTime x : item) {
+            for (LocalTimeAndPricePOJO y : table) {
+                if (y.getTime().equals(x)){
+                    BigDecimal hourlyWage = y.getHourlyWage();//已转换成TWD的时薪
+                    BigDecimal semihWage = (hourlyWage.add(bigDecimal)).divide(new BigDecimal(2)).setScale(0, BigDecimal.ROUND_DOWN);
+                    todayPrice = todayPrice.add(semihWage);
+                    break;
+                }
+            }
+        }
+        return todayPrice.setScale(0, BigDecimal.ROUND_HALF_UP);
+    }
+
     private List<TimeSlot> withPriceOfSlot2(List<LocalTime> item, List<LocalTimeAndPricePOJO> enableTimeToday, Integer employeesId, Integer jobId) {
         //工作小类一小时价格
         BigDecimal bigDecimal = queryService.variablePrice(employeesId, jobId);
-        BigDecimal priceOfHalf = bigDecimal.divide(BigDecimal.valueOf(2));
 
         /* 价格格式处理 */
         Map<LocalTime, LocalTimeAndPricePOJO> ltpMap = new HashMap<>();
@@ -528,7 +552,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 //结束上一段,将上一段放进结果中
                 if (length!=0) {
                     TimeSlot timeSlot = new TimeSlot(start, length);
-                    timeSlot.setThisSlotPrice((lastHw.add(priceOfHalf)).multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+                    timeSlot.setThisSlotPrice((lastHw.add(bigDecimal)).multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
                     timeSlots.add(timeSlot);
                 }
                 //开始新段
@@ -544,7 +568,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
 
         //最后还存留一段时间段长度不小于0.5h的时间段，只需要上传就好了
         TimeSlot timeSlot = new TimeSlot(start, length);
-        timeSlot.setThisSlotPrice(lastHw.multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+        timeSlot.setThisSlotPrice((lastHw.add(bigDecimal)).multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
         timeSlots.add(timeSlot);
 
         return timeSlots;

@@ -34,6 +34,7 @@ public class ConfirmOrderPOJO {
     private String phone2;                      //乙方手机号
 
     private String jobIds;                      //工作内容
+    private String noteIds;                     //工作筆記
     private String address;                     //服务地址
     private Float lng;                          //经度
     private Float lat;                          //纬度
@@ -77,6 +78,7 @@ public class ConfirmOrderPOJO {
         this.phPrefix2 = pojo.getPhPrefix2();
         this.phone2 = pojo.getPhone2();
         this.jobIds = pojo.getJobIds();
+        this.noteIds = pojo.getNoteIds();
         this.address = pojo.getAddress();
         this.lng = pojo.getLng();
         this.lat = pojo.getLat();
