@@ -250,19 +250,4 @@ public class EmployeesDetailsController {
         return employeesDetailsService.getEmployeesByIds(ids);
     }
 
-    @Access({RolesEnum.USER_EMPLOYEES})
-    @ApiOperation("【保洁员】保潔員到家，工作開始")
-    @PutMapping("workStart")
-    public R workStart(@RequestParam String phonePrefix,
-                       @RequestParam String phone){
-        return employeesDetailsService.workStart(phonePrefix,phone);
-    }
-
-    @Access({RolesEnum.USER_EMPLOYEES})
-    @ApiOperation("【保洁员】保潔員离家，工作结束")
-    @PutMapping("workEnd")
-    public R workEnd(@RequestParam String phonePrefix,
-                    @RequestParam String phone){
-        return employeesDetailsService.workEnd(phonePrefix,phone);
-    }
 }

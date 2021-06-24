@@ -937,28 +937,6 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     }
 
     @Override
-    public R workStart(String phonePrefix,String phone) {
-        QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
-        qw.eq("user_id",TokenUtils.getCurrentUserId());
-        EmployeesDetails one = this.getOne(qw);
-        //发送短信
-        String[] params = new String[]{one.getName()};
-        SendMessage.sendWorkStartMessage(phonePrefix, phone, params);
-        return R.ok("成功發送短信");
-    }
-
-    @Override
-    public R workEnd(String phonePrefix,String phone) {
-        QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
-        qw.eq("user_id",TokenUtils.getCurrentUserId());
-        EmployeesDetails one = this.getOne(qw);
-        //发送短信
-        String[] params = new String[]{one.getName()};
-        SendMessage.sendWorkEndMessage(phonePrefix, phone, params);
-        return R.ok("成功發送短信");
-    }
-
-    @Override
     public R updateEmpSkill(EmployeesSkillDTO dto) {
         /* 员工存在性判断 */
         String roleType = TokenUtils.getRoleType();

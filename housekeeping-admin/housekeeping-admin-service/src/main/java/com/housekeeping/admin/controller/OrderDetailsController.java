@@ -71,8 +71,8 @@ public class OrderDetailsController {
     }
 
 
-    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER})
-    @ApiOperation("【保洁员】【客户】订单作废")
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER,RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【保洁员】【客户】【公司】【經理】订单作废")
     @GetMapping("/payment1")
     public R payment1(String number){
         //调用“订单作废”服务
@@ -246,6 +246,13 @@ public class OrderDetailsController {
     @PostMapping("/setOrderInformation")
     public R setOrderInformation(@RequestBody SetOrderInformationDTO dto){
         return orderDetailsService.setOrderInformation(dto);
+    }
+
+    @Access(RolesEnum.USER_CUSTOMER)
+    @ApiOperation("(新)【客戶】獲取工作時間表")
+    @PutMapping("/getWorkTimeTableByCus")
+    public R getWorkTimeTableByCus(@RequestBody TimeTableByCusDTO dto){
+        return orderDetailsService.getWorkTimeTableByCus(dto);
     }
 
 }

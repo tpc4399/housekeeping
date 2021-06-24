@@ -204,7 +204,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         EmployeesDetails byId = employeesDetailsService.getById(empId);
         List<String> skills = Arrays.asList(byId.getPresetJobIds().split(" "));
         List<String> price = Arrays.asList(byId.getJobPrice().split(" "));
-        int i1 = skills.indexOf(jobId);
+        int i1 = skills.indexOf(jobId.toString());
         BigDecimal workPrice = new BigDecimal(price.get(i1));
 
         List<FreeDateTimePriceDTO> freeDateTimeDTOS = new ArrayList<>();
@@ -222,7 +222,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             TimeSlotPricePOJO pojo = new TimeSlotPricePOJO();
             pojo.setTimeSlotStart(ec.getTimeSlotStart());
             pojo.setTimeSlotLength(ec.getTimeSlotLength());
-            pojo.setHourlyWage(ec.getHourlyWage());
+            pojo.setHourlyWage(ec.getHourlyWage().add(workPrice));
             pojo.setCode(ec.getCode());
             pojo.setTotalPrice(workPrice.add(ec.getHourlyWage()));
             if (CommonUtils.isEmpty(ec.getStander())){
@@ -515,7 +515,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             for (LocalTimeAndPricePOJO y : table) {
                 if (y.getTime().equals(x)){
                     BigDecimal hourlyWage = y.getHourlyWage();//已转换成TWD的时薪
-                    BigDecimal semihWage = (hourlyWage.add(bigDecimal)).divide(new BigDecimal(2)).setScale(0, BigDecimal.ROUND_DOWN);
+                    BigDecimal semihWage = (hourlyWage.add(bigDecimal)).divide(new BigDecimal(2)).setScale(0, BigDecimal.ROUND_UP);
                     todayPrice = todayPrice.add(semihWage);
                     break;
                 }

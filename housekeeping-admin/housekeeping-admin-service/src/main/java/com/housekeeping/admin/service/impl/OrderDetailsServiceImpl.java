@@ -12,9 +12,9 @@ import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.admin.vo.WorkTimeTableDateVO;
 import com.housekeeping.common.entity.Message;
 import com.housekeeping.common.utils.*;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import ecpay.payment.integration.AllInOne;
 import ecpay.payment.integration.domain.AioCheckOutOneTime;
 import org.junit.Test;
@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -79,6 +80,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private ISysConfigService sysConfigService;
     @Resource
     private IOrderEvaluationService orderEvaluationService;
+    @Resource
+    private WorkClockService workClockService;
 
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
@@ -294,7 +297,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         }
 
         /* 验证是否是自己能操作的订单，保洁员和客户只能作废属于自己的订单 */
-        if (!this.orderVerification(odp)) return R.failed(null, "訂單不存在（這可能不是你的訂單）");
+        //if (!this.orderVerification(odp)) return R.failed(null, "訂單不存在（這可能不是你的訂單）");
 
         OrderDetails od = new OrderDetails(odp);
         if (status) od.setOrderState(CommonConstants.ORDER_STATE_TO_BE_SERVED);//订单已支付，待服务
@@ -305,7 +308,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         Object photoObj = map.get("photos");
         Object workDetailsObj = map.get("workDetails");
         if (!photoObj.equals("")) ops = orderPhotos((List<OrderPhotoPOJO>) photoObj, number);
-        if (!workDetailsObj.equals("")) wds = workDetails((List<WorkDetailsPOJO>) workDetailsObj, number);
+        if (!workDetailsObj.equals("")) wds = workDetails2((List<WorkDetailsPOJO>) workDetailsObj, number);
 
         synchronized (this){
             orderDetailsService.save(od);
@@ -313,9 +316,19 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 System.out.println();
                 orderPhotosService.saveBatch(ops);
             }
-            wds.forEach(wd -> {
-                workDetailsService.add(wd);
-            });
+
+            for (int i = 0; i < wds.size(); i++) {
+                synchronized (this){
+                    workDetailsService.add(wds.get(i));
+                }
+                WorkDetails workDetails = (WorkDetails) CommonUtils.getMaxId("work_details", workDetailsService);
+                WorkClock workClock = new WorkClock();
+                workClock.setWorkId(workDetails.getId());
+                workClockService.save(workClock);
+            }
+
+
+
             redisTemplate.delete(key);
         }
         return R.ok(number, "操作成功");
@@ -1420,6 +1433,35 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         }
     }
 
+    @Override
+    public R getWorkTimeTableByCus(TimeTableByCusDTO dto) {
+
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份不能选择以前");
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+
+        QueryWrapper<WorkDetails> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("customer_id",dto.getCustomerId());
+        List<Long> numbers = workDetailsService.list().stream().map(x -> {
+            return x.getNumber();
+        }).collect(Collectors.toList());
+
+        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate);
+        return R.ok(workTimeTables);
+
+    }
+
     /* 转换到数据库存储 */
     private List<OrderPhotos> orderPhotos(List<OrderPhotoPOJO> photos, String number){
         if (CommonUtils.isEmpty(photos)) return new ArrayList<>();
@@ -1429,7 +1471,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return ops;
     }
 
-    /* 转换到数据库存储 */
+    /* 转换到数据库存储 *//*
     private List<WorkDetails> workDetails(List<WorkDetailsPOJO> workDetails, String number){
         if (CommonUtils.isEmpty(workDetails)) return new ArrayList<>();
         List<WorkDetails> wds = workDetails.stream().map(x -> {
@@ -1443,6 +1485,25 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             }
             return null;
         }).collect(Collectors.toList());
+        *//* 去null *//*
+        wds = wds.stream().filter(wd -> {
+            return wd != null;
+        }).collect(Collectors.toList());
+        return wds;
+    }
+*/
+    /* 转换到数据库存储 */
+    private List<WorkDetails> workDetails2(List<WorkDetailsPOJO> workDetails, String number){
+        if (CommonUtils.isEmpty(workDetails)) return new ArrayList<>();
+        List<WorkDetails> wds = workDetails.stream().map(x -> {
+            if (x.getCanBeOnDuty()) {
+                List<TimeSlot> timeSlots = x.getTimeSlots();
+                for (int i = 0; i < timeSlots.size(); i++) {
+                    return new WorkDetails(null, Long.valueOf(number), x.getDate(), x.getWeek(), timeSlots.get(i).getTimeSlotStart(),timeSlots.get(i).getTimeSlotLength(),new BigDecimal(timeSlots.get(i).getThisSlotPrice()), x.getCanBeOnDuty(), x.getTodayPrice());
+                }
+            }
+            return null;
+        }).collect(Collectors.toList());
         /* 去null */
         wds = wds.stream().filter(wd -> {
             return wd != null;
@@ -1451,7 +1512,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     }
 
     /*转到pojo实际的应用*/
-    private List<WorkDetailsPOJO> workDetailsPOJOs(List<WorkDetails> wds){
+   /* private List<WorkDetailsPOJO> workDetailsPOJOs(List<WorkDetails> wds){
         List<WorkDetailsPOJO> workDetailsPOJOs = wds.stream().map(wd -> {
             String[] times = wd.getTimeSlots().split(" ");
             List<TimeSlot> timeSlots = new ArrayList<>();
@@ -1462,6 +1523,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             return new WorkDetailsPOJO(wd.getDate(), wd.getWeek(), timeSlots, wd.getCanBeOnDuty(), wd.getTodayPrice());
         }).collect(Collectors.toList());
         return workDetailsPOJOs;
+    }*/
+
+    private List<WorkDetailsPOJO> workDetailsPOJOs2(List<WorkDetails> wds){
+        List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+        for (int i = 0; i < wds.size(); i++) {
+            ArrayList<TimeSlot> timeSlots = new ArrayList<>();
+            timeSlots.add(new TimeSlot(wds.get(i).getTimeSlots(),wds.get(i).getTimeLength(),wds.get(i).getTimePrice().toString()));
+            WorkDetailsPOJO workDetailsPOJO = new WorkDetailsPOJO(wds.get(i).getDate(), wds.get(i).getWeek(), timeSlots, wds.get(i).getCanBeOnDuty(), wds.get(i).getTodayPrice());
+            workDetailsPOJOS.add(workDetailsPOJO);
+        }
+        return workDetailsPOJOS;
     }
 
     private List<OrderPhotoPOJO> orderPhotosPOJOs(List<OrderPhotos> ops){
@@ -1474,7 +1546,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
 
     private OrderDetailsPOJO odp(OrderDetails od, List<WorkDetails> wds, List<OrderPhotos> ops){
         OrderDetailsPOJO odp = new OrderDetailsPOJO(od);
-        List<WorkDetailsPOJO> workDetailsPOJOs = workDetailsPOJOs(wds);
+        List<WorkDetailsPOJO> workDetailsPOJOs = workDetailsPOJOs2(wds);
         List<OrderPhotoPOJO> orderPhotosPOJOs = orderPhotosPOJOs(ops);
         odp.setWorkDetails(workDetailsPOJOs);
         odp.setPhotos(orderPhotosPOJOs);
@@ -1493,10 +1565,38 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         return ts;
     }
 
-    @Test
-    public void k(){
-        String s = "09:00+3.5+5556";
-        System.out.println(ts(s));
-    }
+    public OrderDetailsPOJO getByNumber(String number) {
+        /* 查數據庫 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        OrderDetails od = orderDetailsService.getOne(qw);
+        if (CommonUtils.isNotEmpty(od)) {
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("number", od.getNumber());
+            List<WorkDetails> wds = workDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
+            OrderDetailsPOJO odp = this.odp(od, wds, ops);
+            OrderDetailsParent parent = odp;
+            List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            parent.setJobs(jobs);
+            EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
+            CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
+            if (CommonUtils.isNotEmpty(ed)) {
+                /* 保洁员头像二次加工处理 */
+                parent.setEmployeesHeaderUrl(ed.getHeadUrl());
+                /* 保洁员地址二次加工 */
+                parent.setAddressEmployees(ed.getAddress2() + ed.getAddress3() + ed.getAddress4());
+                parent.setLatEmployees(new Float(ed.getLat()));
+                parent.setLngEmployees(new Float(ed.getLng()));
+            }
+            if (CommonUtils.isNotEmpty(cd)) {
+                /* 客户头像二次加工处理 */
+                parent.setCustomerHeaderUrl(cd.getHeadUrl());
+            }
 
+            return odp;
+        }
+        return null;
+    }
 }

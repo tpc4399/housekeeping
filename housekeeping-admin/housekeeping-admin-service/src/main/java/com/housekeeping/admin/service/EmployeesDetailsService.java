@@ -94,10 +94,6 @@ public interface EmployeesDetailsService extends IService<EmployeesDetails> {
 
     R getEmployeesByIds(List<Integer> ids);
 
-    R workStart(String phonePrefix,String phone);
-
-    R workEnd(String phonePrefix,String phone);
-
     R updateEmpSkill(EmployeesSkillDTO employeesDetailsDTO);
 
     void setPresetJobPrice(String price,Integer empId);

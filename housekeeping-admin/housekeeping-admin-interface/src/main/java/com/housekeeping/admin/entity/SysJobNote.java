@@ -1,5 +1,6 @@
 package com.housekeeping.admin.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @TableName("sys_job_note")
 public class SysJobNote extends Model<SysJobNote> {
 
+    @TableId
     private Integer id;         /* 主鍵id */
     private String note;     /* 工作笔记 */
 

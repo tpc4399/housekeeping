@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * @Author su
@@ -28,7 +29,9 @@ public class WorkDetails extends Model<WorkDetails> {
     private Long number;        /* 订单编号 */
     private LocalDate date;     /* 日期 */
     private Integer week;       /* 星期几 */
-    private String timeSlots;   /* 时段 */
+    private LocalTime timeSlots;   /* 时段 */
+    private Float timeLength;   /* 時長 */
+    private BigDecimal timePrice;   /* 時間段價格 */
     private Boolean canBeOnDuty;        //能否出勤
     private BigDecimal todayPrice;      //今日价格
 

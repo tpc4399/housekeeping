@@ -4,7 +4,7 @@
 
 <mapper namespace="com.housekeeping.admin.mapper.WorkDetailsMapper">
     <insert id="add">
-        INSERT INTO work_details (`number`, `date`, week, time_slots, can_be_on_duty, today_price)
-        VALUES (#{wd.number}, #{wd.date}, #{wd.week}, #{wd.timeSlots}, #{wd.canBeOnDuty}, #{wd.todayPrice})
+        INSERT INTO work_details (`number`, `date`, week, time_slots,time_length,time_price, can_be_on_duty, today_price)
+        VALUES (#{wd.number}, #{wd.date}, #{wd.week}, #{wd.timeSlots},#{wd.timeLength},#{wd.timePrice}, #{wd.canBeOnDuty}, #{wd.todayPrice})
     </insert>
 </mapper>
