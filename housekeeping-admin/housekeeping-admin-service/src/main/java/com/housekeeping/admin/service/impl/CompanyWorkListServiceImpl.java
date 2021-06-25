@@ -457,6 +457,8 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         String jobIds = demandOrder.getJobIds();
         odp.setJobIds(jobIds);
 
+        odp.setNoteIds(null);
+
         /* 地址 */
         odp.setAddress(demandOrder.getAddress());
         odp.setLat(new Float(demandOrder.getLat()));

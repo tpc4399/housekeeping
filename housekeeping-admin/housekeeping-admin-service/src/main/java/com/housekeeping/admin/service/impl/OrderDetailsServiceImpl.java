@@ -12,9 +12,11 @@ import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.admin.vo.WorkClockVO;
 import com.housekeeping.admin.vo.WorkTimeTableDateVO;
 import com.housekeeping.common.entity.Message;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.regexp.internal.RE;
 import ecpay.payment.integration.AllInOne;
 import ecpay.payment.integration.domain.AioCheckOutOneTime;
 import org.junit.Test;
@@ -32,6 +34,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -82,7 +85,8 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private IOrderEvaluationService orderEvaluationService;
     @Resource
     private WorkClockService workClockService;
-
+    @Resource
+    private ISysJobNoteService sysJobNoteService;
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
         return baseMapper.orderRetentionTime(employeesId);
@@ -327,8 +331,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
                 workClockService.save(workClock);
             }
 
-
-
             redisTemplate.delete(key);
         }
         return R.ok(number, "操作成功");
@@ -381,9 +383,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(x.getNumber());
-            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -444,9 +443,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(x.getNumber());
-            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -502,9 +498,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(x.getNumber());
-            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -560,9 +553,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(x.getNumber());
-            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -614,9 +604,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(x.getNumber());
             son.setYes1(yes1);
             son.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(x.getNumber());
-            son.setKeyWorkReturn(status);
             return son;
         }).collect(Collectors.toList());
         return R.ok(sons, "获取成功");
@@ -1121,6 +1108,12 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             parent.setJobs(jobs);
 
+            List<Integer> noteIds = CommonUtils.stringToList(odp.getNoteIds());
+            if(CollectionUtils.isNotEmpty(noteIds)){
+                List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+                parent.setNotes(sysJobNotes);
+            }
+
             EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
             CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
             if (CommonUtils.isNotEmpty(ed)){
@@ -1146,9 +1139,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(number);
             parent.setYes1(yes1);
             parent.setYes2(yes2);
-            /* 工作重点回传状态 */
-            Integer status = orderPhotosService.isCallback(number);
-            parent.setKeyWorkReturn(status);
 
             return R.ok(parent);
         }
@@ -1164,9 +1154,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             OrderDetailsParent parent = odp;
+
+            List<Integer> noteIds = CommonUtils.stringToList(odp.getNoteIds());
+            if(CollectionUtils.isNotEmpty(noteIds)){
+                List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+                parent.setNotes(sysJobNotes);
+            }
+
             List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
             List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             parent.setJobs(jobs);
+
             EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
             CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
             if (CommonUtils.isNotEmpty(ed)){
@@ -1437,7 +1435,6 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R getWorkTimeTableByCus(TimeTableByCusDTO dto) {
 
         if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
-        if (dto.getYear() < LocalDate.now().getYear()) return R.failed(null, "年份不能选择以前");
 
         LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
         LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
@@ -1451,13 +1448,13 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
         LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
 
-        QueryWrapper<WorkDetails> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<OrderDetails> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("customer_id",dto.getCustomerId());
-        List<Long> numbers = workDetailsService.list().stream().map(x -> {
+        List<Long> numbers = orderDetailsService.list(queryWrapper).stream().map(x -> {
             return x.getNumber();
         }).collect(Collectors.toList());
 
-        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate);
+        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate, dto.getMonth());
         return R.ok(workTimeTables);
 
     }
@@ -1577,9 +1574,17 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
             OrderDetailsPOJO odp = this.odp(od, wds, ops);
             OrderDetailsParent parent = odp;
+
             List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
             List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
             parent.setJobs(jobs);
+
+            List<Integer> noteIds = CommonUtils.stringToList(odp.getNoteIds());
+            if(CollectionUtils.isNotEmpty(noteIds)){
+                List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+                parent.setNotes(sysJobNotes);
+            }
+
             EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
             CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
             if (CommonUtils.isNotEmpty(ed)) {
@@ -1598,5 +1603,103 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
             return odp;
         }
         return null;
+    }
+
+    @Override
+    public R getWorkTimeTableByEmp(TimeTableByEmpDTO dto) {
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+
+        QueryWrapper<OrderDetails> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("employees_id",dto.getEmployeesId());
+        List<Long> numbers = orderDetailsService.list(queryWrapper).stream().map(x -> {
+            return x.getNumber();
+        }).collect(Collectors.toList());
+
+        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate, dto.getMonth());
+        return R.ok(workTimeTables);
+    }
+
+    @Override
+    public R getWorkTimeTableByMan(TimeTableByManDTO dto) {
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+
+        /* 獲取經理旗下保潔員的Ids */
+        List<Integer> empIds = groupEmployeesService.getEmployeesIdsByManager();
+
+        List<Long> numbers = new ArrayList<>();
+        for (int i = 0; i < empIds.size(); i++) {
+            List<Long> number = new ArrayList<>();
+            QueryWrapper<OrderDetails> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("employees_id",empIds.get(i));
+            for (OrderDetails x : orderDetailsService.list(queryWrapper)) {
+                Long orderNumber = x.getNumber();
+                number.add(orderNumber);
+            }
+            numbers.addAll(number);
+        }
+        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate, dto.getMonth());
+        return R.ok(workTimeTables);
+    }
+
+    @Override
+    public R getWorkTimeTableByCom(TimeTableByComDTO dto) {
+        if (dto.getMonth()>12 || dto.getMonth()<1) return R.failed(null, "月份錯誤");
+
+        Integer companyId = companyDetailsService.getCompanyIdByUserId(TokenUtils.getCurrentUserId());
+
+        LocalDate thisMonthFirstDay = LocalDate.of(dto.getYear(), dto.getMonth(), 1);//這個月第一天
+        LocalDate thisMonthLastDay = thisMonthFirstDay.plusMonths(1).plusDays(-1);//這個月最後一天 第一天加一個月然後減去一天
+
+        Integer startWeek = thisMonthFirstDay.getDayOfWeek().getValue();
+        Integer startMakeUp = startWeek == 7 ? 0 : startWeek;                 //   星期几 7 1 2 3 4 5 6
+        //   需要補 0 1 2 3 4 5 6 天
+        Integer endWeek = thisMonthLastDay.getDayOfWeek().getValue();
+        Integer endMakeUp = endWeek == 7 ? 6 : 6-endWeek;              //   星期几 7 1 2 3 4 5 6
+        //   需要補 6 5 4 3 2 1 0 天
+        LocalDate startDate = thisMonthFirstDay.plusDays(-startMakeUp);
+        LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
+
+        QueryWrapper<OrderDetails> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("company_id",companyId);
+        List<Long> numbers = orderDetailsService.list(queryWrapper).stream().map(x -> {
+            return x.getNumber();
+        }).collect(Collectors.toList());
+
+        List<WorkTimeTableDateVO> workTimeTables = workDetailsService.getWorkTables(numbers,startDate,endDate,dto.getMonth());
+        return R.ok(workTimeTables);
+    }
+
+    @Override
+    public R getWorkTimeDetails(Integer id) {
+        WorkClock byId = workClockService.getById(id);
+        WorkDetails workDetails = workDetailsService.getById(byId.getWorkId());
+        OrderDetailsPOJO orderDetailsPOJO = this.getByNumber(workDetails.getNumber().toString());
+        WorkClockVO workClockVO = new WorkClockVO(byId.getId(), byId.getWorkStatus(), byId.getToWorkStatus(), byId.getToWorkTime(), byId.getOffWorkStatus(), byId.getOffWorkTime(),
+                byId.getPhotos(), byId.getStaffSummary(), byId.getCustomerStarRating(), byId.getCustomerPhoto(),byId.getCustomerEvaluation(), workDetails, orderDetailsPOJO);
+        return R.ok(workClockVO);
     }
 }

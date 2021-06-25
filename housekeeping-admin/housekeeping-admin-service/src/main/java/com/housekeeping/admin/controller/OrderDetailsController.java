@@ -255,4 +255,34 @@ public class OrderDetailsController {
         return orderDetailsService.getWorkTimeTableByCus(dto);
     }
 
+    @Access(RolesEnum.USER_EMPLOYEES)
+    @ApiOperation("(新)【保潔員】獲取工作時間表")
+    @PutMapping("/getWorkTimeTableByEmp")
+    public R getWorkTimeTableByEmp(@RequestBody TimeTableByEmpDTO dto){
+        return orderDetailsService.getWorkTimeTableByEmp(dto);
+    }
+
+    @Access(RolesEnum.USER_MANAGER)
+    @ApiOperation("(新)【經理】獲取工作時間表")
+    @PutMapping("/getWorkTimeTableByMan")
+    public R getWorkTimeTableByMan(@RequestBody TimeTableByManDTO dto){
+        return orderDetailsService.getWorkTimeTableByMan(dto);
+    }
+
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("(新)【公司】獲取工作時間表")
+    @PutMapping("/getWorkTimeTableByCom")
+    public R getWorkTimeTableByCom(@RequestBody TimeTableByComDTO dto){
+        return orderDetailsService.getWorkTimeTableByCom(dto);
+    }
+
+    @Access(RolesEnum.USER_COMPANY)
+    @ApiOperation("(新)【客戶】【保潔員】【經理】【公司】獲取具体工作時間内容")
+    @PutMapping("/getWorkTimeDetails")
+    public R getWorkTimeDetails(@RequestParam Integer id){
+        return orderDetailsService.getWorkTimeDetails(id);
+    }
+
+
+
 }

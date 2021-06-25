@@ -15,5 +15,5 @@ public interface IWorkDetailsService extends IService<WorkDetails> {
 
     void add(WorkDetails wd);
 
-    List<WorkTimeTableDateVO> getWorkTables(List<Long> numbers, LocalDate startDate, LocalDate endDate);
+    List<WorkTimeTableDateVO> getWorkTables(List<Long> numbers, LocalDate startDate, LocalDate endDate,Integer month);
 }

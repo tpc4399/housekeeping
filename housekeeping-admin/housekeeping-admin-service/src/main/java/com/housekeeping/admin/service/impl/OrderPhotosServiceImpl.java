@@ -24,29 +24,6 @@ public class OrderPhotosServiceImpl implements IOrderPhotosService {
     private OrderPhotosMapper orderPhotosMapper;
 
     @Override
-    public Integer isCallback(String number) {
-        List<OrderPhotos> orderPhotos = orderPhotosMapper.listByNumber(number);
-        if (CommonUtils.isEmpty(orderPhotos)) return CommonConstants.ORDER_PHOTOS_STATUS_3; //没有工作重点,无需回传
-        Long ok = new Long(0);//已回传的工作重点
-        Long opLength = new Long(orderPhotos.size()); //需要回传的工作重点数量
-        ok += orderPhotos.stream().filter(OrderPhotos::getYes).count();
-
-        if (ok.equals(opLength)) return CommonConstants.ORDER_PHOTOS_STATUS_2;//已回传的，等于需要回传的，已经回传完成
-        if (ok<opLength&&ok>0) return CommonConstants.ORDER_PHOTOS_STATUS_1;//已回传的，处于0-n之间,说明只有部分已经回传
-        if (ok.equals(new Long(0))) return CommonConstants.ORDER_PHOTOS_STATUS_0;//已回传的，为0，说明还未回传
-        return -1;//说明程序故障
-    }
-
-    @Override
-    public R keyWorkReturn(List<KeyWorkReturnDTO> dto) {
-        LocalDateTime now = LocalDateTime.now();
-        dto.forEach(x -> {
-            orderPhotosMapper.keyWorkReturn(x, now);
-        });
-        return R.ok(null, "回傳成功");
-    }
-
-    @Override
     public R getByOrderNumber(String orderNumber) {
         List<OrderPhotos> orderPhotos = orderPhotosMapper.getByOrderNumber(orderNumber);
         return R.ok(orderPhotos, "查詢成功");

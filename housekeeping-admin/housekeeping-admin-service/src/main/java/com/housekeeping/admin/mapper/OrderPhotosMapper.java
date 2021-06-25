@@ -16,9 +16,6 @@ public interface OrderPhotosMapper {
 
     List<OrderPhotos> listByNumber(String number);
 
-    void keyWorkReturn(@Param("dto") KeyWorkReturnDTO dto,
-                       @Param("now") LocalDateTime now);
-
     List<OrderPhotos> getByOrderNumber(String number);
 
     void saveBatch(@Param("list") List<OrderPhotos> ops);

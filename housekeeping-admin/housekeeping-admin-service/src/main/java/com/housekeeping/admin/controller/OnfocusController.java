@@ -26,18 +26,11 @@ public class OnfocusController {
 
     private final IOrderPhotosService orderPhotosService;
 
-    @ApiOperation("【保洁员】获取订单的工作重点，以及回传信息")
+    @ApiOperation("【保洁员】获取订单的工作重点")
     @Access({RolesEnum.USER_EMPLOYEES})
     @GetMapping("/onfocus")
     public R getByOrderNumber(String orderNumber){
         return orderPhotosService.getByOrderNumber(orderNumber);
-    }
-
-    @ApiOperation("【保洁员】对订单进行工作重点回传")
-    @Access({RolesEnum.USER_EMPLOYEES})
-    @PostMapping("/onfocus")
-    public R keyWorkReturn(@RequestBody List<KeyWorkReturnDTO> dto){
-        return orderPhotosService.keyWorkReturn(dto);
     }
 
 }

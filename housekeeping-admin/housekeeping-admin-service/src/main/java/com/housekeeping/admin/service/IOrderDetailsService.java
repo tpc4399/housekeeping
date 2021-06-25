@@ -147,4 +147,12 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R getWorkTimeTableByCus(TimeTableByCusDTO dto);
 
     OrderDetailsPOJO getByNumber(String number);
+
+    R getWorkTimeTableByEmp(TimeTableByEmpDTO dto);
+
+    R getWorkTimeTableByMan(TimeTableByManDTO dto);
+
+    R getWorkTimeTableByCom(TimeTableByComDTO dto);
+
+    R getWorkTimeDetails(Integer id);
 }

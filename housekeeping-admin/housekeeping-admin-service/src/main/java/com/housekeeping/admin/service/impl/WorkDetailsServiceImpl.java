@@ -10,10 +10,10 @@ import com.housekeeping.admin.service.IWorkDetailsService;
 import com.housekeeping.admin.service.WorkClockService;
 import com.housekeeping.admin.vo.WorkTimeTableDateVO;
 import com.housekeeping.admin.vo.WorkTimeTableVO;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +40,7 @@ public class WorkDetailsServiceImpl
     }
 
     @Override
-    public List<WorkTimeTableDateVO> getWorkTables(List<Long> numbers, LocalDate start, LocalDate end) {
+    public List<WorkTimeTableDateVO> getWorkTables(List<Long> numbers, LocalDate start, LocalDate end,Integer month) {
         List<WorkTimeTableDateVO> workTimeTableDateVOS = new ArrayList<>();
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)){
 
@@ -57,7 +57,13 @@ public class WorkDetailsServiceImpl
             WorkTimeTableDateVO workTimeTableDateVO = new WorkTimeTableDateVO();
             workTimeTableDateVO.setDate(date);
             workTimeTableDateVO.setWeek(date.getDayOfWeek().getValue());
-
+            workTimeTableDateVO.setIsThisMonth(date.getMonth().getValue() == month);
+            workTimeTableDateVO.setIsThisDay(date.equals(LocalDate.now()));
+            if(CollectionUtils.isEmpty(collect)){
+                workTimeTableDateVO.setHasWork(false);
+            }else {
+                workTimeTableDateVO.setHasWork(true);
+            }
             ArrayList<WorkTimeTableVO> workTimeTableVOS = new ArrayList<>();
             for (int i = 0; i < collect.size(); i++) {
                 QueryWrapper<WorkDetails> wrapper = new QueryWrapper<>();
@@ -73,7 +79,7 @@ public class WorkDetailsServiceImpl
                     workTimeTableVO.setCanBeOnDuty(list.get(i1).getCanBeOnDuty());
                     workTimeTableVO.setTodayPrice(list.get(i1).getTodayPrice());
                     workTimeTableVO.setOrderDetails(orderDetailsService.getByNumber(list.get(i1).getNumber().toString()));
-                    WorkClock workClock = workClockService.getByWorkId(list.get(i).getId());
+                    WorkClock workClock = workClockService.getByWorkId(list.get(i1).getId());
                     workTimeTableVO.setWorkStatus(workClock.getWorkStatus());
                     workTimeTableVO.setToWorkStatus(workClock.getToWorkStatus());
                     workTimeTableVO.setToWorkTime(workClock.getToWorkTime());
@@ -86,6 +92,7 @@ public class WorkDetailsServiceImpl
             workTimeTableDateVO.setWorkTimeTable(workTimeTableVOS);
             workTimeTableDateVOS.add(workTimeTableDateVO);
         }
+
         return workTimeTableDateVOS;
     }
 }
