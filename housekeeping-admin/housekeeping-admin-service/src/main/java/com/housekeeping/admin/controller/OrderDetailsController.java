@@ -276,7 +276,7 @@ public class OrderDetailsController {
         return orderDetailsService.getWorkTimeTableByCom(dto);
     }
 
-    @Access(RolesEnum.USER_COMPANY)
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER,RolesEnum.USER_CUSTOMER})
     @ApiOperation("(新)【客戶】【保潔員】【經理】【公司】獲取具体工作時間内容")
     @PutMapping("/getWorkTimeDetails")
     public R getWorkTimeDetails(@RequestParam Integer id){
