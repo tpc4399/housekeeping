@@ -23,6 +23,7 @@ public class CalendarPriceDTO {
     private List<TimeSlotPricePOJO> times;
     private Boolean hasTime;       //今天是否有時間工作
     private Boolean isThisMonth;   //今天是否是本月的
+    private Boolean isAfter;
 
     public CalendarPriceDTO(FreeDateTimePriceDTO dto) {
         this.week = dto.getWeek();

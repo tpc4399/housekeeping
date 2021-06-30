@@ -35,4 +35,7 @@ public interface ISysIndexService extends IService<SysIndex> {
     /* 输入关键词进行搜索 */
     R query(QueryParamsDTO dto);
 
+    R add2(SysIndexAdd2DTO sysIndexAddDto);
+
+    R update2(SysIndexUpdate2DTO dto);
 }

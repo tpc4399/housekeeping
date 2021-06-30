@@ -250,35 +250,35 @@ public class OrderDetailsController {
 
     @Access(RolesEnum.USER_CUSTOMER)
     @ApiOperation("(新)【客戶】獲取工作時間表")
-    @PutMapping("/getWorkTimeTableByCus")
+    @PostMapping("/getWorkTimeTableByCus")
     public R getWorkTimeTableByCus(@RequestBody TimeTableByCusDTO dto){
         return orderDetailsService.getWorkTimeTableByCus(dto);
     }
 
-    @Access(RolesEnum.USER_EMPLOYEES)
-    @ApiOperation("(新)【保潔員】獲取工作時間表")
-    @PutMapping("/getWorkTimeTableByEmp")
+    @Access({RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER,RolesEnum.USER_COMPANY})
+    @ApiOperation("(新)【保潔員】【经理】【公司】獲取员工工作時間表")
+    @PostMapping("/getWorkTimeTableByEmp")
     public R getWorkTimeTableByEmp(@RequestBody TimeTableByEmpDTO dto){
         return orderDetailsService.getWorkTimeTableByEmp(dto);
     }
 
-    @Access(RolesEnum.USER_MANAGER)
-    @ApiOperation("(新)【經理】獲取工作時間表")
-    @PutMapping("/getWorkTimeTableByMan")
+    @Access({RolesEnum.USER_MANAGER,RolesEnum.USER_COMPANY})
+    @ApiOperation("(新)【經理】【公司】獲取经理工作時間表")
+    @PostMapping("/getWorkTimeTableByMan")
     public R getWorkTimeTableByMan(@RequestBody TimeTableByManDTO dto){
         return orderDetailsService.getWorkTimeTableByMan(dto);
     }
 
     @Access(RolesEnum.USER_COMPANY)
-    @ApiOperation("(新)【公司】獲取工作時間表")
-    @PutMapping("/getWorkTimeTableByCom")
+    @ApiOperation("(新)【公司】獲取公司工作時間表")
+    @PostMapping("/getWorkTimeTableByCom")
     public R getWorkTimeTableByCom(@RequestBody TimeTableByComDTO dto){
         return orderDetailsService.getWorkTimeTableByCom(dto);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_MANAGER,RolesEnum.USER_CUSTOMER})
     @ApiOperation("(新)【客戶】【保潔員】【經理】【公司】獲取具体工作時間内容")
-    @PutMapping("/getWorkTimeDetails")
+    @PostMapping("/getWorkTimeDetails")
     public R getWorkTimeDetails(@RequestParam Integer id){
         return orderDetailsService.getWorkTimeDetails(id);
     }

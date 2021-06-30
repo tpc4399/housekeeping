@@ -47,9 +47,7 @@ public class WorkDetailsServiceImpl
             //獲取date的訂單編號
             QueryWrapper<WorkDetails> qw = new QueryWrapper<>();
             qw.eq("date",date);
-            List<Long> collect = this.list(qw).stream().map(x -> {
-                return x.getNumber();
-            }).collect(Collectors.toList());
+            List<Long> collect = this.list(qw).stream().map(x -> x.getNumber()).collect(Collectors.toList());
 
             //獲取既是今天的，又是客戶/員工的訂單編號
             collect.retainAll(numbers);
@@ -59,6 +57,7 @@ public class WorkDetailsServiceImpl
             workTimeTableDateVO.setWeek(date.getDayOfWeek().getValue());
             workTimeTableDateVO.setIsThisMonth(date.getMonth().getValue() == month);
             workTimeTableDateVO.setIsThisDay(date.equals(LocalDate.now()));
+            workTimeTableDateVO.setIsAfter(date.isAfter(LocalDate.now())||date.equals(LocalDate.now()));
             if(CollectionUtils.isEmpty(collect)){
                 workTimeTableDateVO.setHasWork(false);
             }else {
@@ -66,20 +65,28 @@ public class WorkDetailsServiceImpl
             }
             ArrayList<WorkTimeTableVO> workTimeTableVOS = new ArrayList<>();
             for (int i = 0; i < collect.size(); i++) {
+
+                QueryWrapper<WorkDetails> qw2 = new QueryWrapper<>();
+                qw2.eq("number",collect.get(i));
+                int total = this.count(qw2);
+                int hasWork = baseMapper.countWork(collect.get(i));
+
                 QueryWrapper<WorkDetails> wrapper = new QueryWrapper<>();
                 wrapper.eq("number",collect.get(i));
                 wrapper.eq("date",date);
                 List<WorkDetails> list = this.list(wrapper);
                 for (int i1 = 0; i1 < list.size(); i1++) {
                     WorkTimeTableVO workTimeTableVO = new WorkTimeTableVO();
-                    workTimeTableVO.setId(list.get(i1).getId());
+                    WorkClock workClock = workClockService.getByWorkId(list.get(i1).getId());
+                    workTimeTableVO.setId(workClock.getId());
+                    workTimeTableVO.setWorkProgress(hasWork+"/"+total);
                     workTimeTableVO.setTimeSlots(list.get(i1).getTimeSlots());
                     workTimeTableVO.setTimeLength(list.get(i1).getTimeLength());
                     workTimeTableVO.setTimePrice(list.get(i1).getTimePrice());
                     workTimeTableVO.setCanBeOnDuty(list.get(i1).getCanBeOnDuty());
                     workTimeTableVO.setTodayPrice(list.get(i1).getTodayPrice());
                     workTimeTableVO.setOrderDetails(orderDetailsService.getByNumber(list.get(i1).getNumber().toString()));
-                    WorkClock workClock = workClockService.getByWorkId(list.get(i1).getId());
+
                     workTimeTableVO.setWorkStatus(workClock.getWorkStatus());
                     workTimeTableVO.setToWorkStatus(workClock.getToWorkStatus());
                     workTimeTableVO.setToWorkTime(workClock.getToWorkTime());

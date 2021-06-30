@@ -23,7 +23,11 @@ public class WorkClock extends Model<WorkClock> {
     private LocalDateTime toWorkTime;   //打卡時間
     private Integer offWorkStatus;      //下班打卡狀態 0未打卡 1已打卡
     private LocalDateTime offWorkTime;  //下班打卡時間
-    private String photos;              //員工上傳圖片
+    private String photo1;              //員工上傳圖片
+    private String photo2;              //員工上傳圖片
+    private String photo3;              //員工上傳圖片
+    private String photo4;              //員工上傳圖片
+    private String photo5;              //員工上傳圖片
     private String staffSummary;        //員工總結
     private Integer customerStarRating; //客戶打分
     private String customerPhoto;       //客戶圖片

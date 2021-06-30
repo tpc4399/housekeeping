@@ -35,11 +35,26 @@ public class SysIndexController {
     }
 
     @Access({RolesEnum.SYSTEM_ADMIN})
+    @PostMapping("/add2")
+    @ApiOperation("【平台】（新）新增分类")
+    public R add2(@RequestBody SysIndexAdd2DTO sysIndexAddDto){
+        return sysIndexService.add2(sysIndexAddDto);
+    }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
     @PutMapping
     @ApiOperation("【平台】修改分类")
     public R update(@RequestBody SysIndexUpdateDTO dto){
         return sysIndexService.update(dto);
     }
+
+    @Access({RolesEnum.SYSTEM_ADMIN})
+    @PutMapping("/update2")
+    @ApiOperation("【平台】（新）修改分类")
+    public R update2(@RequestBody SysIndexUpdate2DTO dto){
+        return sysIndexService.update2(dto);
+    }
+
 
     @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【平台】删除分类")
@@ -71,6 +86,8 @@ public class SysIndexController {
     public R query3(@RequestBody QueryDTO dto) throws InterruptedException {
         return queryService.query3(dto);
     }
+
+
 
     @GetMapping("/tree")
     @ApiOperation("获取六大类包括类下的工作内容")

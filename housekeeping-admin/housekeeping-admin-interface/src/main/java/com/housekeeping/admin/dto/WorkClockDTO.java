@@ -6,6 +6,5 @@ import lombok.Data;
 public class WorkClockDTO {
 
     private Integer id;
-    private String photosUrl;
     private String staffSummary;
 }

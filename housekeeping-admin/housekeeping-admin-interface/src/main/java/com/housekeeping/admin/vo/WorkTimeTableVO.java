@@ -11,6 +11,7 @@ import java.time.LocalTime;
 @Data
 public class WorkTimeTableVO {
     private Integer id;                 //工作id
+    private String  workProgress;       //工作进度
     private LocalTime timeSlots;        //开始时间
     private Float timeLength;           //时间长度
     private BigDecimal timePrice;       //时间价格

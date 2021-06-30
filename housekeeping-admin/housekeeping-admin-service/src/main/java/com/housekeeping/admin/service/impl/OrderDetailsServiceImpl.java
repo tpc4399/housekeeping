@@ -9,6 +9,7 @@ import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.OrderDetailsMapper;
 import com.housekeeping.admin.mapper.PaymentCallbackMapper;
+import com.housekeeping.admin.mapper.WorkDetailsMapper;
 import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.TimeSlot;
@@ -87,6 +88,9 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     private WorkClockService workClockService;
     @Resource
     private ISysJobNoteService sysJobNoteService;
+    @Resource
+    private WorkDetailsMapper workDetailsMapper;
+
     @Override
     public Integer orderRetentionTime(Integer employeesId) {
         return baseMapper.orderRetentionTime(employeesId);
@@ -1648,7 +1652,7 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         LocalDate endDate = thisMonthLastDay.plusDays(endMakeUp);
 
         /* 獲取經理旗下保潔員的Ids */
-        List<Integer> empIds = groupEmployeesService.getEmployeesIdsByManager();
+        List<Integer> empIds = groupEmployeesService.getEmployeesIdsByManagerId(dto.getManagerId());
 
         List<Long> numbers = new ArrayList<>();
         for (int i = 0; i < empIds.size(); i++) {
@@ -1697,9 +1701,16 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
     public R getWorkTimeDetails(Integer id) {
         WorkClock byId = workClockService.getById(id);
         WorkDetails workDetails = workDetailsService.getById(byId.getWorkId());
+
+        QueryWrapper<WorkDetails> qw2 = new QueryWrapper<>();
+        qw2.eq("number",workDetails.getNumber());
+        int total = workDetailsService.count(qw2);
+        int hasWork = workDetailsMapper.countWork(workDetails.getNumber());
+        String workProgress = hasWork+"/"+total;
+
         OrderDetailsPOJO orderDetailsPOJO = this.getByNumber(workDetails.getNumber().toString());
-        WorkClockVO workClockVO = new WorkClockVO(byId.getId(), byId.getWorkStatus(), byId.getToWorkStatus(), byId.getToWorkTime(), byId.getOffWorkStatus(), byId.getOffWorkTime(),
-                byId.getPhotos(), byId.getStaffSummary(), byId.getCustomerStarRating(), byId.getCustomerPhoto(),byId.getCustomerEvaluation(), workDetails, orderDetailsPOJO);
+        WorkClockVO workClockVO = new WorkClockVO(byId.getId(),workProgress, byId.getWorkStatus(), byId.getToWorkStatus(), byId.getToWorkTime(), byId.getOffWorkStatus(), byId.getOffWorkTime(),
+                byId.getPhoto1(),byId.getPhoto2(),byId.getPhoto3(),byId.getPhoto4(),byId.getPhoto5(), byId.getStaffSummary(), byId.getCustomerStarRating(), byId.getCustomerPhoto(),byId.getCustomerEvaluation(), workDetails, orderDetailsPOJO);
         return R.ok(workClockVO);
     }
 }

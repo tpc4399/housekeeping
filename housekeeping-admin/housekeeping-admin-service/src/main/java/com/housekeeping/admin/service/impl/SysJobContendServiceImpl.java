@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.AddJobContendDTO;
 import com.housekeeping.admin.entity.SysIndex;
 import com.housekeeping.admin.entity.SysJobContend;
+import com.housekeeping.admin.entity.SysJobNote;
 import com.housekeeping.admin.mapper.SysJobContendMapper;
 import com.housekeeping.admin.service.ISysJobContendService;
+import com.housekeeping.admin.service.ISysJobNoteService;
+import com.housekeeping.admin.vo.ContentVO;
 import com.housekeeping.common.utils.CommonUtils;
 import com.housekeeping.common.utils.R;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,9 @@ import java.util.List;
  */
 @Service("sysJobContendService")
 public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, SysJobContend> implements ISysJobContendService {
+
+    @Resource
+    private ISysJobNoteService sysJobNoteService;
 
     @Override
     public R add(AddJobContendDTO dos) {
@@ -42,15 +49,24 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
         if (CommonUtils.isEmpty(ids)){
             return R.ok(this.list(), "查詢成功");
         }
-        List<String> res = new ArrayList<>();
+        List<ContentVO> res = new ArrayList<ContentVO>();
         List<Integer> noExist = new ArrayList<>();
         ids.forEach(id -> {
+            List<SysJobNote> sysJobNotes = new ArrayList<>();
+            ContentVO contentVO = new ContentVO();
             SysJobContend sjc = this.getById(id);
             if (CommonUtils.isEmpty(sjc)){
                 noExist.add(id);
                 return;
             }
-            res.add(sjc.getContend());
+            List<Integer> noteIds = baseMapper.getAll(id);
+            for (int i = 0; i < noteIds.size(); i++) {
+                SysJobNote byId = sysJobNoteService.getById(noteIds.get(i));
+                sysJobNotes.add(byId);
+            }
+            contentVO.setName(sjc.getContend());
+            contentVO.setNotes(sysJobNotes);
+            res.add(contentVO);
         });
         if (noExist.size() != 0){
             return R.failed(noExist, "該id不存在");
@@ -60,17 +76,28 @@ public class SysJobContendServiceImpl extends ServiceImpl<SysJobContendMapper, S
 
     @Override
     public R getAll2(String ids) {
-        List<String> res = new ArrayList<>();
+        List<ContentVO> res = new ArrayList<ContentVO>();
         String[] idStr = ids.split(" ");
         List<Integer> noExist = new ArrayList<>();
         for (int i = 0; i < idStr.length; i++) {
+
+            List<SysJobNote> sysJobNotes = new ArrayList<>();
+            ContentVO contentVO = new ContentVO();
+
             Integer id = Integer.valueOf(idStr[i]);
             SysJobContend sjc = this.getById(id);
             if (CommonUtils.isEmpty(sjc)){
                 noExist.add(id);
                 continue;
             }
-            res.add(sjc.getContend());
+            List<Integer> noteIds = baseMapper.getAll(id);
+            for (int x = 0; x < noteIds.size(); x++) {
+                SysJobNote byId = sysJobNoteService.getById(noteIds.get(x));
+                sysJobNotes.add(byId);
+            }
+            contentVO.setName(sjc.getContend());
+            contentVO.setNotes(sysJobNotes);
+            res.add(contentVO);
         }
         if (noExist.size() != 0){
             return R.failed(noExist, "該id不存在");

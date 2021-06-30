@@ -76,6 +76,7 @@ housekeeping:
       - /api/admin/sysJobContend/getAll
       - /api/admin/employeesDetails/getAllEmpByCompanyId
       - /api/admin/employeesDetails/getDetailById
+      - /api/admin/employeesDetails/getEmpSkill
       - /api/admin/test/noToken/*
       - /api/admin/employeesDetails/getAllEmployees
       - /api/admin/companyDetails/getAllCompany

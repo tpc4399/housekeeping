@@ -1,5 +1,6 @@
 package com.housekeeping.admin.service.impl;
 
+import com.aliyun.oss.OSSClient;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.CustomerEvaluationDTO;
@@ -10,12 +11,17 @@ import com.housekeeping.admin.mapper.WorkClockMapper;
 import com.housekeeping.admin.service.EmployeesDetailsService;
 import com.housekeeping.admin.service.WorkClockService;
 import com.housekeeping.common.sms.SendMessage;
+import com.housekeeping.common.utils.CommonConstants;
 import com.housekeeping.common.utils.R;
 import com.housekeeping.common.utils.TokenUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @Author su
@@ -26,6 +32,14 @@ public class WorkClockServiceImpl extends ServiceImpl<WorkClockMapper, WorkClock
 
     @Resource
     private EmployeesDetailsService employeesDetailsService;
+    @Resource
+    private OSSClient ossClient;
+
+    @Value("${oss.bucketName}")
+    private String bucketName;
+
+    @Value("${oss.urlPrefix}")
+    private String urlPrefix;
 
     @Override
     public R workStart(Integer id,String phonePrefix,String phone) {
@@ -76,9 +90,8 @@ public class WorkClockServiceImpl extends ServiceImpl<WorkClockMapper, WorkClock
     }
 
     @Override
-    public R uploadPhotoAndSummary(WorkClockDTO workClockDTO) {
+    public R uploadSummary(WorkClockDTO workClockDTO) {
         WorkClock byId = this.getById(workClockDTO.getId());
-        byId.setPhotos(workClockDTO.getPhotosUrl());
         byId.setStaffSummary(workClockDTO.getStaffSummary());
         this.updateById(byId);
         return R.ok("上傳成功");
@@ -92,5 +105,42 @@ public class WorkClockServiceImpl extends ServiceImpl<WorkClockMapper, WorkClock
         byId.setCustomerEvaluation(customerEvaluationDTO.getCustomerEvaluation());
         this.updateById(byId);
         return R.ok("評價成功");
+    }
+
+    @Override
+    public R uploadPhoto(MultipartFile file, Integer id, Integer sort) {
+        String res = "";
+
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_IM_PHOTO_ABSTRACT_PATH_PREFIX_PROV;
+        String type = file.getOriginalFilename().split("\\.")[1];
+        String fileAbstractPath = catalogue + "/" + nowString+"."+ type;
+
+        try {
+            ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+            res = urlPrefix + fileAbstractPath;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.failed("error upload");
+        }
+        WorkClock byId = this.getById(id);
+        if(sort ==1){
+            byId.setPhoto1(res);
+        }
+        if(sort ==2){
+            byId.setPhoto2(res);
+        }
+        if(sort ==3){
+            byId.setPhoto3(res);
+        }
+        if(sort ==4){
+            byId.setPhoto4(res);
+        }
+        if(sort ==5){
+            byId.setPhoto5(res);
+        }
+        this.updateById(byId);
+        return R.ok("上傳成功");
     }
 }

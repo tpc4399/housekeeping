@@ -5,12 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.*;
 import com.housekeeping.admin.mapper.SysIndexMapper;
+import com.housekeeping.admin.mapper.SysJobContendMapper;
 import com.housekeeping.admin.pojo.QueryEmployeesInfo;
 import com.housekeeping.admin.service.*;
-import com.housekeeping.admin.vo.EmployeesHandleVo;
-import com.housekeeping.admin.vo.PriceSlotVo;
-import com.housekeeping.admin.vo.SysIndexVo;
-import com.housekeeping.admin.vo.TimeSlot;
+import com.housekeeping.admin.vo.*;
 import com.housekeeping.common.entity.EmployeesScope;
 import com.housekeeping.common.entity.PeriodOfTime;
 import com.housekeeping.common.entity.PeriodOfTimeWithHourlyWage;
@@ -79,6 +77,10 @@ public class SysIndexServiceImpl
     private RedisUtils redisUtils;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+    @Resource
+    private SysJobContendMapper sysJobContendMapper;
+    @Resource
+    private ISysJobNoteService sysJobNoteService;
 
     @Override
     public R add(SysIndexAddDto sysIndexAddDto) {
@@ -96,10 +98,7 @@ public class SysIndexServiceImpl
             else priceSlot.append(priceSlotList.get(i).getLowPrice().subtract(new BigDecimal(1)));
             priceSlot.append(" ");
         }
-//        sysIndexAddDto.getPriceSlotList().forEach(x->{
-//            priceSlot.append(x.getLowPrice().subtract(new BigDecimal(1)));
-//            priceSlot.append(" ");
-//        });
+
         sysIndex.setPriceSlot(new String(priceSlot).trim());
         Integer maxIndexId = 0;
         synchronized (this){
@@ -238,13 +237,23 @@ public class SysIndexServiceImpl
             );
             priceSlotVoList.add(priceSlot);
             sysIndexVo.setPriceSlotList(priceSlotVoList);
-            List<SysJobContend> sysJobContends = new ArrayList<>();
+            List<JobContendVO> sysJobContends = new ArrayList<>();
             QueryWrapper qw = new QueryWrapper();
             qw.eq("index_id", x.getId());
             List<SysIndexContent> sysIndexContents = sysIndexContentService.list(qw);
             sysIndexContents.forEach(sysIndexContent -> {
                 SysJobContend sysJobContend = sysJobContendService.getById(sysIndexContent.getContentId());
-                sysJobContends.add(sysJobContend);
+                JobContendVO jobContendVO = new JobContendVO();
+                jobContendVO.setId(sysJobContend.getId());
+                jobContendVO.setContend(sysJobContend.getContend());
+                List<SysJobNote> sysJobNotes = new ArrayList<>();
+                List<Integer> noteIds = sysJobContendMapper.getAll(sysJobContend.getId());
+                for (int i = 0; i < noteIds.size(); i++) {
+                    SysJobNote byId = sysJobNoteService.getById(noteIds.get(i));
+                    sysJobNotes.add(byId);
+                }
+                jobContendVO.setNotes(sysJobNotes);
+                sysJobContends.add(jobContendVO);
             });
             sysIndexVo.setSysJobContends(sysJobContends);
             return sysIndexVo;
@@ -505,6 +514,84 @@ public class SysIndexServiceImpl
         res.put("eds", qes);
         res.put("cds", cds);
         return R.ok(res);
+    }
+
+    @Override
+    public R add2(SysIndexAdd2DTO sysIndexAddDto) {
+        SysIndex sysIndex = new SysIndex();
+        sysIndex.setName(sysIndexAddDto.getName());
+        sysIndex.setOrderValue(sysIndexAddDto.getOrderValue());
+        sysIndex.setSelectedLogo(sysIndexAddDto.getSelectedLogo());
+        sysIndex.setUncheckedLogo(sysIndexAddDto.getUncheckedLogo());
+        sysIndex.setNewSelectedLogo(sysIndexAddDto.getSelectedLogo());
+        sysIndex.setNewUncheckedLogo(sysIndexAddDto.getNewUncheckedLogo());
+        StringBuilder priceSlot = new StringBuilder("");
+        List<PriceSlotVo> priceSlotList = sysIndexAddDto.getPriceSlotList();
+        for (int i = 0; i < priceSlotList.size(); i++) {
+            if (i==0) priceSlot.append(priceSlotList.get(i).getLowPrice());
+            else priceSlot.append(priceSlotList.get(i).getLowPrice().subtract(new BigDecimal(1)));
+            priceSlot.append(" ");
+        }
+
+        sysIndex.setPriceSlot(new String(priceSlot).trim());
+        Integer maxIndexId = 0;
+        synchronized (this){
+            this.save(sysIndex);
+            maxIndexId = ((SysIndex) CommonUtils.getMaxId("sys_index", this)).getId();
+        }
+
+        Integer finalMaxIndexId = maxIndexId;
+        sysIndexAddDto.getJobs().forEach(x->{
+            SysIndexContent sysIndexContent = new SysIndexContent();
+            sysIndexContent.setIndexId(finalMaxIndexId);
+            sysIndexContent.setContentId(x.getId());
+            sysIndexContentService.save(sysIndexContent);
+            x.getNoteIds().forEach(y ->{
+                sysJobContendMapper.insertNote(x.getId(),y);
+            });
+        });
+
+        return R.ok("添加成功");
+    }
+
+    @Override
+    public R update2(SysIndexUpdate2DTO dto) {
+
+        //更新一级分类信息
+        SysIndex sysIndex = new SysIndex();
+        sysIndex.setName(dto.getName());
+        sysIndex.setOrderValue(dto.getOrderValue());
+        sysIndex.setSelectedLogo(dto.getSelectedLogo());
+        sysIndex.setUncheckedLogo(dto.getUncheckedLogo());
+        sysIndex.setNewSelectedLogo(dto.getSelectedLogo());
+        sysIndex.setNewUncheckedLogo(dto.getNewUncheckedLogo());
+        StringBuilder priceSlot = new StringBuilder("");
+        dto.getPriceSlotList().forEach(x->{
+            priceSlot.append(x.getLowPrice());
+            priceSlot.append(" ");
+        });
+        sysIndex.setPriceSlot(new String(priceSlot).trim().replace(" ", ","));
+        this.updateById(sysIndex);
+
+        //删除关联二级分类
+        QueryWrapper deleteQw = new QueryWrapper();
+        deleteQw.eq("index_id", dto.getId());
+        sysIndexContentService.remove(deleteQw);
+
+        //新增关联二级分类
+        dto.getJobs().forEach(x->{
+            //删除关联三级分类
+            sysJobContendMapper.cusRemoveNote(x.getId());
+            SysIndexContent sysIndexContent = new SysIndexContent();
+            sysIndexContent.setIndexId(dto.getId());
+            sysIndexContent.setContentId(x.getId());
+            sysIndexContentService.save(sysIndexContent);
+            x.getNoteIds().forEach(y ->{
+                //新增关联三级分类
+                sysJobContendMapper.insertNote(x.getId(),y);
+            });
+        });
+        return R.ok("修改成功");
     }
 
 }

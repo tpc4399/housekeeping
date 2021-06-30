@@ -1,5 +1,6 @@
 package com.housekeeping.admin.pojo;
 
+import com.housekeeping.admin.entity.SysJobNote;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class ConfirmOrderPOJO {
     private String number;                      //订单编号
     private String consumptionItems;            //消费项目
 
+    private List<SysJobNote> notes;
     private Integer employeesId;                //订单甲方 保洁员 (一个)
     private String name1;                       //甲方姓名
     private String phPrefix1;                   //甲方手机号前缀
@@ -35,6 +37,7 @@ public class ConfirmOrderPOJO {
 
     private String jobIds;                      //工作内容
     private String noteIds;                     //工作筆記
+
     private String address;                     //服务地址
     private Float lng;                          //经度
     private Float lat;                          //纬度
@@ -64,6 +67,7 @@ public class ConfirmOrderPOJO {
     private String contractName;                //包工名
 
     public ConfirmOrderPOJO(OrderDetailsPOJO pojo){
+
         this.number = pojo.getNumber();
         this.consumptionItems = pojo.getConsumptionItems();
         this.employeesId = pojo.getEmployeesId();

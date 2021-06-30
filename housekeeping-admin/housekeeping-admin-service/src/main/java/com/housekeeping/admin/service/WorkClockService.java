@@ -6,6 +6,7 @@ import com.housekeeping.admin.dto.WorkClockDTO;
 import com.housekeeping.admin.entity.SysJobNote;
 import com.housekeeping.admin.entity.WorkClock;
 import com.housekeeping.common.utils.R;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,7 +19,9 @@ public interface WorkClockService extends IService<WorkClock> {
 
     WorkClock getByWorkId(Integer id);
 
-    R uploadPhotoAndSummary(WorkClockDTO workClockDTO);
+    R uploadSummary(WorkClockDTO workClockDTO);
 
     R customerEvaluation(CustomerEvaluationDTO customerEvaluationDTO);
+
+    R uploadPhoto(MultipartFile file, Integer id, Integer sort);
 }

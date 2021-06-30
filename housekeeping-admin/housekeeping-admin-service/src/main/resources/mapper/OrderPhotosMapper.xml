@@ -7,7 +7,7 @@
         insert into order_photos
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (null,#{item.number},#{item.photoUrl},#{item.evaluate},#{item.yes},#{item.resultPhotoUrls},#{item.result},#{item.resultTime})
+            (null,#{item.number},#{item.photoUrl},#{item.evaluate})
         </foreach>
     </insert>
 

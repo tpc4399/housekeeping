@@ -65,6 +65,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private ISerialService serialService;
     @Resource
     private IQueryService queryService;
+    @Resource
+    private ISysJobNoteService sysJobNoteService;
     @Override
     public R setCalendar2(SetEmployeesCalendar2DTO dto) {
         log.info("后台接收到的数据："+dto.toString());
@@ -222,7 +224,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             TimeSlotPricePOJO pojo = new TimeSlotPricePOJO();
             pojo.setTimeSlotStart(ec.getTimeSlotStart());
             pojo.setTimeSlotLength(ec.getTimeSlotLength());
-            pojo.setHourlyWage(ec.getHourlyWage().add(workPrice));
+            pojo.setHourlyWage(ec.getHourlyWage());
             pojo.setCode(ec.getCode());
             pojo.setTotalPrice(workPrice.add(ec.getHourlyWage()));
             if (CommonUtils.isEmpty(ec.getStander())){
@@ -451,7 +453,13 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         redisTemplate.expire(key, hourly, TimeUnit.HOURS);
         serialService.generatePipeline(odp);
 
-        return R.ok(new ConfirmOrderPOJO(odp), "预约成功");
+        ConfirmOrderPOJO confirmOrderPOJO = new ConfirmOrderPOJO(odp);
+        List<Integer> noteIds = CommonUtils.stringToList(confirmOrderPOJO.getNoteIds());
+        if(CollectionUtils.isNotEmpty(noteIds)){
+            List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+            confirmOrderPOJO.setNotes(sysJobNotes);
+        }
+        return R.ok(confirmOrderPOJO, "预约成功");
     }
 
     @Override
@@ -497,7 +505,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             Boolean canBeOnDuty = todayIsOk;
             BigDecimal todayPrice = new BigDecimal(0);
             /*if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);*/
-            if (canBeOnDuty) todayPrice = this.todayPrice2(enableTimeToday, item,dto.getEmployeesId(),dto.getJobIds().get(0));
+            if (canBeOnDuty) todayPrice = this.todayPrice2(timeSlots);
 
             /* 今日数据返回 */
             WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);
@@ -506,22 +514,12 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         return workDetailsPOJOS;
     }
 
-    private BigDecimal todayPrice2(List<LocalTimeAndPricePOJO> table, List<LocalTime> item, Integer employeesId, Integer jobId) {
-        //工作小类一小时价格
-        BigDecimal bigDecimal = queryService.variablePrice(employeesId, jobId);
-
-        BigDecimal todayPrice = new BigDecimal(0);
-        for (LocalTime x : item) {
-            for (LocalTimeAndPricePOJO y : table) {
-                if (y.getTime().equals(x)){
-                    BigDecimal hourlyWage = y.getHourlyWage();//已转换成TWD的时薪
-                    BigDecimal semihWage = (hourlyWage.add(bigDecimal)).divide(new BigDecimal(2)).setScale(0, BigDecimal.ROUND_UP);
-                    todayPrice = todayPrice.add(semihWage);
-                    break;
-                }
-            }
+    private BigDecimal todayPrice2(List<TimeSlot> timeSlots) {
+        BigDecimal todayPrice = BigDecimal.valueOf(0);
+        for (int i = 0; i < timeSlots.size(); i++) {
+            todayPrice = todayPrice.add(new BigDecimal(timeSlots.get(i).getThisSlotPrice()));
         }
-        return todayPrice.setScale(0, BigDecimal.ROUND_HALF_UP);
+        return todayPrice;
     }
 
     private List<TimeSlot> withPriceOfSlot2(List<LocalTime> item, List<LocalTimeAndPricePOJO> enableTimeToday, Integer employeesId, Integer jobId) {
@@ -552,7 +550,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 //结束上一段,将上一段放进结果中
                 if (length!=0) {
                     TimeSlot timeSlot = new TimeSlot(start, length);
-                    timeSlot.setThisSlotPrice((lastHw.add(bigDecimal)).multiply(new BigDecimal(length)).setScale(0, BigDecimal.ROUND_DOWN).toString());
+                    timeSlot.setThisSlotPrice(((lastHw.add(bigDecimal)).multiply(new BigDecimal(length))).setScale(0, BigDecimal.ROUND_DOWN).toString());
                     timeSlots.add(timeSlot);
                 }
                 //开始新段
@@ -969,7 +967,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
                 }
             }
         }
-        return todayPrice.setScale(0, BigDecimal.ROUND_HALF_UP);
+        return todayPrice;
     }
 
     public BigDecimal totalPrice(List<WorkDetailsPOJO> workDetails){
@@ -1204,6 +1202,7 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         List<CalendarPriceDTO> list = freeTime.stream().map(x -> {
             CalendarPriceDTO calendarInfoDTO = new CalendarPriceDTO(x);
             calendarInfoDTO.setIsThisMonth(x.getDate().getMonth().getValue() == dto.getMonth());
+            calendarInfoDTO.setIsAfter(x.getDate().isAfter(LocalDate.now())||x.getDate().equals(LocalDate.now()));
             return calendarInfoDTO;
         }).collect(Collectors.toList());
 

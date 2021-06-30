@@ -22,4 +22,13 @@
         WHERE
         content_id = #{id}
     </delete>
+
+    <select id="getAll" resultType="java.lang.Integer">
+        SELECT
+        note_id
+        FROM
+        sys_content_note
+        WHERE
+        content_id = #{id}
+    </select>
 </mapper>

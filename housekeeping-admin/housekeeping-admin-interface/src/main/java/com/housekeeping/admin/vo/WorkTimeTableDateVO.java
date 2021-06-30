@@ -17,5 +17,6 @@ public class WorkTimeTableDateVO {
     private Boolean isThisMonth;    //是否是当前月份
     private Boolean isThisDay;      //是否是当天
     private Boolean hasWork;        //当天是否有工作
+    private Boolean isAfter;
     private List<WorkTimeTableVO> workTimeTable;        //工作详情
 }

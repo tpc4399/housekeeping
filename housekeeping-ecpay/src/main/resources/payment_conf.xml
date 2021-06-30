@@ -3,7 +3,7 @@
     <OperatingMode>Test</OperatingMode> <!--Test or Production-->
     <MercProfile>Stage_Account</MercProfile>
     <IsProjectContractor>N</IsProjectContractor>
-    
+
     <MerchantInfo>
         <MInfo name="Production_Account">
             <MerchantID>3079674</MerchantID>
@@ -16,7 +16,7 @@
             <HashIV>v77hoKGq4kWxNNIS</HashIV>
         </MInfo>
     </MerchantInfo>
-    
+
    <IgnorePayment>
    <!-- <Method>Credit</Method>
         <Method>WebATM</Method>

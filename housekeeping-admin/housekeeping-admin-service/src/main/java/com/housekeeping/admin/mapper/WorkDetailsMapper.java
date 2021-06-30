@@ -10,4 +10,6 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface WorkDetailsMapper extends BaseMapper<WorkDetails> {
     void add(@Param("wd") WorkDetails wd);
+
+    int countWork(Long number);
 }

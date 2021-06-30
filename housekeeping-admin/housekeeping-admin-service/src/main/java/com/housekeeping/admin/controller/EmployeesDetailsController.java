@@ -101,7 +101,6 @@ public class EmployeesDetailsController {
         return employeesDetailsService.updateEmpSkill(employeesDetailsDTO);
     }
 
-    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER})
     @ApiOperation("【公司】【经理】【员工】【客户】查看员工技能标签")
     @LogFlag(description = "查看员工技能标签")
     @PostMapping("/getEmpSkill")
