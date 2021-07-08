@@ -5,6 +5,7 @@ import com.housekeeping.admin.pojo.OrderDetailsPOJO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class WorkClockVO {
@@ -30,7 +31,9 @@ public class WorkClockVO {
 
     private OrderDetailsPOJO orderDetails;
 
-    public WorkClockVO(Integer id, String workProgress, Integer workStatus, Integer toWorkStatus, LocalDateTime toWorkTime, Integer offWorkStatus, LocalDateTime offWorkTime, String photo1, String photo2, String photo3, String photo4, String photo5, String staffSummary, Integer customerStarRating, String customerPhoto, String customerEvaluation, WorkDetails workDetails, OrderDetailsPOJO orderDetails) {
+    private List<OrderPhotoVO> photos;
+
+    public WorkClockVO(Integer id, String workProgress, Integer workStatus, Integer toWorkStatus, LocalDateTime toWorkTime, Integer offWorkStatus, LocalDateTime offWorkTime, String photo1, String photo2, String photo3, String photo4, String photo5, String staffSummary, Integer customerStarRating, String customerPhoto, String customerEvaluation, WorkDetails workDetails, OrderDetailsPOJO orderDetails, List<OrderPhotoVO> photos) {
         this.id = id;
         this.workProgress = workProgress;
         this.workStatus = workStatus;
@@ -49,5 +52,6 @@ public class WorkClockVO {
         this.customerEvaluation = customerEvaluation;
         this.workDetails = workDetails;
         this.orderDetails = orderDetails;
+        this.photos = photos;
     }
 }

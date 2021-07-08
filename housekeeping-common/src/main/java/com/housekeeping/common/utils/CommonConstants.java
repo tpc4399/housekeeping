@@ -25,7 +25,7 @@ public interface CommonConstants {
 	/** redis的key前綴 */
 	String REGISTER_KEY_BY_PHONE = "HK_REGISTER_KEY_BY_PHONE";
 	/** redis驗證碼緩存有效時間，分鐘 */
-	Integer VALID_TIME_MINUTES = 3;
+	Integer VALID_TIME_MINUTES = 30;
 	/** 正式環境的存儲公司logoUrl的絕對路徑 */
 	String HK_COMPANY_LOGO_ABSTRACT_PATH_PREFIX_PROV = "HKFile/CompanyLogoImg/userId=";
 	/** 正式環境的存儲公司组图片Url的絕對路徑 */

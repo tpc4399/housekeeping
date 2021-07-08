@@ -98,6 +98,14 @@ public class GroupDetailsController {
         return groupDetailsService.getGroupData(page,companyId, id ,groupName);
     }
 
+    @Access({RolesEnum.USER_MANAGER,RolesEnum.USER_COMPANY})
+    @ApiOperation("【經理】【公司】分组返回数据")
+    @LogFlag(description = "分组返回数据")
+    @GetMapping("/getGroupDataByMan")
+    public R getGroupDataByMan(Page page,Integer ManId, Integer id,String groupName){
+        return groupDetailsService.getGroupDataByMan(page,ManId, id ,groupName);
+    }
+
     @Access({RolesEnum.SYSTEM_ADMIN})
     @ApiOperation("【管理员】修改分組")
     @PostMapping("/updateGroupByAdmin")

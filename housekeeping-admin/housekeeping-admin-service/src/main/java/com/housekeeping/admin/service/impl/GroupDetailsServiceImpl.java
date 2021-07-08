@@ -17,6 +17,7 @@ import com.housekeeping.admin.service.ManagerDetailsService;
 import com.housekeeping.admin.vo.GroupDetailsVo;
 import com.housekeeping.admin.vo.GroupVO;
 import com.housekeeping.common.utils.*;
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -430,6 +431,63 @@ public class GroupDetailsServiceImpl extends ServiceImpl<GroupDetailsMapper, Gro
         groupEmployeesService.saveBatch(ges);
         return R.ok(null, "成功修改組");
 
+    }
+
+    @Override
+    public R getGroupDataByMan(Page page, Integer manId, Integer id, String groupName) {
+        QueryWrapper<GroupManager> qw = new QueryWrapper<>();
+        qw.eq("manager_id",manId);
+        List<GroupManager> groupManagers = groupManagerService.list(qw);
+        List<GroupDetails> list = new ArrayList<>();
+        for (int i = 0; i < groupManagers.size(); i++) {
+            GroupDetails byId = this.getById(groupManagers.get(i).getGroupId());
+            if(CommonUtils.isNotEmpty(byId)){
+                list.add(byId);
+            }
+        }
+        if(CollectionUtils.isEmpty(list)){
+            return R.ok(null);
+        }
+        ArrayList<GroupVO> groupVOS = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            GroupVO groupVO = new GroupVO();
+            groupVO.setGroupId(list.get(i).getId());
+            groupVO.setGroupName(list.get(i).getGroupName());
+            groupVO.setHeadUrl(list.get(i).getHeadUrl());
+            groupVO.setManNum(groupManagerService.count(list.get(i).getId()));
+            groupVO.setEmpNum(groupEmployeesService.count(list.get(i).getId()));
+            List<Integer> manIds = groupManagerService.getManIdsByGroupId(list.get(i).getId());
+            StringBuilder sb = new StringBuilder();
+            if(CollectionUtils.isEmpty(manIds)){
+                groupVO.setResponsible("");
+            }else {
+                for (int j = 0; j < manIds.size(); j++) {
+                    ManagerDetails byId = managerDetailsService.getById(manIds.get(j));
+                    String s = (CommonUtils.isNotEmpty(byId.getName())?byId.getName() : "");
+                    sb.append(s).append(",");
+                }
+                String s = sb.toString();
+                groupVO.setResponsible(s.substring(0, s.length() - 1));
+            }
+            groupVOS.add(groupVO);
+        }
+        if(CommonUtils.isNotEmpty(id)){
+            List<GroupVO> groupVOS1 = search2(id, groupVOS);
+            if(CommonUtils.isEmpty(groupVOS1)){
+                return R.ok(null);
+            }
+            return R.ok(groupVOS1);
+        }
+        if(StringUtils.isNotEmpty(groupName)){
+            List<GroupVO> search = search(groupName, groupVOS);
+            if(CommonUtils.isEmpty(search)){
+                return R.ok(null);
+            }
+            Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), search);
+            return R.ok(pages);
+        }
+        Page pages = PageUtils.getPages((int) page.getCurrent(), (int) page.getSize(), groupVOS);
+        return R.ok(pages);
     }
 
     public List<GroupVO> search(String name, List<GroupVO> list){

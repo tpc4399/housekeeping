@@ -50,4 +50,6 @@ public interface IGroupDetailsService extends IService<GroupDetails> {
     String logoSave(MultipartFile logo);
 
     R updateGroup2(Integer groupId, String headPortrait, String name, Integer[] managerIds, Integer[] employeesIds);
+
+    R getGroupDataByMan(Page page, Integer manId, Integer id, String groupName);
 }

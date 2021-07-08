@@ -155,4 +155,8 @@ public interface IOrderDetailsService extends IService<OrderDetails> {
     R getWorkTimeTableByCom(TimeTableByComDTO dto);
 
     R getWorkTimeDetails(Integer id);
+
+    R getOrder2(String number);
+
+    R setNote(Long number, MultipartFile[] photos, String[] evaluates, String remarks);
 }

@@ -36,7 +36,9 @@
         demand_order.lat,
         demand_order.lng,
         demand_order.phone_prefix,
-        demand_order.phone
+        demand_order.phone,
+        demand_order.create_time,
+        demand_order.update_time
         FROM
         demand_order
         <where>

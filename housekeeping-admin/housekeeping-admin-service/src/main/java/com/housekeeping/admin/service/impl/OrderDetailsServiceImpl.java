@@ -12,6 +12,7 @@ import com.housekeeping.admin.mapper.PaymentCallbackMapper;
 import com.housekeeping.admin.mapper.WorkDetailsMapper;
 import com.housekeeping.admin.pojo.*;
 import com.housekeeping.admin.service.*;
+import com.housekeeping.admin.vo.OrderPhotoVO;
 import com.housekeeping.admin.vo.TimeSlot;
 import com.housekeeping.admin.vo.WorkClockVO;
 import com.housekeeping.admin.vo.WorkTimeTableDateVO;
@@ -1709,8 +1710,206 @@ public class OrderDetailsServiceImpl extends ServiceImpl<OrderDetailsMapper, Ord
         String workProgress = hasWork+"/"+total;
 
         OrderDetailsPOJO orderDetailsPOJO = this.getByNumber(workDetails.getNumber().toString());
+        List<OrderPhotoPOJO> photos = orderDetailsPOJO.getPhotos();
+
+        List<OrderPhotoVO> orderPhotoVOS = new ArrayList<>();
+        for (int i = 0; i < photos.size(); i++) {
+            OrderPhotoVO orderPhotoVO = new OrderPhotoVO();
+            orderPhotoVO.setEvaluate(photos.get(i).getEvaluate());
+            orderPhotoVO.setPhotoUrl(photos.get(i).getPhotoUrl());
+            orderPhotoVO.setOrderPhotoId(photos.get(i).getOrderPhotoId());
+            if(i==0){
+                orderPhotoVO.setEmpPhoto(byId.getPhoto1());
+            }
+            if(i==1){
+                orderPhotoVO.setEmpPhoto(byId.getPhoto2());
+            }
+            if(i==2){
+                orderPhotoVO.setEmpPhoto(byId.getPhoto3());
+            }
+            if(i==3){
+                orderPhotoVO.setEmpPhoto(byId.getPhoto4());
+            }
+            if(i==4){
+                orderPhotoVO.setEmpPhoto(byId.getPhoto5());
+            }
+            orderPhotoVOS.add(orderPhotoVO);
+        }
+
         WorkClockVO workClockVO = new WorkClockVO(byId.getId(),workProgress, byId.getWorkStatus(), byId.getToWorkStatus(), byId.getToWorkTime(), byId.getOffWorkStatus(), byId.getOffWorkTime(),
-                byId.getPhoto1(),byId.getPhoto2(),byId.getPhoto3(),byId.getPhoto4(),byId.getPhoto5(), byId.getStaffSummary(), byId.getCustomerStarRating(), byId.getCustomerPhoto(),byId.getCustomerEvaluation(), workDetails, orderDetailsPOJO);
+                byId.getPhoto1(),byId.getPhoto2(),byId.getPhoto3(),byId.getPhoto4(),byId.getPhoto5(), byId.getStaffSummary(), byId.getCustomerStarRating(), byId.getCustomerPhoto(),byId.getCustomerEvaluation(), workDetails, orderDetailsPOJO,orderPhotoVOS);
         return R.ok(workClockVO);
+    }
+
+    @Override
+    public R getOrder2(String number) {
+        /* 查redis */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        if (!keys.isEmpty()) {
+            Object[] keysArr = (Object[]) keys.toArray();
+            String key = keysArr[0].toString();
+            OrderDetailsPOJO odp = null;
+            Map<Object, Object> map = redisTemplate.opsForHash().entries(key);
+            try {
+                odp = (OrderDetailsPOJO) CommonUtils.mapToObject(map, OrderDetailsPOJO.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            List<OrderPhotoPOJO> ops = new ArrayList<>();
+            List<WorkDetailsPOJO> wds = new ArrayList<>();
+            Object photoObj = map.get("photos");
+            Object workDetailsObj = map.get("workDetails");
+            if (!photoObj.equals("")) ops = (List<OrderPhotoPOJO>) map.get("photos");;
+            if (!workDetailsObj.equals("")) wds = (List<WorkDetailsPOJO>) map.get("workDetails");
+            List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+            for (int i = 0; i < wds.size(); i++) {
+                List<TimeSlot> timeSlots = wds.get(i).getTimeSlots();
+                for (int i1 = 0; i1 < timeSlots.size(); i1++) {
+                    List<TimeSlot> timeSlots1 = new ArrayList<>();
+                    timeSlots1.add(timeSlots.get(i1));
+                    WorkDetailsPOJO workDetailsPOJO = new WorkDetailsPOJO();
+                    workDetailsPOJO.setDate(wds.get(i).getDate());
+                    workDetailsPOJO.setCanBeOnDuty(wds.get(i).getCanBeOnDuty());
+                    workDetailsPOJO.setWeek(wds.get(i).getWeek());
+                    workDetailsPOJO.setTodayPrice(wds.get(i).getTodayPrice());
+                    workDetailsPOJO.setTimeSlots(timeSlots1);
+                    workDetailsPOJOS.add(workDetailsPOJO);
+                }
+            }
+            odp.setPhotos(ops);
+            odp.setWorkDetails(workDetailsPOJOS);
+
+            OrderDetailsParent parent = odp;
+            List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            parent.setJobs(jobs);
+
+            List<Integer> noteIds = CommonUtils.stringToList(odp.getNoteIds());
+            if(CollectionUtils.isNotEmpty(noteIds)){
+                List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+                parent.setNotes(sysJobNotes);
+            }
+
+            EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
+            CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
+            if (CommonUtils.isNotEmpty(ed)){
+                /* 保洁员头像二次加工处理 */
+                parent.setEmployeesHeaderUrl(ed.getHeadUrl());
+                /* 保洁员地址二次加工 */
+                parent.setAddressEmployees(ed.getAddress2()+ed.getAddress3()+ed.getAddress4());
+                parent.setLatEmployees(new Float(ed.getLat()));
+                parent.setLngEmployees(new Float(ed.getLng()));
+            }
+            if (CommonUtils.isNotEmpty(cd)){
+                /* 客户头像二次加工处理 */
+                parent.setCustomerHeaderUrl(cd.getHeadUrl());
+            }
+            /* 第一次工作内容 */
+            if (wds.isEmpty()){
+                parent.setWdp(new WorkDetailsPOJO());
+            }else {
+                parent.setWdp(wds.get(0));
+            }
+            /* 保洁员和客户是否已评价 */
+            Boolean yes1 = orderEvaluationService.getEvaluationStatusOfCustomer(number);
+            Boolean yes2 = orderEvaluationService.getEvaluationStatusOfEmployees(number);
+            parent.setYes1(yes1);
+            parent.setYes2(yes2);
+
+            return R.ok(parent);
+        }
+
+        /* 查數據庫 */
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("number", number);
+        OrderDetails od = orderDetailsService.getOne(qw);
+        if (CommonUtils.isNotEmpty(od)) {
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("number", od.getNumber());
+            List<WorkDetails> wds = workDetailsService.list(qw2);
+            List<OrderPhotos> ops = orderPhotosService.listByNumber(od.getNumber().toString());
+            OrderDetailsPOJO odp = this.odp(od, wds, ops);
+            OrderDetailsParent parent = odp;
+
+            List<WorkDetailsPOJO> workDetails = odp.getWorkDetails();
+            List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+            for (int i = 0; i < wds.size(); i++) {
+                List<TimeSlot> timeSlots = workDetails.get(i).getTimeSlots();
+                for (int i1 = 0; i1 < timeSlots.size(); i1++) {
+                    List<TimeSlot> timeSlots1 = new ArrayList<>();
+                    timeSlots1.add(timeSlots.get(i1));
+                    WorkDetailsPOJO workDetailsPOJO = new WorkDetailsPOJO();
+                    workDetailsPOJO.setDate(wds.get(i).getDate());
+                    workDetailsPOJO.setCanBeOnDuty(wds.get(i).getCanBeOnDuty());
+                    workDetailsPOJO.setWeek(wds.get(i).getWeek());
+                    workDetailsPOJO.setTodayPrice(wds.get(i).getTodayPrice());
+                    workDetailsPOJO.setTimeSlots(timeSlots1);
+                    workDetailsPOJOS.add(workDetailsPOJO);
+                }
+            }
+            odp.setWorkDetails(workDetailsPOJOS);
+            List<Integer> noteIds = CommonUtils.stringToList(odp.getNoteIds());
+            if(CollectionUtils.isNotEmpty(noteIds)){
+                List<SysJobNote> sysJobNotes = sysJobNoteService.listByIds(noteIds);
+                parent.setNotes(sysJobNotes);
+            }
+
+            List<Integer> jobIds = CommonUtils.stringToList(odp.getJobIds());
+            List<SysJobContend> jobs = sysJobContendService.listByIds(jobIds);
+            parent.setJobs(jobs);
+
+            EmployeesDetails ed = employeesDetailsService.getById(odp.getEmployeesId());
+            CustomerDetails cd = customerDetailsService.getById(odp.getCustomerId());
+            if (CommonUtils.isNotEmpty(ed)){
+                /* 保洁员头像二次加工处理 */
+                parent.setEmployeesHeaderUrl(ed.getHeadUrl());
+                /* 保洁员地址二次加工 */
+                parent.setAddressEmployees(ed.getAddress2()+ed.getAddress3()+ed.getAddress4());
+                parent.setLatEmployees(new Float(ed.getLat()));
+                parent.setLngEmployees(new Float(ed.getLng()));
+            }
+            if (CommonUtils.isNotEmpty(cd)){
+                /* 客户头像二次加工处理 */
+                parent.setCustomerHeaderUrl(cd.getHeadUrl());
+            }
+
+            return R.ok(odp);
+        }
+        return R.failed(null, "訂單不存在");
+    }
+
+    @Override
+    public R setNote(Long number, MultipartFile[] photos, String[] evaluates, String remarks) {
+        List<OrderPhotoPOJO> pojoList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        String nowString = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String catalogue = CommonConstants.HK_ORDER_PHOTOS_ABSTRACT_PATH_PREFIX_PROV + number;
+        File mkdir = new File(catalogue);
+        if (!mkdir.exists()){
+            mkdir.mkdirs();
+        }
+        AtomicReference<Integer> count = new AtomicReference<>(0);
+        Arrays.stream(photos).forEach(file -> {
+            String fileType = file.getOriginalFilename().split("\\.")[1];
+            String fileName = nowString + "[" + count.toString() + "]."+ fileType;
+            String fileAbstractPath = catalogue + "/" + fileName;
+            try {
+                ossClient.putObject(bucketName, fileAbstractPath, new ByteArrayInputStream(file.getBytes()));
+                OrderPhotoPOJO pojo = new OrderPhotoPOJO(null, urlPrefix + fileAbstractPath, evaluates[count.get()]);
+                pojoList.add(pojo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                count.getAndSet(count.get() + 1);
+            }
+        });
+
+        /* 数据修改,对hash操控，直接修改jobIds */
+        Set<String> keys = redisTemplate.keys("OrderToBePaid:employeesId*:" + number);
+        Object[] keysArr = keys.toArray();
+        String key = keysArr[0].toString();
+        redisTemplate.opsForHash().put(key, "photos", pojoList);
+        redisTemplate.opsForHash().put(key, "remarks", remarks);
+        return R.ok(null, "成功修改工作备注");
     }
 }

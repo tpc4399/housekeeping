@@ -67,6 +67,8 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
     private IQueryService queryService;
     @Resource
     private ISysJobNoteService sysJobNoteService;
+    @Resource
+    private ISysConfigService configService;
     @Override
     public R setCalendar2(SetEmployeesCalendar2DTO dto) {
         log.info("后台接收到的数据："+dto.toString());
@@ -427,7 +429,28 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
         /* 原价格计算 */
         BigDecimal pdb = this.totalPrice(wds);
         odp.setPriceBeforeDiscount(pdb);
-        odp.setPriceAfterDiscount(pdb);
+
+
+        //媒合费
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("config_key", "matchmakingFeeFloat");
+        SysConfig one = configService.getOne(qw);
+        odp.setMatchmakingFee(pdb.multiply(new BigDecimal(one.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //系统服务费
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.eq("config_key", "systemServiceFeeFloat");
+        SysConfig one2 = configService.getOne(qw2);
+        odp.setSystemServiceFee(pdb.multiply(new BigDecimal(one2.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //刷卡手续费
+        QueryWrapper qw3 = new QueryWrapper();
+        qw3.eq("config_key", "servicesChargeForCreditCardFloat");
+        SysConfig one3 = configService.getOne(qw3);
+        odp.setCardSwipeFee(pdb.multiply(new BigDecimal(one3.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //服务费+订单费
+        odp.setPriceAfterDiscount(pdb.add(odp.getMatchmakingFee()).add(odp.getSystemServiceFee()).add(odp.getCardSwipeFee()));
 
         /* 订单状态 */
         odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态
@@ -506,6 +529,37 @@ public class EmployeesCalendarServiceImpl extends ServiceImpl<EmployeesCalendarM
             BigDecimal todayPrice = new BigDecimal(0);
             /*if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);*/
             if (canBeOnDuty) todayPrice = this.todayPrice2(timeSlots);
+
+            /* 今日数据返回 */
+            WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);
+            workDetailsPOJOS.add(wdp);
+        });
+        return workDetailsPOJOS;
+    }
+
+    public List<WorkDetailsPOJO> makeAnAppointmentHandle2(MakeAnAppointmentDTO dto, Boolean need) {
+        List<WorkDetailsPOJO> workDetailsPOJOS = new ArrayList<>();
+        /* 获取这段日期内的空闲时间 */
+        List<FreeDateTimeDTO> freeTime = this.getFreeTimeByDateSlot2(new GetCalendarByDateSlotDTO(new DateSlot(dto.getStart(), dto.getEnd()), dto.getEmployeesId()));
+        freeTime.forEach(x -> {
+            /* 今日数据准备 */
+            LocalDate today = x.getDate(); //今日日期
+            Integer todayWeek = today.getDayOfWeek().getValue();
+            if (!dto.getWeeks().contains(todayWeek)) return;     //如果周数没有这天，那么就跳过吧
+            List<LocalTimeAndPricePOJO> enableTimeToday = this.enableTimeToday(x.getTimes());//切割的时间表与价格
+            List<LocalTime> item = sysIndexService.periodSplittingB(dto.getTimeSlots());//切割的需求时间段
+            Boolean todayIsOk = this.judgeToday(enableTimeToday, item);         //判断今天行不行
+            List<TimeSlot> timeSlots = new ArrayList<>();
+            if (need) {
+                if(todayIsOk) timeSlots = this.withPriceOfSlot(item, enableTimeToday);
+                else timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }else {
+                timeSlots = dto.getTimeSlots();  //不用给时段加价格了
+            }
+
+            Boolean canBeOnDuty = todayIsOk;
+            BigDecimal todayPrice = new BigDecimal(0);
+            if (canBeOnDuty) todayPrice = this.todayPrice(enableTimeToday, item);
 
             /* 今日数据返回 */
             WorkDetailsPOJO wdp = new WorkDetailsPOJO(today, todayWeek, timeSlots, canBeOnDuty, todayPrice);

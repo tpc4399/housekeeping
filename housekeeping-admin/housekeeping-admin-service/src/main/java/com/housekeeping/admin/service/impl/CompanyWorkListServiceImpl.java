@@ -3,6 +3,7 @@ package com.housekeeping.admin.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.housekeeping.admin.dto.MakeAnAppointmentDTO;
@@ -16,6 +17,7 @@ import com.housekeeping.admin.pojo.WorkDetailsPOJO;
 import com.housekeeping.admin.service.*;
 import com.housekeeping.admin.vo.*;
 import com.housekeeping.common.utils.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +74,10 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
     private ISerialNumberService serialNumberService;
     @Resource
     private ISerialService serialService;
+    @Resource
+    private ISysJobContendService sysJobContendService;
+    @Resource
+    private ISysConfigService configService;
 
     /*@Override
     public R beInterested(Integer demandOrderId) {
@@ -143,6 +149,25 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
             }
             return demandEmployeesStatusVo;
         }).collect(Collectors.toList());
+
+        collect.forEach(x ->{
+            EmployeesDetails byId = x.getEmployeesDetails();
+            String presetJobIds = byId.getPresetJobIds();
+            List<Skill> skills = new ArrayList<>();
+            if(StringUtils.isNotBlank(presetJobIds)){
+                List<String> strings = Arrays.asList(presetJobIds.split(" "));
+                if(CollectionUtils.isNotEmpty(strings)){
+                    for (int i = 0; i < strings.size(); i++) {
+                        Skill skill = new Skill();
+                        skill.setJobId(Integer.parseInt(strings.get(i)));
+                        skill.setContent(sysJobContendService.getById(Integer.parseInt(strings.get(i))).getContend());
+                        skills.add(skill);
+                    }
+                }
+            }
+            x.setSkills(skills);
+        });
+
         return R.ok(collect);
     }
 
@@ -481,11 +506,52 @@ public class CompanyWorkListServiceImpl extends ServiceImpl<CompanyWorkListMappe
         /* 原价格计算 */
         if(CommonUtils.isNotEmpty(byId.getPrice())){
             odp.setPriceBeforeDiscount(BigDecimal.valueOf(byId.getPrice()));
-            odp.setPriceAfterDiscount(BigDecimal.valueOf(byId.getPrice()));
+
+            //媒合费
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("config_key", "matchmakingFeeFloat");
+            SysConfig one = configService.getOne(qw);
+            odp.setMatchmakingFee(BigDecimal.valueOf(byId.getPrice()).multiply(new BigDecimal(one.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //系统服务费
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("config_key", "systemServiceFeeFloat");
+            SysConfig one2 = configService.getOne(qw2);
+            odp.setSystemServiceFee(BigDecimal.valueOf(byId.getPrice()).multiply(new BigDecimal(one2.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //刷卡手续费
+            QueryWrapper qw3 = new QueryWrapper();
+            qw3.eq("config_key", "servicesChargeForCreditCardFloat");
+            SysConfig one3 = configService.getOne(qw3);
+            odp.setCardSwipeFee(BigDecimal.valueOf(byId.getPrice()).multiply(new BigDecimal(one3.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //服务费+订单费
+            odp.setPriceAfterDiscount(BigDecimal.valueOf(byId.getPrice()).add(odp.getMatchmakingFee()).add(odp.getSystemServiceFee()).add(odp.getCardSwipeFee()));
+
         }else {
             BigDecimal pdb = this.getPrice(wds,byId.getDemandOrderId(), byId.getEmployeesId());
             odp.setPriceBeforeDiscount(pdb);
-            odp.setPriceAfterDiscount(pdb);
+
+            //媒合费
+            QueryWrapper qw = new QueryWrapper();
+            qw.eq("config_key", "matchmakingFeeFloat");
+            SysConfig one = configService.getOne(qw);
+            odp.setMatchmakingFee(pdb.multiply(new BigDecimal(one.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //系统服务费
+            QueryWrapper qw2 = new QueryWrapper();
+            qw2.eq("config_key", "systemServiceFeeFloat");
+            SysConfig one2 = configService.getOne(qw2);
+            odp.setSystemServiceFee(pdb.multiply(new BigDecimal(one2.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //刷卡手续费
+            QueryWrapper qw3 = new QueryWrapper();
+            qw3.eq("config_key", "servicesChargeForCreditCardFloat");
+            SysConfig one3 = configService.getOne(qw3);
+            odp.setCardSwipeFee(pdb.multiply(new BigDecimal(one3.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+            //服务费+订单费
+            odp.setPriceAfterDiscount(pdb.add(odp.getMatchmakingFee()).add(odp.getSystemServiceFee()).add(odp.getCardSwipeFee()));
         }
 
         /* 订单状态 */

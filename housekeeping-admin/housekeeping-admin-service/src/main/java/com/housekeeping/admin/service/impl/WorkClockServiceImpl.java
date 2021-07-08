@@ -64,13 +64,13 @@ public class WorkClockServiceImpl extends ServiceImpl<WorkClockMapper, WorkClock
     public R workEnd(Integer id,String phonePrefix,String phone) {
 
         WorkClock byId = this.getById(id);
-        if(byId.getOffWorkStatus().equals(0)){
+        if(byId.getToWorkStatus().equals(0)){
             return R.failed("請先進行上班打卡！");
         }
 
         byId.setOffWorkStatus(1);
         byId.setOffWorkTime(LocalDateTime.now());
-        byId.setWorkStatus(2);
+        /*byId.setWorkStatus(2);*/
         this.updateById(byId);
 
         QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
@@ -142,5 +142,21 @@ public class WorkClockServiceImpl extends ServiceImpl<WorkClockMapper, WorkClock
         }
         this.updateById(byId);
         return R.ok("上傳成功");
+    }
+
+    @Override
+    public R workCheck(Integer id, String staffCheck) {
+        WorkClock byId = this.getById(id);
+        byId.setStaffCheck(staffCheck);
+        this.updateById(byId);
+        return R.ok(null,null);
+    }
+
+    @Override
+    public R customerConfirm(Integer id) {
+        WorkClock byId = this.getById(id);
+        byId.setCustomerConfirm(true);
+        this.updateById(byId);
+        return R.ok(null,"确认成功");
     }
 }

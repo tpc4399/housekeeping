@@ -47,6 +47,8 @@ public interface IEmployeesCalendarService extends IService<EmployeesCalendar> {
     Boolean judgmentOfExistenceByEmployeesId(Integer employeesId);
     /* 处理预约钟点流程，取消不能做的日子,是否需要 */
     List<WorkDetailsPOJO> makeAnAppointmentHandle(MakeAnAppointmentDTO dto, Boolean need);
+
+    List<WorkDetailsPOJO> makeAnAppointmentHandle2(MakeAnAppointmentDTO dto, Boolean need);
     /* 判断今日能否做 */
     Boolean judgeToday(List<LocalTimeAndPricePOJO> table, List<LocalTime> item);
     /* 给时段带上价格 */

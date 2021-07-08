@@ -42,10 +42,14 @@ public class ConfirmOrderPOJO {
     private Float lng;                          //经度
     private Float lat;                          //纬度
 
+    private BigDecimal matchmakingFee;          //媒合费
+    private BigDecimal systemServiceFee;        //系统服务费
+    private BigDecimal cardSwipeFee;            //刷卡手续费
     private List<WorkDetailsPOJO> workDetails;  //订单安排详情 (工作内容、时间安排)
     private Integer days;                       //可工作的天数
     private Float hOfDay;                       //每天的小时数
-    private BigDecimal priceAfterDiscount;      //优惠后的价格(台币元)
+    private BigDecimal priceBeforeDiscount;     //订单价格(台币元)
+    private BigDecimal priceAfterDiscount;      //订单价格+服务费(台币元)
     private String payType;                     //支付方式
     private List<OrderPhotoPOJO> photos;        //订单的照片一级评论
     private String remarks;                     //备注
@@ -86,9 +90,13 @@ public class ConfirmOrderPOJO {
         this.address = pojo.getAddress();
         this.lng = pojo.getLng();
         this.lat = pojo.getLat();
+        this.matchmakingFee = pojo.getMatchmakingFee();
+        this.systemServiceFee = pojo.getSystemServiceFee();
+        this.cardSwipeFee = pojo.getCardSwipeFee();
         this.workDetails = pojo.getWorkDetails();
         this.days = pojo.getDays();
         this.hOfDay = pojo.getHOfDay();
+        this.priceBeforeDiscount = pojo.getPriceBeforeDiscount();
         this.priceAfterDiscount = pojo.getPriceAfterDiscount();
         this.payType = pojo.getPayType();
         this.photos = pojo.getPhotos();

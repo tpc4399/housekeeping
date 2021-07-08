@@ -231,6 +231,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setServerPlaceType(list3.get(i).getServerPlaceType());
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
+            demandOrderDTO.setCreateTime(list3.get(i).getCreateTime());
+            demandOrderDTO.setUpdateTime(list3.get(i).getUpdateTime());
             demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }
@@ -316,6 +318,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
             demandOrderDTO.setParentId(list3.get(i).getParentId());
+            demandOrderDTO.setCreateTime(list3.get(i).getCreateTime());
+            demandOrderDTO.setUpdateTime(list3.get(i).getUpdateTime());
             demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }
@@ -526,6 +530,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
         demandOrderDTO.setStartDate(byId.getStartDate());
         demandOrderDTO.setWeek(byId.getWeek());
         demandOrderDTO.setParentId(byId.getParentId());
+        demandOrderDTO.setCreateTime(byId.getCreateTime());
+        demandOrderDTO.setUpdateTime(byId.getUpdateTime());
         demandOrderDTO.setStatus(this.getStatus(byId));
 
         List<TimeSlot> timeSlots = demandOrderMapper.getTimes(id);
@@ -661,6 +667,8 @@ public class ReleaseRequirementServiceImpl implements IReleaseRequirementService
             demandOrderDTO.setStartDate(list3.get(i).getStartDate());
             demandOrderDTO.setWeek(list3.get(i).getWeek());
             demandOrderDTO.setParentId(list3.get(i).getParentId());
+            demandOrderDTO.setCreateTime(list3.get(i).getCreateTime());
+            demandOrderDTO.setUpdateTime(list3.get(i).getUpdateTime());
             demandOrderDTO.setStatus(this.getStatus(list3.get(i)));
             list.add(demandOrderDTO);
         }

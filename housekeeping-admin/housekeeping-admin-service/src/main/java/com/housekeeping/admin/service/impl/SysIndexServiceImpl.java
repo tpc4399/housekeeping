@@ -517,7 +517,7 @@ public class SysIndexServiceImpl
     }
 
     @Override
-    public R add2(SysIndexAdd2DTO sysIndexAddDto) {
+    public synchronized R add2(SysIndexAdd2DTO sysIndexAddDto) {
         SysIndex sysIndex = new SysIndex();
         sysIndex.setName(sysIndexAddDto.getName());
         sysIndex.setOrderValue(sysIndexAddDto.getOrderValue());
@@ -542,13 +542,59 @@ public class SysIndexServiceImpl
 
         Integer finalMaxIndexId = maxIndexId;
         sysIndexAddDto.getJobs().forEach(x->{
-            SysIndexContent sysIndexContent = new SysIndexContent();
-            sysIndexContent.setIndexId(finalMaxIndexId);
-            sysIndexContent.setContentId(x.getId());
-            sysIndexContentService.save(sysIndexContent);
-            x.getNoteIds().forEach(y ->{
-                sysJobContendMapper.insertNote(x.getId(),y);
-            });
+            Integer id = x.getId();
+            SysJobContend sysJobContend = new SysJobContend();
+            if(id==null){
+                SysJobContend sysJobContent = (SysJobContend) CommonUtils.getMaxId("sys_job_contend", sysJobContendService);
+                sysJobContend.setId(sysJobContent.getId()+1);
+                sysJobContend.setContend(x.getContent());
+                sysJobContendService.save(sysJobContent);
+
+                SysJobContend maxId = (SysJobContend) CommonUtils.getMaxId("sys_job_contend", sysJobContendService);
+
+                SysIndexContent sysIndexContent = new SysIndexContent();
+                sysIndexContent.setIndexId(finalMaxIndexId);
+                sysIndexContent.setContentId(maxId.getId());
+                sysIndexContentService.save(sysIndexContent);
+
+                List<SysJobNote> noteIds = x.getNoteIds();
+                for (int i = 0; i < noteIds.size(); i++) {
+                    SysJobNote sysJobNote = noteIds.get(i);
+                    SysJobNote sysJobNote1 = new SysJobNote();
+                    if(sysJobNote.getId()==null){
+                        sysJobNote1.setNote(sysJobNote.getNote());
+                        sysJobNoteService.save(sysJobNote1);
+                        SysJobNote note = (SysJobNote) CommonUtils.getMaxId("sys_job_note", sysJobNoteService);
+                        sysJobContendMapper.insertNote(maxId.getId(),note.getId());
+                    }else {
+                        sysJobNote1.setId(sysJobNote.getId());
+                        sysJobNote1.setNote(sysJobNote.getNote());
+                        sysJobNoteService.updateById(sysJobNote1);
+                        sysJobContendMapper.insertNote(maxId.getId(),sysJobNote.getId());
+                    }
+                }
+            }else {
+                sysJobContend.setId(id);
+                sysJobContend.setContend(x.getContent());
+                sysJobContendService.updateById(sysJobContend);
+
+                List<SysJobNote> noteIds = x.getNoteIds();
+                for (int i = 0; i < noteIds.size(); i++) {
+                    SysJobNote sysJobNote = noteIds.get(i);
+                    SysJobNote sysJobNote1 = new SysJobNote();
+                    if(sysJobNote.getId()==null){
+                        sysJobNote1.setNote(sysJobNote.getNote());
+                        sysJobNoteService.save(sysJobNote1);
+                        SysJobNote note = (SysJobNote) CommonUtils.getMaxId("sys_job_note", sysJobNoteService);
+                        sysJobContendMapper.insertNote(id,note.getId());
+                    }else {
+                        sysJobNote1.setId(sysJobNote.getId());
+                        sysJobNote1.setNote(sysJobNote.getNote());
+                        sysJobNoteService.updateById(sysJobNote1);
+                        sysJobContendMapper.insertNote(id,sysJobNote.getId());
+                    }
+            }
+            }
         });
 
         return R.ok("添加成功");
@@ -588,7 +634,7 @@ public class SysIndexServiceImpl
             sysIndexContentService.save(sysIndexContent);
             x.getNoteIds().forEach(y ->{
                 //新增关联三级分类
-                sysJobContendMapper.insertNote(x.getId(),y);
+                sysJobContendMapper.insertNote(x.getId(),y.getId());
             });
         });
         return R.ok("修改成功");

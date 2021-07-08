@@ -66,8 +66,8 @@ public class EmployeesContractController {
 
     }
 
-    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER})
-    @ApiOperation("【管理员】【公司】【经理】給員工添加一个包工服务，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
+    @Access({RolesEnum.SYSTEM_ADMIN, RolesEnum.USER_COMPANY, RolesEnum.USER_MANAGER,RolesEnum.USER_EMPLOYEES})
+    @ApiOperation("【管理员】【公司】【经理】【员工】給員工添加一个包工服务，盡量用postman測試這個接口，swagger會出問題(圖片數據為空，程序不會報錯)")
     @PostMapping(value = "/add2_2", headers = "content-type=multipart/form-data")
     public R add2(@RequestParam("employeesId") Integer employeesId,
                   @RequestParam("name") String name,

@@ -28,7 +28,9 @@ public class WorkClock extends Model<WorkClock> {
     private String photo3;              //員工上傳圖片
     private String photo4;              //員工上傳圖片
     private String photo5;              //員工上傳圖片
+    private String staffCheck;          //员工上班检查
     private String staffSummary;        //員工總結
+    private Boolean customerConfirm;    //客户确认
     private Integer customerStarRating; //客戶打分
     private String customerPhoto;       //客戶圖片
     private String customerEvaluation;  //客戶評價

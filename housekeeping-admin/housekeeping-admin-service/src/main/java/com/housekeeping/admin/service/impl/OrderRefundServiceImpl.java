@@ -63,14 +63,26 @@ public class OrderRefundServiceImpl extends ServiceImpl<OrderRefundMapper, Order
         CustomerDetails customerDetails = customerDetailsService.getByUserId(TokenUtils.getCurrentUserId());
         QueryWrapper<OrderRefund> qw = new QueryWrapper<>();
         qw.eq("customer_id",customerDetails.getId());
-        List<OrderRefund> list = this.list(qw);
-        return R.ok(list);
+        List<OrderRefundVo> collect = this.list(qw).stream().map(x -> {
+            OrderDetailsPOJO orderDetailsPOJO = orderDetailsService.getByNumber(x.getNumber().toString());
+            CustomerDetails byId = customerDetailsService.getById(x.getCustomerId());
+            return new OrderRefundVo(x.getId(), x.getCustomerId(), x.getNumber(), x.getRequirePrice(),
+                    x.getReason(), x.getVoucher(), x.getCollectionAccount(), x.getCompanyAgree(), x.getCompanyPrice(), x.getCompanyReason(),
+                    x.getCompanyVoucher(), x.getFinancePrice(), x.getFinanceVoucher(), x.getStatus(), orderDetailsPOJO, byId);
+        }).collect(Collectors.toList());
+
+        return R.ok(collect);
     }
 
     @Override
     public R getRefundById(Integer id) {
         OrderRefund byId = this.getById(id);
-        return R.ok(byId);
+        OrderDetailsPOJO orderDetailsPOJO = orderDetailsService.getByNumber(byId.getNumber().toString());
+        CustomerDetails customerDetails = customerDetailsService.getById(byId.getCustomerId());
+        OrderRefundVo orderRefundVo = new OrderRefundVo(byId.getId(), byId.getCustomerId(), byId.getNumber(), byId.getRequirePrice(),
+                byId.getReason(), byId.getVoucher(), byId.getCollectionAccount(), byId.getCompanyAgree(), byId.getCompanyPrice(), byId.getCompanyReason(),
+                byId.getCompanyVoucher(), byId.getFinancePrice(), byId.getFinanceVoucher(), byId.getStatus(), orderDetailsPOJO, customerDetails);
+        return R.ok(orderRefundVo);
     }
 
     @Override

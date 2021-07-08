@@ -96,7 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             String key = CommonConstants.REGISTER_KEY_BY_PHONE + "_" + deptId + "_+" + phonePrefix + "_" + phone;
             //存入redis
             redisUtils.set(key, code);
-            redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三分鐘
+            redisUtils.expire(key, CommonConstants.VALID_TIME_MINUTES * 60);//三十分鐘
             //发送短信
             String[] params = new String[]{code, CommonConstants.VALID_TIME_MINUTES.toString()};
             SendMessage.sendMessage(phonePrefix, phone, params);
@@ -193,6 +193,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                         customerDetails.setLastReviserId(TokenUtils.getCurrentUserId());
                         customerDetails.setCreateTime(LocalDateTime.now());
                         customerDetails.setUpdateTime(LocalDateTime.now());
+                        customerDetails.setHeadUrl("https://test-live-video.oss-cn-shanghai.aliyuncs.com/HKFile/ImPhoto/userId=/20210705152934.png");
                         customerDetailsService.save(customerDetails);
 
                         //把地址存為經緯度

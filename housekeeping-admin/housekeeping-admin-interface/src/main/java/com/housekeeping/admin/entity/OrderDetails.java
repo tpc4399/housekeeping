@@ -48,6 +48,9 @@ public class OrderDetails extends Model<OrderDetails> {
     private Float lng;                          //经度
     private Float lat;                          //纬度
 
+    private BigDecimal matchmakingFee;          //媒合费
+    private BigDecimal systemServiceFee;        //系统服务费
+    private BigDecimal cardSwipeFee;            //刷卡手续费
     private Integer days;                       //天数
     private Float hOfDay;                       //每天的小时数
     private BigDecimal priceBeforeDiscount;     //优惠前的价格(台币元)
@@ -87,6 +90,9 @@ public class OrderDetails extends Model<OrderDetails> {
         this.jobIds = pojo.getJobIds();
         this.noteIds = pojo.getNoteIds();
         this.address = pojo.getAddress();
+        this.matchmakingFee = pojo.getMatchmakingFee();
+        this.systemServiceFee = pojo.getSystemServiceFee();
+        this.cardSwipeFee = pojo.getCardSwipeFee();
         this.lng = pojo.getLng();
         this.lat = pojo.getLat();
         this.days = pojo.getDays();

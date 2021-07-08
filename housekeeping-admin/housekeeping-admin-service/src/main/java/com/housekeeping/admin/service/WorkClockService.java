@@ -24,4 +24,8 @@ public interface WorkClockService extends IService<WorkClock> {
     R customerEvaluation(CustomerEvaluationDTO customerEvaluationDTO);
 
     R uploadPhoto(MultipartFile file, Integer id, Integer sort);
+
+    R workCheck(Integer id, String staffCheck);
+
+    R customerConfirm(Integer id);
 }

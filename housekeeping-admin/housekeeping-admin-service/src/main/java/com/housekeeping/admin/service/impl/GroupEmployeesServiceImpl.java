@@ -141,8 +141,8 @@ public class GroupEmployeesServiceImpl extends ServiceImpl<GroupEmployeesMapper,
                         skills.add(skill);
                     }
                     byId.setSkills(skills);
-                    es.add(byId);
             }
+                es.add(byId);
         }
         }
         if(CollectionUtils.isEmpty(es)){

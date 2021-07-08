@@ -702,8 +702,17 @@ public class EmployeesDetailsServiceImpl extends ServiceImpl<EmployeesDetailsMap
     public R getAllEmpByCompanyId(Integer companyId) {
         QueryWrapper<EmployeesDetails> qw = new QueryWrapper<>();
         qw.eq("company_id",companyId);
-        List<EmployeesDetails> list = this.list(qw);
-        return R.ok(list);
+        List<EmployeesDetails> eds = this.list(qw);
+        List<EmployeesDetailsPOJO> edps = eds.stream().map(ed->{
+            EmployeesDetailsPOJO edp = new EmployeesDetailsPOJO(ed);
+            //技能标签
+            List<SysJobContend> jobs = new ArrayList<>();
+            List<Integer> jobIds = CommonUtils.stringToList(ed.getPresetJobIds());
+            if (!jobIds.isEmpty()) jobs = sysJobContendService.listByIds(jobIds);
+            edp.setSkillTags(jobs);
+            return edp;
+        }).collect(Collectors.toList());
+        return R.ok(edps);
     }
 
     @Override

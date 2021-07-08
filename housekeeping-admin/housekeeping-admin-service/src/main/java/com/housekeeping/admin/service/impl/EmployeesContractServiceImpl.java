@@ -77,6 +77,8 @@ public class EmployeesContractServiceImpl
     private ISerialNumberService serialNumberService;
     @Resource
     private ISerialService serialService;
+    @Resource
+    private ISysConfigService configService;
 
     @Override
     public R getByEmployeesId(Integer employeesId) {
@@ -324,7 +326,7 @@ public class EmployeesContractServiceImpl
         TimeSlot timeSlot = new TimeSlot(dto.getStartTime(), ec.getTimeLength());
         timeSlots.add(timeSlot);
         MakeAnAppointmentDTO mapDTO = new MakeAnAppointmentDTO(employeesId, null, start, end, weeks, jobIdsList,null, timeSlots);
-        List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle(mapDTO, false);
+        List<WorkDetailsPOJO> wds = employeesCalendarService.makeAnAppointmentHandle2(mapDTO, false);
         odp.setWorkDetails(wds);
 
         /* 可工作天数计算 */
@@ -337,7 +339,27 @@ public class EmployeesContractServiceImpl
 
         /* 原价格计算 */
         odp.setPriceBeforeDiscount(ec.getTotalPrice());
-        odp.setPriceAfterDiscount(ec.getTotalPrice());
+
+        //媒合费
+        QueryWrapper qw = new QueryWrapper();
+        qw.eq("config_key", "matchmakingFeeFloat");
+        SysConfig one = configService.getOne(qw);
+        odp.setMatchmakingFee(ec.getTotalPrice().multiply(new BigDecimal(one.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //系统服务费
+        QueryWrapper qw2 = new QueryWrapper();
+        qw2.eq("config_key", "systemServiceFeeFloat");
+        SysConfig one2 = configService.getOne(qw2);
+        odp.setSystemServiceFee(ec.getTotalPrice().multiply(new BigDecimal(one2.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //刷卡手续费
+        QueryWrapper qw3 = new QueryWrapper();
+        qw3.eq("config_key", "servicesChargeForCreditCardFloat");
+        SysConfig one3 = configService.getOne(qw3);
+        odp.setCardSwipeFee(ec.getTotalPrice().multiply(new BigDecimal(one3.getConfigValue()).multiply(BigDecimal.valueOf(0.01))).setScale(0,BigDecimal.ROUND_DOWN));
+
+        //服务费+订单费
+        odp.setPriceAfterDiscount(ec.getTotalPrice().add(odp.getMatchmakingFee()).add(odp.getSystemServiceFee()).add(odp.getCardSwipeFee()));
 
         /* 订单状态 */
         odp.setOrderState(CommonConstants.ORDER_STATE_TO_BE_PAID);//待支付状态

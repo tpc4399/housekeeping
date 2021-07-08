@@ -4,12 +4,9 @@ import com.housekeeping.admin.dto.*;
 import com.housekeeping.admin.entity.PaymentCallback;
 import com.housekeeping.admin.service.ICardPayCallbackService;
 import com.housekeeping.admin.service.IOrderDetailsService;
-import com.housekeeping.admin.service.IOrderPhotosService;
 import com.housekeeping.common.annotation.Access;
 import com.housekeeping.common.annotation.RolesEnum;
 import com.housekeeping.common.utils.R;
-import ecpay.payment.integration.AllInOne;
-import ecpay.payment.integration.domain.InvoiceObj;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -19,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * @Author su
@@ -213,6 +209,13 @@ public class OrderDetailsController {
         return R.ok(orderDetailsService.getOrder(number), "成功獲取訂單详情");
     }
 
+    @Access({RolesEnum.SYSTEM_ADMIN,RolesEnum.USER_COMPANY,RolesEnum.USER_EMPLOYEES,RolesEnum.USER_CUSTOMER,RolesEnum.USER_MANAGER})
+    @ApiOperation("【管理員】【公司】【保洁员】【客户】【经理】(新)根據訂單number獲取訂單详情")
+    @GetMapping("/getOrder2")
+    public R getOrder2(String number){
+        return R.ok(orderDetailsService.getOrder2(number), "成功獲取訂單详情");
+    }
+
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
     @ApiOperation("【公司】【经理】修改待支付订单的工作安排")
     @PostMapping("/setWorkDetails")
@@ -232,6 +235,16 @@ public class OrderDetailsController {
     @PostMapping("/setDiscountPrice")
     public R setDiscountPrice(@RequestBody SetOrderDiscountPriceDTO dto){
         return orderDetailsService.setDiscountPrice(dto);
+    }
+
+    @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
+    @ApiOperation("【公司】【经理】修改待支付订单的客户备注")
+    @PostMapping("/setNote")
+    public R setNote(@RequestParam("number") Long number,
+                     @RequestParam("photos") MultipartFile[] photos,
+                     @RequestParam("evaluates") String[] evaluates,
+                     @RequestParam("remarks") String remarks){
+        return orderDetailsService.setNote(number,photos,evaluates,remarks);
     }
 
     @Access({RolesEnum.USER_COMPANY,RolesEnum.USER_MANAGER})
