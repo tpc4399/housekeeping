@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.EmployeesCalendarMapper">
+
+    <select id="getSkillTags" resultType="com.housekeeping.admin.entity.SysJobContend">
+        select c.id, c.contend
+        from employees_calendar as a, employees_calendar_details as b, sys_job_contend as c
+        where a.id = b.calendar_id and b.job_id = c.id and employees_id = #{employeesId}
+        group by job_id;
+    </select>
+</mapper>

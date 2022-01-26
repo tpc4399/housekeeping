@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.UserMapper">
+
+	<resultMap id="baseResultMap" type="com.housekeeping.admin.entity.User">
+		<id property="id" column="id"/>
+		<result property="number" column="number"/>
+		<result property="nickname" column="nickname"/>
+		<result property="name" column="name"/>
+		<result property="dateOfBirth" column="date_of_birth"/>
+		<result property="phonePrefix" column="phone_prefix"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="deptId" column="dept_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="lastReviserId" column="last_reviser_id"/>
+		<result property="bonus" column="bonus"/>
+	</resultMap>
+    <select id="getUserByIdAndDept" resultType="com.housekeeping.admin.entity.User">
+		SELECT * FROM sys_user WHERE id = #{id} AND dept_id = #{i}
+	</select>
+
+    <select id="getAllEmps" resultType="java.lang.Integer">
+		SELECT id FROM employees_details WHERE company_id = #{id}
+	</select>
+
+	<select id="getAllMans" resultType="java.lang.Integer">
+		SELECT id FROM manager_details WHERE company_id = #{id}
+	</select>
+
+    <select id="byPhoneLogin" resultType="com.housekeeping.common.entity.HkUser">
+		SELECT id as id,
+			nickname as nickName,
+			phone_prefix as phonePrefix,
+			phone as phone,
+			email as email,
+			password as password,
+			dept_id as deptId
+		FROM `sys_user`
+		WHERE phone = #{phone}
+				and dept_id = #{deptId}
+	</select>
+
+</mapper>

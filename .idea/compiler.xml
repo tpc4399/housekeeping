@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="housekeeping-order-service" />
+        <module name="housekeeping-order-interface" />
+        <module name="housekeeping-im-service" />
+        <module name="housekeeping-gateway" />
+        <module name="housekeeping-ecpay" />
+        <module name="housekeeping-im-interface" />
+        <module name="housekeeping-register" />
+        <module name="housekeeping-interfaces" />
+        <module name="housekeeping-admin-interface" />
+        <module name="housekeeping-log" />
+        <module name="housekeeping-admin-service" />
+        <module name="housekeeping-common" />
+        <module name="housekeeping-auth-service" />
+        <module name="housekeeping-auth-interface" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="housekeeping-admin" options="-parameters" />
+      <module name="housekeeping-admin-interface" options="-parameters" />
+      <module name="housekeeping-admin-service" options="-parameters" />
+      <module name="housekeeping-auth" options="-parameters" />
+      <module name="housekeeping-auth-interface" options="-parameters" />
+      <module name="housekeeping-auth-service" options="-parameters" />
+      <module name="housekeeping-common" options="-parameters" />
+      <module name="housekeeping-ecpay" options="-parameters" />
+      <module name="housekeeping-gateway" options="-parameters" />
+      <module name="housekeeping-im" options="-parameters" />
+      <module name="housekeeping-im-interface" options="-parameters" />
+      <module name="housekeeping-im-service" options="-parameters" />
+      <module name="housekeeping-interfaces" options="-parameters" />
+      <module name="housekeeping-order" options="-parameters" />
+      <module name="housekeeping-order-interface" options="-parameters" />
+      <module name="housekeeping-order-service" options="-parameters" />
+      <module name="housekeeping-register" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.OrderPhotosMapper">
+    <insert id="saveBatch">
+        insert into order_photos
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (null,#{item.number},#{item.photoUrl},#{item.evaluate})
+        </foreach>
+    </insert>
+
+    <select id="getByOrderNumber" resultType="com.housekeeping.admin.entity.OrderPhotos">
+        SELECT t.*
+        FROM housekeeping.order_photos t
+        WHERE `number` = #{number}
+    </select>
+    <select id="listByNumber" resultType="com.housekeeping.admin.entity.OrderPhotos">
+        SELECT t.*
+        FROM housekeeping.order_photos t
+        WHERE `number` = #{number}
+    </select>
+
+</mapper>

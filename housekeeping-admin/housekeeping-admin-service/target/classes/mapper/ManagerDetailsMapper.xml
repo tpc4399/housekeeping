@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.ManagerDetailsMapper">
+
+	<resultMap id="baseResultMap" type="com.housekeeping.admin.vo.ManagerDetailsVO">
+		<id property="id" column="id"/>
+		<result property="number" column="number"/>
+		<result property="name" column="name"/>
+		<result property="dateOfBirth" column="date_of_birth"/>
+		<result property="phone" column="phone"/>
+		<result property="realName" column="real_name"/>
+		<result property="email" column="email"/>
+		<result property="schedule" column="schedule"/>
+		<result property="companyId" column="company_id"/>
+		<result property="idCard" column="id_card"/>
+		<result property="location" column="location"/>
+		<result property="address" column="address"/>
+		<result property="workYear" column="work_year"/>
+		<result property="educationBackground" column="education_background"/>
+		<result property="accountLine" column="account_line"/>
+		<result property="describes" column="describes"/>
+		<result property="phoneUrl" column="phone_url"/>
+		<result property="sex" column="sex"/>
+		<result property="qrcode" column="qrcode"/>
+		<result property="link" column="link"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="lastReviserId" column="last_reviser_id"/>
+		<result property="lastReviserName" column="username"/>
+		<result property="companyName" column="company_name"/>
+	</resultMap>
+
+	<select id="getScaleById" resultType="java.lang.String">
+		select scale from company_scale where id = #{id}
+	</select>
+
+	<select id="cusPage" resultMap="baseResultMap">
+		SELECT
+		ed.id,
+		ed.number,
+		ed.name,
+		ed.date_of_birth,
+		ed.phone,
+		ed.real_name,
+		ed.email,
+		ed.schedule,
+		ed.company_id,
+		ed.id_card,
+		ed.location,
+		ed.address,
+		ed.work_year,
+		ed.education_background,
+		ed.account_line,
+		ed.describes,
+		ed.phone_url,
+		ed.sex,
+		ed.qrcode,
+		ed.link,
+		ed.create_time,
+		ed.update_time,
+		ed.last_reviser_id,
+		s.`name` as username,
+		cd.company_name
+		FROM
+		manager_details as ed
+		LEFT JOIN sys_user as s ON ed.last_reviser_id = s.id
+		LEFT JOIN company_details as cd ON ed.company_id = cd.id
+		WHERE ed.company_id = #{companyId}
+		<if test=" id != null and  id != ''">
+			and ed.id =  #{id}
+		</if>
+	</select>
+
+    <select id="getManIdsByCompId" resultType="java.lang.Integer">
+		SELECT id FROM manager_details WHERE company_id  = #{companyId}
+	</select>
+
+    <select id="getAllManagerByAdmin" resultType="com.housekeeping.admin.vo.ManagerVo">
+		SELECT
+		md.id,
+		md.user_id,
+		md.number,
+		md.`name`,
+		md.date_of_birth,
+		md.phone_prefix,
+		md.phone,
+		md.real_name,
+		md.email,
+		md.head_url,
+		md.`schedule`,
+		md.company_id,
+		md.id_card,
+		md.location,
+		md.address,
+		md.work_year,
+		md.education_background,
+		md.account_line,
+		md.describes,
+		md.qrcode,
+		md.link,
+		md.phone_url,
+		md.sex,
+		md.create_time,
+		md.update_time,
+		md.last_reviser_id,
+		cd.no_certified_company
+		FROM
+		manager_details md
+		LEFT JOIN
+		company_details cd
+		ON
+		md.company_id = cd.id
+		<where>
+			<if test="query.id != null and query.id != ''">
+				md.id = #{query.id}
+			</if>
+			<if test="query.companyId != null and query.companyId != ''">
+				and md.company_id = #{query.companyId}
+			</if>
+			<if test="query.name != null and query.name != ''">
+				and md.name LIKE CONCAT('%',#{query.name},'%')
+			</if>
+			<if test="query.accountLine != null and query.accountLine != ''">
+				and md.account_line LIKE CONCAT('%',#{query.accountLine},'%')
+			</if>
+		</where>
+	</select>
+
+    <select id="getAllUserIdByCompanyId" resultType="java.lang.Integer">
+		SELECT
+		user_id
+		FROM
+		manager_details
+		WHERE
+		company_id = #{companyId}
+	</select>
+
+    <update id="updateHeadUrlById">
+		UPDATE manager_details
+		SET head_url = #{headUrl}
+		WHERE user_id = #{userId}
+    </update>
+</mapper>

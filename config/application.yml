@@ -1,0 +1,104 @@
+spring:
+  datasource:
+    dynamic:
+      primary: ds1
+      datasource:
+        ds1:
+          url: jdbc:mysql://47.56.146.107:3306/housekeeping?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: snaildy123
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          druid:
+            max-idle: 10
+            max-wait: 10000
+            min-idle: 5
+            initial-size: 5
+            validation-query: SELECT 1
+            test-on-borrow: false
+            test-while-idle: true
+            time-between-eviction-runs-millis: 18800
+        ds2:
+          url: jdbc:mysql://47.56.146.107:3306/hk_order?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+          username: root
+          password: snaildy123
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          druid:
+            max-idle: 10
+            max-wait: 10000
+            min-idle: 5
+            initial-size: 5
+            validation-query: SELECT 1
+            test-on-borrow: false
+            test-while-idle: true
+            time-between-eviction-runs-millis: 18800
+  rabbitmq:
+    host: 47.56.146.107
+    port: 5672
+    username: guest
+    password: guest
+  redis:
+    database: 1
+    host: 47.56.146.107
+    port: 6379
+    password: snaildy123
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 3
+        max-wait: -1
+        min-idle: 0
+    timeout: 1000
+  mail:
+    host: smtp.qq.com
+    username: 1213225994@qq.com
+    password: iyhijjjyvqxkifie
+    default-encoding: UTF-8
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 1000MB
+mq:
+  exchange: logMessage.direct
+  info:
+    routerKey: infoKey
+    queue: info
+  error:
+    routerKey: errorKey
+    queue: error
+oss:
+  endpoint: http://oss-cn-shanghai.aliyuncs.com
+  accessKeyId: UAlClM+FccyHfzGjBX5Njx8kB9Ww/4zb
+  accessKeySecret: wJCEnxvmPFxBzvw4QaPFM7clYNLZFE0NOKyn9y1sV10=
+  bucketName: test-live-video
+  urlPrefix: https://test-live-video.oss-cn-shanghai.aliyuncs.com/
+currency:
+  exchangeRate:
+    host: https://ali-waihui.showapi.com
+    path: /waihui-transform
+    path1: /waihui-list
+    method: GET
+    appcode: 74bf2f4aaa8e4bb3a67d287c53509cda
+address:
+  coding:
+    host: http://api.map.baidu.com
+    path1: /geocoding/v3/
+    path2: /routematrix/v2/walking
+    method_get: GET
+    ak: WCAGT9OncmkrNmlLpesssRnUtmGwUb3U
+    host_google: https://maps.googleapis.com
+    path_google: /maps/api/geocode/json
+    google_key: AIzaSyDNC2MO9tl5mMc9H_DcWVisMHC2hI0IR1M
+logging:
+  level:
+    com:
+      housekeeping:
+        admin:
+          mapper: debug

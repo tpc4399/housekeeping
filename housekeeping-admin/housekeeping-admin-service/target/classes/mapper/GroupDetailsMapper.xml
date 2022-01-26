@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.GroupDetailsMapper">
+
+    <resultMap id="baseResultMap" type="com.housekeeping.admin.entity.GroupDetails">
+        <id property="id" column="id"/>
+        <result property="companyId" column="company_id"/>
+        <result property="headUrl" column="head_url"/>
+        <result property="groupName" column="group_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="lastReviserId" column="last_reviser_id"/>
+    </resultMap>
+
+    <insert id="addMan">
+        insert into group_manager (group_id,manager_id) VALUES (#{groupId},#{managerId})
+    </insert>
+    <update id="updateGroup">
+        UPDATE group_details
+        SET group_name = #{groupDetails.groupName},
+        update_time = #{groupDetails.updateTime},
+        last_reviser_id = #{groupDetails.lastReviserId}
+        WHERE id = #{groupDetails.id}
+    </update>
+
+    <delete id="removeEmp">
+        delete from group_employees where group_id = #{id}
+    </delete>
+
+    <delete id="removeMan">
+        delete from group_manager where group_id = #{id}
+    </delete>
+
+    <select id="getGroup" resultMap="baseResultMap">
+        select
+        id,
+        company_id,
+        head_url,
+        group_name,
+        create_time,
+        update_time,
+        last_reviser_id
+        from
+        group_details
+        <where>
+            <if test=" id != null and  id != ''">
+                id =  #{id}
+            </if>
+            <if test=" companyId != null and  companyId != ''">
+                and company_id =  #{companyId}
+            </if>
+        </where>
+        order by id DESC
+    </select>
+
+    <select id="getAllGroups" resultType="com.housekeeping.admin.vo.GroupDetailsVo">
+        SELECT
+        gd.id,
+        gd.company_id,
+        gd.head_url,
+        gd.group_name,
+        gd.create_time,
+        gd.update_time,
+        gd.last_reviser_id,
+        cd.no_certified_company
+        FROM
+        group_details gd
+        LEFT JOIN
+        company_details cd
+        ON
+        gd.company_id = cd.id
+        <if test="groupName != null and groupName != ''">
+        where gd.group_name LIKE CONCAT('%',#{groupName},'%')
+        </if>
+    </select>
+</mapper>

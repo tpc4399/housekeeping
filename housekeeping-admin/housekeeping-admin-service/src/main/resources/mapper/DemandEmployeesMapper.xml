@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.DemandEmployeesMapper">
+
+    <select id="getAllDemandIds" resultType="java.lang.Integer">
+        SELECT
+        DISTINCT
+        demand_order_id
+        FROM
+        demand_employees
+        WHERE
+        user_id = #{userId}
+    </select>
+
+    <select id="getAllUserId" resultType="java.lang.Integer">
+        SELECT
+        user_id
+        FROM
+        demand_employees
+    </select>
+
+    <select id="getAllDemandIdsByEmpId" resultType="java.lang.Integer">
+        SELECT
+        DISTINCT
+        demand_order_id
+        FROM
+        demand_employees
+        WHERE
+        employees_id = #{employeesId}
+    </select>
+</mapper>

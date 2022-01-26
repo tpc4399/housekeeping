@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.CustomerDetailsMapper">
+
+    <update id="updateHeadUrlById">
+		UPDATE customer_details
+		SET head_url = #{headUrl}
+		WHERE user_id = #{userId}
+    </update>
+
+    <select id="getIdbyByCompanyId" resultType="java.lang.Integer">
+		SELECT id FROM im_chat_group WHERE company_id = #{companyId}
+	</select>
+
+    <select id="getUserIdByGId" resultType="java.lang.Integer">
+		SELECT user_id FROM im_chat_group_user WHERE chat_group_id = #{gid}
+	</select>
+
+	<select id="getAllEmpId" resultType="java.lang.Integer">
+		SELECT
+		emp_id
+		FROM
+		customer_employess
+		WHERE
+		cus_id = #{id}
+	</select>
+
+    <select id="checkCollection" resultType="java.lang.Integer">
+		SELECT id FROM customer_employess WHERE cus_id = #{customerId} AND emp_id = #{empId}
+	</select>
+
+	<select id="getAllCompId" resultType="java.lang.Integer">
+		SELECT
+		company_id
+		FROM
+		customer_company
+		WHERE
+		cus_id = #{id}
+	</select>
+
+	<select id="checkCollectionCompany" resultType="java.lang.Integer">
+		SELECT id FROM customer_company WHERE cus_id = #{id} AND company_id = #{companyId}
+	</select>
+
+	<update id="blacklist">
+		UPDATE customer_details
+		SET blacklist_flag = #{action}
+		WHERE id = #{customerId}
+	</update>
+
+	<insert id="collection">
+		insert into customer_employess values (null,#{cusId},#{empId})
+	</insert>
+
+    <insert id="collectionCompany">
+		insert into customer_company values (null,#{id},#{companyId})
+	</insert>
+
+    <delete id="cancelCollection">
+		DELETE FROM customer_employess WHERE cus_id = #{cusId} and emp_id = #{empId}
+	</delete>
+
+	<delete id="cancelCollectionCompany">
+		DELETE FROM customer_company WHERE cus_id = #{id}  AND company_id = #{compId}
+	</delete>
+</mapper>

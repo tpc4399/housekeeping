@@ -1,0 +1,125 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: gateway
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://184.168.125:3306/housekeeping?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowMultiQueries=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: snaildy123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    registry-fetch-interval-seconds: 5
+zuul:
+  host:
+    connect-timeout-millis: 60000  #HTTP连接超时大于Hystrix的超时时间
+    socket-timeout-millis: 60000   #socket超时
+  prefix: /api
+  routes:
+    admin-service: /admin/**
+    order-service: /order/**
+    auth-service: /auth/**
+    im-service: /im/**
+  add-host-header: true
+  sensitive-headers:
+housekeeping:
+  filter:
+    allowPaths:
+      - /api/auth/login/company/*
+      - /api/auth/login/admin/*
+      - /api/auth/login/customer/*
+      - /api/auth/Employees/*
+      - /api/auth/Manager/*
+      - /api/auth/login/personal/*
+      - /api/auth/others/checkToken
+      - /v2/api-docs
+      - /swagger-resources/configuration/ui
+      - /swagger-resources
+      - /swagger-resources/configuration/security
+      - /swagger-ui.html
+      - /api/admin/v2/api-docs
+      - /api/order/v2/api-docs
+      - /api/auth/v2/api-docs
+      - /api/im/v2/api-docs
+      - /api/admin/checkAdmin
+      - /api/admin/customer/checkCus/**
+      - /api/admin/companyHuman/checkEmp/**
+      - /api/admin/personal/checkPersonal/**
+      - /api/admin/admin/AdminSMS
+      - /api/admin/companyHuman/EmpSMS
+      - /api/admin/customer/CusSMS
+      - /api/admin/personal/personalSMS
+      - /api/admin/companyHuman/saveEmp
+      - /api/admin/customer/saveCus
+      - /api/admin/admin/saveAdmin
+      - /api/admin/personal/savePersonal
+      - /api/admin/admin/AdminForgetSMS
+      - /api/admin/admin/AdminUpdatePwd
+      - /api/admin/companyHuman/EmpForgetSMS
+      - /api/admin/companyHuman/EmpUpdatePwd
+      - /api/admin/customer/CusForgetSMS
+      - /api/admin/customer/CusUpdatePwd
+      - /api/admin/personal/personalForgetSMS
+      - /api/admin/personal/personalUpdatePwd
+      - /api/admin/personal/verfifyPersonalCode
+      - /api/admin/companyHuman/verfifyCompanyCode
+      - /api/admin/customer/verfifyCustomerCode
+      - /api/admin/admin/verfifyAdminCode
+      - /api/admin/test/redisInto
+      - /api/admin/employeesWorkExperience
+      - /api/admin/employeesCalendar/getCalendarByDateSlot
+      - /api/admin/employeesCalendar/getFreeTimeByDateSlot
+      - /api/admin/employeesContract/getCalendarByDateSlot
+      - /api/admin/employeesContract/getFreeTimeByDateSlot
+      - /api/admin/employeesCalendar/getFreeTimeByDateSlot2
+      - /api/admin/employeesCalendar/getFreeTimeByMonth
+      - /api/admin/employeesCalendar/getFreeTimeByMonth2
+      - /api/admin/employeesCalendar/getAbsenceDaysByMonth
+      - /api/admin/employeesCalendar/tags
+      - /api/admin/sysJobContend/getAll
+      - /api/admin/employeesDetails/getAllEmpByCompanyId
+      - /api/admin/employeesDetails/getDetailById
+      - /api/admin/employeesDetails/getEmpSkill
+      - /api/admin/test/noToken/*
+      - /api/admin/employeesDetails/getAllEmployees
+      - /api/admin/companyDetails/getAllCompany
+      - /api/admin/employeesContract/getAllById
+      - /api/admin/employeesCalendar/getScheduling/*
+      - /api/admin/employeesCalendar/getScheduling2/*
+      - /api/admin/employeesContract/getById
+      - /api/admin/orderDetails/paymentCallback
+      - /api/admin/employeesCalendar/getCalendar
+      - /api/admin/employeesCalendar/getCalendarFreeTime
+      - /api/admin/index/*
+      - /api/im/api/uploadWithName
+      - /api/order/payment
+      - /api/admin/companyAdvertising/getByRan
+      - /api/admin/orderDetails/cardPay
+      - /api/admin/sysJobNote/getAll
+      - /api/admin/sysJobNote/getAllByContent
+      - /api/admin/tokenOrder/cardPayByToken
+      - /api/admin/employeesDetails/search
+      - /api/im/api/upload
+      - /api/auth/others/byPhonePassword
+      - /api/auth/others/SMS
+      - /api/auth/others/byPhoneCode
+      - /api/admin/sysUser/forgetSMS
+      - /api/admin/sysUser/verfifyPersonalCode
+      - /api/admin/sysUser/updatePwd
+      - /api/admin/employeesContract/getAllByIndex
+      - /api/admin/companyDetails/getCollect
+      - /api/admin/employeesDetails/getCollect
+      - /api/admin/sysUser/forgetSMS
+      - /api/admin/sysUser/verfifyPersonalCode
+      - /api/admin/sysUser/updatePwd
+      - /api/admin/sysConfig/getPlatButton
+      - /api/admin/index/getCal
+      - /api/admin/qr/download
+
+ribbon:
+  ConnectTimeout: 60000 # ribbon链接超时时长
+  ReadTimeout: 60000 # ribbon读取超时时间长

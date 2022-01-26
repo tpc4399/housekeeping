@@ -1,0 +1,39 @@
+server:
+  port: 8282
+spring:
+  application:
+    name: im-service
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:ehcache.xml
+  aop:
+    proxy-target-class: true
+  mvc:
+    static-path-pattern: /**
+  servlet:
+    multipart:
+      max-file-size: 99999999
+      max-request-size: 99999999
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/page/,file:${web.upload-path}
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+mybatis-plus:
+  type-aliases-package: com.housekeeping.im.entity
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config.db-config.id-type: uuid
+  global-config.db-config.update-strategy: not_empty
+  global-config.db-config.logic-delete-value: 0
+  global-config.db-config.logic-not-delete-value: 1
+  configuration:
+    cache-enabled: false
+    map-underscore-to-camel-case: true
+
+web:
+  upload-path: D:/temp

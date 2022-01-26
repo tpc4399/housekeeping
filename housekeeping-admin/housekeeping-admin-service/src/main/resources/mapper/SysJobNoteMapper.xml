@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.SysJobNoteMapper">
+    <delete id="cusRemove">
+        DELETE
+        FROM
+        sys_content_note
+        WHERE
+        note_id = #{id}
+    </delete>
+
+    <select id="getAllNoteByContent" resultType="java.lang.Integer">
+        SELECT
+        note_id
+        FROM
+        sys_content_note
+        WHERE
+        content_id = #{contentId}
+    </select>
+</mapper>

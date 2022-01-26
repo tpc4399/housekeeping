@@ -1,0 +1,6 @@
+com\housekeeping\order\pojo\EmployeesDetailsPOJO.class
+com\housekeeping\order\dto\Action1DTO.class
+com\housekeeping\order\dto\Action2DTO.class
+com\housekeeping\order\vo\TimeSlotVo.class
+com\housekeeping\order\pojo\WorkDetailsPOJO.class
+com\housekeeping\order\pojo\OrderDetailsPOJO.class

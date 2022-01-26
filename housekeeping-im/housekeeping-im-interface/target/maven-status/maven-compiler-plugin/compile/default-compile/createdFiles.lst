@@ -1,0 +1,11 @@
+com\housekeeping\im\entity\ImUser.class
+com\housekeeping\im\entity\ImMessage.class
+com\housekeeping\im\entity\ImUserInfo.class
+com\housekeeping\im\entity\ImChatGroupUser.class
+com\housekeeping\im\entity\SendInfo.class
+com\housekeeping\im\entity\Message.class
+com\housekeeping\im\entity\ImChatGroupVo.class
+com\housekeeping\im\entity\CompanyDetails.class
+com\housekeeping\im\entity\CustomerDetails.class
+com\housekeeping\im\entity\EmployeesDetails.class
+com\housekeeping\im\entity\ImChatGroup.class

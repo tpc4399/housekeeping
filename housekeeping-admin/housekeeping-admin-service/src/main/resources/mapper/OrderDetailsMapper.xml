@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.OrderDetailsMapper">
+    <insert id="insertEvaluation">
+        INSERT INTO order_evaluation (order_number, yes1, star_rating1, evaluation1, image_urls1, yes2, star_rating2, evaluation2, image_urls2)
+        VALUES (#{orderNumber}, false, null, null, null, false, null, null, null)
+    </insert>
+
+    <insert id="insertTokenOrder">
+        INSERT INTO token_order
+(number,consumption_items,company_id,tokens,price,order_state,pay_date_time,pay_type,pay_deadline,h)
+VALUES
+(#{odp.number},#{odp.ConsumptionItems},#{odp.companyId},#{odp.tokens},#{odp.price},#{odp.orderState},#{odp.payDateTime},#{odp.payType},#{odp.payDeadline},#{odp.h})
+    </insert>
+
+    <update id="statusAndTime">
+        UPDATE order_details
+        SET order_state = #{status},
+            completion_date_time = #{time}
+        WHERE number = #{number}
+    </update>
+    <update id="status">
+        UPDATE order_details
+        SET order_state = #{status}
+        WHERE number = #{number}
+    </update>
+
+    <select id="orderRetentionTime" resultType="java.lang.Integer">
+        SELECT c.order_retention_time
+        FROM company_details c right join employees_details e on e.company_id = c.id
+        WHERE e.id = #{employeesId}
+    </select>
+</mapper>

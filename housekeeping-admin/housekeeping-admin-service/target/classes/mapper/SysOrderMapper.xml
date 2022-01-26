@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.housekeeping.admin.mapper.SysOrderMapper">
+
+	<update id="setEvaluationDeadTime">
+		UPDATE sys_order
+		SET evaluation_dead_time = #{evaluationDeadTime},
+			evaluation_time = #{evaluationDeadTime},
+			evaluation_content = "用戶默認好評"
+		WHERE id = #{orderId}
+	</update>
+
+	<update id="doEvaluation">
+		UPDATE sys_order
+		SET evaluation_star = #{evaluationStar},
+			evaluation_time = #{evaluationTime},
+			evaluation_content = #{evaluationContent},
+			evaluation_image = #{evaluationImage},
+			evaluation_type = #{evaluationType}
+		WHERE id = #{orderId}
+	</update>
+</mapper>
