@@ -1,7 +1,0 @@
-com\housekeeping\gateway\config\FilterConfig.class
-com\housekeeping\gateway\config\SwaggerProvider.class
-com\housekeeping\gateway\config\FilterProperties.class
-com\housekeeping\gateway\HousekeepingGatewayApplication.class
-com\housekeeping\gateway\client\AuthClient.class
-META-INF\spring-configuration-metadata.json
-com\housekeeping\gateway\filter\LoginFilter.class
